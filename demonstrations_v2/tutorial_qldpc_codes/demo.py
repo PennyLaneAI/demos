@@ -7,7 +7,7 @@ present in these systems, which manifests itself as computational errors and imp
 Thus, for a fault-tolerant quantum computer to exist, where one can run these devices indefinitely
 with minimal permissible errors, we need quantum error correction (QEC).
 
-For this purpose, QEC codes encode :math:`n` physical qubits into :math:`k` logical qubits.
+For this purpose, QEC codes encode :math:`k` logical qubits into :math:`n` physical qubits.
 To allow for fault-tolerant computation with these :math:`k` qubits, the QEC codes need to have
 the following desirable properties:
 
@@ -49,7 +49,7 @@ the absolute theoretical limits of data transmission, known as the `Shannon limi
 <https://en.wikipedia.org/wiki/Shannon_limit>`_. Classical LDPC codes achieve this with highly
 efficient, linear-time decoding that exploits the sparse structure of their parity checks.
 
-A classical LDPC code :math:`C[[n,k,d]]` protects :math:`k` logical bits by encoding them into
+A classical LDPC code :math:`C[n,k,d]` protects :math:`k` logical bits by encoding them into
 :math:`n` physical bits, where :math:`d` is the minimum distance of the code that dictates how
 many errors the code can correct. The encoding rules are defined by an :math:`m\times n`
 parity-check matrix (:math:`H`), where :math:`k = n - m` [#qldpc1]_. The "low-density" part of
@@ -61,7 +61,7 @@ Mathematically, these codes are visualized as `Tanner graphs
 <https://en.wikipedia.org/wiki/Tanner_graph>`_, which are bipartite graphs with edges
 representing connections between the variable nodes (:math:`n` physical bits)
 and the check nodes (:math:`m` parity constraints). For example, the following
-is a Tanner graph for a simple :math:`[[5, 2, 3]]` LDPC code:
+is a Tanner graph for a simple :math:`[5, 2, 3]` LDPC code:
 """
 
 import numpy as np
@@ -82,7 +82,7 @@ for (i, j) in zip(*np.nonzero(H)):
     G.add_edge(f"c{i}", f"v{j}")
 
 # Plot the Bipartite Graph
-plt.figure(figsize=(6, 4))
+plt.figure(figsize=(6, 3))
 pos = nx.bipartite_layout(G, var_nodes)
 colors = ["#70CEFF"] * num_vars + ["#C756B2"] * num_checks
 nx.draw(G, pos, with_labels=True, node_color=colors, node_size=500)
@@ -122,14 +122,14 @@ plt.show()
 #
 # For example, look at the following CSS code known as the `Steane code
 # <https://errorcorrectionzoo.org/c/steane>`_ :math:`[[7,1,3]]`, constructed from the two
-# :math:`d=3` Hamming codes. To build its corresponding parity-check matrix, we assign the Hamming
+# :math:`m=3` Hamming codes. To build its corresponding parity-check matrix, we assign the Hamming
 # code's parity-check matrix to both the :math:`X` and :math:`Z` checks, and stack them into a
-# single block matrix :math:`H = [H_X, 0;\, 0, H_Z]`, which is shown below:
+# single block matrix :math:`H = [0, H_Z;\, H_X, 0]`, which is shown below:
 #
 
-def hamming_code(distance: int) -> np.ndarray:
+def hamming_code(rank: int) -> np.ndarray:
     """Returns a Hamming code parity check matrix of a given rank."""
-    bit_masks = np.arange(1, 2**distance)[:, None] & (1 << np.arange(distance)[::-1])
+    bit_masks = np.arange(1, 2**rank)[:, None] & (1 << np.arange(rank)[::-1])
     return (bit_masks > 0).astype(np.uint8).T
 
 h1, h2 = hamming_code(3), hamming_code(3)
@@ -147,7 +147,7 @@ css_code = np.hstack((
 # which we can be easily verified below:
 #
 
-hx, hz = css_code[m1:, :n1], css_code[:m2, n2:] # Extract individual components.
+hx, hz = css_code[:m1, :n1], css_code[m1:, n1:] # Extract individual components.
 
 print(f"Does H_X * H_Z^T = 0? {np.allclose((hx @ hz.T) % 2, 0)}")
 print(f"Does H_Z * H_X^T = 0? {np.allclose((hz @ hx.T) % 2, 0)}\n")
@@ -155,7 +155,7 @@ print(f"Does H_Z * H_X^T = 0? {np.allclose((hz @ hx.T) % 2, 0)}\n")
 ######################################################################
 # Finally, we can also confirm that our constructed matrix encodes exactly one logical qubit
 # by computing the code dimension (:math:`k`) by subtracting the linearly independent stabilizer
-# constraints from the total number of physical qubits. 
+# constraints from the total number of physical qubits.
 #
 
 from pennylane.math import binary_matrix_rank
@@ -169,7 +169,7 @@ print(f"Code dimension (k): {code_dim}\n")
 #
 # Finding a single sparse matrix for a classical code is straightforward. However, for a
 # quantum code, we must find two sparse matrices that also perfectly commute with each other.
-# This requires their parity checks to always overlap on an even number of qubits, whcich is
+# This requires their parity checks to always overlap on an even number of qubits, which is
 # a strict mathematical constraint that makes generating these matrices notoriously difficult.
 # This severely limits the design space compared to classical codes, which is why it took decades
 # for researchers to discover families of good QLDPC codes. However, a foundational breakthrough
@@ -282,7 +282,7 @@ print(f"Physical qubits (n) of the HGP code: {n1*n2 + m1*m2} == {2*dist*(dist-1)
 #    :math:`d = \Theta(n)`, meeting the quantum Gilbert-Varshamov bound.
 #
 # 3. **Bivariate Bicycle (BB) Codes:** These codes bridge the gap between the abstract algebra of
-#    expander graphs that require highly non-local hardware wiring, and the physical reality of
+#    expander graphs that require highly non-local hardware wiring, and the physical reality
 #    of quantum processors [#BBCodes]_.  Built using pairs of low-degree polynomials :math:`A(x,y)`
 #    and :math:`B(x,y)` over the ring :math:`\mathbb{F}_2[x,y]/(x^\ell - 1, y^m - 1)`, where
 #    :math:`x` and :math:`y` generate cyclic shifts along the two axes of an :math:`\ell \times m`
@@ -324,6 +324,7 @@ for dist in (distances := range(2, 20)):
     hx, hz = tanner_code(h1, h2)
     ns_tan.append(max(hx.shape[1], hz.shape[1]))
 
+plt.figure(figsize=(6, 3))
 plt.plot(distances, ns_hgp, '-o', label="HGP Code")
 plt.plot(distances, ns_tan, '-*',label="Quantum Tanner Code")
 plt.grid(True, which="both", ls="--", c="lightgray", alpha=0.7)
@@ -340,7 +341,7 @@ plt.show()
 # As mentioned earlier, Tanner graphs constructed using the parity-check matrix of the code
 # can be used for decoding errors efficiently using an iterative message-passing algorithm
 # like Belief Propagation (BP) [#BProp]_. This decoding process can be thought of as a
-# collaborative excercise, where the variable nodes (qubits) and check nodes (parity rules) act
+# collaborative exercise, where the variable nodes (qubits) and check nodes (parity rules) act
 # like detectives passing *notes* back and forth. A variable node sends a confidence level message,
 # *"I am 84% sure that I've an error"*. The check node looks at the notes from all connected
 # qubits, applies the parity rule, and replies *"Based on group's evidence, adjust your
@@ -467,64 +468,114 @@ print(f"Decoded error: {res}")
 # As multiple physical error patterns map to the exact same syndrome, the decoder
 # might find an alternative, equally valid path. When we apply its guessed
 # correction to our system, we are essentially creating a *residual* error,
-# :math:`E_{residual} = (E_{injected} + E_{decoded}) \mod 2`, as we can see below.
+# :math:`E_{residual} = (E_{injected} + E_{decoded}) \mod 2`. This will be a null
+# vector, if the guessed correction is exact. Alternatively, it can happen to be
+# a valid :math:`X`-stabilizer, which means that the combined effect of the noise and
+# our guessed correction simply applied a stabilizer to the code block. Since stabilizers
+# inherently leave the logical codespace perfectly untouched, our quantum information is
+# successfully preserved, even though the decoder guessed a completely different physical
+# path! We can see this by adding it as a new row to the :math:`H_X` parity-check matrix
+# and checking if it increases its :math:`\mathbb{Z}_2` rank, as shown below.
 #
 
 residual = (res + x_error) % 2
+hx_w_res = np.vstack([hx, residual])
 
 if np.allclose(residual, 0):
     print("Result: Exact correction")
-elif np.all((hz @ residual) % 2 == 0):
+elif binary_matrix_rank(hx_w_res) == binary_matrix_rank(hx):
     print("Result: Corrected up to stabilizer.")
 else:
     print("Result: Logical error.")
 
 ######################################################################
-# The guessed correction is exact when the residual error turns out to be a null vector.
-# Alternatively, it can happen to be a valid :math:`X`-stabilizer, which means that the
-# combined effect of the noise and our guessed correction simply applied a stabilizer to the
-# code block. Since stabilizers inherently leave the logical codespace perfectly untouched,
-# our quantum information is successfully preserved, even though the decoder guessed a
-# completely different physical path! We can see this by adding it as a new row to the
-# :math:`H_X` parity-check matrix and checking if it increases its :math:`\mathbb{Z}_2` rank.
+# Logical Gates for QLDPC Codes
+# ------------------------------
+#
+# Beyond just storing information safely, a practical quantum computer must also perform logic
+# operations on encoded qubits. This is done using logical operators, which are the specific
+# combinations of physical single-qubit gates that act on the encoded logical qubits. The most
+# fundamental of these are the logical Pauli operators. To be valid, a logical operator must
+# commute with all of the code's stabilizers, so it does not trigger an error syndrome, but
+# must not be a stabilizer itself and must act nontrivially on the encoded logical state rather
+# than as the identity.
+#
+# For general CSS codes, including QLDPC code families, we can systematically construct a
+# canonical basis of :math:`k` logical operator pairs :math:`\{(L_X^{(i)}, L_Z^{(i)})\}_{i=1}^{k}`
+# using linear algebra over :math:`\mathbb{F}_2`. The algorithm requires two sequential RREF
+# passes, first on :math:`H_X`, then on the remaining free columns of :math:`H_Z` to identify the
+# the logical sector. By doing this we natively guarantee the canonical anticommutation condition
+# :math:`L_X^{(i)} \cdot L_Z^{(j)} = \delta_{ij} \pmod{2}`, where :math:`\delta_{ij}` is the
+# Kronecker delta. For example, below we construct logical operators for a simple Toric code.
+#
 
-print(f"Rank w/o residual: {binary_matrix_rank(hx)}")
-print(f"Rank with residual: {binary_matrix_rank(np.vstack([hx, residual]))}")
+def compute_logical_ops(hx: np.ndarray, hz: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+    """Compute the canonical logical operator bases :math:`L_x` and :math:`L_z` for a CSS code."""
+    n = hx.shape[1]
+
+    # Reduced row echelon forms to get Sx and Sz cols
+    hx_rref = binary_finite_reduced_row_echelon(hx)
+    hx_rref = hx_rref[np.any(hx_rref, axis=1)]
+    sx_cols = hx_rref.argmax(axis=1)
+    non_sx_cols = np.sort(list(set(range(n)) - set(sx_cols)))
+    hz_rref = binary_finite_reduced_row_echelon(hz[:, non_sx_cols])
+    hz_rref = hz_rref[np.any(hz_rref, axis=1)]
+    sz_cols = non_sx_cols[hz_rref.argmax(axis=1)]
+
+    # Get the logical columns that are free in both Sx and Sz
+    l_cols = np.sort(list(set(non_sx_cols) - set(sz_cols)))
+    if (k := len(l_cols)) == 0:
+        return np.empty((0, n), dtype=int), np.empty((0, n), dtype=int)
+    l_r_cols = np.searchsorted(non_sx_cols, l_cols)
+
+    # Construct the logical operators Lx and Lz
+    lx, lz = np.zeros((k, n), dtype=int), np.zeros((k, n), dtype=int)
+    lx[np.arange(k), l_cols], lz[np.arange(k), l_cols] = 1, 1
+    lx[:, sz_cols], lz[:, sx_cols] = hz_rref[:, l_r_cols].T, hx_rref[:, l_cols].T
+    return lx, lz
+
+# 2-bit repetition code on a ring
+h1, h2 = np.ones((2, 2)), np.ones((2, 2))
+hx, hz = hgp_code(h1, h2)  # Toric code
+lx, lz = compute_logical_ops(hx, hz)
+
+print(f"Lx: {lx}")
+print(f"Lz: {lz}")
+
+print("Does Lx commute with all Z-stabilizers? ", np.allclose((hz @ lx.T) % 2, 0))
+print("Does Lz commute with all X-stabilizers? ", np.allclose((hx @ lz.T) % 2, 0))
+print("Does Lx and Lz anticommute? ", np.allclose(lx @ lz.T, np.eye(lx.shape[0])))
 
 ######################################################################
 # Transversal Gates for QLDPC Codes
 # ----------------------------------
 #
-# Beyond just storing information safely, a practical quantum computer must also perform logic 
-# operations on encoded qubits. A logical gate on a logical qubit is always realized by a
-# collection of microscopic operations on the physical qubits. Transversal gates typically refer
-# to the special case where the logical operation is realized by its equivalent physical operation
-# on all qubits. For example, a transversal :math:`T` gate in the Steane code corresponds to
-# applying a :class:`~.pennylane.T` gate on all physical qubits.
+# Transversal gates are the logical operations realized by applying independent single-qubit
+# gates in parallel across all qubits in a code block. Because each physical qubit
+# is acted on by at most one gate, errors cannot spread within the block, making them
+# inherently fault-tolerant. For example a transversal :math:`T^\dagger` gate in the
+# :math:`[[15, 1, 3]]` quantum `Reed-Muller code <https://errorcorrectionzoo.org/c/stab_15_1_3>`_
+# corresponds to applying the :class:`~.pennylane.T` gate on all physical qubits, i.e.,
+# :math:`T^\dagger_L = T^{\otimes 15}`.
 #
-# As such, they are relatively easy to implement and propagate minimal errors. However, the
-# `Earnest-Knill theorem <https://en.wikipedia.org/wiki/Eastin%E2%80%93Knill_theorem>`_ restricts
-# the set of the logical unitary product operators that can be applied transversally for any
-# nontrivial local-error-detecting quantum code to be non-universal. While this limits the ways
-# to implement fault-tolerant gates on quantum codes, there are still ways to use non-transversal
-# methods to implement a logical gate. For example, we can implement non-Clifford gates such as
-# :class:`~.pennylane.T` by injecting a `magic state
+# However, the `Eastin-Knill theorem <https://en.wikipedia.org/wiki/Eastin%E2%80%93Knill_theorem>`_
+# restricts the set of the logical unitary product operators that can be applied transversally for
+# any nontrivial local-error-detecting quantum code to be non-universal. For most stabilizer codes,
+# the transversal gate set is limited to the Clifford group. The non-Clifford gates such as
+# :class:`~.pennylane.T` must instead be realized indirectly, for example via `magic state injection
 # <https://pennylane.ai/qml/glossary/what-are-magic-states>`__ [#Transversal]_.
 #
-# While the transversal gate set for most standard codes is limited to Clifford gates, a major
-# breakthrough of certain QLDPC code families is their ability to natively support transversal
-# non-Clifford gates, such as the :class:`~.pennylane.CCZ` gate. This drastically reduces the
-# hardware overhead needed for universal quantum computing. We can test if any given operation is
-# transversal for a given code by testing if it preserves its *codespace*. For example, we check
-# if the :class:`~.pennylane.SWAP` gate is transversal for a simple Toric code below.
+# A major breakthrough of certain QLDPC code families is their ability to natively support
+# transversal non-Clifford gates, such as the :class:`~.pennylane.CCZ` gate. This substantially
+# reduces the hardware overhead needed for universal quantum computing. We can test if any given
+# operation is transversal for a given code by testing if (i) it preserves its *codespace*, i.e., the
+# subspace stabilized by all stabilizer generators, and (ii) maps logical operators to valid logical
+# operators. For example, we can check whether the :class:`~.pennylane.SWAP` gate is transversal for
+# the previously constructed Toric code:
 #
 
 from itertools import product
 import stim
-
-# 2-bit repetition code on a ring
-h1, h2 = np.ones((2, 2)), np.ones((2, 2))
-hx, hz = hgp_code(h1, h2)  # Toric code
 
 def compute_stabilizer_group(hx: np.ndarray, hz: np.ndarray) -> tuple[list, set]:
     """Generates the independent Pauli checks and the full stabilizer group."""
@@ -550,12 +601,15 @@ def compute_stabilizer_group(hx: np.ndarray, hz: np.ndarray) -> tuple[list, set]
         full_group.add(str(-current_pauli))
     return generators, full_group
 
-def verify_transversality(operations: str, generators: list, stabilizers: set):
+def verify_transversality(
+    operations: list, generators: list, stabilizers: set, logical_ops: tuple = None
+) -> bool:
     """Verify if the given operations are transversal for the given QLDPC code."""
     tableau, result = stim.Tableau(num_qubits=len(generators[0])), True
     for operation in operations:
         tableau.append(*operation)
 
+    print("Condition 1: Codespace preservation")
     for generator in generators:
         if str(evolved := tableau(generator)) in stabilizers:
             print(f"{generator}  -->  {evolved}  (Valid!)")
@@ -564,13 +618,29 @@ def verify_transversality(operations: str, generators: list, stabilizers: set):
             result = False
             break
 
+    if logical_ops is not None:
+        print("\nCondition 2: Logical operators consistency")
+        for itr, (lx_row, lz_row) in enumerate(zip(*logical_ops)):
+            lx_pauli = stim.PauliString(["".join(["I", "X"][bit]) for bit in lx_row])
+            lz_pauli = stim.PauliString(["".join(["I", "Z"][bit]) for bit in lz_row])
+            evolved_lx, evolved_lz = tableau(lx_pauli), tableau(lz_pauli)
+
+            for label, evolved in [("Lx", evolved_lx), ("Lz", evolved_lz)]:
+                commutes = all(evolved.commutes(g) for g in generators)
+                ntrivial = str(evolved) not in stabilizers
+                valid = commutes and ntrivial
+                print(f"{label}[{itr}] --> {evolved} | "\
+                      f"commutes={commutes}, nontrivial={ntrivial}")
+                if not valid:
+                    result = False
+                    break
     return result
 
 swap = stim.Tableau.from_named_gate("SWAP")
 ops = [[swap, (0, 1)], [swap, (2, 3)], [swap, (4, 5)], [swap, (6, 7)]]
 generators, stabilizers = compute_stabilizer_group(hx, hz)
-result = verify_transversality(ops, generators, stabilizers)
-print(f"Result: The codespace is preserved: {result}")
+result = verify_transversality(ops, generators, stabilizers, (lx, lz))
+print(f"\nResult: The gate operation is transversal: {result}")
 
 ######################################################################
 # In addition to the gate operations being transversal, there's active work being done to develop
@@ -593,10 +663,10 @@ print(f"Result: The codespace is preserved: {result}")
 # the ultimate theoretical scaling for massive quantum processors.
 #
 # Advancements in dynamically reconfigurable and modular architectures are turning these highly
-# connected codes into a physical reality. While still many engineering hurdles remain,
-# particularly in designing universal transversal gate sets and executing efficient logical
-# measurements. However, supported by fast, linear-time decoding algorithms, QLDPC codes have
-# evolved past elegant mathematical formalism and are progressing towards practicality.
+# connected codes into a physical reality. Many engineering hurdles still remain, particularly
+# in designing universal transversal gate sets and executing efficient logical measurements.
+# However, supported by fast, linear-time decoding algorithms, QLDPC codes have evolved past
+# elegant mathematical formalism and are progressing towards practicality.
 #
 # References
 # ----------
