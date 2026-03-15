@@ -1,0 +1,156 @@
+{
+    "title": "Quantum low-density parity-check (QLDPC) codes for quantum error correction",
+    "authors": [{
+        "username": "whatsis"
+    }],
+    "executable_stable": true,
+    "executable_latest": true,
+    "dateOfPublication": "2026-02-27T00:00:00+00:00",
+    "dateOfLastModification": "2026-02-27T00:00:00+00:00",
+    "categories": [
+        "Algorithms",
+        "Quantum Computing",
+        "Quantum Hardware"
+    ],
+    "tags": [],
+    "previewImages": [{
+            "type": "thumbnail",
+            "uri": "/_static/demo_thumbnails/regular_demo_thumbnails/pennylane-demo-stabilizer-codes-thumbnail.png"
+        },
+        {
+            "type": "large_thumbnail",
+            "uri": "/_static/demo_thumbnails/large_demo_thumbnails/pennylane-demo-stabilizer-codes-large-thumbnail.png"
+        }
+    ],
+    "seoDescription": "Learn how to use quantum low-density parity-check (QLDPC) codes for quantum error correction.",
+    "doi": "",
+    "references": [{
+            "id": "qldpc1",
+            "type": "article",
+            "title": "Quantum Low-Density Parity-Check Codes",
+            "authors": "Breuckmann, N.P., Eberhardt, J.N.",
+            "year": "2021",
+            "journal": "PRX Quantum",
+            "doi": "10.1103/PRXQuantum.2.040101",
+            "url": "https://journals.aps.org/prxquantum/abstract/10.1103/PRXQuantum.2.040101"
+        },
+        {
+            "id": "CSS",
+            "type": "article",
+            "title": "The Physics of (good) LDPC Codes I. Gauging and dualities",
+            "authors": "Rakovszky, T., Khemani, V.",
+            "year": "2023",
+            "journal": "",
+            "doi": "10.48550/arXiv.2310.16032",
+            "url": "https://arxiv.org/abs/2310.16032"
+        },
+        {
+            "id": "HGP",
+            "type": "article",
+            "title": "Quantum LDPC Codes With Positive Rate and Minimum Distance Proportional to the Square Root of the Blocklength",
+            "authors": "Tillich, J. P., Zémor, G.",
+            "year": "2014",
+            "journal": "IEEE Transactions on Information Theory",
+            "doi": "10.1109/TIT.2013.2292061",
+            "url": "https://ieeexplore.ieee.org/document/6671468"
+        },
+        {
+            "id": "LPCodes",
+            "type": "article",
+            "title": "Explicit Abelian Lifts and Quantum LDPC Codes",
+            "authors": "Granha Jeronimo, F., Mittal, T., O'Donnell, R., Paredes, P., Tulsiani, M.",
+            "year": "2021",
+            "journal": "arXiv e-prints",
+            "doi": "10.48550/arXiv.2112.01647",
+            "url": "https://arxiv.org/abs/2112.01647"
+        },
+        {
+            "id": "QTCodes",
+            "type": "article",
+            "title": "Quantum Tanner codes",
+            "authors": "Panteleev, P., Kalachev, G.",
+            "year": "2022",
+            "journal": "IEEE Symp. Found. Comput. Sci. (FOCS)",
+            "doi": "10.48550/arXiv.2202.13641",
+            "url": "https://arxiv.org/abs/2202.13641"
+        },
+        {
+            "id": "BBCodes",
+            "type": "article",
+            "title": "High-threshold and low-overhead fault-tolerant quantum memory",
+            "authors": "Bravyi, S., Cross, A.W., Gambetta, J.M., Maslov, D., Rall, P., Yoder, T.J.",
+            "year": "2024",
+            "journal": "Nature",
+            "doi": "10.1038/s41586-024-07107-7",
+            "url": "https://www.nature.com/articles/s41586-024-07107-7"
+        },
+        {
+            "id": "BProp",
+            "type": "article",
+            "title": "Generalized Belief Propagation Algorithms for Decoding of Surface Codes",
+            "authors": "Old, J., Rispler, M.",
+            "year": "2023",
+            "journal": "Quantum",
+            "doi": "10.22331/q-2023-06-07-1037",
+            "url": "https://quantum-journal.org/papers/q-2023-06-07-1037/"
+        },
+        {
+            "id": "OSD0",
+            "type": "article",
+            "title": "Syndrome-Based Min-Sum vs OSD-0 Decoders: FPGA Implementation and Analysis for Quantum LDPC Codes",
+            "authors": "Valls, J., Garcia-Herrero, F., Raveendran, N., Vasic, B.",
+            "year": "2021",
+            "journal": "IEEE Access",
+            "doi": "10.1109/ACCESS.2021.3117428",
+            "url": "https://ieeexplore.ieee.org/document/9562513"
+        },
+        {
+            "id": "Transversal",
+            "type": "article",
+            "title": "Transversal Gates for Highly Asymmetric qLDPC Codes",
+            "authors": "Leitch, H., Kay, A.",
+            "year": "2025",
+            "journal": "arXiv e-prints",
+            "doi": "10.48550/arXiv.2506.15905",
+            "url": "https://arxiv.org/abs/2506.15905"
+        },
+        {
+            "id": "LMHM",
+            "type": "article",
+            "title": "Fault-tolerant logical measurements via homological measurement",
+            "authors": "Ide, B., Gowda, M.G., Nadkarni, P.J., Dauphinais, G.",
+            "year": "2025",
+            "journal": "Phys. Rev. X 15, 021088",
+            "doi": "10.1103/PhysRevX.15.021088",
+            "url": "https://arxiv.org/abs/2410.02753"
+        }
+    ],
+    "basedOnPapers": [],
+    "referencedByPapers": [],
+    "relatedContent": [{
+            "type": "demonstration",
+            "id": "tutorial_stabilizer_codes",
+            "weight": 1.0
+        },
+        {
+            "type": "demonstration",
+            "id": "tutorial_game_of_surface_codes",
+            "weight": 1.0
+        },
+        {
+            "type": "demonstration",
+            "id": "tutorial_toric_code",
+            "weight": 1.0
+        },
+        {
+            "type": "demonstration",
+            "id": "tutorial_bp_catalyst",
+            "weight": 1.0
+        },
+        {
+            "type": "demonstration",
+            "id": "tutorial_lattice_surgery",
+            "weight": 1.0
+        }
+    ]
+}
