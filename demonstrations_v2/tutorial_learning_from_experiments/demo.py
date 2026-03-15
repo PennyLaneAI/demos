@@ -160,6 +160,7 @@ n_shots = 100  # the number of times we can use each unitary
 #
 
 import pennylane as qml
+qml.capture.enable()
 from pennylane.templates.layers import RandomLayers
 import numpy as np
 

@@ -140,6 +140,7 @@ You can check out a great tutorial on
 
 # Quantum Machine Learning
 import pennylane as qml
+qml.capture.enable()
 from pennylane import qaoa
 
 # Classical Machine Learning

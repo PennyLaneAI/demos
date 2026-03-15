@@ -33,6 +33,7 @@ The first step is to import the required libraries and packages:
 import matplotlib.pyplot as plt
 from pennylane import numpy as np
 import pennylane as qml
+qml.capture.enable()
 
 ##############################################################################
 # For this simple example, we consider the following single-qubit Hamiltonian: :math:`\sigma_x + \sigma_z.`

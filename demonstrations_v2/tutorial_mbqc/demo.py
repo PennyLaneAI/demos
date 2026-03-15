@@ -90,6 +90,7 @@ nx.draw(G, pos={node: node for node in G}, node_size=500, node_color="black")
 #
 
 import pennylane as qml
+qml.capture.enable()
 
 qubits = [str(node) for node in G.nodes]
 dev = qml.device("lightning.qubit", wires=qubits)
@@ -152,6 +153,7 @@ print(qml.draw(cluster_state)())
 # Let's implement one-qubit teleportation in PennyLane.
 
 import pennylane as qml
+qml.capture.enable()
 import pennylane.numpy as np
 
 dev = qml.device("lightning.qubit", wires=2)

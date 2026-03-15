@@ -59,6 +59,7 @@ and artificially adding :class:`PhaseDamping <pennylane.PhaseDamping>` noise usi
 """
 
 import pennylane as qml
+qml.capture.enable()
 
 n_wires = 4
 

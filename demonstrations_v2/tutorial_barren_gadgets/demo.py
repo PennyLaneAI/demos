@@ -156,6 +156,7 @@ and using that for training instead. That is what we will do in the rest of this
 # Finally, ``build_ansatz`` puts the pieces together. 
 
 import pennylane as qml
+qml.capture.enable()
 from pennylane import numpy as np
 from barren_gadgets.barren_gadgets import PerturbativeGadgets
 from barren_gadgets.layered_ansatz import (

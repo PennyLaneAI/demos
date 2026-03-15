@@ -116,6 +116,7 @@ of tensors in the network.
 
 import numpy as onp
 import pennylane as qml
+qml.capture.enable()
 from pennylane import numpy as np
 
 

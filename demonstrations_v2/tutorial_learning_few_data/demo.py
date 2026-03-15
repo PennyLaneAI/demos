@@ -141,6 +141,7 @@ import jax.numpy as jnp
 import optax  # optimization using jax
 
 import pennylane as qml
+qml.capture.enable()
 import pennylane.numpy as pnp
 
 sns.set()

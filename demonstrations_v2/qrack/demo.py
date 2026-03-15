@@ -95,6 +95,7 @@ initialization and perform the QFT across a width of 60 qubits, with Catalyst's 
 """
 
 import pennylane as qml
+qml.capture.enable()
 from pennylane import numpy as np
 from catalyst import qjit
 

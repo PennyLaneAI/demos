@@ -514,6 +514,7 @@ Let's start with a very simple circuit consisting of three gates and show that y
 import matplotlib.pyplot as plt
 
 import pennylane as qml
+qml.capture.enable()
 import pyzx
 
 dev = qml.device("default.qubit", wires=2)

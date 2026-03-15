@@ -68,6 +68,7 @@ PyTorch as well:
 """
 
 import pennylane as qml
+qml.capture.enable()
 import torch
 from torch.autograd import Variable
 
@@ -200,6 +201,7 @@ print(cost(phi, theta, 400))
 # :doc:`Computing gradients in parallel with Amazon Braket <demos/braket-parallel-gradients>`.
 
 import pennylane as qml
+qml.capture.enable()
 import torch
 from torch.autograd import Variable
 

@@ -330,6 +330,7 @@ print(f"Heavy output probability = {heavy_output_prob}")
 # :func:`~.pennylane.Permute` subroutine.
 
 import pennylane as qml
+qml.capture.enable()
 
 # Object for random number generation from numpy
 rng = np.random.default_rng()

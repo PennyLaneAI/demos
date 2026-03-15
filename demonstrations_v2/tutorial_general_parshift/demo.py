@@ -128,6 +128,7 @@ def random_observable(N, seed):
 import jax
 from jax import numpy as np
 import pennylane as qml
+qml.capture.enable()
 
 jax.config.update("jax_enable_x64", True)
 

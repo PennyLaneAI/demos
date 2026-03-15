@@ -1,4 +1,5 @@
 import pennylane as qml
+qml.capture.enable()
 from pennylane import numpy as np
 
 """ Based on the SimplifiedTwoDesign template from pennylane

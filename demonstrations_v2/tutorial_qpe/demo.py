@@ -208,6 +208,7 @@ and its eigenstate :math:`|1\rangle` with corresponding phase :math:`\theta=0.2`
 """
 
 import pennylane as qml
+qml.capture.enable()
 import numpy as np
 
 def U(wires):

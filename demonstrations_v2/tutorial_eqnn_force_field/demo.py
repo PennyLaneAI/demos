@@ -130,6 +130,7 @@ Let’s implement the model depicted above!
 # We start by importing the libraries that we will need.
 
 import pennylane as qml
+qml.capture.enable()
 import numpy as np
 
 import jax

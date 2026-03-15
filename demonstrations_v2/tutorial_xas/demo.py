@@ -168,6 +168,7 @@ hf.run(verbose=0)
 # To do this, we can obtain the molecular orbital coefficients from PennyLane using :func:`~.pennylane.qchem.scf`, and change the coefficients in the ``hf`` instance to match.
 
 import pennylane as qml
+qml.capture.enable()
 
 mole = qml.qchem.Molecule(symbols, geometry, basis_name="sto-3g", unit="angstrom")
 

@@ -43,6 +43,7 @@ We start by importing the necessary libraries for simulation, optimization, and 
 as well as setting some important constants:
 """
 import pennylane as qml
+qml.capture.enable()
 import numpy as np
 from jax import jit, vmap, value_and_grad, random, config
 from jax import numpy as jnp

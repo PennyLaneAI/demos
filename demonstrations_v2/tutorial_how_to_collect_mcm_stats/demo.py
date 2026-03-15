@@ -32,6 +32,7 @@ running --- mid-circuit measurement statistics!
 #
 
 import pennylane as qml
+qml.capture.enable()
 import numpy as np
 
 np.random.seed(511)

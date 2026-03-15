@@ -47,6 +47,7 @@ PennyLane ``QNodes``.
 # provide qubit information to :class:`~pennylane.FromBloq` via the ``wires`` argument.
 
 import pennylane as qml
+qml.capture.enable()
 from qualtran.bloqs.basic_gates import XGate
 
 bloq_as_op = qml.FromBloq(XGate(), wires=0)

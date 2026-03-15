@@ -67,6 +67,7 @@ we will work with. We define wires for input registers, the output register, and
 """
 
 import pennylane as qml
+qml.capture.enable()
 
 # we indicate the name of the registers and their number of qubits. 
 wires = qml.registers({"x": 4, "y":4, "output":6,"work_wires": 4})

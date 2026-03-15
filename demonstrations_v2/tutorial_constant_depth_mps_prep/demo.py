@@ -154,6 +154,7 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import FancyBboxPatch
 
 import pennylane as qml
+qml.capture.enable()
 
 
 def A(g):

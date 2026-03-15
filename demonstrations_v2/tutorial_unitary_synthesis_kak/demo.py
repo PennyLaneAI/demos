@@ -197,6 +197,7 @@ or multiplexed, ``qml.RY`` rotation. Then we check that those matrices multiplie
 yield the input ``U`` again.
 """
 import pennylane as qml
+qml.capture.enable()
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.linalg import cossin, eig, qr

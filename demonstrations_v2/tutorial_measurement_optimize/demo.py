@@ -111,6 +111,7 @@ import warnings
 import jax
 from jax import numpy as jnp
 import pennylane as qml
+qml.capture.enable()
 
 jax.config.update("jax_enable_x64", True)
 

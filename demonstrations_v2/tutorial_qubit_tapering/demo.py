@@ -120,6 +120,7 @@ In PennyLane, a :doc:`molecular Hamiltonian <demos/tutorial_quantum_chemistry>` 
 coordinates.
 """
 import pennylane as qml
+qml.capture.enable()
 from jax import numpy as jnp
 import jax
 

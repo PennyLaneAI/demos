@@ -51,6 +51,7 @@ training signal for the generator to improve its fake generated data.
 
 import numpy as np
 import pennylane as qml
+qml.capture.enable()
 import tensorflow as tf
 
 ##############################################################################

@@ -188,6 +188,7 @@ solution or lookup table.
 from catalyst import qjit, cond, measure, debug
 from jax import random, numpy as jnp
 import pennylane as qml
+qml.capture.enable()
 
 distance = 3
 

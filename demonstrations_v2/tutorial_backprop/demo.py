@@ -53,6 +53,7 @@ quantum circuit, but with shifted parameter values (hence the name, parameter-sh
 Let's have a go implementing the parameter-shift rule manually in PennyLane.
 """
 import pennylane as qml
+qml.capture.enable()
 from jax import numpy as jnp
 from matplotlib import pyplot as plt
 import jax

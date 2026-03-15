@@ -80,6 +80,7 @@ at the classical mixtures introduced by the Kraus operators of the noise channel
 For more information see e.g. our :doc:`demo on simulating noisy circuits <demos/tutorial_noisy_circuits>`.
 """
 import pennylane as qml
+qml.capture.enable()
 import jax
 import jax.numpy as jnp
 import matplotlib.pyplot as plt

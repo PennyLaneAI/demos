@@ -360,6 +360,7 @@ print("GFD Purity and power spectrum coincide:", np.isclose(power_spectrum[3], p
 
 
 import pennylane as qml
+qml.capture.enable()
 from scipy.stats import unitary_group
 
 

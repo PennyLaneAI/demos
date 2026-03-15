@@ -157,6 +157,7 @@ We start with some boilerplate PennyLane imports.
 """
 
 import pennylane as qml
+qml.capture.enable()
 from pennylane import X, Z, I
 import numpy as np
 

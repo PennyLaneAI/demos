@@ -100,6 +100,7 @@ Of course, we could also check the closure manually for this small example.
 
 from itertools import product, combinations
 import pennylane as qml
+qml.capture.enable()
 from pennylane import X, Y, Z
 import numpy as np
 

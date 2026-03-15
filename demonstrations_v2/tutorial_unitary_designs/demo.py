@@ -432,6 +432,7 @@ single_qubit_cliffords = [
 # unitaries, and then again with only the Clifford group.
 
 import pennylane as qml
+qml.capture.enable()
 
 # Scipy allows us to sample Haar-random unitaries directly
 from scipy.stats import unitary_group

@@ -35,6 +35,7 @@ We can compute this easily with PennyLane:
 """
 
 import pennylane as qml
+qml.capture.enable()
 from pennylane.resource import SpectralNormError
 
 exact_op = qml.RX(1.234, wires=0)

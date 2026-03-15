@@ -73,6 +73,7 @@ import galois
 import matplotlib.pyplot as plt
 import numpy as np
 import pennylane as qml
+qml.capture.enable()
 from scipy.stats import unitary_group
 
 # set random seed

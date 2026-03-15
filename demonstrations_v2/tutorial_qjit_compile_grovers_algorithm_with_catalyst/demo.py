@@ -66,6 +66,7 @@ How to quantum just-in-time (QJIT) compile Grover's algorithm with Catalyst
 import matplotlib.pyplot as plt
 import numpy as np
 import pennylane as qml
+qml.capture.enable()
 
 
 def equal_superposition(wires):
@@ -265,14 +266,16 @@ runtimes_native_lightning = timeit.repeat(
 )
 runtimes_compilation = timeit.repeat(
     "qml.qjit(circuit_lightning)",
-    setup="import pennylane as qml",
+    setup="import pennylane as qml
+qml.capture.enable()",
     globals={"circuit_lightning": circuit_lightning},
     number=1,
     repeat=1,
 )
 runtimes_qjit_call = timeit.repeat(
     "_circuit_qjit()",
-    setup="import pennylane as qml; _circuit_qjit = qml.qjit(circuit_lightning);",
+    setup="import pennylane as qml
+qml.capture.enable(); _circuit_qjit = qml.qjit(circuit_lightning);",
     globals={"circuit_lightning": circuit_lightning},
     number=1,
     repeat=NUM_REPS,

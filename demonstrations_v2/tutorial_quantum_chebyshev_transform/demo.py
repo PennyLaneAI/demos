@@ -160,6 +160,7 @@ To start, we will define a function for the CNOT ladder.
 """
 
 import pennylane as qml
+qml.capture.enable()
 
 # Number of qubits (non-auxiliary qubit).
 N = 4

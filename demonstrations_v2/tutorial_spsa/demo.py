@@ -164,6 +164,7 @@ the pieces of an example optimization to come together:
 """
 
 import pennylane as qml
+qml.capture.enable()
 from pennylane import numpy as np
 
 num_wires = 4

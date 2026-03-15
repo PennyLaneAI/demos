@@ -32,6 +32,7 @@ model.
 #
 
 import pennylane as qml
+qml.capture.enable()
 import jax
 from jax import numpy as jnp
 import optax

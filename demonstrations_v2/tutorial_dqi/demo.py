@@ -47,6 +47,7 @@ initial plot to see how well DQI performs.
 """
 
 import pennylane as qml
+qml.capture.enable()
 from pennylane import numpy as pnp
 import matplotlib.pyplot as plt
 

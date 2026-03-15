@@ -201,6 +201,7 @@ This Python code requires *PennyLane* and the plotting library *matplotlib*.
 """
 
 import pennylane as qml
+qml.capture.enable()
 from pennylane import numpy as np
 import matplotlib.pyplot as plt
 

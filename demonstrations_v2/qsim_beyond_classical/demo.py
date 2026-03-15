@@ -69,6 +69,7 @@ simulations.
 #
 
 import pennylane as qml
+qml.capture.enable()
 from pennylane_cirq import ops
 
 import cirq

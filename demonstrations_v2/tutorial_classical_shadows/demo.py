@@ -130,6 +130,7 @@ observables.
 # We will now demonstrate how to obtain classical shadows using PennyLane.
 
 import pennylane as qml
+qml.capture.enable()
 import pennylane.numpy as np
 import matplotlib.pyplot as plt
 import time

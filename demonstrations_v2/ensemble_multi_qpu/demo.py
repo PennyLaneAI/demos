@@ -38,6 +38,7 @@ import dask
 import matplotlib.pyplot as plt
 import numpy as np
 import pennylane as qml
+qml.capture.enable()
 import sklearn.datasets
 import sklearn.decomposition
 import torch

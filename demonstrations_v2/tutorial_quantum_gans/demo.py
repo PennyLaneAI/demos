@@ -133,6 +133,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 import pennylane as qml
+qml.capture.enable()
 
 # Pytorch imports
 import torch

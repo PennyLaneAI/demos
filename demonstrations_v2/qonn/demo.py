@@ -77,6 +77,7 @@ of how to use third-party optimization libraries with PennyLane; in this case, `
 #
 
 import pennylane as qml
+qml.capture.enable()
 from pennylane import numpy as np
 
 import nlopt

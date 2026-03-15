@@ -93,6 +93,7 @@ First, let's define a simple Hamiltonian to use as an example:
 """
 
 import pennylane as qml
+qml.capture.enable()
 
 H = -0.4 * qml.Z(0) + 0.3 * qml.Z(1) + 0.4 * qml.Z(0) @ qml.Z(1)
 

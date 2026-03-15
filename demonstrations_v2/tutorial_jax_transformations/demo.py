@@ -44,6 +44,7 @@ for quantum machine learning (QML), and can be used directly with PennyLane.
 import jax
 import jax.numpy as jnp
 import pennylane as qml
+qml.capture.enable()
 
 # Added to silence some warnings.
 jax.config.update("jax_enable_x64", True)

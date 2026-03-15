@@ -46,6 +46,7 @@ world and learn how to create an unbreakable lock? Let’s go!
 #
 
 import pennylane as qml
+qml.capture.enable()
 import numpy as np
 
 num_wires = 5

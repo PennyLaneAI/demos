@@ -38,6 +38,7 @@ Here is the example circuit we will be simulating:
 """
 
 import pennylane as qml
+qml.capture.enable()
 import matplotlib.pyplot as plt
 import numpy as np
 

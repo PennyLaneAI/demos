@@ -125,6 +125,7 @@ step at a time.
 # to do the state preparation step:
 
 import pennylane as qml
+qml.capture.enable()
 import numpy as np
 
 

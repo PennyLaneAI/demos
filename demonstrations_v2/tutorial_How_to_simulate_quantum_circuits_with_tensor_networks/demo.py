@@ -52,6 +52,7 @@ or pick among other `PennyLane devices <https://pennylane.ai/plugins/#built-in-d
 #
 
 import pennylane as qml
+qml.capture.enable()
 import numpy as np
 
 # Define the keyword arguments for the MPS method
@@ -137,6 +138,7 @@ for num_qubits in range(50, 201, 50):
 #
 
 import pennylane as qml
+qml.capture.enable()
 import numpy as np
 
 # Define the keyword arguments for the TN method

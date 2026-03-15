@@ -58,6 +58,7 @@ We're putting the N in NISQ.
 # return the expectation value of :math:`Z_0\otimes Z_1:`
 #
 import pennylane as qml
+qml.capture.enable()
 from jax import numpy as np
 import jax
 import jaxopt

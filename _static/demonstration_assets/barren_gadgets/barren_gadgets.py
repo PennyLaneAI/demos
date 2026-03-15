@@ -1,4 +1,5 @@
 import pennylane as qml
+qml.capture.enable()
 from pennylane import numpy as np
 
 def non_identity_obs(obs):

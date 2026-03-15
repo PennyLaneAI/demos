@@ -183,6 +183,7 @@ def generate_many_sro(a_vals):
 
 
 import pennylane as qml
+qml.capture.enable()
 
 
 def QSP_circ(phi, W):

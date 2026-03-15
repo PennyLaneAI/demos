@@ -77,6 +77,7 @@ plt.show()
 # operations from the :doc:`templates <introduction/templates>` module.
 
 import pennylane as qml
+qml.capture.enable()
 
 n_qubits = 2
 dev = qml.device("default.qubit", wires=n_qubits)

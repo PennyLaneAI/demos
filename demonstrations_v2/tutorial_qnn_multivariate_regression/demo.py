@@ -68,6 +68,7 @@ We will also define the device, which has two qubits, using :func:`~.pennylane.d
 
 import matplotlib.pyplot as plt
 import pennylane as qml
+qml.capture.enable()
 from pennylane import numpy as pnp
 import jax
 from jax import numpy as jnp

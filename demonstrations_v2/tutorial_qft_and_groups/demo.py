@@ -250,6 +250,7 @@ def h_hat(k):
 #
 
 import pennylane as qml
+qml.capture.enable()
 
 dev = qml.device("default.qubit", wires=4, shots=None)
 

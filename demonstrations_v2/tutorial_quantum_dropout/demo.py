@@ -56,6 +56,7 @@ r"""Dropout for Quantum Neural Networks
 
 import numpy as np
 import pennylane as qml
+qml.capture.enable()
 
 seed = 12345
 np.random.seed(seed=seed)

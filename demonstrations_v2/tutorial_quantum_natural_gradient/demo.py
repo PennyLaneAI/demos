@@ -186,6 +186,7 @@ where :math:`g^{+}` refers to the pseudo-inverse.
 
 import numpy as np
 import pennylane as qml
+qml.capture.enable()
 from pennylane import numpy as pnp
 
 dev = qml.device("lightning.qubit", wires=3)

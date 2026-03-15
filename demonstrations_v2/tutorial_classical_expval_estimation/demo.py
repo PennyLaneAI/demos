@@ -88,6 +88,7 @@ To maintain an overview, we set the number of qubits and layers to just 4 and 3,
 """
 
 import pennylane as qml
+qml.capture.enable()
 import numpy as np
 from itertools import combinations, product
 

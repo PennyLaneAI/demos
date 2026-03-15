@@ -133,6 +133,7 @@ As usual, we begin by importing PennyLane and the wrapped version of NumPy provi
 """
 
 import pennylane as qml
+qml.capture.enable()
 from pennylane import numpy as np
 
 ##############################################################################

@@ -234,6 +234,7 @@ plt.show()
 #
 
 import pennylane as qml
+qml.capture.enable()
 
 np.random.seed(42)
 

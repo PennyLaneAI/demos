@@ -46,6 +46,7 @@ Let's import the usual PennyLane and Numpy libraries to load the necessary funct
 
 import matplotlib.pyplot as plt
 import pennylane as qml
+qml.capture.enable()
 import numpy as np
 
 ######################################################################

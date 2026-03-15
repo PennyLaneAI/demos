@@ -100,6 +100,7 @@ Let's see how we would code the number :math:`6.`
 """
 
 import pennylane as qml
+qml.capture.enable()
 import matplotlib.pyplot as plt
 
 dev = qml.device("default.qubit", wires=3)
@@ -169,6 +170,7 @@ plt.show()
 #
 
 import pennylane as qml
+qml.capture.enable()
 import numpy as np
 
 n_wires = 4

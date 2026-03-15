@@ -655,6 +655,7 @@ In those cases the directive will not appear 1-to-1 in the rendered demo.
 # We need to make sure code is not affected by the filters.
 
 import pennylane as qml
+qml.capture.enable()
 
 dev = qml.device("default.qubit", wires=2)
 

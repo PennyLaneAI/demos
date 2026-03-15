@@ -130,6 +130,7 @@ circuit below.
 from functools import partial
 
 import pennylane as qml
+qml.capture.enable()
 from pennylane import numpy as np
 
 dev = qml.device("default.qubit", wires=3)

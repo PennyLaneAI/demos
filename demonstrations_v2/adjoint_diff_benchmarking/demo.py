@@ -19,6 +19,7 @@ Adjoint Differentiation
 import timeit
 import matplotlib.pyplot as plt
 import pennylane as qml
+qml.capture.enable()
 import pennylane.numpy as pnp
 
 plt.style.use("bmh")

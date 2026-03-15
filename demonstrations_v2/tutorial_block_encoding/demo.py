@@ -85,6 +85,7 @@ circuit for a structured :math:`4 \times 4` matrix.
 """
 
 import pennylane as qml
+qml.capture.enable()
 from pennylane.templates.state_preparations.mottonen import compute_theta, gray_code
 import numpy as np
 import matplotlib.pyplot as plt

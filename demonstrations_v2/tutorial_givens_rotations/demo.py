@@ -183,6 +183,7 @@ This can be implemented in PennyLane as follows:
 """
 
 import pennylane as qml
+qml.capture.enable()
 from jax import numpy as jnp
 import jax
 

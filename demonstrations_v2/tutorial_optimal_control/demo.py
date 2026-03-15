@@ -445,6 +445,7 @@ plt.show()
 # functions, this almost always pays off.
 
 import pennylane as qml
+qml.capture.enable()
 
 X, Y, Z = qml.PauliX, qml.PauliY, qml.PauliZ
 

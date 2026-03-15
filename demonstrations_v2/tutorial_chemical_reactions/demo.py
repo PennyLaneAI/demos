@@ -84,6 +84,7 @@ will be optimized to prepare ground states for different configurations of the m
 """
 
 import pennylane as qml
+qml.capture.enable()
 from pennylane import qchem
 
 # Hartree-Fock state

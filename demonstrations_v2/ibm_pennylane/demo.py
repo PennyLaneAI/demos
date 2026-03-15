@@ -42,6 +42,7 @@ platform. We will learn how to:
 # Currently, there are three devices available — ``Aer``, ``BasicSim`` and ``Remote`` — that can be initialized
 # as follows:
 import pennylane as qml
+qml.capture.enable()
 from qiskit_aer import AerSimulator
 
 qubits = 4
@@ -138,6 +139,7 @@ from pennylane import numpy as pnp
 from qiskit_ibm_runtime import QiskitRuntimeService
 
 import pennylane as qml
+qml.capture.enable()
 
 # Obtaining the Hamiltonian for H2 from PennyLane QChem dataset
 [dataset] = qml.data.load("qchem", molname="H2", bondlength=0.742, basis="STO-3G")

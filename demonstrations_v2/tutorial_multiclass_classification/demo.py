@@ -48,6 +48,7 @@ of size 4.
 """
 
 import pennylane as qml
+qml.capture.enable()
 import torch
 import numpy as np
 from torch.autograd import Variable

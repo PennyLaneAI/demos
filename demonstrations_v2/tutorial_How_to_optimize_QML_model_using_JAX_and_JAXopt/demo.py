@@ -31,6 +31,7 @@ of JAX-compatible gradient-based optimizers, to optimize a PennyLane quantum mac
 #
 
 import pennylane as qml
+qml.capture.enable()
 import jax
 from jax import numpy as jnp
 import jaxopt

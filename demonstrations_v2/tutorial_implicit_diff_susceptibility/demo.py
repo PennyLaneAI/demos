@@ -264,6 +264,7 @@ from jax import jit
 import jax.numpy as jnp
 
 import pennylane as qml
+qml.capture.enable()
 import numpy as np
 
 import jaxopt

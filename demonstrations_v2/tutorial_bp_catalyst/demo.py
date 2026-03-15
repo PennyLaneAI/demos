@@ -103,6 +103,7 @@ By the end of this tutorial, you’ll have:
 from typing import Callable, Optional, Dict, Union, Sequence
 
 import pennylane as qml
+qml.capture.enable()
 
 syndromes = ["XXZIZIX", "XXIIZZI"]
 dev = qml.device("lightning.qubit", wires := max(map(len, syndromes)) + 1)
@@ -740,6 +741,7 @@ print(f"Decoding success rate: {success_rate * 100:.2f}%")
 #
 
 import pennylane as qml
+qml.capture.enable()
 from jax import random
 import catalyst
 

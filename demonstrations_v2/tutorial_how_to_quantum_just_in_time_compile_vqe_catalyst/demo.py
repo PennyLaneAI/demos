@@ -44,6 +44,7 @@ We will break the implementation into three steps:
 #
 
 import pennylane as qml
+qml.capture.enable()
 from pennylane import numpy as np
 
 dataset = qml.data.load('qchem', molname="H3+")[0]

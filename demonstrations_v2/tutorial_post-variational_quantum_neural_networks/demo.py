@@ -84,6 +84,7 @@ Post-variational quantum neural networks
 #
 
 import pennylane as qml
+qml.capture.enable()
 from pennylane import numpy as np
 import jax
 from jax import numpy as jnp

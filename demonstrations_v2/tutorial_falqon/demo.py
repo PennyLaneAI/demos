@@ -109,6 +109,7 @@ which gives us an approximation for the ground state of :math:`H_c.`
 #
 
 import pennylane as qml
+qml.capture.enable()
 from pennylane import numpy as np
 from matplotlib import pyplot as plt
 from pennylane import qaoa as qaoa

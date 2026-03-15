@@ -80,6 +80,7 @@ to carry out our noisy simulations.
 """
 
 import pennylane as qml
+qml.capture.enable()
 from pennylane import numpy as np
 import matplotlib.pyplot as plt
 

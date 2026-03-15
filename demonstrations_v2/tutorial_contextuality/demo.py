@@ -175,6 +175,7 @@ Contextuality and inductive bias in QML
 import jax
 import jax.numpy as jnp
 import pennylane as qml
+qml.capture.enable()
 import numpy as np
 jax.config.update("jax_platform_name", "cpu")
 np.random.seed(666) # seed used for random functions

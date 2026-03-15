@@ -76,6 +76,7 @@ print(model_qk)
 #
 
 import pennylane as qml
+qml.capture.enable()
 
 # Depolarization error for single-qubit gates
 gate1_fcond = qml.noise.op_in(["U1", "U2", "U3"]) & qml.noise.wires_in(range(n_qubits))

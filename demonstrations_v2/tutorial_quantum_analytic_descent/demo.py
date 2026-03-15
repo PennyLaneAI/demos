@@ -89,6 +89,7 @@ Let's look at a toy example to illustrate this structure of the cost function.
 """
 
 import pennylane as qml
+qml.capture.enable()
 from pennylane import numpy as np
 import matplotlib.pyplot as plt
 import warnings

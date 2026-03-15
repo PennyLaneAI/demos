@@ -494,6 +494,7 @@ with torch.no_grad():
 
 
 import pennylane as qml
+qml.capture.enable()
 import matplotlib.pyplot as plt
 
 # Set up a nine-qubit system

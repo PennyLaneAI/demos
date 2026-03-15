@@ -123,6 +123,7 @@ statistics of mid-circuit measurements <demos/tutorial_how_to_collect_mcm_stats>
 #
 
 import pennylane as qml
+qml.capture.enable()
 
 dev = qml.device("default.qubit")
 

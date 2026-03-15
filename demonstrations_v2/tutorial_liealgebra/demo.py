@@ -99,6 +99,7 @@ First, let us do a linear combination of :math:`\{iX, iY, iZ\}` with some real v
 """
 import numpy as np
 import pennylane as qml
+qml.capture.enable()
 from pennylane import X, Y, Z
 
 su2 = [1j * X(0), 1j * Y(0), 1j * Z(0)]

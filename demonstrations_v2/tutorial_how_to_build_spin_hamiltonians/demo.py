@@ -59,6 +59,7 @@ and more. And you can also already explore some of these models in detail using 
 # the following sections.
 
 import pennylane as qml
+qml.capture.enable()
 
 n_cells = [2, 2]
 hopping = 0.2

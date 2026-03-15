@@ -118,6 +118,7 @@ of shots is 1!
 # as well as the estimated gradient using number of shots :math:`N\in\{1, 100\}.`
 
 import pennylane as qml
+qml.capture.enable()
 import numpy as np
 from pennylane import numpy as pnp
 

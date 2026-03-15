@@ -15,6 +15,7 @@ in PennyLane.
 # 
 
 import pennylane as qml
+qml.capture.enable()
 
 register = qml.registers({"alice": 1, "bob": 2, "charlie": 3})
 print(register)

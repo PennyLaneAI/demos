@@ -62,6 +62,7 @@ and a phase shift:
 """
 
 import pennylane as qml
+qml.capture.enable()
 
 import jax; jax.config.update('jax_platform_name', 'cpu')
 from jax import numpy as jnp

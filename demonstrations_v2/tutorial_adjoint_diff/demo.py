@@ -70,6 +70,7 @@ Adjoint Differentiation
 # To start, we import PennyLane and Jax's numpy:
 
 import pennylane as qml
+qml.capture.enable()
 import pennylane.numpy as pnp
 
 

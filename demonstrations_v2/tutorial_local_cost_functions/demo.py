@@ -57,6 +57,7 @@ We first need to import the following modules.
 """
 
 import pennylane as qml
+qml.capture.enable()
 from pennylane import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.ticker import LinearLocator, FormatStrFormatter

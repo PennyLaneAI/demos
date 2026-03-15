@@ -44,6 +44,7 @@ We start by initializing a noisy device using a noise model with :class:`~.penny
 """
 
 import pennylane as qml
+qml.capture.enable()
 import pennylane.numpy as np
 from pennylane.noise import mitigate_with_zne
 

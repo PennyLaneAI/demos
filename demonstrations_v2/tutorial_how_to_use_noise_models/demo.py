@@ -59,6 +59,7 @@ r"""How to use noise models in PennyLane
 #
 
 import pennylane as qml
+qml.capture.enable()
 import numpy as np
 
 @qml.BooleanFn

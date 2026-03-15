@@ -87,6 +87,7 @@ and :math:`-1` (if :math:`\left|\psi\right\rangle = \left|1\right\rangle`).
 # of NumPy provided by Jax.
 
 import pennylane as qml
+qml.capture.enable()
 from jax import numpy as np
 import jax
 

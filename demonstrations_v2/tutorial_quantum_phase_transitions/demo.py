@@ -79,6 +79,7 @@ The simplest Ising model consists of :math:`N` qubits arranged along a line.
 # The code below creates this Hamiltonian for three qubits:
 #
 import pennylane as qml
+qml.capture.enable()
 
 from pennylane import numpy as np
 

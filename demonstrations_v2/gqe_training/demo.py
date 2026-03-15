@@ -124,6 +124,7 @@ state. And lastly, we discuss the results, potential ways optimizing the code, a
 
 import numpy as np
 import pennylane as qml
+qml.capture.enable()
 
 def generate_molecule_data(molecules="H2"):
     datasets = qml.data.load("qchem", molname=molecules)

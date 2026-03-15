@@ -114,6 +114,7 @@ gates = [[[0]], [[1]], [[2]], [[0,1]], [[0,2]], [[1,2]]]
 # specified by lists of the form ``op`` above with the following
 #
 import pennylane as qml
+qml.capture.enable()
 import numpy as np
 
 # Suppress the warning caused by iqpopt

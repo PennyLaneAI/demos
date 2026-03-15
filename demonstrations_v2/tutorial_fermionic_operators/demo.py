@@ -134,6 +134,7 @@ print(f"eigenvectors:\n{np.real(vec.T)}")
 # the hydrogen molecule as an example. We first define the atom types and the atomic coordinates.
 
 import pennylane as qml
+qml.capture.enable()
 from jax import numpy as jnp
 
 symbols = ["H", "H"]

@@ -112,6 +112,7 @@ We can solve for the ground state energy using the variational quantum eigensolv
 First, let's import NumPy and PennyLane, and define our Hamiltonian.
 """
 import pennylane as qml
+qml.capture.enable()
 from pennylane import numpy as np
 
 # set the random seed

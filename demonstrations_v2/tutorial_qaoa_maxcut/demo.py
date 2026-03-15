@@ -131,6 +131,7 @@ version of NumPy.
 """
 
 import pennylane as qml
+qml.capture.enable()
 from pennylane import numpy as np
 
 np.random.seed(42)

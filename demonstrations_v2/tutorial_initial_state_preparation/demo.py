@@ -219,6 +219,7 @@ wf_hf = import_state(hf_primer)
 # linear :math:`\text{H}_3^+` molecule, a device, and a simple VQE circuit with single and double excitations:
 
 import pennylane as qml
+qml.capture.enable()
 from pennylane import qchem
 from jax import numpy as jnp
 

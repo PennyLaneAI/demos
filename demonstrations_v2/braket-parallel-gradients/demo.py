@@ -100,6 +100,7 @@ device_arn = "arn:aws:braket:::device/quantum-simulator/amazon/sv1"
 # SV1 can now be loaded with the standard PennyLane :func:`~.pennylane.device`:
 
 import pennylane as qml
+qml.capture.enable()
 from pennylane import numpy as np
 
 n_wires = 25

@@ -184,6 +184,7 @@ This Python code requires *PennyLane* and the plotting library *matplotlib*.
 
 # Pennylane
 import pennylane as qml
+qml.capture.enable()
 from pennylane import numpy as np
 
 # Plotting

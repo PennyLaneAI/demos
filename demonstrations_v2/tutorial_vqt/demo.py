@@ -108,6 +108,7 @@ This demonstration discusses theory and experiments relating to a recently propo
 
 
 import pennylane as qml
+qml.capture.enable()
 from matplotlib import pyplot as plt
 import numpy as np
 import scipy

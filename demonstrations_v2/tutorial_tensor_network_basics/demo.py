@@ -380,6 +380,7 @@ print(f"Computation cost for path 2: {time_BC + time_BCA}")
 # As we will explore in the next section, we can use tensor networks to simulate quantum circuits. In particular, the calculation of an expectation value corresponds to the contraction of the tensor network into a single tensor (scalar). In ``Pennylane``, this simulation can be performed using the :class:`~pennylane.devices.default_tensor.DefaultTensor` device, and the method used to find the contraction path can be chosen via the ``contraction_optimizer`` keyword argument.
 
 import pennylane as qml
+qml.capture.enable()
 
 dev = qml.device("default.tensor", method="tn", contraction_optimizer="auto-hq")
 

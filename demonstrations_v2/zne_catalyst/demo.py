@@ -97,6 +97,7 @@ the noise scaling method, and the extrapolation method. The rest is taken care o
 
 import numpy as np
 import pennylane as qml
+qml.capture.enable()
 from catalyst import mitigate_with_zne
 
 import warnings

@@ -153,6 +153,7 @@ qubits = [ThreeDQubit(xy_scale * x, xy_scale * y, z_scale * z)
 # above. We also need to instantiate the device with a fixed control radius.
 
 import pennylane as qml
+qml.capture.enable()
 
 num_wires = len(qubits)
 control_radius = 32.4

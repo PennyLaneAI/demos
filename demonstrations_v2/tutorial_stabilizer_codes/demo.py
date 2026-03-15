@@ -68,6 +68,7 @@ Let's code this below and verify the output
 """
 
 import pennylane as qml
+qml.capture.enable()
 from pennylane import numpy as np
 
 

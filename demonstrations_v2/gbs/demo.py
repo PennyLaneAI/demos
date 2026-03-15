@@ -137,6 +137,7 @@ np.random.seed(42)
 
 # import PennyLane
 import pennylane as qml
+qml.capture.enable()
 
 ##############################################################################
 # We must define the unitary matrix we would like to embed in the circuit.

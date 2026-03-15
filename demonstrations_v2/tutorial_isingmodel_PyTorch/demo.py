@@ -44,6 +44,7 @@ so that the energy of the system is minimized for the given couplings.
 import torch
 from torch.autograd import Variable
 import pennylane as qml
+qml.capture.enable()
 from pennylane import numpy as np
 
 ###############################################################################

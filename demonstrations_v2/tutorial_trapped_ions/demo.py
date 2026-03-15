@@ -398,6 +398,7 @@ and read future papers to keep up-to-date with the most recent developments.
 # duration :math:`t` of the pulse, with :math:`\Omega` set to 100 kHz.
 
 import pennylane as qml
+qml.capture.enable()
 import numpy as np
 from scipy.linalg import expm
 

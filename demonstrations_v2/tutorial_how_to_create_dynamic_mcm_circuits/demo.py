@@ -42,6 +42,7 @@ have a read of the :doc:`how-to on MCM statistics <demos/tutorial_how_to_collect
 #
 
 import pennylane as qml
+qml.capture.enable()
 import numpy as np
 
 dev = qml.device("lightning.qubit", wires=2)

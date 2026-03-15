@@ -175,6 +175,7 @@ we will only implement a single qubit classifier.
 """
 
 import pennylane as qml
+qml.capture.enable()
 from pennylane import numpy as np
 from pennylane.optimize import AdamOptimizer, GradientDescentOptimizer
 

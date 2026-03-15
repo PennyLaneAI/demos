@@ -80,6 +80,7 @@ which is a unitary defined as:"""
 # template. For example, let's say we have the following Hamiltonian:
 
 import pennylane as qml
+qml.capture.enable()
 
 H = qml.Hamiltonian([1, 1, 0.5], [qml.PauliX(0), qml.PauliZ(1), qml.PauliX(0) @ qml.PauliX(1)])
 print(H)

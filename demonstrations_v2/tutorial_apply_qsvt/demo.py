@@ -36,6 +36,7 @@ how to obtain them. The code below shows how to construct a basic QSVT circuit o
 """
 
 import pennylane as qml
+qml.capture.enable()
 from pennylane import numpy as np
 
 dev = qml.device("lightning.qubit", wires=[0, 1])

@@ -139,6 +139,7 @@ n = len(values)
 # in :math:`|\Psi\rangle.` Let's generate the state and visualize it.
 
 import pennylane as qml
+qml.capture.enable()
 import matplotlib.pyplot as plt
 plt.style.use('pennylane.drawer.plot')
 

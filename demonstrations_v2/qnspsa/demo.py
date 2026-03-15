@@ -187,6 +187,7 @@ for noisy intermediate-scale quantum (NISQ) devices.
 # initialize a graph for the max cut problem
 import networkx as nx
 import pennylane as qml
+qml.capture.enable()
 from pennylane import qaoa
 
 nodes = n_qubits = 4
@@ -636,6 +637,7 @@ if loss_curr + tol < loss_next:
 
 import random
 import pennylane as qml
+qml.capture.enable()
 from pennylane import numpy as np
 from scipy.linalg import sqrtm
 import warnings

@@ -116,6 +116,7 @@ We can obtain any other element :math:`g\in G` by simply iterating
 """
 
 import pennylane as qml
+qml.capture.enable()
 from pennylane import numpy as np
 
 # Create wires for the system

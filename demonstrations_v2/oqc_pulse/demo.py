@@ -80,6 +80,7 @@ for :math:`1 \text{ ns}.` We choose :math:`\omega = 5 \times 2\pi \text{ GHz}` a
 """
 
 import pennylane as qml
+qml.capture.enable()
 import numpy as np
 import jax.numpy as jnp
 import jax

@@ -193,6 +193,7 @@ The Quantum Graph Recurrent Neural Network
 
 
 import pennylane as qml
+qml.capture.enable()
 from matplotlib import pyplot as plt
 from pennylane import numpy as np
 import scipy

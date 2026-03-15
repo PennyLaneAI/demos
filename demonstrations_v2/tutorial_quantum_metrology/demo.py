@@ -120,6 +120,7 @@ We now turn to the actual implementation of the scheme.
 """
 
 import pennylane as qml
+qml.capture.enable()
 from pennylane import numpy as np
 
 

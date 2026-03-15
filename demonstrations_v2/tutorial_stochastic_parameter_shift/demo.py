@@ -115,6 +115,7 @@ Let's jump into some code and take a look at the parameter-shift rule in action.
 """
 
 import pennylane as qml
+qml.capture.enable()
 import matplotlib.pyplot as plt
 from pennylane import numpy as np
 from scipy.linalg import expm

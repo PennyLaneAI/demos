@@ -36,6 +36,7 @@ import dask
 import matplotlib.pyplot as plt
 from pennylane import numpy as np
 import pennylane as qml
+qml.capture.enable()
 from pennylane import qchem
 
 ##############################################################################

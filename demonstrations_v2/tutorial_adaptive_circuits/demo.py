@@ -59,6 +59,7 @@ Note that the atomic coordinates are in `Bohr <https://en.wikipedia.org/wiki/Boh
 """
 
 import pennylane as qml
+qml.capture.enable()
 import jax
 import numpy as np
 import time

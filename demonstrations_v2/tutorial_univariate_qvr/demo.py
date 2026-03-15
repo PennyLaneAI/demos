@@ -435,6 +435,7 @@ def get_training_cycler(Xtr: torch.Tensor, batch_size: int, seed: int = GLOBAL_S
 #
 
 import pennylane as qml
+qml.capture.enable()
 from itertools import combinations
 
 

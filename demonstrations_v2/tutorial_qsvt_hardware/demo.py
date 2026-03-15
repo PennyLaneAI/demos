@@ -36,6 +36,7 @@ polynomial, ordered from lowest to highest power, as input. We also need to defi
 which the angles are computed, which is ``'QSVT'`` here.
 """
 import pennylane as qml
+qml.capture.enable()
 poly = [0, -1.0, 0, 1/2, 0, 1/2]
 angles_pl = qml.poly_to_angles(poly, "QSVT")
 print(angles_pl)
@@ -84,6 +85,7 @@ print(angles_pyqsp)
 # a Hamiltonian and manually apply the polynomial of interest:
 
 import pennylane as qml
+qml.capture.enable()
 import numpy as np
 from numpy.linalg import matrix_power as mpow
 

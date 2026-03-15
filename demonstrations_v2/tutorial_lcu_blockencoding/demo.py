@@ -46,6 +46,7 @@ in the code below for a simple example.
 """
 import numpy as np
 import pennylane as qml
+qml.capture.enable()
 
 a = 0.25
 b = 0.75

@@ -85,6 +85,7 @@ then map the operator using :func:`~.pennylane.fermi.jordan_wigner`.
 """
 
 import pennylane as qml
+qml.capture.enable()
 from pennylane.fermi import from_string, jordan_wigner
 
 qubits = 10

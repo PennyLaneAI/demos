@@ -83,6 +83,7 @@ qc = qiskit_circuit()
 #
 
 import pennylane as qml
+qml.capture.enable()
 import matplotlib.pyplot as plt
 
 pl_func = qml.from_qiskit(qc)

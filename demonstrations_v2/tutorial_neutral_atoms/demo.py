@@ -305,6 +305,7 @@ the work that still needs to be done to scale this technology even further.
 # Let's plot this function to get an idea of what the pulse looks like. First, let's import all the relevant libraries.
 
 import pennylane as qml
+qml.capture.enable()
 from pennylane import numpy as np
 import matplotlib.pyplot as plt
 import jax

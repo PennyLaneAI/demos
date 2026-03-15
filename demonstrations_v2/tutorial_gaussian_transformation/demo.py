@@ -66,6 +66,7 @@ What is this circuit doing?
 # by JAX:
 
 import pennylane as qml
+qml.capture.enable()
 from jax import numpy as np
 
 ###############################################################################

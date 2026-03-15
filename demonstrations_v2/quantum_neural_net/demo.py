@@ -36,6 +36,7 @@ and an optimizer.
 """
 
 import pennylane as qml
+qml.capture.enable()
 from pennylane import numpy as np
 from pennylane.optimize import AdamOptimizer
 

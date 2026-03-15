@@ -60,6 +60,7 @@ The Hamiltonian depends on the set of parameters :math:`p = \{p_i\}.` One way to
 """
 
 import pennylane as qml
+qml.capture.enable()
 import numpy as np
 import jax.numpy as jnp
 import jax

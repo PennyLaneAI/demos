@@ -33,6 +33,7 @@ make an explicit example in PennyLane after some boilerplate imports. Let us loo
 :math:`U^\text{test} = \text{CNOT}_{(0, 1)}\text{CNOT}_{(2, 3)}\text{CNOT}_{(1, 2)} H^{\otimes n}.`
 """
 import pennylane as qml
+qml.capture.enable()
 import numpy as np
 import matplotlib.pyplot as plt
 

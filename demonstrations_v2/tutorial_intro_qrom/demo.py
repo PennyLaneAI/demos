@@ -59,6 +59,7 @@ We use :class:`~.pennylane.BasisState` as a useful template for implementing the
 """
 
 import pennylane as qml
+qml.capture.enable()
 import numpy as np
 from functools import partial
 import matplotlib.pyplot as plt

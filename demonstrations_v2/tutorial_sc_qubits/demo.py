@@ -401,6 +401,7 @@ papers on the topic and keep up-to-date with the newest developments.
 # angle :math:`\phi` actually means a rotation by :math:`\omega_r+\phi.` In PennyLane, the operations read:
 
 import pennylane as qml
+qml.capture.enable()
 import numpy as np
 import matplotlib.pyplot as plt
 

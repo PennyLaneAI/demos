@@ -85,6 +85,7 @@ Let us construct its DLA via :func:`~pennylane.lie_closure`.
 """
 
 import pennylane as qml
+qml.capture.enable()
 import numpy as np
 
 from pennylane import X, Y, Z, I

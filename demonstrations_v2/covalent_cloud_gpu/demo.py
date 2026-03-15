@@ -33,6 +33,7 @@ import covalent as ct
 import covalent_cloud as cc
 import matplotlib.pyplot as plt
 import pennylane as qml
+qml.capture.enable()
 from matplotlib.colors import ListedColormap
 from pennylane import numpy as np
 from sklearn.datasets import make_blobs
@@ -266,6 +267,7 @@ decision_boundary_figure
 #    import covalent_cloud as cc
 #    import matplotlib.pyplot as plt
 #    import pennylane as qml
+qml.capture.enable()
 #    from matplotlib.colors import ListedColormap
 #    from pennylane import numpy as np
 #    from sklearn.datasets import make_blobs

@@ -210,6 +210,7 @@ plt.show()
 
 
 import pennylane as qml
+qml.capture.enable()
 
 def perm_equivariant_embedding(A, betas, gammas):
     """

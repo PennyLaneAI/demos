@@ -174,6 +174,7 @@ def shors_algorithm(N):
 # looks to be as simple as the following:
 
 import pennylane as qml
+qml.capture.enable()
 
 
 @qml.qjit
@@ -668,6 +669,7 @@ def phase_to_order(phase, max_denominator):
 # previous section.
 
 import pennylane as qml
+qml.capture.enable()
 import catalyst
 from catalyst import measure
 

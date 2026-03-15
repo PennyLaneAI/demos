@@ -237,6 +237,7 @@ ax = plot_double_cake_data(X, Y, plt.gca(), num_sectors=num_sectors)
 # layer as building block. Let's start by defining this layer:
 
 import pennylane as qml
+qml.capture.enable()
 
 
 def layer(x, params, wires, i0=0, inc=1):

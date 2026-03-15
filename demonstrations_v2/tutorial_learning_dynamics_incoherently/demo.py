@@ -53,6 +53,7 @@ overlap between the model output states and the unknown process output states.
 #
 
 import pennylane as qml
+qml.capture.enable()
 from pennylane import numpy as pnp
 import numpy as np
 import matplotlib.pyplot as plt

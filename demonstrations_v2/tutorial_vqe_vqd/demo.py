@@ -52,6 +52,7 @@ a familiarization with the `variational quantum eigensolver (VQE) algorithm <dem
 #
 
 import pennylane as qml
+qml.capture.enable()
 import numpy as np
 
 import warnings

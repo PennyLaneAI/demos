@@ -73,6 +73,7 @@ import matplotlib.pyplot as plt
 
 import numpy as np
 import pennylane as qml
+qml.capture.enable()
 from pennylane import X, Y, Z
 from pennylane.liealg import even_odd_involution, cartan_decomp, horizontal_cartan_subalgebra
 

@@ -101,6 +101,7 @@ Let’s get started!
 #
 
 import pennylane as qml
+qml.capture.enable()
 from pennylane import qchem
 import numpy as np
 from jax import numpy as jnp

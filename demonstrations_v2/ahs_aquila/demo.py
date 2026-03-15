@@ -212,6 +212,7 @@ we can start defining our pulse program.
 """
 
 import pennylane as qml
+qml.capture.enable()
 
 aquila = qml.device(
     "braket.aws.ahs",

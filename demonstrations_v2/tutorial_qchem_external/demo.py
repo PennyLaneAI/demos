@@ -47,6 +47,7 @@ backend as:
 """
 
 import pennylane as qml
+qml.capture.enable()
 import numpy as np
 
 symbols = ["H", "O", "H"]

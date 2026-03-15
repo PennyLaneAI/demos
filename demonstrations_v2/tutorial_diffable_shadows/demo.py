@@ -94,6 +94,7 @@ This has the advantage that it preserves the typical PennyLane syntax *and* is d
 """
 
 import pennylane as qml
+qml.capture.enable()
 import pennylane.numpy as np
 from matplotlib import pyplot as plt
 from pennylane import classical_shadow, shadow_expval, ClassicalShadow

@@ -572,6 +572,7 @@ for i in range(len(Ms)):
 # see our :doc:`demo on how to use default.tensor <demos/tutorial_How_to_simulate_quantum_circuits_with_tensor_networks/>` for more details.
 
 import pennylane as qml
+qml.capture.enable()
 
 [dataset] = qml.data.load("qchem", molname="H6", bondlength=1.3, basis="STO-3G")
 

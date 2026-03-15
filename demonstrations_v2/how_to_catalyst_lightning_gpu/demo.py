@@ -73,6 +73,7 @@ to highlight Catalyst with Lightning-GPU features.
 # .. code-block:: python
 #
 #     import pennylane as qml
+qml.capture.enable()
 #     import jax.numpy as jnp
 #
 #     import jax

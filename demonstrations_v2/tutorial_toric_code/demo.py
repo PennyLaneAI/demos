@@ -113,6 +113,7 @@ On to some practical coding! First, let's define the sites on a :math:`4\times 6
 """
 
 import pennylane as qml
+qml.capture.enable()
 import matplotlib.pyplot as plt
 from matplotlib.patches import Polygon, Patch
 from itertools import product

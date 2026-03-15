@@ -350,6 +350,7 @@ print(f"Cost:{cost}")
 # -----------------------------   QAOA circuit ------------------------------------
 from collections import defaultdict
 import pennylane as qml
+qml.capture.enable()
 
 shots = 5000  # Number of samples used
 dev = qml.device("default.qubit")

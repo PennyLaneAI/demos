@@ -127,6 +127,7 @@ We will first code the classical solution. We will do this inside a quantum circ
 
 
 import pennylane as qml
+qml.capture.enable()
 
 dev = qml.device("default.qubit", wires = 4)
 

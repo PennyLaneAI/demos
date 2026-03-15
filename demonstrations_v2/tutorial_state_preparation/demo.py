@@ -48,6 +48,7 @@ how to:
 # To start, we import PennyLane, NumPy, and PyTorch for the optimization:
 
 import pennylane as qml
+qml.capture.enable()
 import numpy as np
 import torch
 from torch.autograd import Variable

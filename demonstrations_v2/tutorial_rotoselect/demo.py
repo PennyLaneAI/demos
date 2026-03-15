@@ -123,6 +123,7 @@ Quantum circuit structure learning
 # devices, simulators have the capability of doing these calculations without sampling.
 
 import pennylane as qml
+qml.capture.enable()
 from pennylane import numpy as np
 
 np.random.seed(9432092)

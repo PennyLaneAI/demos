@@ -121,6 +121,7 @@ Start importing the usual suspects:
 """
 
 import pennylane as qml
+qml.capture.enable()
 from pennylane import numpy as np
 import matplotlib.pyplot as plt
 np.random.seed(53173)

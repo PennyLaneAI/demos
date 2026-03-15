@@ -76,6 +76,7 @@ First, we import PennyLane, NumPy, and Matplotlib
 """
 
 import pennylane as qml
+qml.capture.enable()
 from pennylane import numpy as np
 import matplotlib.pyplot as plt
 

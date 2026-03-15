@@ -134,6 +134,7 @@ from torchvision import datasets, transforms
 
 # Pennylane
 import pennylane as qml
+qml.capture.enable()
 from pennylane import numpy as np
 
 torch.manual_seed(42)

@@ -100,6 +100,7 @@ For the hydrogen molecule we have
 """
 
 import pennylane as qml
+qml.capture.enable()
 import numpy as np
 import jax
 import jax.numpy as jnp

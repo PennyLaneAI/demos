@@ -215,6 +215,7 @@ hardware-ready derivative recipe, we will make use of JAX.
 """
 
 import pennylane as qml
+qml.capture.enable()
 import numpy as np
 import jax
 

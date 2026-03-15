@@ -84,6 +84,7 @@ This Python code requires *PennyLane* with the *TensorFlow* interface and the pl
 """
 
 import pennylane as qml
+qml.capture.enable()
 from pennylane import numpy as np
 from pennylane.templates import RandomLayers
 import tensorflow as tf

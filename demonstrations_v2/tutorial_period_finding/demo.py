@@ -99,6 +99,7 @@ However, group theory is a huge hurdle for even some of the more seasoned quantu
 # ----------------
 
 import pennylane as qml
+qml.capture.enable()
 import numpy as np
 import matplotlib.pyplot as plt
 

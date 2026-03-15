@@ -135,6 +135,7 @@ following way.
 """
 
 import pennylane as qml
+qml.capture.enable()
 import numpy as np
 from pennylane import X, Y, Z, I
 

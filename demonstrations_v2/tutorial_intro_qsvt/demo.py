@@ -101,6 +101,7 @@ input values, then our QSP transformation successfully implements the desired ma
 """
 
 import pennylane as qml
+qml.capture.enable()
 import numpy as np
 import matplotlib.pyplot as plt
 

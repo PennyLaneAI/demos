@@ -78,6 +78,7 @@ r"""Adversarial attacks and robustness for quantum machine learning
 #
 
 import pennylane as qml
+qml.capture.enable()
 from pennylane import numpy as np
 import torch
 from matplotlib import pyplot as plt

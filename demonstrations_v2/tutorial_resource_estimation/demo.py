@@ -63,6 +63,7 @@ the water molecule at its equilibrium geometry with the
 `6-31g basis set <https://en.wikipedia.org/wiki/Basis_set_(chemistry)>`_ as an example.
 """
 import pennylane as qml
+qml.capture.enable()
 import numpy as np
 import jax
 

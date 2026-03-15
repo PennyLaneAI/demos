@@ -63,6 +63,7 @@ coordinates = np.array([0.0, 0.0, -0.6614, 0.0, 0.0, 0.6614])
 # :func:`~.pennylane.qchem.molecular_hamiltonian` function.
 
 import pennylane as qml
+qml.capture.enable()
 
 H, qubits = qml.qchem.molecular_hamiltonian(symbols, coordinates)
 

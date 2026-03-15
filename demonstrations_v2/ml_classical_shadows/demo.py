@@ -117,6 +117,7 @@ plt.show()
 #
 
 import pennylane as qml
+qml.capture.enable()
 
 def Hamiltonian(J_mat):
     coeffs, ops = [], []

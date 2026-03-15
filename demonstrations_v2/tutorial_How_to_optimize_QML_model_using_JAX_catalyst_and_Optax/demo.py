@@ -31,6 +31,7 @@ Here, we will create a simple QML model for our optimization. In particular:
 """
 
 import pennylane as qml
+qml.capture.enable()
 from jax import numpy as jnp
 import optax
 import catalyst

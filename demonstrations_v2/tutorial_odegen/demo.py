@@ -165,6 +165,7 @@ Let us define it in PennyLane and also import some libraries that we are going t
 """
 
 import pennylane as qml
+qml.capture.enable()
 import numpy as np
 import jax.numpy as jnp
 import jax

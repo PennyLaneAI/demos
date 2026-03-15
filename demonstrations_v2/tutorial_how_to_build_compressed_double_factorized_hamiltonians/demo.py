@@ -31,6 +31,7 @@ and :math:`p, q, r, s` are the orbital indices. In PennyLane, we can obtain :mat
 """
 
 import pennylane as qml
+qml.capture.enable()
 
 symbols = ["H", "H", "H", "H"]
 geometry = qml.math.array([[0., 0., -0.2], [0., 0., -0.1], [0., 0., 0.1], [0., 0., 0.2]])

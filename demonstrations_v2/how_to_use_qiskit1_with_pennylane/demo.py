@@ -97,6 +97,7 @@ print(counts)
 #
 
 import pennylane as qml
+qml.capture.enable()
 
 dev = qml.device("qiskit.basicsim", wires=2)
 

@@ -34,6 +34,7 @@ These transformations are linear and can be represented by a matrix. Let's verif
 
 from scipy.linalg import dft
 import pennylane as qml
+qml.capture.enable()
 import numpy as np
 
 n = 2
@@ -91,6 +92,7 @@ print(np.round(qft_inverse.matrix(), 2))
 # apply SWAP gates at the end. Let's see how the decomposition looks like using the drawer:
 
 import pennylane as qml
+qml.capture.enable()
 from functools import partial
 import matplotlib.pyplot as plt
 

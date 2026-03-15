@@ -132,6 +132,7 @@ performs several measurements.
 """
 
 import pennylane as qml
+qml.capture.enable()
 
 dev = qml.device("default.clifford", wires=2, tableau=True)
 

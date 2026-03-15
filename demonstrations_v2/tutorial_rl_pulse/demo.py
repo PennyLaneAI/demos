@@ -178,6 +178,7 @@ multi-qubit devices and gates.
 """
 
 import pennylane as qml
+qml.capture.enable()
 
 # Quantum computer
 qubit_freqs = [4.81]  # GHz
