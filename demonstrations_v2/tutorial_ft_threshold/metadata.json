@@ -1,0 +1,42 @@
+{
+    "title": "Understanding Fault-tolerant Threshold Theorem in Practice",
+    "authors": [{
+        "username": "whatsis"
+    }],
+    "executable_stable": true,
+    "executable_latest": true,
+    "dateOfPublication": "2025-06-02T00:00:00+00:00",
+    "dateOfLastModification": "2026-01-22T00:00:00+00:00",
+    "categories": [
+        "Quantum Computing",
+        "Compilation",
+        "Algorithms"
+    ],
+    "tags": [],
+    "previewImages": [{
+            "type": "thumbnail",
+            "uri": "/_static/demo_thumbnails/regular_demo_thumbnails/thumbnail_game_of_surface_codes.png"
+        },
+        {
+            "type": "large_thumbnail",
+            "uri": "/_static/demo_thumbnails/large_demo_thumbnails/thumbnail_large_game_of_surface_codes.png"
+        }
+    ],
+    "seoDescription": "Understanding Fault-tolerant Threshold Theorem in Practice",
+    "doi": "",
+    "references": [{
+        "id": "threshold_theorem",
+        "type": "article",
+        "title": "An Introduction to Quantum Error Correction and Fault - Tolerant Quantum Computation ",
+        "authors": "Daniel Gottesman",
+        "year": "2009",
+        "journal": "arXiv e-prints",
+        "url": "https://arxiv.org/abs/0904.2557"
+    }],
+    "referencedByPapers": [],
+    "relatedContent": [{
+        "type": "demonstration",
+        "id": "tutorial_toric_code",
+        "weight": 1.0
+    }, ]
+}
