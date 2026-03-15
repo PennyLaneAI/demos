@@ -299,7 +299,6 @@ print(f"Physical qubits (n) of the HGP code: {n1*n2 + m1*m2} == {2*dist*(dist-1)
 def tanner_code(h1: np.ndarray, h2: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
     """Construct Tanner code parity check matrices [arXiv:2309.11719]."""
     itr, idx = h1.shape[0] * h2.shape[0], h1.shape[1] * h2.shape[1]
-
     def apply_gaussian_pivot(mat: np.ndarray) -> np.ndarray:
         col = mat[:, idx]
         if not col.any():
@@ -510,10 +509,9 @@ else:
 #
 
 def compute_logical_ops(hx: np.ndarray, hz: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
-    """Compute the canonical logical operator bases :math:`L_x` and :math:`L_z` for a CSS code."""
+    """Compute the canonical logical operators for a CSS code."""
+    # Reduced row echelon forms to get X- and Z-stabilizer pivot columns
     n = hx.shape[1]
-
-    # Reduced row echelon forms to get Sx and Sz cols
     hx_rref = binary_finite_reduced_row_echelon(hx)
     hx_rref = hx_rref[np.any(hx_rref, axis=1)]
     sx_cols = hx_rref.argmax(axis=1)
@@ -542,7 +540,7 @@ lx, lz = compute_logical_ops(hx, hz)
 print(f"Lx: {lx}")
 print(f"Lz: {lz}")
 
-print("Does Lx commute with all Z-stabilizers? ", np.allclose((hz @ lx.T) % 2, 0))
+print("\nDoes Lx commute with all Z-stabilizers? ", np.allclose((hz @ lx.T) % 2, 0))
 print("Does Lz commute with all X-stabilizers? ", np.allclose((hx @ lz.T) % 2, 0))
 print("Does Lx and Lz anticommute? ", np.allclose(lx @ lz.T, np.eye(lx.shape[0])))
 
@@ -579,19 +577,16 @@ import stim
 
 def compute_stabilizer_group(hx: np.ndarray, hz: np.ndarray) -> tuple[list, set]:
     """Generates the independent Pauli checks and the full stabilizer group."""
-    n_qubits = hx.shape[1]
-
     # Create PauliStrings for X-checks and Z-checks
     generators = [
         stim.PauliString(["".join(["I", "X"][bit]) for bit in row])
         for row in hx if np.any(row)
-    ]
-    generators += [
+    ] + [
         stim.PauliString(["".join(["I", "Z"][bit]) for bit in row])
         for row in hz if np.any(row)
     ]
 
-    full_group = set()
+    n_qubits, full_group = hx.shape[1], set()
     for bits in product([0, 1], repeat=len(generators)):
         current_pauli = stim.PauliString(n_qubits)
         for bit, gen in zip(bits, generators):
