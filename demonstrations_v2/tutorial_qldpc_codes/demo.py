@@ -566,10 +566,10 @@ print("Does Lx and Lz anticommute? ", np.allclose(lx @ lz.T, np.eye(lx.shape[0])
 # A major breakthrough of certain QLDPC code families is their ability to natively support
 # transversal non-Clifford gates, such as the :class:`~.pennylane.CCZ` gate. This substantially
 # reduces the hardware overhead needed for universal quantum computing. We can test if any given
-# operation is transversal for a given code by testing if (i) it preserves its *codespace*, i.e., the
-# subspace stabilized by all stabilizer generators, and (ii) maps logical operators to valid logical
-# operators. For example, we can check whether the :class:`~.pennylane.SWAP` gate is transversal for
-# the previously constructed Toric code:
+# operation is transversal for a given code by testing if (i) it preserves its *codespace*, i.e.,
+# the subspace stabilized by all stabilizer generators, and (ii) maps logical operators to valid
+# logical operators. For example, we can check whether the :class:`~.pennylane.SWAP` gate is
+# transversal for the previously constructed Toric code by first verifying the (i) condition.
 #
 
 from itertools import product
@@ -596,15 +596,12 @@ def compute_stabilizer_group(hx: np.ndarray, hz: np.ndarray) -> tuple[list, set]
         full_group.add(str(-current_pauli))
     return generators, full_group
 
-def verify_transversality(
-    operations: list, generators: list, stabilizers: set, logical_ops: tuple = None
-) -> bool:
-    """Verify if the given operations are transversal for the given QLDPC code."""
+def codespace_preservation(operations: list, generators: list, stabilizers: set) -> bool:
+    """Verify if the given generators preserve the codespace."""
     tableau, result = stim.Tableau(num_qubits=len(generators[0])), True
     for operation in operations:
         tableau.append(*operation)
 
-    print("Condition 1: Codespace preservation")
     for generator in generators:
         if str(evolved := tableau(generator)) in stabilizers:
             print(f"{generator}  -->  {evolved}  (Valid!)")
@@ -612,30 +609,48 @@ def verify_transversality(
             print(f"{generator}  -->  {evolved}  (Invalid!)")
             result = False
             break
-
-    if logical_ops is not None:
-        print("\nCondition 2: Logical operators consistency")
-        for itr, (lx_row, lz_row) in enumerate(zip(*logical_ops)):
-            lx_pauli = stim.PauliString(["".join(["I", "X"][bit]) for bit in lx_row])
-            lz_pauli = stim.PauliString(["".join(["I", "Z"][bit]) for bit in lz_row])
-            evolved_lx, evolved_lz = tableau(lx_pauli), tableau(lz_pauli)
-
-            for label, evolved in [("Lx", evolved_lx), ("Lz", evolved_lz)]:
-                commutes = all(evolved.commutes(g) for g in generators)
-                ntrivial = str(evolved) not in stabilizers
-                valid = commutes and ntrivial
-                print(f"{label}[{itr}] --> {evolved} | "\
-                      f"commutes={commutes}, nontrivial={ntrivial}")
-                if not valid:
-                    result = False
-                    break
     return result
 
 swap = stim.Tableau.from_named_gate("SWAP")
 ops = [[swap, (0, 1)], [swap, (2, 3)], [swap, (4, 5)], [swap, (6, 7)]]
 generators, stabilizers = compute_stabilizer_group(hx, hz)
-result = verify_transversality(ops, generators, stabilizers, (lx, lz))
-print(f"\nResult: The gate operation is transversal: {result}")
+preserved = codespace_preservation(ops, generators, stabilizers)
+print(f"Result: The codespace is preserved: {preserved}")
+
+######################################################################
+# Next, we verify the (ii) condition, which requires the mapped logical operators
+# :math:`L_X` and :math:`L_Z` to be consistent, i.e., they commute with all stabilizers
+# but does not collapse into one. A gate that passes only the first condition preserves
+# the codespace but may act trivially or incoherently on the encoded qubit, making the
+# second condition the true test of logical correctness as we see below.
+#
+
+def logical_operators_consistency(operations: list, logical_ops: tuple) -> bool:
+    """Verify if the given logical operators are consistent."""
+    tableau, result = stim.Tableau(num_qubits=len(generators[0])), True
+    for operation in operations:
+        tableau.append(*operation)
+
+    result = True
+    for itr, (lx_row, lz_row) in enumerate(zip(*logical_ops)):
+        lx_pauli = stim.PauliString(["".join(["I", "X"][bit]) for bit in lx_row])
+        lz_pauli = stim.PauliString(["".join(["I", "Z"][bit]) for bit in lz_row])
+        evolved_lx, evolved_lz = tableau(lx_pauli), tableau(lz_pauli)
+
+        for label, evolved in [("Lx", evolved_lx), ("Lz", evolved_lz)]:
+            commutes = all(evolved.commutes(g) for g in generators)
+            ntrivial = str(evolved) not in stabilizers
+            valid = commutes and ntrivial
+            print(f"{label}[{itr}] --> {evolved} | "\
+                    f"commutes={commutes}, nontrivial={ntrivial}")
+            if not valid:
+                result = False
+                break
+    return result
+
+consistent = logical_operators_consistency(ops, (lx, lz))
+print(f"Result: The logical operators are consistent: {consistent}")
+print(f"\nResult: The gate operation is transversal: {preserved and consistent}")
 
 ######################################################################
 # In addition to the gate operations being transversal, there's active work being done to develop
