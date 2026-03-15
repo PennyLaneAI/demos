@@ -1,0 +1,77 @@
+{
+    "title": "Qubit-Efficient Encoding Techniques for Solving QUBO Problems",
+    "authors": [
+        {
+            "username": "supreethmv"
+        }
+    ],
+    "dateOfPublication": "2024-11-15T00:00:00+00:00",
+    "dateOfLastModification": "2025-04-07T00:00:00+00:00",
+    "categories": ["Optimization"],
+    "tags": ["qubit-efficient encoding", "QUBO", "VQA", "image segmentation"],
+    "previewImages": [
+      {
+        "type": "thumbnail",
+        "uri": "/_static/demonstration_assets/qubit_efficient_encoding/vqa-segmentation.png"
+      }
+    ],
+    "seoDescription": "Explore scalable qubit-efficient variational quantum algorithms (VQAs) for solving QUBO problems, with applications in image segmentation and beyond.",
+    "doi": "10.1109/QCE60285.2024.00059",
+    "references": [
+      {
+        "id": "smv-nisq-seg",
+        "type": "article",
+        "title": "Qubit-Efficient Variational Quantum Algorithms for Image Segmentation",
+        "authors": "S. M. Venkatesh, A. Macaluso, M. Nuske, M. Klusch, and A. Dengel",
+        "year": "2024",
+        "journal": "2024 IEEE International Conference on Quantum Computing and Engineering (QCE)",
+        "doi": "10.1109/QCE60285.2024.00059",
+        "url": "https://doi.org/10.1109/QCE60285.2024.00059",
+        "pages": "450–456"
+      },
+      {
+        "id": "smv-qseg",
+        "type": "article",
+        "title": "Q-Seg: Quantum Annealing-Based Unsupervised Image Segmentation",
+        "authors": "S. M. Venkatesh, A. Macaluso, M. Nuske, M. Klusch, and A. Dengel",
+        "year": "2024",
+        "journal": "IEEE Computer Graphics and Applications",
+        "doi": "10.1109/MCG.2024.3455012",
+        "url": "https://doi.org/10.1109/MCG.2024.3455012",
+        "pages": "27–39"
+      },
+      {
+        "id": "qaoa",
+        "type": "preprint",
+        "title": "A quantum approximate optimization algorithm",
+        "authors": "E. Farhi, J. Goldstone, and S. Gutmann",
+        "year": "2014",
+        "url": "https://arxiv.org/abs/1411.4028"
+      },
+      {
+        "id": "pge",
+        "type": "article",
+        "title": "Noisy intermediate-scale quantum computing algorithm for solving an n-vertex MaxCut problem with log(n) qubits",
+        "authors": "M. J. Rančić",
+        "year": "2023",
+        "journal": "Physical Review Research",
+        "doi": "10.1103/PhysRevResearch.5.L012021",
+        "url": "https://doi.org/10.1103/PhysRevResearch.5.L012021"
+      },
+      {
+        "id": "abe",
+        "type": "article",
+        "title": "Qubit-efficient encoding schemes for binary optimisation problems",
+        "authors": "B. Tan, M.-A. Lemonde, S. Thanasilp, J. Tangpanitanon, and D. G. Angelakis",
+        "year": "2021",
+        "journal": "Quantum",
+        "doi": "10.22331/q-2021-05-04-454",
+        "url": "https://doi.org/10.22331/q-2021-05-04-454"
+      }
+    ],
+    "basedOnPapers": ["10.1109/QCE60285.2024.00059"],
+    "referencedByPapers": [],
+    "relatedContent": [],
+    "hardware": []
+  }
+  
