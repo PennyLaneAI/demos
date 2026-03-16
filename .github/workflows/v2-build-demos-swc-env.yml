@@ -73,7 +73,7 @@ jobs:
           EOL
 
       - name: Upload Pull Request Event Context as Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: deployment_build_context
           path: /tmp/merge
