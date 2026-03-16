@@ -509,7 +509,7 @@ else:
 #
 
 def compute_logical_ops(hx: np.ndarray, hz: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
-    """Compute the canonical logical operators for a CSS code."""
+    """Compute the canonical logical operators for a stabilizer codes."""
     # Reduced row echelon forms to get X- and Z-stabilizer pivot columns
     n = hx.shape[1]
     hx_rref = binary_finite_reduced_row_echelon(hx)
@@ -539,6 +539,10 @@ lx, lz = compute_logical_ops(hx, hz)
 
 print(f"Lx: {lx}")
 print(f"Lz: {lz}")
+
+######################################################################
+# We can now verify the obtained logical operators by checking the following(anti)commutation relations:
+#
 
 print("\nDoes Lx commute with all Z-stabilizers? ", np.allclose((hz @ lx.T) % 2, 0))
 print("Does Lz commute with all X-stabilizers? ", np.allclose((hx @ lz.T) % 2, 0))
