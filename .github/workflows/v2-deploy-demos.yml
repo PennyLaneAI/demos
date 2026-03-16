@@ -56,7 +56,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       - name: Setup Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v6
         with:
           python-version: '3.11'
       
@@ -64,7 +64,7 @@ jobs:
         run: pip install -r .github/workflows/qml_pipeline_v2/requirements.txt
       
       - name: Fetch demo build artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           name: ${{ inputs.artifact-name }}
           run-id: ${{ inputs.workflow-run-id }}
