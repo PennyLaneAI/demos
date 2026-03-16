@@ -94,7 +94,7 @@ plt.show()
 ######################################################################
 #
 # When noise corrupts our bits, creating an error vector :math:`\vec{e}`, the system identifies the
-# problem by computing the syndrome :math:`s = H\vec{e} \mod\ 2`. As each check node only connects
+# problem by computing the syndrome :math:`s = H\vec{e} \pmod{2}`. As each check node only connects
 # to a handful of data nodes (and vice versa), these codes achieve linear-time decoding complexity
 # because errors can be decoded using local message-passing algorithms sharing probabilistic
 # information along the edges of the Tanner graph until all parity constraints are satisfied.
@@ -143,7 +143,7 @@ css_code = np.hstack((
 ######################################################################
 # For these codes, all stabilizers must commute, which is ensured by having each of the
 # :math:`X - Z` stabilizer pairs overlap on an even number of qubits. Mathematically, this is
-# equivalent to the symplectic orthogonality condition :math:`H^X(H^Z)^T = 0\mod\, 2`,
+# equivalent to the symplectic orthogonality condition :math:`H^X(H^Z)^T = 0 \pmod{2},
 # which we can be easily verified below:
 #
 
@@ -467,7 +467,7 @@ print(f"Decoded error: {res}")
 # As multiple physical error patterns map to the exact same syndrome, the decoder
 # might find an alternative, equally valid path. When we apply its guessed
 # correction to our system, we are essentially creating a *residual* error,
-# :math:`E_{residual} = (E_{injected} + E_{decoded}) \mod 2`. This will be a null
+# :math:`E_{residual} = (E_{injected} + E_{decoded}) \pmod{2}`. This will be a null
 # vector, if the guessed correction is exact. Alternatively, it can happen to be
 # a valid :math:`X`-stabilizer, which means that the combined effect of the noise and
 # our guessed correction simply applied a stabilizer to the code block. Since stabilizers
@@ -662,21 +662,28 @@ print(f"\nResult: The gate operation is transversal: {preserved and consistent}"
 #
 # The journey to fault-tolerant quantum computing hinges on managing errors without requiring an
 # astronomical number of physical qubits. By relaxing the strict nearest-neighbor constraints of
-# topological codes, Quantum Low-Density Parity-Check (QLDPC) codes offer a profound paradigm
-# shift: they trade massive qubit overhead for a complex hardware connectivity challenge.
+# topological codes, quantum low-density parity-check (qLDPC) codes offer a profound paradigm
+# shift: they trade massive qubit overhead for a complex hardware connectivity challenge. In
+# this demo, we explored the fundamentals of these codes, including their construction, decoding
+# mechanisms, and key properties like their transversal gate sets.
 #
-# So, which codes are actually leading the charge? While early abstract constructions like purely
-# random sparse matrices proved too difficult to wire or decode in practice, highly structured
-# families have emerged as the clear path forward. For near-term hardware with limited but growing
-# connectivity, Bivariate Bicycle (BB) codes are currently the most promising candidates. Looking
-# further ahead, asymptotically good codes such as lifted product and quantum Tanner codes offer
-# the ultimate theoretical scaling for massive quantum processors.
+# While recent breakthroughs in qLDPC codes—such as lifted product and quantum Tanner codes—have
+# achieved linear distance scaling, their physical construction remains quite involved in
+# practice, especially for finite-size codes. Furthermore, other promising candidates for
+# low-overhead quantum memory, like bivariate bicycle codes, still exhibit asymptotic badness
+# as the number of physical qubits increases. Beyond these structural challenges, more work is
+# needed to design transversal gates that allow for complex logical operations. We also need to
+# improve general-purpose BP-OSD decoders so they can better exploit the specific structure of
+# the code for real-time error correction.
 #
-# Advancements in dynamically reconfigurable and modular architectures are turning these highly
-# connected codes into a physical reality. Many engineering hurdles still remain, particularly
-# in designing universal transversal gate sets and executing efficient logical measurements.
-# However, supported by fast, linear-time decoding algorithms, QLDPC codes have evolved past
-# elegant mathematical formalism and are progressing towards practicality.
+# Fortunately, advancements in dynamically reconfigurable and modular architectures are beginning
+# to turn these highly connected codes into a physical reality. Many engineering hurdles remain,
+# particularly in designing universal transversal gate sets and executing efficient logical
+# measurements. However, supported by fast, linear-time decoding algorithms and increasingly
+# flexible hardware, qLDPC codes have evolved past elegant mathematical formalism. They are
+# rapidly progressing toward practicality, offering a compelling, high-performance alternative
+# to traditional surface or toric codes.
+#
 #
 # References
 # ----------
