@@ -176,7 +176,7 @@ jobs:
             graphviz
 
       - name: Setup Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v6
         with:
           python-version: '3.11'
 
@@ -200,7 +200,7 @@ jobs:
       - name: Upload artifacts
         id: upload-artifacts
         if: ${{ inputs.save-artifact }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: ${{ needs.generate-build-variables.outputs.artifact-name }}-c${{ matrix.chunk-index }}
           path: _build/pack/*.zip
@@ -218,7 +218,7 @@ jobs:
           fetch-depth: 1
 
       - name: Download All Artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           path: _build/pack
           pattern: ${{ needs.generate-build-variables.outputs.artifact-name }}-c*
@@ -226,7 +226,7 @@ jobs:
         
       - name: Upload consolidated artifact
         id: upload-artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: ${{ needs.generate-build-variables.outputs.artifact-name }}
           path: _build/pack/*.zip
@@ -234,6 +234,6 @@ jobs:
           overwrite: true
       
       - name: Delete partial artifacts
-        uses: geekyeggo/delete-artifact@v5
+        uses: geekyeggo/delete-artifact@v6
         with:
             name: ${{ needs.generate-build-variables.outputs.artifact-name }}-c*
