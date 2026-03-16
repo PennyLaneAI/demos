@@ -51,7 +51,7 @@ Members of the Clifford group, $C_2$, conjugate Pauli gates to Pauli gates, up t
 
 Formally, $C_2 = \{ U: U P U^\dagger \in C_1 \forall P \in C_1 \}$
 
-Members of this group include the Hadamard gate $H$, phase gate $S$, and the CNOT gate. As an example, they conjugate Paulis like so: $HZH^\dagger = X$ and $SXS^\dagger = Y$. Notice that the entire Pauli group lives within the Clifford group (e.g., $XZX^\dagger = -Z$), but the vernacular is that the Clifford group excludes the Pauli group i.e., $C_2 \\ C_1$. The Gottesman-Knill theorem states that a circuit composed to entirely Pauli and Clifford gates are efficiently simulateable classically, meaning such circuits do not warrant making a quantum computer to execute. In this manner, these gates aren't too 'quantum'. 
+Members of this group include the Hadamard gate $H$, phase gate $S$, and the CNOT gate. As an example, they conjugate Paulis like so: $HZH^\dagger = X$ and $SXS^\dagger = Y$. Notice that the entire Pauli group lives within the Clifford group (e.g., $XZX^\dagger = -Z$), but the vernacular is that the Clifford group excludes the Pauli group i.e., $C_2 \setminus C_1$. The Gottesman-Knill theorem states that a circuit composed to entirely Pauli and Clifford gates are efficiently simulateable classically, meaning such circuits do not warrant making a quantum computer to execute. In this manner, these gates aren't too 'quantum'. 
 
 ### $C_3$ set 
 
@@ -67,7 +67,7 @@ In principle, you could select any gate that is outside of the Pauli and Cliffor
 
 However, we shall see how members of the next level in the hierarchy, $C_3$, can efficiently address all three concerns. Members of $C_3$ are defined to satisfy: 
 
-$C_3 = \{U: U P U^\dagger \in C_{2} \forall P \in C_1\}$
+$C_3 = \{U: U P U^{\dagger} \in C_{2} \forall P \in C_1\}$
 
 In other words, members of $C_3$ map to members of $C_2$ under conjugation, as in the Heisenberg picture. Examples of members of this group include the $T$ gate, Toffoli gate, and CCZ gate.
 
@@ -75,7 +75,7 @@ In other words, members of $C_3$ map to members of $C_2$ under conjugation, as i
 
 More generally, the $k^{\mathrm{th}}$ level of the Clifford hierarchy for $k\geq 2$ is: 
 
-$C_k = \{U: UPU^\dagger in C_{k-1} \forall P \in C_1 \}$. 
+$C_k = \{U: UPU^{\dagger} in C_{k-1} \forall P \in C_1 \}$. 
 
 The Pauli and Clifford group constitute the foundation of an infinitely nested gates. 
 
