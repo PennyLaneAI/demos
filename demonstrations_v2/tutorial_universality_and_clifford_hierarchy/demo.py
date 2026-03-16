@@ -63,7 +63,7 @@ However,
 2). The Eastin-Knill theorem states no quantum error correcting code can implement both Clifford and non-Clifford gates transversally.
 3). The proofs by Nebe, Rains, and Sloane (http://arxiv.org/abs/math/0001038v2) / The Solovay-Kitaev theorem show that you must have both Clifford and non-Clifford gates in your gate set to universally perform quantum computing. 
 
-In principle, you could select any gate that is outside of the Pauli and Clifford groups. Arbitrary rotation gates, for example, such as $R_Z(\theta)$ when $\theta\neq \{0, \pi/2, \pi\}$. 
+In principle, you could select any gate that is outside of the Pauli and Clifford groups. Arbitrary rotation gates, for example, such as $R_Z(\theta)$ when $\theta \neq \{0, \pi/2, \pi\}$. 
 
 However, we shall see how members of the next level in the hierarchy, $C_3$, can efficiently address all three concerns. Members of $C_3$ are defined to satisfy: 
 
@@ -73,7 +73,7 @@ In other words, members of $C_3$ map to members of $C_2$ under conjugation, as i
 
 ### C_k set
 
-More generally, the $k^{\mathrm{th}}$ level of the Clifford hierarchy for $k\geq 2$ is: 
+More generally, the $k^{\text{th}}$ level of the Clifford hierarchy for $k\geq 2$ is: 
 
 $C_k = \{U: UPU^{\dagger} in C_{k-1} \forall P \in C_1 \}$. 
 
@@ -86,9 +86,9 @@ Recall that many QEC codes naturally implement Clifford gates transversally and 
 
 Gottesman and Chuang showed that it is always possible to apply a gate in $C_k$ with a gate teleportation circuit using gates and measurements that are at most in $C_{k-1}$. 
 
-Gate teleportation is an extension of state teleportation (recall Alice and Bob). To teleport a $T$ gate, see Figure 1 below. Prepared in advance is a Bell state aka EPR pair where the $T$ gate is applied to half of the pair. The other half undergoes Bell basis measurement with the input state $|\psi\rangle$. Such measurements have a uniform probability of introducing a Pauli u I gate change. 
+Gate teleportation is an extension of state teleportation (recall Alice and Bob). To teleport a $T$ gate, see Figure 1 below. Prepared in advance is a Bell state aka EPR pair where the $T$ gate is applied to half of the pair. The other half undergoes Bell basis measurement with the input state $| \psi \rangle$. Such measurements have a uniform probability of introducing a Pauli $\union ~I$ gate change. 
 
-Knowing the definition of a $C_3$ gate leads to $TPT^\dagger = C$, where $C$ is some Clifford gate that can be classically determined once the Bell basis measurement reveals $P$. Hence, the state may be written as $TP|\psi\rangle = CT|\psi\rangle$. If we apply $C^\dagger$, conditioned on the result of $P$, then the output state becomes $T|\psi\rangle$. 
+Knowing the definition of a $C_3$ gate leads to $T P T^{\dagger} = C$, where $C$ is some Clifford gate that can be classically determined once the Bell basis measurement reveals $P$. Hence, the state may be written as $TP|\psi\rangle = CT| \psi \rangle$. If we apply $C^{\dagger}$, conditioned on the result of $P$, then the output state becomes $T| \psi \rangle$. 
 
 Fault tolerance becomes a question of careful state preparation rather than 
 
