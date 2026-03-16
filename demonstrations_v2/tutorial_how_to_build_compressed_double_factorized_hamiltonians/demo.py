@@ -282,7 +282,14 @@ def core_unitary_rotation(core, body_type, wires):
 # Suzuki-Trotter products.
 #
 
-from functools import partial
+@qml.prod
+def block(time, leaf, core, body_type, wires):
+    # apply the basis rotation for leaf tensor
+    leaf_unitary_rotation(leaf, wires)
+    # apply the rotation for core tensor scaled by the time-step
+    core_unitary_rotation(time * core, body_type, wires)
+    # revert the change-of-basis for leaf tensor
+    leaf_unitary_rotation(leaf.conjugate().T, wires)
 
 def CDFTrotterStep(time, cdf_ham, wires):
     """Implements a first-order Trotter step for a CDF Hamiltonian.
@@ -296,11 +303,7 @@ def CDFTrotterStep(time, cdf_ham, wires):
     for bidx, (core, leaf) in enumerate(zip(cores, leaves)):
         # Note: only the first term is one-body, others are two-body
         body_type = "two_body" if bidx else "one_body"
-        qml.change_op_basis(
-            compute_op=partial(leaf_unitary_rotation, leaf, wires),
-            target_op=partial(core_unitary_rotation, time*core, body_type, wires),
-            uncompute_op=partial(leaf_unitary_rotation, leaf.conjugate().T, wires)
-        )
+        block(time, leaf, core, body_type, wires)
 
 ######################################################################
 # We now use this function to simulate the evolution of the :math:`H_4` Hamiltonian
