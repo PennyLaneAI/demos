@@ -279,7 +279,9 @@ def core_unitary_rotation(core, body_type, wires):
 # step using the following :func:`CDFTrotterStep` function that uses the CDF Hamiltonian
 # with the ``leaf_unitary_rotation`` and ``core_unitary_rotation`` functions defined earlier.
 # We can then use the :func:`~.pennylane.trotterize` function to implement any higher-order
-# Suzuki-Trotter products.
+# Suzuki-Trotter products. It is crucial to wrap these steps in :func:`~.pennylane.prod`; this ensures
+# the sequence of operators are preserved as a single block which prevents
+# :func:`~.pennylane.trotterize` from re-ordering or reversing the internal terms.
 #
 
 @qml.prod
