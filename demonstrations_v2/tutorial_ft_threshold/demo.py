@@ -2,7 +2,7 @@ r"""Understanding Fault-tolerant Threshold Theorem in Practice
 ===============================================================
 
 Quantum mechanics offers a revolutionary framework for computation, unlocking the ability
-to solve highly complex problems well beyond the reach of classical supercomputers. Yet,
+to solve complex problems well beyond the reach of classical supercomputers. Yet,
 the current generation of quantum hardware faces a critical roadblock, namely physical
 instability. Even though modern processors feature hundreds of qubits, they are highly
 susceptible to stray environmental interactions and imperfect gate operations. This constant
@@ -10,8 +10,8 @@ barrage of noise causes delicate quantum states to rapidly decohere, corrupting 
 with computational errors.
 
 To build a quantum computer that can run indefinitely with negligible errors, we must utilize
-Quantum Error Correction (QEC). QEC works by redundantly encoding a single "logical" qubit into
-many "physical" qubits. However, because the operations used to perform this encoding are
+Quantum Error Correction (QEC). QEC works by redundantly encoding a single *logical* qubit into
+many *physical* qubits. However, because the operations used to perform this encoding are
 themselves noisy, QEC introduces new opportunities for errors to occur. This leads to a
 fundamental question: Can we ever get ahead of the noise? This is where the *fault-tolerant
 threshold theorem* comes in.
@@ -26,329 +26,399 @@ threshold theorem* comes in.
 Fault-tolerant Threshold Theorem
 ---------------------------------
 
-The Threshold Theorem is the mathematical bedrock of scalable quantum computing.
-Intuitively, it states that a fault-tolerant quantum computation of size :math:`N`
-can be accurately executed on imperfect hardware, provided that the base error rate
-of the physical operations, :math:`p`, remains strictly below a specific, non-zero
-constant known as the threshold, :math:`p_{th}`.
+The threshold theorem is the mathematical bedrock of scalable quantum computing.
+Intuitively, it states that a fault-tolerant quantum computation of any size can be 
+accurately executed on imperfect hardware, provided that the base error rate of the 
+physical operations, :math:`p`, remains strictly below a specific, non-zero constant 
+known as the *threshold*, :math:`p_{th}`.
 
-To state this more rigorously: assuming a local stochastic error model where :math:`p<p_{th}`,
-we can take any ideal circuit :math:`\mathcal{C}` and construct a corresponding fault-tolerant
-circuit :math:`\mathcal{C}^{\prime}`. Even when subjected to continuous noise, the latter is
-guaranteed to yield an output that is statistically indistinguishable from the ideal
-outcome—deviating by no more than an arbitrarily small tolerance, :math:`\epsilon > 0`.
-Furthermore, the theorem ensures that this error correction is practically achievable,
-i.e., the required hardware overhead is efficient. The total number of physical qubits and
-time steps needed for the fault-tolerant circuit :math:`\mathcal{C}^{\prime}`
-grows at most by a polylogarithmic factor, :math:`\mathcal{O}(\log^{c}(N/\epsilon))`
-for some positive constant :math:`c`.
+More rigorously, assuming a local stochastic error model where :math:`p < p_{th}`,
+we can take any ideal circuit :math:`\mathcal{C}` of size :math:`N` and construct a 
+corresponding fault-tolerant circuit :math:`\mathcal{C}^{\prime}`. Even when subjected
+to continuous noise, this corrected circuit is guaranteed to yield an output that deviates
+from the ideal outcome by no more than an arbitrarily small tolerance, :math:`\epsilon > 0`.
+Crucially, the theorem ensures that this correction is practically achievable and the
+required hardware overhead, i.e., the total number of physical qubits and time steps
+needed for :math:`\mathcal{C}^{\prime}`, grows at most by a polylogarithmic factor,
+:math:`\mathcal{O}(\log^{c}(N/\epsilon))` for some positive constant :math:`c` [#threshold]_.
 
-In simpler terms, this means that as long as your physical hardware is "good enough",
+In simpler terms, this means that as long as your physical hardware is *good enough*,
 i.e., the error rate per physical gate or time step is below the threshold :math:`p_{th}`,
-you can build reliable quantum circuits of any size. The required number of physical
-qubits would grow non-exponentially with the size of the computation.
+you can build reliable quantum circuits of any size. Although the original theoretical
+framework relied on specific assumptions like independent stochastic noise, the threshold
+theorem is robust enough to apply to highly realistic, correlated noise environments as well.
+Moreover it assures the required number of physical qubits would grow non-exponentially with
+the size of the computation, which means there is no fundamental physical barrier standing
+in the way of large-scale quantum computers, at least, theoretically.
 
-Although the original theoretical framework relied on specific assumptions like
-independent stochastic noise, the threshold theorem is robust enough to apply to
-highly realistic, correlated noise environments as well. It assures us that there
-is no fundamental physical barrier standing in the way of large-scale quantum computers.
-
-The Pseudo-Threshold
---------------------
-
-While the asymptotic threshold :math:`p_{th}` guarantees scalability in the long run,
-experimentalists working with near-term hardware often focus on a different metric:
-the *pseudo-threshold*. It is defined as the physical error rate below which the
-logical error rate of a specific code distance becomes lower than the physical error
-rate of a single, unencoded physical operation (:math:`p_{L} < p_{phys}`).
-
-To test the threshold theorem in practice, we look to the leading candidate for
-near-term QEC: the Surface Code, which is a topological code where qubits
+To test the threshold theorem in practice, we look at one of the initial candidates for
+quantum error correction, the surface code, which is a topological code where qubits
 are arranged on a 2D grid, with stabilizer measurements locally checking for
 parity errors among nearest neighbors. For practical implementation, we specifically
-look at the Rotated Surface Code, which requires only :math:`d^2` data qubits to
+look at the rotated surface codes, which requires only :math:`d^2` data qubits to
 achieve the exact same distance :math:`d`. This gives a 50% reduction in qubit overhead
-when compared to the standard surface code. This reduction is crucial makes it the
-ideal candidate for near-term QEC.
+when compared to the standard surface codes.
 
-To find the pseudo-threshold, we don't need to test a bunch of different distances.
-We just need to focus on a single, near-term implementation—like a distance-3
-():math:`d=3`) surface code—and compare its performance to the raw physical noise.
-
+The function below generates the qubits indices involved in the stabilizers and logical
+operators for a rotated surface code of distance :math:`d`, which will be required for
+the threshold evaluation. For these codes, the stabilizers occupy the faces of a
+checkerboard lattice, i.e., :math:`X`-type on one side, :math:`Z`-type on the other.
+The top and bottom edges host weight-2 :math:`X` stabilizers, while the left and right
+edges host weight-2 :math:`Z` stabilizers [#fowler]_.
 """
-def evaluate_pseudo_threshold():
-    """Evaluates a d=3 surface code to find its pseudo-threshold."""
-    d = 3
-    # We use a slightly wider noise range to ensure we catch the crossover point
-    noise_levels = [0.001, 0.003, 0.005, 0.008, 0.012, 0.015]
-    num_shots = 20000 
-    
-    logical_error_rates = []
-    
-    for p in noise_levels:
-        # Generate the d=3 rotated surface code circuit
-        circuit = stim.Circuit.generated(
-            "surface_code:rotated_memory_z",
-            distance=d,
-            rounds=d,
-            after_clifford_depolarization=p,
-            before_round_data_depolarization=p,
-            before_measure_flip_probability=p,
-            after_reset_flip_probability=p
-        )
-        
-        # Count errors (reusing our previously defined count_logical_errors function)
-        errors = count_logical_errors(circuit, num_shots)
-        ler = errors / num_shots
-        logical_error_rates.append(ler)
-        
-        print(f"Physical Noise p={p:.3f} -> d=3 Logical Error Rate: {ler:.4f}")
-            
-    return noise_levels, logical_error_rates
 
-######################################################################
-# Next, we need a function to plot this data. The key addition here is the "Unencoded Physical Error" line. When our d=3 line crosses below this unencoded line, we know our error correction is actually helping.
-#
-
-def plot_pseudo_threshold(noise_levels, logical_error_rates):
-    """Plots the d=3 logical error rate against the unencoded physical error rate."""
-    plt.figure(figsize=(8, 6))
-    
-    # Plot the logical error rate for our d=3 code
-    plt.plot(noise_levels, logical_error_rates, marker='o', label='Encoded d=3 (Logical Error)', color='blue', linewidth=2)
-    
-    # Plot the break-even line (y=x) representing the unencoded physical error rate
-    plt.plot(noise_levels, noise_levels, linestyle='--', color='red', label='Unencoded (Physical Error)', linewidth=2)
-    
-    plt.title('Surface Code Pseudo-Threshold (d=3)', fontsize=14)
-    plt.xlabel('Physical Error Rate (p)', fontsize=12)
-    plt.ylabel('Error Rate', fontsize=12)
-    
-    # Log scale for clear visualization
-    plt.yscale('log')
-    plt.xscale('log')
-    
-    plt.grid(True, which="both", ls="--", alpha=0.6)
-    plt.legend(fontsize=12)
-    plt.tight_layout()
-    plt.show()
-
-######################################################################
-# Finally, we execute our functions to see the results.
-
-# Run the pseudo-threshold evaluation and plot
-p_levels, d3_results = evaluate_pseudo_threshold()
-plot_pseudo_threshold(p_levels, d3_results)
-
-######################################################################
-# When you look at this graph, the red dashed line is your baseline. If your hardware's noise
-# is high (on the right side of the graph), the blue line (d=3 QEC) sits above the red line,
-# meaning QEC is actually making things worse because the extra gates are introducing too
-# much noise. But as hardware improves and moves to the left, the blue line dips below the
-# red line. That exact crossing point is your pseudo-threshold!
-#
-# Simulating the Threshold in Practice
-# -------------------------------------
-#
-# To see the threshold theorem in action, we need to simulate a quantum circuit,
-# inject noise, and attempt to correct those errors. We will use stim for
-# lightning-fast simulation of our surface code circuits and pymatching to
-# decode the errors.
-#
-# Let's start by importing our libraries and defining our core decoding function.
-# This function takes a noisy circuit, samples it, and uses a Minimum Weight
-# Perfect Matching (MWPM) decoder to see if our error correction succeeded or failed.
-#
-import stim
-import pymatching
 import numpy as np
-import matplotlib.pyplot as plt
 
-def count_logical_errors(circuit: stim.Circuit, num_shots: int) -> int:
-    """Samples the circuit and decodes errors using PyMatching."""
-    # Sample the circuit to get detection events and actual logical observable flips.
-    sampler = circuit.compile_detector_sampler()
-    detection_events, observable_flips = sampler.sample(
-        num_shots, separate_observables=True
+def rotated_surface_code(d: int):
+    """Generate stabilizers and logical operators for a rotated surface code."""
+    # Create a grid of row and column indices for the plaquettes
+    grid_idxs = np.arange(d - 1)
+    row, col = np.meshgrid(grid_idxs, grid_idxs, indexing='ij')
+    plaquette_qubits = np.stack([
+        row * d + col, row * d + col + 1, # Top-left/right
+        (row + 1) * d + col, (row + 1) * d + col + 1# Bottom-left/right
+     ], axis=-1)
+
+    # Assign X and Z stabilizers in a checkerboard pattern
+    is_x_plaquette = (row + col) % 2 == 0
+    x_stabilizers = plaquette_qubits[is_x_plaquette].tolist()
+    z_stabilizers = plaquette_qubits[~is_x_plaquette].tolist()
+
+    # Top boundary X-stabilizers sit on the odd indices
+    top_edges = np.stack([grid_idxs, grid_idxs + 1], axis=-1)
+    x_stabilizers += top_edges[(grid_idxs % 2) != 0].tolist()
+
+    # Bottom boundary X-stabilizers sit on the even indices
+    bottom_edges = np.stack([(d-1)*d + grid_idxs, (d-1)*d + grid_idxs + 1], axis=-1)
+    x_stabilizers += bottom_edges[(grid_idxs % 2) == 0].tolist()
+
+    # Left boundary Z-stabilizers sit on the even indices
+    left_edges = np.stack([grid_idxs * d, (grid_idxs + 1) * d], axis=-1)
+    z_stabilizers += left_edges[(grid_idxs % 2 == 0)].tolist()
+
+    # Right boundary Z-stabilizers sit on the odd indices
+    right_edges = np.stack([grid_idxs*d + (d-1), grid_idxs*d + 2*d - 1], axis=-1)
+    z_stabilizers += right_edges[(grid_idxs % 2 != 0)].tolist()
+
+    # Logical X runs top-to-bottom along the left-most column
+    # Logical Z runs left-to-right along the top-most row
+    logical_x, logical_z = list(range(0, d * d, d)), list(range(d))
+
+    return x_stabilizers, z_stabilizers, logical_x, logical_z
+
+x_stabs, z_stabs, log_x, log_z = rotated_surface_code(3)
+print(f"X stabilizers: {x_stabs}")
+print(f"Z stabilizers: {z_stabs}")
+
+######################################################################
+# Let's verify our construction for a distance :math:`d=3` code, for which
+# we expect 4 :math:`X`-type stabilizers, 4 :math:`Z`-type stabilizers, and
+# 1 logical qubit encoded in 9 data qubits (:math:`9 - 8 = 1`).
+#
+
+print(f"d=3: {len(x_stabs)} X-stabilizers, {len(z_stabs)} Z-stabilizers")
+print(f"Total data qubits: {len(x_stabs) + len(z_stabs)}")
+print(f"Logical X operators: {log_x}")
+print(f"Logical Z operators: {log_z}")
+
+######################################################################
+# The Pseudo-Threshold
+# --------------------
+#
+# Before sweeping over many code distances to locate the true threshold, it is instructive
+# to first ask a simpler question: is this code worth using at all for my hardware? The answer
+# is given by the *pseudo-threshold*. For a single code of distance :math:`d`, it is referred
+# to as :math:`p_{\text{pseudo}}^{(d)}`, the physical error rate at which the encoded logical
+# error rate (LER) equals the unencoded physical error rate:
+#
+# .. math::
+#
+#    \text{LER}(d,\, p_{\text{pseudo}}^{(d)}) = p_{\text{pseudo}}^{(d)}.
+#
+# Below :math:`p_{\text{pseudo}}^{(d)}`, encoding is actively harmful, i.e., the code introduces
+# more overhead than it corrects. Only above this point does the code provide any benefit over
+# running unprotected qubits. This is the *break-even* point of the code at distance :math:`d`,
+# and gives the lower bound on the true threshold.
+#
+# Therefore, encoding logical qubits into physical qubits is only worthwhile if the
+# pseudo-threshold is below the hardware's physical error rate. Moreover, if
+# :math:`p_{\text{pseudo}}^{(d)}` increases with :math:`d`, we can assess that
+# the code is scalable, even before computing the more expensive asymptotic threshold.
+#
+# For rotated surface code, we can compute the pseudo-threshold by computing the logical error
+# rate for the minimum distance code (:math:`d=3`) and comparing it to the raw physical noise.
+# For this, we first need to define the syndrome extraction circuits that will help us evaluate
+# the logical error rate of our code. The ``syndrome_extraction`` function below uses the
+# stabilizers and logical operators constructed in the previous section to build these circuits,
+# which are then executed using the ``default.clifford`` backend with the given depolarizing
+# noise for specified number of shots.
+#
+
+import pennylane as qp
+
+def syndrome_extraction(stabilizers, logical_ops, num_wires, noise_param, n_shots):
+    """Extract the syndrome from the stabilizers and logical operators."""
+    x_stabs, z_stabs = stabilizers
+    x_lg_op, z_lg_op = logical_ops
+
+    # Build the measurement operators for the X and Z stabilizers
+    z_stab_ops = [qp.prod(*[qp.Z(q) for q in s]) for s in z_stabs]
+    x_stab_ops = [qp.prod(*[qp.X(q) for q in s]) for s in x_stabs]
+    z_logic_op = qp.prod(*[qp.Z(q) for q in z_lg_op])
+    x_logic_op = qp.prod(*[qp.X(q) for q in x_lg_op])
+    z_meas_ops = z_stab_ops + [z_logic_op]
+    x_meas_ops = x_stab_ops + [x_logic_op]
+
+    # Build the syndrome extraction circuit
+    @qp.set_shots(n_shots)
+    @qp.qnode(qp.device("default.clifford", wires=num_wires))
+    def syndrome_circuit(meas_ops, x_basis=False):
+        for q in range(num_wires):
+            if x_basis:
+                qp.H(wires=q)
+            qp.DepolarizingChannel(noise_param, wires=q)
+        return [qp.sample(op) for op in meas_ops]
+
+    # Circuit 1: |+...+⟩ → noise → measure X-stabs + X-logical  (Z-error syndrome)
+    # Circuit 2: |0...0⟩ → noise → measure Z-stabs + Z-logical  (X-error syndrome)
+    z_stab_res = np.column_stack(syndrome_circuit(x_meas_ops, x_basis=True))
+    x_stab_res = np.column_stack(syndrome_circuit(z_meas_ops, x_basis=False))
+    return z_stab_res, x_stab_res
+
+######################################################################
+# The results from the above syndrome extraction circuits are then decoded using
+# the minimum weight perfect matching (MWPM) decoding algorithm from the
+# `PyMatching <https://github.com/oscarhiggott/PyMatching>`__ [#pymatching]_
+# library as shown below to give the corrected syndromes :math:`\vec{c}`.
+#
+
+from pymatching import Matching
+
+def syndrome_decoding(stabilizers, syndrome_results, num_wires, noise_param):
+    """Decode the syndrome using PyMatching and compute corrections."""
+    x_stabs, z_stabs = stabilizers
+    nx, nz = len(x_stabs), len(z_stabs)
+
+    # Z-error and X-error syndromes from the results
+    z_stab_res, x_stab_res = syndrome_results
+    z_syndrome = ((1 - z_stab_res[:, :nx]) // 2).astype(np.uint8) 
+    x_syndrome = ((1 - x_stab_res[:, :nz]) // 2).astype(np.uint8)
+
+    # Build the parity check matrices for the X and Z stabilizers
+    H_x, H_z = np.zeros((nx, num_wires)), np.zeros((nz, num_wires))
+    for ix, sx in enumerate(x_stabs):
+        H_x[ix, sx] = 1
+    for iz, sz in enumerate(z_stabs):
+        H_z[iz, sz] = 1
+
+    # Decode the syndrome using PyMatching and compute corrections
+    q_eff = 2 * noise_param / 3
+    wt = np.log((1 - q_eff) / q_eff) if 0 < q_eff < 1 else 1.0
+    z_corr = Matching(H_x, weights=wt).decode_batch(z_syndrome)
+    x_corr = Matching(H_z, weights=wt).decode_batch(x_syndrome)
+    return z_corr, x_corr
+
+######################################################################
+# So overall, we model the surface code such the all the qubits independently suffers a
+# depolarizing error with probability (``noise_param``). We then compute the :math:`Z`/
+# :math:`X`-stabilizer syndromes from the :math:`X`/:math:`Z`-stabilizer measurements,
+# which are then decoded using the MWPM decoder defined above [#gottesman]_. We additionally
+# measure the logical operators to obtain the values of logical observables that are used
+# tocompute the logical errors as a final step. More specifically, the ``ler_eval`` function
+# below does this by computing the residual :math:`\vec{p} = \vec{e} \xor \vec{c} \cdot \vec{l}`.
+# It reconstructs the :math:`\vec{e} \cdot \vec{l}` from the circuit output and uses the
+# corrected syndromes from the function above to compute the LER as
+# :math:`p_{L} = 1 - (1 - p_{x}) * (1 - p_{z})`.
+#
+
+def ler_eval(stabilizers, logical_ops, noise_param, num_shots=10_000):
+    """Evaluate the logical error rate for a given set of stabilizers and logical operators."""
+    num_wires = 2 * max(len(stabilizers[0]), len(stabilizers[1])) + 1 # Total number of wires
+
+    # Extract the syndrome measurements
+    z_stab_res, x_stab_res = syndrome_extraction(
+        stabilizers, logical_ops, num_wires, noise_param, num_shots
     )
 
-    # Configure a decoder using the circuit's specific error model.
-    detector_error_model = circuit.detector_error_model(decompose_errors=True)
-    matcher = pymatching.Matching.from_detector_error_model(detector_error_model)
+    # Decode the syndrome and compute the logical corrections
+    syndrome_results = (z_stab_res[:, :-1], x_stab_res[:, :-1])
+    z_corr, x_corr = syndrome_decoding(
+        stabilizers, syndrome_results, num_wires, noise_param
+    )
 
-    # Run the decoder to predict if a logical flip occurred.
-    predictions = matcher.decode_batch(detection_events)
+    # Build the logical operators for the X and Z stabilizers
+    log_x_vec, log_z_vec = np.zeros((2, num_wires), dtype=np.uint8)
+    log_x_vec[logical_ops[0]], log_z_vec[logical_ops[1]] = 1, 1
 
-    # Count the mistakes by comparing predictions to the actual observable flips.
-    num_errors = 0
-    for shot in range(num_shots):
-        actual_for_shot = observable_flips[shot]
-        predicted_for_shot = predictions[shot]
-        if not np.array_equal(actual_for_shot, predicted_for_shot):
-            num_errors += 1
-            
-    return num_errors
+    # Pauli frame tracking: compute error from the circuit output
+    x_log_meas, z_log_meas = (x_stab_res[:, -1], z_stab_res[:, -1])
+    lx_raw = ((1 - x_log_meas) // 2).astype(np.uint8)
+    lz_raw = ((1 - z_log_meas) // 2).astype(np.uint8)
+    p_lx = (lx_raw ^ (x_corr @ log_z_vec % 2)).mean()
+    p_lz = (lz_raw ^ (z_corr @ log_x_vec % 2)).mean()
+    return (1 - (1 - p_lx) * (1 - p_lz))
 
 ######################################################################
-# Next, we need a function to evaluate our rotated surface code across different
-# sizes—known as the code distance :math:`d`—and various physical noise levels :math:`p`.
-# We will use distances of 3, 5, and 7. For the noise levels, we know the circuit-level
-# threshold for a surface code is generally around 0.8% (or 0.008). We will sweep our
-# noise parameter right across that bridge to capture the crossing point.
+# We can now evaluate the pseudo-threshold for a given set of stabilizers and
+# logical operators. by sweeping over a range of noise parameters and evaluating
+# the logical error rate.
 #
 
-def evaluate_surface_code_threshold():
-    """Evaluates the rotated surface code across varying distances and noise levels."""
-    distances = [3, 5, 7]
-    noise_levels = [0.004, 0.006, 0.008, 0.010, 0.012]
-    num_shots = 20000 
-    
-    results = {}
-    
-    for d in distances:
-        results[d] = []
+from matplotlib import pyplot as plt
+
+lerror_rates = []
+noise_levels = np.geomspace(0.025, 0.25, 21)
+for p in noise_levels:
+    ler = ler_eval((x_stabs, z_stabs), (log_x, log_z), p)
+    lerror_rates.append(ler)
+
+# Approximating the pseudo-threshold by linear interpolation
+diff = np.array(lerror_rates) - noise_levels
+p_idx = np.where(diff <= 0)[0][-1]
+p0, p1 = noise_levels[p_idx], noise_levels[p_idx + 1]
+d0, d1 = diff[p_idx], diff[p_idx + 1]
+pseudo_threshold = p0 - d0 * (p1 - p0) / (d1 - d0)
+
+plt.figure(figsize=(6, 3))
+plt.axvline(x=pseudo_threshold, color="black", linestyle="--", linewidth=1)
+plt.text(pseudo_threshold, 0.04, r" p$_{pseudo}$="+f"{pseudo_threshold:.3f}")
+plt.plot(noise_levels, lerror_rates, marker="o", label="Surface Code (d=3)", color="blue")
+plt.plot(noise_levels, noise_levels, linestyle="--", label="Unencoded", color="red")
+plt.xlabel("Physical Error Rate (p)", fontsize=10)
+plt.ylabel(r"Logical Error Rate (p$_{L}$)", fontsize=10)
+plt.yscale("log")
+plt.xscale("log")
+plt.grid(True, which="both", ls="--", alpha=0.6)
+plt.legend(fontsize=10)
+plt.tight_layout()
+plt.show()
+
+######################################################################
+# The red dashed line is the baseline: the error rate you would see with no
+# error correction at all. On the right side of the graph (high noise), the
+# blue curve sits *above* the red line—QEC is making things worse because the
+# extra circuit operations introduce more noise than they correct. Moving
+# leftward to lower physical error rates, the blue curve eventually dips
+# *below* the red line. That crossing point is the **pseudo-threshold** for
+# our distance :math:`d=3` code.
+#
+# Simulating The Threshold
+# -------------------------
+#
+# While the pseudo-threshold we computed previously tells us when a
+# *specific* code distance starts helping, the true *asymptotic* threshold
+# tells us something deeper for the entire code family, i.e., the physical
+# error rate below which we can *keep improving* by increasing the code
+# distance. Here, we sweep over distances :math:`d = 3, 5, 7` and a range
+# of depolarizing noise strengths.
+#
+
+def eval_threshold(distances, noise_levels, num_shots):
+    """Evaluates the threshold for a given set of distances and noise levels."""
+    results = {d: [] for d in distances}
+    for dist in distances:
+        x_stabs, z_stabs, log_x, log_z = rotated_surface_code(dist)
         for p in noise_levels:
-            # Use Stim to instantly generate a rotated surface code circuit
-            # incorporating reset, measurement, and depolarizing errors.
-            circuit = stim.Circuit.generated(
-                "surface_code:rotated_memory_z",
-                distance=d,
-                rounds=d,
-                after_clifford_depolarization=p,
-                before_round_data_depolarization=p,
-                before_measure_flip_probability=p,
-                after_reset_flip_probability=p
-            )
-            
-            # Count the errors and calculate the logical error rate (LER)
-            errors = count_logical_errors(circuit, num_shots)
-            logical_error_rate = errors / num_shots
-            results[d].append(logical_error_rate)
-            
-            print(f"Distance {d}, Physical Noise p={p:.3f} -> Logical Error Rate: {logical_error_rate:.4f}")
-            
-    return distances, noise_levels, results
+            ler = ler_eval((x_stabs, z_stabs), (log_x, log_z), p, num_shots)
+            results[dist].append(ler)
+    return results
+
+distances = [3, 5, 7]
+noise_levels = np.geomspace(0.036, 0.36, 15)
+results = eval_threshold(distances, noise_levels, num_shots=20_000)
 
 ######################################################################
-# Now that we have the data, we need to visualize it. The visual hallmark of the
-# threshold theorem is a specific crossing point on a graph. We will plot the
-# Logical Error Rate (LER) against the Physical Error Rate (p) using matplotlib.
-# We use a logarithmic scale for this plot because below the threshold, errors
-# are suppressed exponentially as we increase the code distance!
-
-def plot_threshold(distances, noise_levels, results):
-    """Plots the logical error rate vs. physical error rate to visualize the threshold."""
-    plt.figure(figsize=(8, 6))
-    
-    markers = ['o', 's', '^']
-    
-    for i, d in enumerate(distances):
-        plt.plot(noise_levels, results[d], marker=markers[i % len(markers)], label=f'Distance {d}', linestyle='-', markersize=8)
-        
-    plt.title('Rotated Surface Code Threshold Evaluation', fontsize=14)
-    plt.xlabel('Physical Error Rate (p)', fontsize=12)
-    plt.ylabel('Logical Error Rate (LER)', fontsize=12)
-    
-    # Using log scale helps visualize the exponential suppression of errors below threshold
-    plt.yscale('log')
-    plt.xscale('log')
-    
-    plt.grid(True, which="both", ls="--", alpha=0.6)
-    plt.legend(fontsize=12)
-    plt.tight_layout()
-    plt.show()
-
-######################################################################
-# Finally, we just need to call our functions to run the simulation and render the plot.
+# We visualize the results on a log-log plot. Below the threshold, errors
+# are suppressed *exponentially* with increasing distance, so the curves
+# fan out dramatically on a logarithmic scale.
 #
 
-# Run the evaluation and plot the results
-distances, noise_levels, results = evaluate_surface_code_threshold()
-plot_threshold(distances, noise_levels, results)
+plt.figure(figsize=(6, 4))
+
+ler_vals = []
+for d in distances:
+    result = np.array(results[d])
+    plt.plot(noise_levels, result, label=f"Distance {d}", marker="o")
+    ler_vals.append(result)
+
+# Approximation of the threshold by linear interpolation
+diff = np.diff(np.array(ler_vals), axis=0)
+idxs = np.argmax(np.diff(np.sign(diff), axis=1) != 0, axis=1)[0]
+p0, p1 = noise_levels[idxs], noise_levels[idxs + 1]
+d0, d1 = diff[np.arange(len(diff)), idxs], diff[np.arange(len(diff)), idxs + 1]
+p_th  = np.mean(p0 - d0 * (p1 - p0) / (d1 - d0))
+plt.axvline(x=p_th, color="black", linestyle="--", linewidth=1)
+plt.text(p_th, 0.04, r" p$_{th}$="+f"{p_th:.3f}")
+
+plt.xlabel("Physical Error Rate (p)", fontsize=10)
+plt.ylabel("Logical Error Rate (p$_{L}$)", fontsize=10)
+plt.yscale("log")
+plt.xscale("log")
+plt.grid(True, which="both", ls="--", alpha=0.6)
+plt.legend(fontsize=10)
+plt.tight_layout()
+plt.show()
 
 ######################################################################
+# The curves for different distances cross at a single point—the
+# **threshold**. To the right of the crossing (high noise), larger codes
+# perform *worse*: they have more qubits for errors to strike but cannot
+# correct them all. To the left (low noise), larger codes perform
+# *better*, and the improvement is exponential with distance.
 #
-# When you run this code, you will clearly see the lines intersecting.
-# Above that crossing point, a larger code distance makes your logical qubit worse.
-# But below that threshold, the magic of the Threshold Theorem kicks in, and
-# increasing the code distance successfully suppresses the logical errors.
+# Note that this code-capacity threshold (``~15%``) is considerably higher
+# than the circuit-level threshold (``~0.8%``) seen in the pseudo-threshold
+# section, because it assumes instantaneous perfect syndrome extraction.
+# In real hardware, typically 4 CNOTs per stabilizer are applied and the
+# measurement itself could be noisy, which would push the threshold lower.
+# Nevertheless, the qualitative behaviour, curves crossing at a single
+# threshold point would still hold true.
 #
 # Conclusion
 # ----------
 #
-# The Threshold Theorem transitions quantum computing from an abstract mathematical
-# curiosity into a viable engineering discipline. By proving that noise can be
-# systematically managed, it provides the foundation upon which modern quantum
-# architecture is built. As we demonstrated, 2D topological models like the
-# Rotated Surface Code make fault tolerance an achievable reality, bringing the
-# necessary thresholds into the realm of current hardware capabilities.
-#
-# While engineering challenges remain—particularly in executing efficient logical
-# measurements and building the physical hardware to support the required number
-# of qubits—the threshold theorem guarantees that we are fighting a winnable battle.
-# By keeping our physical gate errors below the threshold, we unlock the path to
-# arbitrarily complex, reliable quantum computations.
+# In this tutorial, we demonstrated the threshold theorem in practice by
+# simulating both the pseudo-threshold and the asymptotic threshold for the Rotated
+# Surface Code. We saw that below the threshold point, increasing the code distance
+# leads to an exponential suppression of logical errors. This qualitative behavior,
+# curves for different code distances crossing at a single distinct point,
+# is the defining hallmark of the threshold theorem.
+
+# It is important to remember that our simulation targeted the *code-capacity*
+# threshold, which is the theoretical upper bound on the threshold and assumes
+# perfect, instantaneous syndrome extraction. In physical hardware, syndromes
+# are extracted using noisy multi-qubit gates and measurements, which pushes the
+# *circuit-level* threshold lower. In this spirit, while significant engineering
+# challenges remain, particularly in scaling up the number of physical qubits and
+# executing fast, efficient logical operations, the threshold theorem guarantees that
+# we are fighting a winnable battle. By engineering hardware that keeps physical error
+# rates below the threshold, we unlock the path to arbitrarily challenging, reliable
+# quantum computations.
 #
 # References
 # ----------
 #
-# .. [#qldpc1]
+# .. [#threshold]
 #
-#     N. P. Breuckmann, J. N. Eberhardt,
-#     "Quantum Low-Density Parity-Check Codes",
-#     `PRX Quantum 2, 040101 <https://journals.aps.org/prxquantum/abstract/10.1103/PRXQuantum.2.040101>`__, 2021.
+#     D. Aharonov, M. Ben-Or,
+#     "Fault-Tolerant Quantum Computation With Constant Error Rate",
+#     `SIAM J. Comput., 38(4), 1207–1282 <https://arxiv.org/abs/quant-ph/9906129>`__, 2008.
 #
-# .. [#CSS]
+# .. [#gottesman]
 #
-#     T. Rakovszky, V. Khemani,
-#     "The Physics of (good) LDPC Codes I. Gauging and dualities",
-#     `arXiv:2310.16032 <https://arxiv.org/abs/2310.16032>`__, 2023.
+#     D. Gottesman,
+#     "An Introduction to Quantum Error Correction and Fault-Tolerant Quantum Computation",
+#     `arXiv:0904.2557 <https://arxiv.org/abs/0904.2557>`__, 2009.
 #
-# .. [#HGP]
+# .. [#fowler]
 #
-#     J.-P. Tillich, G. Zémor,
-#     "Quantum LDPC Codes With Positive Rate and Minimum Distance Proportional to the Square Root of the Blocklength",
-#     `IEEE Transactions on Information Theory 60(1), 119–136 <https://ieeexplore.ieee.org/document/6671468>`__, 2014.
+#     A. G. Fowler, M. Mariantoni, J. M. Martinis, A. N. Cleland,
+#     "Surface codes: Towards practical large-scale quantum computation",
+#     `Phys. Rev. A 86, 032324 <https://arxiv.org/abs/1208.0928>`__, 2012.
 #
-# .. [#LPCodes]
+# .. [#pymatching]
 #
-#     F. G. Jeronimo, T. Mittal, R. O'Donnell, P. Paredes, M. Tulsiani,
-#     "Explicit Abelian Lifts and Quantum LDPC Codes",
-#     `arXiv:2112.01647 <https://arxiv.org/abs/2112.01647>`__, 2021.
-#
-# .. [#QTCodes]
-#
-#     A. Leverrier, G. Zémor,
-#     "Quantum Tanner codes",
-#     `arXiv:2202.13641 <https://arxiv.org/abs/2202.13641>`__, 2022.
-#
-# .. [#BBCodes]
-#
-#     S. Bravyi, A. W. Cross, J. M. Gambetta, D. Maslov, P. Rall, T. J. Yoder,
-#     "High-threshold and low-overhead fault-tolerant quantum memory",
-#     `Nature <https://www.nature.com/articles/s41586-024-07107-7>`__, 2024.
-#
-# .. [#BProp]
-#
-#     J. Old, M. Rispler,
-#     "Generalized Belief Propagation Algorithms for Decoding of Surface Codes",
-#     `Quantum 7, 1037 <https://quantum-journal.org/papers/q-2023-06-07-1037/>`__, 2023.
-#
-# .. [#OSD0]
-#
-#     J. Valls, F. Garcia-Herrero, N. Raveendran, B. Vasic,
-#     "Syndrome-Based Min-Sum vs OSD-0 Decoders: FPGA Implementation and Analysis for Quantum LDPC Codes",
-#     `IEEE Access <https://ieeexplore.ieee.org/document/9562513>`__, 2021.
-#
-# .. [#Transversal]
-#
-#     H. Leitch, A. Kay,
-#     "Transversal Gates for Highly Asymmetric qLDPC Codes",
-#     `arXiv:2506.15905 <https://arxiv.org/abs/2506.15905>`__, 2025.
-#
-# .. [#LMHM]
-#
-#     B. Ide, M. G. Gowda, P. J. Nadkarni, G. Dauphinais,
-#     "Fault-tolerant logical measurements via homological measurement",
-#     `Phys. Rev. X 15, 021088 <https://arxiv.org/abs/2410.02753>`__, 2024.
+#     O. Higgott,
+#     "PyMatching: A Python package for decoding quantum codes with minimum-weight perfect matching",
+#     `ACM Trans. Quantum Comput. 3(3), 1–16 <https://arxiv.org/abs/2105.13082>`__, 2022.
 #
