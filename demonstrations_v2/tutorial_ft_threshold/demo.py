@@ -228,8 +228,8 @@ def syndrome_decoding(stabilizers, syndrome_results, num_wires, noise_param):
 #
 
 def ler_eval(stabilizers, logical_ops, noise_param, num_shots=10_000):
-    """Evaluate the logical error rate for a given set of stabilizers and logical operators."""
-    num_wires = 2 * max(len(stabilizers[0]), len(stabilizers[1])) + 1 # Total number of wires
+    """Evaluate LER for a given set of stabilizers and logical operators."""
+    num_wires = 2 * max(len(stabilizers[0]), len(stabilizers[1])) + 1
 
     # Extract the syndrome measurements
     z_stab_res, x_stab_res = syndrome_extraction(
