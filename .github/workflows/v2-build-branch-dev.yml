@@ -1,4 +1,4 @@
-name: V2 Build QML Branch - Dev
+name: V2 Build Branch - Dev
 on:
   workflow_dispatch:
   schedule:
@@ -6,12 +6,12 @@ on:
     #- cron: '0 10 * * *' # At 10:00 (5am EST) on every day-of-week. Use this during feature freeze.
 
 concurrency:
-  group: v2-build-qml-demo-branch-dev
+  group: v2-build-demo-branch-dev
   cancel-in-progress: true
 
 jobs:
   build_dev:
-    uses: PennyLaneAI/qml/.github/workflows/v2-build-demos.yml@dev
+    uses: PennyLaneAI/demos/.github/workflows/v2-build-demos.yml@dev
     with:
       ref: dev
       dev: true

@@ -6,7 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Run CircleCI artifacts redirector
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Get artifact URL
         id: getArtifact

@@ -1,8 +1,8 @@
-# QML CLI Tool
+# CLI Tool
 
 ## Overview
 
-The **QML CLI tool** streamlines the creation, testing, and building of PennyLane demonstrations. It provides an intuitive command-line interface to simplify the authoring process and maintain consistency across demonstration projects.
+The **CLI tool** streamlines the creation, testing, and building of PennyLane demonstrations. It provides an intuitive command-line interface to simplify the authoring process and maintain consistency across demonstration projects.
 
 ## Table of Contents
 
@@ -20,7 +20,7 @@ The **QML CLI tool** streamlines the creation, testing, and building of PennyLan
 
 ## Installation
 
-To install the QML CLI, you will need Python version `3.11` or later. We highly recommend using a virtual environment to install the CLI tool to manage dependencies effectively.
+To install the CLI, you will need Python version `3.11` or later. We highly recommend using a virtual environment to install the CLI tool to manage dependencies effectively.
 
 ### MacOS/Linux Installation Steps
 
@@ -31,14 +31,14 @@ python3.11 -m venv .venv
 # Step 2. Activate the virtual environment
 source .venv/bin/activate
 
-# Step 3. Install the QML CLI tool
-# This command assumes you are in the root directory of the QML repository.
+# Step 3. Install the CLI tool
+# This command assumes you are in the root directory of this repository.
 pip install .
 
 # Step 4. Verify the installation
-qml
+demo
 
- QML Demo build tool - Create, build, and manage quantum machine learning demos.                               
+PennyLane demo build tool - Create, build, and manage PennyLane demos.
 
 ╭─ Options ───────────────────────────────────────────────────────────────────────────────────────────────────╮
 │ --install-completion          Install completion for the current shell.                                     │
@@ -63,14 +63,14 @@ python -m venv .venv
 # Step 2. Activate the virtual environment
 .\.venv\Scripts\activate
 
-# Step 3. Install the QML CLI tool
-# This command assumes you are in the root directory of the QML repository.
+# Step 3. Install the CLI tool
+# This command assumes you are in the root directory of this repository.
 pip install .
 
 # Step 4. Verify the installation
-qml
+demo
 
-QML Demo build tool - Create, build, and manage quantum machine learning demos.                                                                                                               
+PennyLane demo build tool - Create, build, and manage PennyLane demos.                                                                                                               
 
 ╭─ Options ───────────────────────────────────────────────────────────────────────────────────────────────────╮
 │ --install-completion          Install completion for the current shell.                                     │
@@ -89,19 +89,19 @@ QML Demo build tool - Create, build, and manage quantum machine learning demos.
 
 ### `help`
 
-Displays comprehensive help information for the QML CLI tool, including a list of available commands and their usage.
+Displays comprehensive help information for the CLI tool, including a list of available commands and their usage.
 
 ```bash
-qml help
+demo help
 ```
 
 
 ### `new`
 
-Creates a new PennyLane demonstration project within the `demonstrations-v2` directory. To ensure a demonstration is executable via Sphinx Gallery, its name must be prefixed with `tutorial__` (e.g., `tutorial__my_demo`).
+Creates a new PennyLane demonstration project within the `demonstrations_v2` directory.
 
 ```bash
-qml new
+demo new
 ```
 
 Upon executing this command, you will be prompted to provide the following details interactively:
@@ -113,7 +113,7 @@ Upon executing this command, you will be prompted to provide the following detai
 *   **Thumbnail**: (Optional) The path to a thumbnail image. This file must be located in `/_static/demo_thumbnails/regular_demo_thumbnails/`. You may leave this field blank and add the image later.
 *   **Large Thumbnail**: (Optional) The path to a larger thumbnail image, also to be placed in `/_static/demo_thumbnails/large_demo_thumbnails/`. This can be left blank and added later.
 
-Once all required inputs are provided, a new subdirectory will be created under `demonstrations-v2`, named according to the specified demo name. This new directory will include the following essential files:
+Once all required inputs are provided, a new subdirectory will be created under `demonstrations_v2`, named according to the specified demo name. This new directory will include the following essential files:
 
 *   `demo.py`: The main Python script containing the demonstration's code.
 *   `metadata.json`: A JSON file storing descriptive metadata about the demonstration.
@@ -129,13 +129,13 @@ Compiles one or more demonstrations, preparing them for local execution or packa
 # If no demo names are provided, all demonstrations within `demonstrations_v2` will be built.
 
 # Example: Building all demonstrations
-qml build
+demo build
 
 # Example: Building a specific demonstration
-qml build my_demo
+demo build my_demo
 
 # Example: Building multiple demonstrations
-qml build demo_one demo_two
+demo build demo_one demo_two
 ```
 
 #### Build Flags:
@@ -145,7 +145,7 @@ qml build demo_one demo_two
 Executes the specified demos using Sphinx Gallery. This flag is effective only for demos whose metadata fields `executable_stable` (uses the most recent release versions of packages in the PennyLane ecosystem) or `executable_latest` (uses the latest development versions of the PennyLane ecosystem) are set to "true". Historically, directory names prefixed with `tutorial__` marked them as executable tutorials. This is the fallback behaviour if either of the aforementioned metadata fields are missing for that demonstration.
 
 ```bash
-qml build --execute
+demo build --execute
 ```
 
 ##### `--format <html|json>`
@@ -154,10 +154,10 @@ Specifies the desired output format for the built demonstration. Options include
 
 ```bash
 # Output as HTML
-qml build --format html demo_name
+demo build --format html demo_name
 
 # Output as JSON
-qml build --format json demo_name
+demo build --format json demo_name
 ```
 
 ##### `--no-dev`
@@ -165,7 +165,7 @@ qml build --format json demo_name
 Instructs the build process to use stable (release) versions of [PennyLane](https://docs.pennylane.ai/), [Catalyst](https://docs.pennylane.ai/projects/catalyst), [official plugins](https://pennylane.ai/devices), and other core dependencies. This is the default build behaviour.
 
 ```bash
-qml build --no-dev demo_name
+demo build --no-dev demo_name
 ```
 
 ##### `--dev`
@@ -173,7 +173,7 @@ qml build --no-dev demo_name
 Instructs the build process to use the latest development (unreleased) versions of [PennyLane](https://github.com/pennylaneai/pennylane), [Catalyst](https://docs.pennylane.ai/projects/catalyst/en/latest/), [official plugins](https://pennylane.ai/devices), and other core dependencies.
 
 ```bash
-qml build --dev demo_name
+demo build --dev demo_name
 ```
 
 ##### `--venv`
@@ -181,7 +181,7 @@ qml build --dev demo_name
 Specify a new or existing virtual environment to use for installing the demo dependencies. If omitted, the defaul virtual environment name of `.venv-build` will be used.
 
 ```bash
-qml build --venv .my_env
+demo build --venv .my_env
 ```
 
 
@@ -191,8 +191,8 @@ You can view the demonstration in any web browser. Upon successful completion of
 
 ## Support
 
-*   **Source Code:** https://github.com/PennyLaneAI/QML
-*   **Issue Tracker:** https://github.com/PennyLaneAI/QML/issues
+*   **Source Code:** https://github.com/PennyLaneAI/demos
+*   **Issue Tracker:** https://github.com/PennyLaneAI/demos/issues
 
 For any issues or questions, please utilize our GitHub issue tracker.
 

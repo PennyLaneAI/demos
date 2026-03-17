@@ -1,6 +1,6 @@
 # Specifies global constraints for the dev build
 # NOTE: PennyLane, Lightning and Catalyst dev versions 
-# are handled separately in the qml app.
+# are handled separately in the demo cli.
 
 --extra-index-url https://test.pypi.org/simple/
 --extra-index-url https://download.pytorch.org/whl/cpu

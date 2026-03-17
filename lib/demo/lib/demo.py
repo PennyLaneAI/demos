@@ -3,8 +3,8 @@ from pathlib import Path, PurePosixPath
 from collections.abc import Sequence, Iterator
 from packaging.version import Version
 import shutil
-from qml.lib import fs, cmds
-from qml.lib.virtual_env import Virtualenv
+from demo.lib import fs, cmds
+from demo.lib.virtual_env import Virtualenv
 import os
 import sys
 from logging import getLogger
@@ -14,11 +14,11 @@ import functools
 import requirements
 import json
 import lxml.html
-from qml.context import Context
+from demo.context import Context
 import sphobjinv as soi
 
 
-logger = getLogger("qml")
+logger = getLogger("demo")
 
 
 class BuildTarget(Enum):

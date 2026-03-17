@@ -1,6 +1,6 @@
 from dulwich.repo import Repo
 from pathlib import Path
-from qml.lib import fs
+from demo.lib import fs
 
 
 def file_commit_timestamp(repo: Repo, path: Path) -> int:

@@ -541,7 +541,7 @@ print(np.round(np.abs(Uvec_diag), 4))
 # But ``Uvec_diag`` does not look block diagonal. What happened here?
 # Well, it *is* block-diagonal, but we have to reorder the columns and rows of the final matrix to make this visible.
 # This takes a bit of pain, which we outsource to a utility function that can be found
-# `here <https://github.com/PennyLaneAI/qml/demonstrations_v2/tutorial_resourcefulness/utils.py>`__:
+# `here <https://github.com/PennyLaneAI/demos/blob/master/demonstrations_v2/tutorial_resourcefulness/utils.py>`__:
 #
 
 from utils import group_rows_cols_by_sparsity

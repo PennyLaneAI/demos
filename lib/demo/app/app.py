@@ -1,6 +1,6 @@
 import typer
-from qml.context import Context
-from qml.lib import demo, cli, template, fs
+from demo.context import Context
+from demo.lib import demo, cli, template, fs
 import shutil
 import logging
 from typing import Annotated
@@ -25,15 +25,15 @@ THUMBNAIL_FILENAME = "thumbnail"
 LARGE_THUMBNAIL_FILENAME = "large_thumbnail"
 
 app = typer.Typer(
-    name="qml",
+    name="demo",
     no_args_is_help=True,
-    help="QML Demo build tool - Create, build, and manage quantum machine learning demos.",
+    help="PennyLane demo build tool - Create, build, and manage PennyLane demos.",
 )
 
 
 @app.command()
 def help():
-    print("QML Demo build tool.")
+    print("PennyLane demo build tool - Create, build, and manage PennyLane demos.")
 
 
 @app.command()
