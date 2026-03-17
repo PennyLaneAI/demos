@@ -1,16 +1,16 @@
-name: V2 Build QML Branch - Master
+name: V2 Build Branch - Master
 on:
   workflow_dispatch:
   schedule:
     - cron: '0 5 * * 1,3,5' # At 05:00 (12am EST) on Sunday (Monday am), Tuesday (Wednesday am), Thursday (Friday am).
 
 concurrency:
-  group: v2-build-qml-demo-branch-master
+  group: v2-build-demo-branch-master
   cancel-in-progress: true
 
 jobs:
   build_master: 
-    uses: PennyLaneAI/qml/.github/workflows/v2-build-demos.yml@master
+    uses: PennyLaneAI/demos/.github/workflows/v2-build-demos.yml@master
     with:
       ref: master
       dev: false

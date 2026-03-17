@@ -2,7 +2,7 @@
 # Project Metadata
 # ---------------------------
 [project]
-name = "qml"
+name = "demo"
 version = "0.3.0"
 description = "Introductions to key concepts in quantum computing, as well as tutorials and implementations from cutting-edge quantum computing research."
 readme = "README.md"
@@ -32,13 +32,13 @@ dependencies = [
 # ---------------------------
 [project.urls]
 Homepage = "https://pennylane.ai/qml/"
-Repository = "https://github.com/PennyLaneAI/qml"
+Repository = "https://github.com/PennyLaneAI/demos"
 
 # ---------------------------
 # Project Scripts
 # ---------------------------
 [project.scripts]
-qml = "qml.app:app"
+demo = "demo.app:app"
 
 # ---------------------------
 # Poetry Configuration
@@ -46,7 +46,7 @@ qml = "qml.app:app"
 [tool.poetry]
 requires-poetry = ">=2.1"
 packages = [
-  {include = "qml", from = "lib"}
+  {include = "demo", from = "lib"}
 ]
 
 # ---------------------------

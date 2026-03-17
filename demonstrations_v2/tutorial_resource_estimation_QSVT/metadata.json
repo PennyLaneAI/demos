@@ -1,0 +1,58 @@
+{
+    "title": "How to estimate the resource cost of QSVT",
+    "authors": [
+        {
+            "username": "Jay"
+        }
+    ],
+    "executable_stable": true,
+    "executable_latest": true,
+    "dateOfPublication": "2026-02-27T10:00:00+00:00",
+    "dateOfLastModification": "2026-02-27T10:00:00+00:00",
+    "categories": [
+        "Algorithms"
+    ],
+    "tags": [],
+    "previewImages": [
+        {
+            "type": "thumbnail",
+            "uri": "/_static/demo_thumbnails/regular_demo_thumbnails/pennylane-demo-resource-estimation-qsvt-thumbnail.png"
+        },
+        {
+            "type": "large_thumbnail",
+            "uri": "/_static/demo_thumbnails/large_demo_thumbnails/pennylane-demo-resource-estimation-qsvt-large-thumbnail.png"
+        }
+    ],
+    "seoDescription": "Learn how to estimate the resource cost of QSVT",
+    "doi": "",
+    "references": [
+        {
+            "id": "chuang2021",
+            "type": "article",
+            "title": "A Grand Unification of Quantum Algorithms",
+            "authors": "John M. Martyn, Zane M. Rossi, Andrew K. Tan, and Isaac L. Chuang",
+            "year": "2021",
+            "journal": "",
+            "url": "https://arxiv.org/pdf/2105.02859"
+        }
+    ],
+    "basedOnPapers": [],
+    "referencedByPapers": [],
+    "relatedContent": [
+        {
+            "type": "demonstration",
+            "id": "tutorial_intro_qsvt",
+            "weight": 1.0
+        },
+        {
+            "type": "demonstration",
+            "id": "re_how_to_use_pennylane_for_resource_estimation",
+            "weight": 1.0
+        },
+        {
+            "type": "demonstration",
+            "id": "tutorial_apply_qsvt",
+            "weight": 1.0
+        }
+    ]
+}

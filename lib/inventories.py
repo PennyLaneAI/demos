@@ -14,7 +14,7 @@ import requests
 from requests import exceptions as requests_exceptions
 
 REQUEST_TIMEOUT = 5  # seconds
-USER_AGENT = "Mozilla/5.0 (compatible; QML-Pandoc-Filter; +https://github.com/PennyLaneAI/qml)"
+USER_AGENT = "Mozilla/5.0 (compatible; Demos-Pandoc-Filter; +https://github.com/PennyLaneAI/demos)"
 
 
 def _load_inventory_from_path(path: Path) -> soi.Inventory | None:

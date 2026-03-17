@@ -9,7 +9,7 @@ This document provides comprehensive guidelines for contributing to the PennyLan
   - [Getting Started](#getting-started)
     - [Cloning or Forking the Repository](#cloning-or-forking-the-repository)
     - [Creating a New Demo](#creating-a-new-demo)
-      - [Using the QML CLI Tool](#using-the-qml-cli-tool)
+      - [Using the CLI Tool](#using-the-cli-tool)
       - [Manually Creating a Demo](#manually-creating-a-demo)
   - [Tutorial Content Guidelines](#tutorial-content-guidelines)
   - [General Guidelines](#general-guidelines)
@@ -30,20 +30,20 @@ This document provides comprehensive guidelines for contributing to the PennyLan
 
 ### Cloning or Forking the Repository
 
-To contribute to PennyLane demonstrations, begin by forking and cloning the QML repository. All contributions should be made by opening a pull request against the `master` branch (for stable versions) or the `dev` branch (for the latest features from PennyLane, Catalyst, and other plugins).
+To contribute to PennyLane demonstrations, begin by forking and cloning this repository. All contributions should be made by opening a pull request against the `master` branch (for stable versions) or the `dev` branch (for the latest features from PennyLane, Catalyst, and other plugins).
 
 ### Creating a New Demo
 
-There are multiple ways to create a new demo. The recommended method is to use the QML CLI tool, which provides a structured way to set up your demo environment and ensures that all necessary files are created.
+There are multiple ways to create a new demo. The recommended method is to use the CLI tool, which provides a structured way to set up your demo environment and ensures that all necessary files are created.
 
-#### Using the QML CLI Tool
+#### Using the CLI Tool
 
-To create a new demonstration, use the QML CLI tool's [`new` command](/documentation/qml-cli.md#new). This command will guide you through the initial setup. You will be prompted to provide a title, a custom directory name, a description, and the author's username. Optionally, you can add thumbnail images for the demo.
+To create a new demonstration, use the CLI tool's [`new` command](/documentation/demo-cli.md#new). This command will guide you through the initial setup. You will be prompted to provide a title, a custom directory name, a description, and the author's username. Optionally, you can add thumbnail images for the demo.
 
-To make a demo executable, ensure that the directory name starts with `tutorial_` (legacy), or set the `executable_stable` or `executable_latest` flag to `true` in the metadata.json file.
+To make a demo executable, set the `executable_stable` or `executable_latest` flag to `true` in the metadata.json file.
 
 ```bash
-❯ qml new
+❯ demo new
 Title: Your demo title
 Custom directory name [your_demo_title]: your_demo_directory_name
 Description []: A description of the demo you are creating
@@ -57,7 +57,7 @@ Large thumbnail image []:
 
 If you prefer to set up your demo manually, follow these steps:
 
-1. **Create a New Directory:** Create a new directory within the `demonstrations_v2` folder. The directory name must start with `tutorial_` unless the metadata includes either the `executable_stable` or `executable_latest` flag set to `true`. All demos are saved in the `demonstrations_v2` directory. For example: `demonstrations_v2/tutorial_my_demo`.
+1. **Create a New Directory:** Create a new directory within the `demonstrations_v2` folder, named after your demo. All demos are saved in the `demonstrations_v2` directory. For example: `demonstrations_v2/my_demo`.
 
 2. **Add Required Files:** At a minimum, your demo directory should contain:
    - `demo.py`: The main executable Python script for your demo.
@@ -83,8 +83,8 @@ While you are encouraged to be creative with your demo, please keep the followin
 ## General Guidelines
 
 - **Format:** Demos are written as executable Python scripts.
-- **Jupyter Notebook Conversion:** If you prefer writing your demo in a Jupyter notebook, you can convert it to the required executable Python format by following the [QML Notebook to Demo Converter](https://github.com/PennyLaneAI/qml/tree/master/notebook_converter).
-- **Naming Convention:** All demo directories must begin with `tutorial_` and are saved in the `demonstrations_v2` directory. For example: `demonstrations_v2/tutorial_my_demo`.
+- **Jupyter Notebook Conversion:** If you prefer writing your demo in a Jupyter notebook, you can convert it to the required executable Python format by following the [Notebook to Demo Converter](https://github.com/PennyLaneAI/demos/tree/master/notebook_converter).
+- **Naming Convention:** All demo directories must be saved in the `demonstrations_v2` directory. For example: `demonstrations_v2/my_demo`.
 - **Frameworks:** New demos should avoid using `autograd` or `TensorFlow`. `JAX` and `PyTorch` are recommended instead. Whenever possible, the use of `lightning.qubit` is also encouraged.
 - **Restructured Text (ReST):** ReST sections can be included anywhere within the script by beginning the comment with 79 hash characters (`#`). These are useful for breaking up large code blocks and providing extensive explanations.
 - **LaTeX Macros:** Avoid using LaTeX macros within your comments. Even if they appear to work in development, they will not be displayed correctly once the demo is published.
@@ -92,7 +92,7 @@ While you are encouraged to be creative with your demo, please keep the followin
 - **Code Formatting:** Before submitting, run your script through the [Black Python formatter](https://github.com/psf/black):
     ```bash
     pip install black
-    black -l 100 /demonstrations_v2/tutorial_your_demo/demo.py
+    black -l 100 /demonstrations_v2/your_demo/demo.py
     ```
 - **Referencing Other Demos in `demo.py`:** You can reference other demos in your `demo.py` file using ``:doc:\`demos/<demo_name>\``` syntax. This will create a link to the specified demo in the documentation. For example, to reference the `tutorial_qft` demo, use ``:doc:\`demos/tutorial_qft\``` .
 
@@ -112,11 +112,11 @@ While you are encouraged to be creative with your demo, please keep the followin
 
 ## Metadata Guidelines
 
-Every demo requires an accompanying `metadata.json` file located in its directory. This JSON file stores crucial information about the demo. Refer to [this example](https://github.com/PennyLaneAI/qml/blob/master/demonstrations_v2/tutorial_here_comes_the_sun/metadata.json) for the required fields:
+Every demo requires an accompanying `metadata.json` file located in its directory. This JSON file stores crucial information about the demo. Refer to [this example](https://github.com/PennyLaneAI/demos/blob/master/demonstrations_v2/tutorial_here_comes_the_sun/metadata.json) for the required fields:
 
 - **Filename:** Ensure the file is named `metadata.json`.
 - **Authors:** Ensure that the `"authors"` field is populated with the `"username"` of the author(s) as registered on pennylane.ai. This should match the username provided when creating the bio.
-- **`executable_stable` and `executable_latest`:** Set either of these fields to `true` if your demo is executable with the stable or latest versions of PennyLane, respectively. If neither field is set to `true`, the demo directory name must start with `tutorial_` to be executable.
+- **`executable_stable` and `executable_latest`:** Set either of these fields to `true` if your demo is executable with the stable or latest versions of PennyLane, respectively. If neither field is set to `true`, the demo will not be executable.
 - **Dates:** Leave publication and modification dates empty if you do not know them or use UTC format (e.g., `"2023-10-01T12:00:00Z"`).
 - **Categories:** Choose relevant categories for your demo, such as `"Getting Started"`.
 - **`previewImages`:** Modify the final part of the image file names to match your demo's name. These two images will be provided to you once the review process begins. After receiving them, you must upload them to the address indicated in the metadata.
@@ -202,11 +202,11 @@ Once your script and metadata are ready, you can submit a pull request!
 
 ## Dependency Management
 
-Demo dependencies are automatically installed by the `qml` tool during demo execution. For detailed information on dependency specifications, refer to [dependencies/README.md](/dependencies/README.md). A `requirements.txt` file will be created in the demo directory after a successful build.
+Demo dependencies are automatically installed by the CLI tool during demo execution. For detailed information on dependency specifications, refer to [dependencies/README.md](/dependencies/README.md). A `requirements.txt` file will be created in the demo directory after a successful build.
 
 ## Building and Testing Locally
 
-You can build and test PennyLane demos locally using the QML CLI tool, allowing you to preview your demo before submitting it for review.
+You can build and test PennyLane demos locally using the CLI tool, allowing you to preview your demo before submitting it for review.
 
 > **Note:** Local HTML builds will differ visually from the production site or PR previews. These differences are expected; local builds are intended for functional testing rather than visual accuracy.
 
@@ -215,7 +215,7 @@ You can build and test PennyLane demos locally using the QML CLI tool, allowing 
 To build your demo in HTML format, navigate to the root directory of the repository and run:
 
 ```bash
-qml build --format html <name_of_your_demo>
+demo build --format html <name_of_your_demo>
 ```
 
 The generated HTML file will be located at:
@@ -231,7 +231,7 @@ Open this file in your web browser to view the demo content.
 To build your demo in JSON format, use:
 
 ```bash
-qml build --format json <name_of_your_demo>
+demo build --format json <name_of_your_demo>
 ```
 
 The output will be generated in the following directories:
@@ -245,8 +245,8 @@ If you do not specify a `--format` option, the demo will be built in JSON format
 
 ## Support
 
-- **Source Code:** https://github.com/PennyLaneAI/QML
-- **Issue Tracker:** https://github.com/PennyLaneAI/QML/issues
+- **Source Code:** https://github.com/PennyLaneAI/demos
+- **Issue Tracker:** https://github.com/PennyLaneAI/demos/issues
 
 If you encounter any issues, please report them on our GitHub issue tracker.
 

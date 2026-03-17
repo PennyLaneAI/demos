@@ -59,7 +59,7 @@ Let's get to it!
    `PennyLane-cirq plugin <https://pennylane-cirq.readthedocs.io/en/latest/>`_
    (version >= 0.13). You will also need to download a copy of the data, which
    is available `here
-   <https://github.com/PennyLaneAI/qml/blob/master/_static/demonstration_assets/pasqal/Eiffel_tower_data.dat>`_.
+   <https://github.com/PennyLaneAI/demos/blob/master/_static/demonstration_assets/pasqal/Eiffel_tower_data.dat>`_.
 
 """
 

@@ -1,0 +1,68 @@
+{
+    "title": "Quantifying resource requirements for vibronic dynamics simulation",
+    "authors": [
+        {
+            "username": "ddhawan"
+        }
+    ],
+    "executable_stable": true,
+    "executable_latest": true,
+    "dateOfPublication": "2026-03-16T00:00:00+00:00",
+    "dateOfLastModification": "2026-03-16T00:00:00+00:00",
+    "categories": [
+        "Algorithms",
+        "Quantum Chemistry"
+    ],
+    "tags": [],
+    "previewImages": [
+        {
+            "type": "thumbnail",
+            "uri": "/_static/demo_thumbnails/regular_demo_thumbnails/pennylane-demo-resource-estimation-vibronic-thumbnail.png"
+        },
+        {
+            "type": "large_thumbnail",
+            "uri": "/_static/demo_thumbnails/large_demo_thumbnails/pennylane-demo-resource-estimation-vibronic-large-thumbnail.png"
+        }
+    ],
+    "seoDescription": "Learn how to estimate the quantum resources of a vibronic dynamics algorithm",
+    "doi": "",
+    "references": [
+        {
+            "id": "Motlagh2025",
+            "type": "article",
+            "title": "Quantum Algorithm for Vibronic Dynamics: Case Study on Singlet Fission Solar Cell Design",
+            "authors": "Danial Motlagh, Robert A. Lang, Paarth Jain, Jorge A. Campos-Gonzalez-Angulo, William Maxwell, Tao Zeng, Alan Aspuru-Guzik, Juan Miguel Arrazola",
+            "year": "2025",
+            "publisher": "arXiv:2411.13669",
+            "url": "https://arxiv.org/abs/2411.13669"
+        },
+        {
+            "id": "Pradhan2022",
+            "type": "article",
+            "title": "Design of the Smallest Intramolecular Singlet Fission Chromophore with the Fastest Singlet Fission",
+            "authors": "E. Pradhan, T. Zeng",
+            "year": "2022",
+            "publisher": "Journal of Physical Chemistry Letters 13.48 (2022)",
+            "url": "https://pubs.acs.org/doi/10.1021/acs.jpclett.2c03131"
+        }
+    ],
+    "basedOnPapers": [],
+    "referencedByPapers": [],
+    "relatedContent": [
+        {
+            "type": "demonstration",
+            "id": "re_how_to_use_pennylane_for_resource_estimation",
+            "weight": 1.0
+        },
+        {
+            "type": "demonstration",
+            "id": "tutorial_re_for_qubitizedQPE",
+            "weight": 1.0
+        },
+        {
+            "type": "demonstration",
+            "id": "tutorial_estimator_hamiltonian_simulation_gqsp",
+            "weight": 1.0
+        }
+    ]
+}
