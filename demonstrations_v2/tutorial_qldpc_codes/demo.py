@@ -143,7 +143,7 @@ css_code = np.hstack((
 ######################################################################
 # For these codes, all stabilizers must commute, which is ensured by having each of the
 # :math:`X - Z` stabilizer pairs overlap on an even number of qubits. Mathematically, this is
-# equivalent to the symplectic orthogonality condition :math:`H^X(H^Z)^T = 0 \pmod{2},
+# equivalent to the symplectic orthogonality condition :math:`H^X(H^Z)^T = 0 \pmod{2}`,
 # which we can be easily verified below:
 #
 
