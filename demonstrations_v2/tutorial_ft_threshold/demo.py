@@ -221,7 +221,7 @@ def syndrome_decoding(stabilizers, syndrome_results, num_wires, noise_param):
 # which are then decoded using the MWPM decoder defined above [#gottesman]_. We additionally
 # measure the logical operators to obtain the values of logical observables that are used
 # tocompute the logical errors as a final step. More specifically, the ``ler_eval`` function
-# below does this by computing the residual :math:`\vec{p} = \vec{e} \xor \vec{c} \cdot \vec{l}`.
+# below does this by computing the residual :math:`\vec{p} = \vec{e} \oplus \vec{c} \cdot \vec{l}`.
 # It reconstructs the :math:`\vec{e} \cdot \vec{l}` from the circuit output and uses the
 # corrected syndromes from the function above to compute the LER as
 # :math:`p_{L} = 1 - (1 - p_{x}) * (1 - p_{z})`.
