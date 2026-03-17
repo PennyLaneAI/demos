@@ -175,8 +175,8 @@ def syndrome_extraction(stabilizers, logical_ops, num_wires, noise_param, n_shot
             qp.DepolarizingChannel(noise_param, wires=q)
         return [qp.sample(op) for op in meas_ops]
 
-    # Circuit 1: |+...+⟩ → noise → measure X-stabs + X-logical  (Z-error syndrome)
-    # Circuit 2: |0...0⟩ → noise → measure Z-stabs + Z-logical  (X-error syndrome)
+    # Circuit 1: |+...+⟩ -> noise -> measure X-stabs + X-logical  (Z-error syndrome)
+    # Circuit 2: |0...0⟩ -> noise -> measure Z-stabs + Z-logical  (X-error syndrome)
     z_stab_res = np.column_stack(syndrome_circuit(x_meas_ops, x_basis=True))
     x_stab_res = np.column_stack(syndrome_circuit(z_meas_ops, x_basis=False))
     return z_stab_res, x_stab_res
