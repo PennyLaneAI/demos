@@ -129,11 +129,7 @@ print(f"Logical Z operators: {log_z}")
 # to first ask a simpler question: is this code worth using at all for my hardware? The answer
 # is given by the *pseudo-threshold*. For a single code of distance :math:`d`, it is referred
 # to as :math:`p_{\text{pseudo}}^{(d)}`, the physical error rate at which the encoded logical
-# error rate (LER) equals the unencoded physical error rate:
-#
-# .. math::
-#
-#    \text{LER}(d,\, p_{\text{pseudo}}^{(d)}) = p_{\text{pseudo}}^{(d)}.
+# error rate (LER) equals the unencoded physical error rate.
 #
 # Below :math:`p_{\text{pseudo}}^{(d)}`, encoding is actively harmful, i.e., the code introduces
 # more overhead than it corrects. Only above this point does the code provide any benefit over
@@ -299,7 +295,7 @@ plt.show()
 # blue curve sits *above* the red line—QEC is making things worse because the
 # extra circuit operations introduce more noise than they correct. Moving
 # leftward to lower physical error rates, the blue curve eventually dips
-# *below* the red line. That crossing point is the **pseudo-threshold** for
+# *below* the red line. That crossing point is the *pseudo-threshold* for
 # our distance :math:`d=3` code.
 #
 # Simulating The Threshold
@@ -360,8 +356,8 @@ plt.tight_layout()
 plt.show()
 
 ######################################################################
-# The curves for different distances cross at a single point—the
-# **threshold**. To the right of the crossing (high noise), larger codes
+# The curves for different distances cross at a single point, the
+# *threshold*. To the right of the crossing (high noise), larger codes
 # perform *worse*: they have more qubits for errors to strike but cannot
 # correct them all. To the left (low noise), larger codes perform
 # *better*, and the improvement is exponential with distance.
@@ -383,7 +379,7 @@ plt.show()
 # leads to an exponential suppression of logical errors. This qualitative behavior,
 # curves for different code distances crossing at a single distinct point,
 # is the defining hallmark of the threshold theorem.
-
+#
 # It is important to remember that our simulation targeted the *code-capacity*
 # threshold, which is the theoretical upper bound on the threshold and assumes
 # perfect, instantaneous syndrome extraction. In physical hardware, syndromes
