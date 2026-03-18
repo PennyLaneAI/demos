@@ -132,7 +132,7 @@ print(f"Syndrome: {syndrome}")
 # as :math:`H^{ij}_{P=\{X,Z\}} = 1` only if the :math:`i^{th}` :math:`P`-type check has support
 # on the :math:`j^{th}` qubit.
 #
-# For a CSS code on :math:`n` qubits  with:math:`m_1` X-checks and :math:`m_2` Z-checks,
+# For a CSS code on :math:`n` qubits with :math:`m_1` X-checks and :math:`m_2` Z-checks,
 # we can pack both matrices into a single :math:`(m_1 + m_2) \times (n_1, n_2)`
 # block matrix :math:`H = [0, H_Z;\, H_X, 0]`, where each row directly corresponds to one
 # stabilizer generator. For example, look at the following CSS code known as the `Steane code
@@ -235,13 +235,13 @@ print(f"Does H_X * H_Z^T = 0? {np.allclose((hx @ hz.T) % 2, 0)}")
 # entire qubit range:
 #
 
-fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 4), sharey=True)
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(8, 4), sharey=True)
 
 ax1.imshow(hx, cmap="Reds")
 ax2.imshow(hz, cmap="Blues")
-ax1.set_xlabel(r"H$_X$ | Data-qubit index")
-ax2.set_xlabel(r"H$_Z$ | Data-qubit index")
-ax1.set_ylabel(r"Stabilizer index")
+ax1.set_xlabel(r"H$_X$ | Data-qubit index", fontsize=11)
+ax2.set_xlabel(r"H$_Z$ | Data-qubit index", fontsize=11)
+ax1.set_ylabel(r"Stabilizer index", fontsize=11)
 
 plt.tight_layout()
 plt.show()
