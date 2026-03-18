@@ -1,12 +1,12 @@
 {
-    "title": "Quantum low-density parity-check (QLDPC) codes for quantum error correction",
+    "title": "Quantum low-density parity-check (qLDPC) codes for quantum error correction",
     "authors": [{
         "username": "whatsis"
     }],
     "executable_stable": true,
     "executable_latest": true,
-    "dateOfPublication": "2026-02-27T00:00:00+00:00",
-    "dateOfLastModification": "2026-02-27T00:00:00+00:00",
+    "dateOfPublication": "2026-03-18T00:00:00+00:00",
+    "dateOfLastModification": "2026-03-18T00:00:00+00:00",
     "categories": [
         "Algorithms",
         "Quantum Computing",
