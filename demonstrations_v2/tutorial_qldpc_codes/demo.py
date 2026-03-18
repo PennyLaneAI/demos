@@ -235,17 +235,17 @@ print(f"Does H_X * H_Z^T = 0? {np.allclose((hx @ hz.T) % 2, 0)}")
 # entire qubit range:
 #
 
-fig, (ax1, ax2) = plt.subplot(1, 2, figsize=(10, 4), sharey=True)
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 4), sharey=True)
 
 ax1.imshow(hx, cmap="Reds")
 ax2.imshow(hz, cmap="Blues")
-
 ax1.set_xlabel(r"H$_X$ | Data-qubit index")
 ax2.set_xlabel(r"H$_Z$ | Data-qubit index")
 ax1.set_ylabel(r"Stabilizer index")
 
 plt.tight_layout()
 plt.show()
+
 
 ######################################################################
 # This represents the non-local connectivity, which is the defining characteristic of
