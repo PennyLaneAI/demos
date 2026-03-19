@@ -7,14 +7,29 @@ susceptible to stray environmental interactions and imperfect gate operations. T
 barrage of noise causes delicate quantum states to rapidly decohere, corrupting the system
 with computational errors.
 
-To build a quantum computer that can run indefinitely with negligible errors, we must utilize
-Quantum Error Correction (QEC). QEC works by redundantly encoding a single *logical* qubit into
-many *physical* qubits. However, because the operations used to perform this encoding are
-themselves noisy, QEC introduces new opportunities for errors to occur. This leads to a
-fundamental question: Can we ever get ahead of the noise? This is where the *fault-tolerant
-threshold theorem* comes in.
+Building a fault-tolerant quantum computer requires Quantum Error Correction (QEC),
+which involves redundantly encoding a single logical qubit across many physical qubits
+so that errors can be detected and corrected without ever directly reading the encoded
+information. But because the physical operations performing this encoding are themselves
+noisy, QEC introduces new opportunities for errors, raising a fundamental question:
+*Can we ever get ahead of the noise?*
 
-.. figure::    
+Think of QEC like bailing water from a leaky boat. If the hole is too large, water rushes
+in faster than you can throw it out, and the effort of bailing only wears you down. But if
+the hole is small enough, your bailing outpaces the leak and the boat stays dry indefinitely.
+The fault-tolerant threshold theorem is the mathematical proof that such a regime exists,
+i.e., below a critical physical error rate, adding more qubits exponentially suppresses the
+logical error rate.
+
+In this demo, we will learn the theoretical framework of the fault-tolerant threshold
+theorem and observe this phenomenon in action. We will construct a QEC scheme called the
+*rotated surface code*, and subject it to simulated quantum noise across a range of physical
+error rates, computing two key metrics: (i) the pseudo-threshold, which is the break-even
+point where a specific error-correcting code becomes better than doing nothing at all, and
+(ii) the fault-tolerant threshold, the fundamental crossing point below which increasing our
+code size provides an exponential suppression of errors.
+
+.. figure::
     ../_static/demo_thumbnails/opengraph_demo_thumbnails/pennylane-demo-stabilizer-codes-open-graph.png
     :align: center
     :width: 50%
