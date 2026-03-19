@@ -131,8 +131,9 @@ nx, nz = len(x_stabs), len(z_stabs)
 print(f"Number of X / Z stabilizers: {nx} | {nz}")
 print(f"Logical X / Z operator: {log_x} | {log_z}")
 
-print(f"Number of data qubits: {num_qubits := max(log_x + log_z) + 1}")
-print(f"Number of logical qubits: {num_qubits - nx - nz}")
+n_qubits = max(log_x + log_z) + 1
+print(f"Number of data qubits: {n_qubits}")
+print(f"Number of logical qubits: {n_qubits - nx - nz}")
 
 ######################################################################
 # The Pseudo-Threshold
