@@ -4,8 +4,8 @@ r"""Quantum low-density parity-check (qLDPC) codes for quantum error correction
 Quantum computers are envisioned to be incredibly powerful devices. While many of the
 machines available today boast hundreds of qubits, their performance remains limited
 by noise, which manifests as computational errors and impacts their utility.
-Thus, for a fault-tolerant quantum computer to exist, on capable of running indefinitely
-with minimal permissible errors, we need quantum error correction (QEC).
+Thus, for a fault-tolerant quantum computer to exist and be capable of running
+indefinitely with minimal permissible errors, we need quantum error correction (QEC).
 
 For this purpose, QEC codes encode :math:`k` logical qubits into :math:`n` physical qubits.
 To allow for fault-tolerant computation with these :math:`k` logical qubits, the QEC codes need
@@ -26,13 +26,13 @@ solution. But as solving real-world problems requires scaling up to thousands of
 moving beyond strict nearest-neighbor constraints becomes crucial. Quantum low-density parity-check
 (qLDPC) codes are particularly well-suited for this, as they can leverage high-connectivity between
 qubits to drastically reduce qubit overheads, making them preferred codes of choice for the
-photonic and neutral-atom platforms that offer such qubit connectivity. In this demo, we will cover
+hardware platforms that offer such qubit connectivity. In this demo, we will cover
 the basics of qLDPC codes, including their construction and decoding. For the readers who are not
 familiar with the fundamentals of QEC, we recommend reading our tutorials on the :doc:`Surface Code
 <demos/tutorial_game_of_surface_codes>`, :doc:`Stabilizer Codes <demos/tutorial_stabilizer_codes>`,
 and :doc:`Lattice Surgery <demos/tutorial_lattice_surgery>` that cover them in detail.
 
-.. figure::    
+.. figure::
     ../_static/demo_thumbnails/opengraph_demo_thumbnails/pennylane-demo-stabilizer-codes-open-graph.png
     :align: center
     :width: 50%
@@ -94,7 +94,7 @@ plt.show()
 # When noise corrupts our bits, it creates an error vector :math:`\vec{e}`, where a ``1``
 # at position :math:`i` means bit :math:`i` was flipped. The system identifies this
 # error by computing the syndrome :math:`s = H\vec{e} \pmod{2}`, which flags the
-# parity checks that are violated. We can see this with an error on bit ``0``: 
+# parity checks that are violated. We can see this with an error on bit ``0``:
 #
 
 error_vec = np.array([1, 0, 0, 0, 0]) # bit flip on bit 0
@@ -250,7 +250,7 @@ plt.show()
 ######################################################################
 # This represents the non-local connectivity, which is the defining characteristic of
 # qLDPC code. Next, we determine the code dimension :math:`k`, that follows directly
-# from the ranks of the seed matrices: 
+# from the ranks of the seed matrices:
 #
 
 (m1, n1), (m2, n2) = h1.shape, h2.shape
@@ -294,8 +294,10 @@ print(f"Physical qubits (n) of the HGP code: {n1*n2 + m1*m2} == {2*dist*(dist-1)
 # grows only as :math:`d=\mathcal{O}(\sqrt{n})`, matching the surface code scaling. Note
 # that, the distance computed here is the classical distance, which is not the same as
 # the quantum distance. The latter is more complex to compute as it requires finding
-# the minimum weight of an error that goes undetected by the checks but is
-# not a stabilizer.
+# the minimum weight of an error that goes undetected by the checks but is not
+# a stabilizer. For HGP codes specifically, the classical distance serves as an
+# upper bound on the quantum distance and thus remains a reliable proxy in practice,
+# though the two can diverge significantly for other code families.
 #
 # Modern qLDPC Codes
 # -------------------
@@ -532,7 +534,7 @@ else:
 # In particular, even though the decoder did not perfectly undo the error,
 # the logical state of the qubit is perfectly preserved because any residual
 # that is a stabilizer acts as identity on the codespace.
-# 
+#
 # Logical Gates for qLDPC Codes
 # ------------------------------
 #
@@ -614,11 +616,13 @@ print("Does Lx and Lz anticommute? ", np.allclose(lx @ lz.T, np.eye(lx.shape[0])
 # :class:`~.pennylane.T` must instead be realized indirectly, for example via `magic state injection
 # <https://pennylane.ai/qml/glossary/what-are-magic-states>`__ [#Transversal]_.
 #
-# A major breakthrough of certain qLDPC code families is their ability to natively support
-# transversal non-Clifford gates, such as the :class:`~.pennylane.CCZ` gate. This substantially
-# reduces the hardware overhead needed for universal quantum computing. We can test if any given
-# operation is transversal for a given code by testing if (i) it preserves its *codespace*, i.e.,
-# the subspace stabilized by all stabilizer generators, and (ii) maps logical operators to valid
+# A notable property of certain qLDPC code families is their native support for transversal
+# non-Clifford gates, such as the :class:`~.pennylane.CCZ` gate. While this property
+# depends on the specific algebraic structure of the code rather than being a consequence of the
+# low-density parity check construction alone, it substantially reduces the hardware overhead
+# needed for universal quantum computing. We can test if any given operation is transversal
+# for a given code by testing if (i) it preserves its *codespace*, i.e., the subspace
+# stabilized by all stabilizer generators, and (ii) maps logical operators to valid
 # logical operators. For example, we can check whether the :class:`~.pennylane.SWAP` gate is
 # transversal for the previously constructed Toric code by first verifying the condition (i).
 #
