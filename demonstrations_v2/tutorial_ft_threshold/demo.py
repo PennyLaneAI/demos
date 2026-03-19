@@ -30,9 +30,9 @@ point where a specific error-correcting code becomes better than doing nothing a
 code size provides an exponential suppression of errors.
 
 .. figure::
-    ../_static/demo_thumbnails/opengraph_demo_thumbnails/pennylane-demo-stabilizer-codes-open-graph.png
+    ../_static/demonstration_assets/ft_threshold/cartoon_thresholds.png
     :align: center
-    :width: 50%
+    :width: 85%
     :target: javascript:void(0)
 
 
