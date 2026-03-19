@@ -1,9 +1,7 @@
 r"""Understanding Fault-tolerant Threshold Theorem in Practice
 ===============================================================
 
-Quantum mechanics offers a revolutionary framework for computation, unlocking the ability
-to solve complex problems well beyond the reach of classical supercomputers. Yet,
-the current generation of quantum hardware faces a critical roadblock, namely physical
+The current generation of quantum hardware faces a critical roadblock, namely physical
 instability. Even though modern processors feature hundreds of qubits, they are highly
 susceptible to stray environmental interactions and imperfect gate operations. This constant
 barrage of noise causes delicate quantum states to rapidly decohere, corrupting the system
@@ -49,22 +47,35 @@ framework relied on specific assumptions like independent stochastic noise, the 
 theorem is robust enough to apply to highly realistic, correlated noise environments as well.
 Moreover it assures the required number of physical qubits would grow non-exponentially with
 the size of the computation, which means there is no fundamental physical barrier standing
-in the way of large-scale quantum computers, at least, theoretically.
+in the way of large-scale quantum computers. At least, theoretically!
 
-To test the threshold theorem in practice, we look at one of the initial candidates for
-quantum error correction, the surface code, which is a topological code where qubits
+To test the threshold theorem in practice, we use one of the initial candidates for
+quantum error correction, the *surface code*, which is a topological code where qubits
 are arranged on a 2D grid, with stabilizer measurements locally checking for
-parity errors among nearest neighbors. For practical implementation, we specifically
-look at the rotated surface codes, which requires only :math:`d^2` data qubits to
-achieve the exact same distance :math:`d`. This gives a 50% reduction in qubit overhead
-when compared to the standard surface codes.
+parity errors among nearest neighbors. If you had like to deepen your understanding
+of surface codes before proceeding, our `Introducing Lattice Surgery <tutorial_lattice_surgery>`_
+and `A Game of Surface Codes <tutorial_game_of_surface_codes>`_ demos are a great starting point.
+Here, we specifically look at its *rotated* variant, which requires only :math:`d^2`
+data qubits to achieve the exact same distance :math:`d`. This gives a 50% reduction in
+qubit overhead when compared to the standard surface codes.
 
-The function below generates the qubits indices involved in the stabilizers and logical
-operators for a rotated surface code of distance :math:`d`, which will be required for
-the threshold evaluation. For these codes, the stabilizers occupy the faces of a
-checkerboard lattice, i.e., :math:`X`-type on one side, :math:`Z`-type on the other.
-The top and bottom edges host weight-2 :math:`X` stabilizers, while the left and right
-edges host weight-2 :math:`Z` stabilizers [#fowler]_.
+.. figure::    
+    ../_static/demo_figures/tutorial_ft_threshold/rotated_surface_codes.png
+    :align: center
+    :width: 50%
+    :target: javascript:void(0)
+
+As shown above for :math:`d=3` and :math:`d=5` rotated surface codes, the bulk plaquettes
+alternate between :math:`X`- and :math:`Z`-type stabilizers in a checkerboard pattern,
+while the boundaries host weight-2 stabilizers: :math:`X`-type on the top and bottom edges,
+:math:`Z`-type on the left and right edges [#fowler]_. The logical :math:`X` operator runs
+top-to-bottom along the left column, and the logical :math:`Z` operator runs left-to-right
+along the top row, each forming a string of length :math:`d` that cannot be detected by any
+stabilizer.
+
+The function below encodes this geometry directly, returning the qubit indices
+involved in each stabilizer and logical operator for any distance :math:`d` rotated
+surface code:
 """
 
 import numpy as np
@@ -116,10 +127,12 @@ print(f"Z stabilizers: {z_stabs}")
 # 1 logical qubit encoded in 9 data qubits (:math:`9 - 8 = 1`).
 #
 
-print(f"d=3: {len(x_stabs)} X-stabilizers, {len(z_stabs)} Z-stabilizers")
-print(f"Total data qubits: {len(x_stabs) + len(z_stabs)}")
-print(f"Logical X operators: {log_x}")
-print(f"Logical Z operators: {log_z}")
+nx, nz = len(x_stabs), len(z_stabs)
+print(f"Number of X / Z stabilizers: {nx} | {nz}")
+print(f"Logical X / Z operator: {log_x} | {log_z}")
+
+print(f"Number of data qubits: {num_qubits := max(log_x + log_z) + 1}")
+print(f"Number of logical qubits: {num_qubits - nx - nz}")
 
 ######################################################################
 # The Pseudo-Threshold
@@ -134,20 +147,24 @@ print(f"Logical Z operators: {log_z}")
 # Below :math:`p_{\text{pseudo}}^{(d)}`, encoding is actively harmful, i.e., the code introduces
 # more overhead than it corrects. Only above this point does the code provide any benefit over
 # running unprotected qubits. This is the *break-even* point of the code at distance :math:`d`,
-# and gives the lower bound on the true threshold.
+# and gives the lower bound on the true threshold. Therefore, encoding logical qubits into
+# physical qubits is only worthwhile if the pseudo-threshold is below the hardware's physical
+# error rate. Moreover, if :math:`p_{\text{pseudo}}^{(d)}` increases with :math:`d`, we can
+# assess that the code is scalable, even before computing the more expensive asymptotic threshold.
 #
-# Therefore, encoding logical qubits into physical qubits is only worthwhile if the
-# pseudo-threshold is below the hardware's physical error rate. Moreover, if
-# :math:`p_{\text{pseudo}}^{(d)}` increases with :math:`d`, we can assess that
-# the code is scalable, even before computing the more expensive asymptotic threshold.
-#
-# For rotated surface code, we can compute the pseudo-threshold by computing the logical error
-# rate for the minimum distance code (:math:`d=3`) and comparing it to the raw physical noise.
-# For this, we first need to define the syndrome extraction circuits that will help us evaluate
-# the logical error rate of our code. The ``syndrome_extraction`` function below uses the
-# stabilizers and logical operators constructed in the previous section to build these circuits,
-# which are then executed using the ``default.clifford`` backend with the given depolarizing
-# noise for specified number of shots.
+# For the rotated surface code, we compute the pseudo-threshold by evaluating the logical
+# error rate of the minimum-distance code (:math:`d=3`) and comparing it against the raw
+# physical noise level. To do so, we need syndrome extraction circuits that measure all
+# stabilizers and return a syndrome for the decoder. For simplicity, these circuits assume
+# instantaneous, noiseless syndrome extraction. In real hardware, each stabilizer measurement
+# requires typically 4 CNOTs followed by a noisy readout, each introducing additional error
+# sources. This places our simulation in the *code-capacity* regime, which yields a higher
+# threshold than what is achievable in practice, a key difference we will quantify at the end
+# of the `Simulating The Threshold <Simulating The Threshold>` section. 
+# 
+# The ``syndrome_extraction`` function below uses the stabilizers and logical operators
+# from the previous section to build these circuits, which are then executed on the
+# ``default.clifford`` simulator with depolarizing noise at a specified number of shots.
 #
 
 import pennylane as qp
@@ -362,13 +379,12 @@ plt.show()
 # correct them all. To the left (low noise), larger codes perform
 # *better*, and the improvement is exponential with distance.
 #
-# Note that this code-capacity threshold (``~15%``) is considerably higher
-# than the circuit-level threshold (``~0.8%``) seen in the pseudo-threshold
-# section, because it assumes instantaneous perfect syndrome extraction.
-# In real hardware, typically 4 CNOTs per stabilizer are applied and the
-# measurement itself could be noisy, which would push the threshold lower.
-# Nevertheless, the qualitative behaviour, curves crossing at a single
-# threshold point would still hold true.
+# Note that this code-capacity threshold (~15%) is considerably higher than the
+# circuit-level threshold (~0.8%) reported in the pseudo-threshold section. This
+# gap arises directly from our code-capacity assumption of instantaneous, perfect
+# syndrome extraction, the real hardware noise would in fact drive the threshold
+# lower. Nevertheless, the qualitative picture remains the same; logical error
+# rate curves for increasing code distances cross at a single threshold point.
 #
 # Conclusion
 # ----------
