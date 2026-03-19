@@ -71,7 +71,7 @@ parity errors among nearest neighbors. If you had like to deepen your understand
 of surface codes before proceeding, our `Introducing Lattice Surgery <tutorial_lattice_surgery>`_
 and `A Game of Surface Codes <tutorial_game_of_surface_codes>`_ demos are a great starting point.
 Here, we specifically look at its *rotated* variant, which requires only :math:`d^2`
-data qubits to achieve the exact same distance :math:`d`. This gives a 50% reduction in
+data qubits to achieve the same distance :math:`d`. This gives a 50% reduction in
 qubit overhead when compared to the standard surface codes.
 
 .. figure::
@@ -156,14 +156,14 @@ print(f"Number of logical qubits: {n_qubits - nx - nz}")
 # --------------------
 #
 # Before sweeping over many code distances to locate the true threshold, it is instructive
-# to first ask a simpler question: is this code worth using at all for my hardware?
+# to first ask a simpler question: Is this code worth using at all for my hardware?
 # The answer is given by the *pseudo-threshold*, the leftmost crossing point in the
 # schematic we saw earlier. For a single code of distance :math:`d`, it is referred to
 # as :math:`p_{\text{pseudo}}^{(d)}`, the physical error rate at which the encoded
 # logical error rate (LER) equals the unencoded physical error rate.
 #
 # Below the pseudo-threshold (green region), the code actively suppresses errors, i.e.,
-# the LER sits beneath the unencoded line and encoding is immediately beneficial. Above
+# the LER sits beneath the unencoded line, and encoding is immediately beneficial. Above
 # it but below $p_\text{th}$ (the amber region), the $d=3$ code becomes a net liability,
 # as it introduces more overhead than it corrects. This makes $p_\text{pseudo}^{(d)}$
 # the *break-even* point for a specific code distance :math:`d` and gives the lower bound
@@ -180,7 +180,7 @@ print(f"Number of logical qubits: {n_qubits - nx - nz}")
 # requires typically 4 CNOTs followed by a noisy readout, each introducing additional error
 # sources. This places our simulation in the *code-capacity* regime, which yields a higher
 # threshold than what is achievable in practice, a key difference we will quantify at the end
-# of `Simulating The Threshold <#simulating-the-threshold>`__ section.
+# of the `Simulating The Threshold <#simulating-the-threshold>`__ section.
 #
 # The ``syndrome_extraction`` function below uses the stabilizers and logical operators
 # from the previous section to build these circuits, which are then executed on the
@@ -224,7 +224,7 @@ def syndrome_extraction(stabilizers, logical_ops, num_wires, noise_param, n_shot
 # The results from the above syndrome extraction circuits are then decoded using
 # the minimum weight perfect matching (MWPM) decoding algorithm from the
 # `PyMatching <https://github.com/oscarhiggott/PyMatching>`__ [#pymatching]_
-# library as shown below to give the corrected syndromes :math:`\vec{c}`.
+# library, as shown below, to give the corrected syndromes :math:`\vec{c}`.
 #
 
 from pymatching import Matching
@@ -254,7 +254,7 @@ def syndrome_decoding(stabilizers, syndrome_results, num_wires, noise_param):
     return z_corr, x_corr
 
 ######################################################################
-# So overall, we model the surface code such the all the qubits independently suffers a
+# So overall, we model the surface code such that all the qubits independently suffer a
 # depolarizing error with probability (``noise_param``). We then compute the :math:`Z`/
 # :math:`X`-stabilizer syndromes from the :math:`X`/:math:`Z`-stabilizer measurements,
 # which are then decoded using the MWPM decoder defined above [#gottesman]_. We additionally
@@ -295,7 +295,7 @@ def ler_eval(stabilizers, logical_ops, noise_param, num_shots=10_000):
 
 ######################################################################
 # We can now evaluate the pseudo-threshold for a given set of stabilizers and
-# logical operators. by sweeping over a range of noise parameters and evaluating
+# logical operators by sweeping over a range of noise parameters and evaluating
 # the logical error rate.
 #
 
@@ -329,10 +329,10 @@ plt.tight_layout()
 plt.show()
 
 ######################################################################
-# The red dashed line is the baseline: the error rate you would see with no
-# error correction at all. On the right side of the graph (high noise), the
-# blue curve sits *above* the red line—QEC is making things worse because the
-# extra circuit operations introduce more noise than they correct. Moving
+# The red dashed line is the baseline, i.e., the error rate you would see with
+# no error correction at all. On the right side of the graph (high noise), the
+# blue curve sits *above* the red line, meaning QEC is making things worse because
+# the extra circuit operations introduce more noise than they correct. Moving
 # leftward to lower physical error rates, the blue curve eventually dips
 # *below* the red line. That crossing point is the *pseudo-threshold* for
 # our distance :math:`d=3` code.
@@ -341,11 +341,11 @@ plt.show()
 # -------------------------
 #
 # While the pseudo-threshold we computed previously tells us when a
-# *specific* code distance starts helping, the true *asymptotic* threshold
-# tells us something deeper for the entire code family, i.e., the physical
-# error rate below which we can *keep improving* by increasing the code
-# distance. Here, we sweep over distances :math:`d = 3, 5, 7` and a range
-# of depolarizing noise strengths.
+# specific code distance starts helping, the true *asymptotic* fault-tolerant
+# threshold tells us something deeper for the entire code family, i.e., the
+# physical error rate below which we can keep improving by increasing the
+# code distance. Here, we sweep over distances :math:`d = 3, 5, 7` and a
+# range of depolarizing noise strengths.
 #
 
 def eval_threshold(distances, p_noise, num_shots):
@@ -395,17 +395,17 @@ plt.tight_layout()
 plt.show()
 
 ######################################################################
-# The curves for different distances cross at a single point, the
-# *threshold*. To the right of the crossing (high noise), larger codes
-# perform *worse*: they have more qubits for errors to strike but cannot
-# correct them all. To the left (low noise), larger codes perform
-# *better*, and the improvement is exponential with distance.
+# The curves for different distances cross at a single point, the *threshold*.
+# To the right of the crossing (high noise), larger codes perform worse, i.e.,
+# they have more qubits for errors to strike, but cannot correct them all.
+# To the left (low noise), larger codes perform better, and the improvement
+# is exponential with distance.
 #
 # Note that this code-capacity threshold (``~15%``) is considerably higher than the
 # circuit-level threshold (``~0.8%``) reported in the pseudo-threshold section. This
 # gap arises directly from our code-capacity assumption of instantaneous, perfect
-# syndrome extraction, the real hardware noise would in fact drive the threshold
-# lower. Nevertheless, the qualitative picture remains the same; logical error
+# syndrome extraction; the real hardware noise would, in fact, drive the threshold
+# lower. Nevertheless, the qualitative picture remains the same: logical error
 # rate curves for increasing code distances cross at a single threshold point.
 #
 # Conclusion
@@ -418,11 +418,11 @@ plt.show()
 # curves for different code distances crossing at a single distinct point,
 # is the defining hallmark of the threshold theorem.
 #
-# It is important to remember that our simulation targeted the code-capacity
+# It is essential to recall that our simulation targeted the code-capacity
 # threshold, which is the theoretical upper bound on the threshold and assumes
 # perfect, instantaneous syndrome extraction. In physical hardware, syndromes
 # are extracted using noisy multi-qubit gates and measurements, which pushes the
-# *circuit-level* threshold lower. In this spirit, while significant engineering
+# circuit-level threshold lower. In this spirit, while significant engineering
 # challenges remain, particularly in scaling up the number of physical qubits and
 # executing fast, efficient logical operations, the threshold theorem guarantees that
 # we are fighting a winnable battle. By engineering hardware that keeps physical error
