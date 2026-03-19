@@ -60,19 +60,13 @@ data qubits to achieve the exact same distance :math:`d`. This gives a 50% reduc
 qubit overhead when compared to the standard surface codes.
 
 .. figure::
-    ../_static/demonstration_assets/ft_threshold/rotated_surface_codes.jpg
-    :align: center
-    :width: 75%
-    :target: javascript:void(0)
-
-.. figure::
     ../_static/demonstration_assets/ft_threshold/rotated_surface_code.jpg
     :align: center
-    :width: 75%
+    :width: 85%
     :target: javascript:void(0)
 
 As shown above for :math:`d=3` and :math:`d=5` rotated surface codes, the bulk plaquettes
-alternate between :math:`X`- and :math:`Z`-type stabilizers in a checkerboard pattern,
+alternate between :math:`Z`- and :math:`X`-type stabilizers in a checkerboard pattern,
 while the boundaries host weight-2 stabilizers: :math:`X`-type on the top and bottom edges,
 :math:`Z`-type on the left and right edges [#fowler]_. The logical :math:`X` operator runs
 top-to-bottom along the left column, and the logical :math:`Z` operator runs left-to-right
@@ -123,7 +117,8 @@ def rotated_surface_code(d: int):
 
     return x_stabilizers, z_stabilizers, logical_x, logical_z
 
-x_stabs, z_stabs, log_x, log_z = rotated_surface_code(3)
+dist = 3
+x_stabs, z_stabs, log_x, log_z = rotated_surface_code(dist)
 print(f"X stabilizers: {x_stabs}")
 print(f"Z stabilizers: {z_stabs}")
 
@@ -151,7 +146,7 @@ print(f"Number of logical qubits: {n_qubits - nx - nz}")
 # to as :math:`p_{\text{pseudo}}^{(d)}`, the physical error rate at which the encoded logical
 # error rate (LER) equals the unencoded physical error rate.
 #
-# Below :math:`p_{\text{pseudo}}^{(d)}`, encoding is actively harmful, i.e., the code introduces
+# Below the pseudo-threshold, encoding is actively harmful, i.e., the code introduces
 # more overhead than it corrects. Only above this point does the code provide any benefit over
 # running unprotected qubits. This is the *break-even* point of the code at distance :math:`d`,
 # and gives the lower bound on the true threshold. Therefore, encoding logical qubits into
@@ -167,11 +162,13 @@ print(f"Number of logical qubits: {n_qubits - nx - nz}")
 # requires typically 4 CNOTs followed by a noisy readout, each introducing additional error
 # sources. This places our simulation in the *code-capacity* regime, which yields a higher
 # threshold than what is achievable in practice, a key difference we will quantify at the end
-# of the `Simulating The Threshold <Simulating The Threshold>` section. 
-# 
+# of `Simulating The Threshold <#simulating-the-threshold>`__ section.
+#
 # The ``syndrome_extraction`` function below uses the stabilizers and logical operators
 # from the previous section to build these circuits, which are then executed on the
-# ``default.clifford`` simulator with depolarizing noise at a specified number of shots.
+# ``default.clifford`` `device
+# <https://docs.pennylane.ai/en/latest/code/api/pennylane.devices.default_clifford.html>`_
+# with depolarizing noise at a specified number of shots.
 #
 
 import pennylane as qp
@@ -221,7 +218,7 @@ def syndrome_decoding(stabilizers, syndrome_results, num_wires, noise_param):
 
     # Z-error and X-error syndromes from the results
     z_stab_res, x_stab_res = syndrome_results
-    z_syndrome = ((1 - z_stab_res[:, :nx]) // 2).astype(np.uint8) 
+    z_syndrome = ((1 - z_stab_res[:, :nx]) // 2).astype(np.uint8)
     x_syndrome = ((1 - x_stab_res[:, :nz]) // 2).astype(np.uint8)
 
     # Build the parity check matrices for the X and Z stabilizers
@@ -287,23 +284,23 @@ def ler_eval(stabilizers, logical_ops, noise_param, num_shots=10_000):
 from matplotlib import pyplot as plt
 
 lerror_rates = []
-noise_levels = np.geomspace(0.025, 0.25, 21)
-for p in noise_levels:
+p_noise = np.geomspace(0.025, 0.25, 21)
+for p in p_noise:
     ler = ler_eval((x_stabs, z_stabs), (log_x, log_z), p)
     lerror_rates.append(ler)
 
 # Approximating the pseudo-threshold by linear interpolation
-diff = np.array(lerror_rates) - noise_levels
+diff = np.array(lerror_rates) - p_noise
 p_idx = np.where(diff <= 0)[0][-1]
-p0, p1 = noise_levels[p_idx], noise_levels[p_idx + 1]
+p0, p1 = p_noise[p_idx], p_noise[p_idx + 1]
 d0, d1 = diff[p_idx], diff[p_idx + 1]
 pseudo_threshold = p0 - d0 * (p1 - p0) / (d1 - d0)
 
 plt.figure(figsize=(6, 3))
 plt.axvline(x=pseudo_threshold, color="black", linestyle="--", linewidth=1)
 plt.text(pseudo_threshold, 0.04, r" p$_{pseudo}$="+f"{pseudo_threshold:.3f}")
-plt.plot(noise_levels, lerror_rates, marker="o", label="Surface Code (d=3)", color="blue")
-plt.plot(noise_levels, noise_levels, linestyle="--", label="Unencoded", color="red")
+plt.plot(p_noise, lerror_rates, marker="o", label=f"Surface Code (d={dist})", color="b")
+plt.plot(p_noise, p_noise, linestyle="--", label="Unencoded", color="r")
 plt.xlabel("Physical Error Rate (p)", fontsize=10)
 plt.ylabel(r"Logical Error Rate (p$_{L}$)", fontsize=10)
 plt.yscale("log")
@@ -333,19 +330,19 @@ plt.show()
 # of depolarizing noise strengths.
 #
 
-def eval_threshold(distances, noise_levels, num_shots):
+def eval_threshold(distances, p_noise, num_shots):
     """Evaluates the threshold for a given set of distances and noise levels."""
     results = {d: [] for d in distances}
     for dist in distances:
         x_stabs, z_stabs, log_x, log_z = rotated_surface_code(dist)
-        for p in noise_levels:
+        for p in p_noise:
             ler = ler_eval((x_stabs, z_stabs), (log_x, log_z), p, num_shots)
             results[dist].append(ler)
     return results
 
 distances = [3, 5, 7]
-noise_levels = np.geomspace(0.036, 0.36, 15)
-results = eval_threshold(distances, noise_levels, num_shots=20_000)
+p_noise = np.geomspace(0.036, 0.36, 15)
+results = eval_threshold(distances, p_noise, num_shots=20_000)
 
 ######################################################################
 # We visualize the results on a log-log plot. Below the threshold, errors
@@ -358,13 +355,13 @@ plt.figure(figsize=(6, 4))
 ler_vals = []
 for d in distances:
     result = np.array(results[d])
-    plt.plot(noise_levels, result, label=f"Distance {d}", marker="o")
+    plt.plot(p_noise, result, label=f"Distance {d}", marker="o")
     ler_vals.append(result)
 
 # Approximation of the threshold by linear interpolation
 diff = np.diff(np.array(ler_vals), axis=0)
 idxs = np.argmax(np.diff(np.sign(diff), axis=1) != 0, axis=1)[0]
-p0, p1 = noise_levels[idxs], noise_levels[idxs + 1]
+p0, p1 = p_noise[idxs], p_noise[idxs + 1]
 d0, d1 = diff[np.arange(len(diff)), idxs], diff[np.arange(len(diff)), idxs + 1]
 p_th  = np.mean(p0 - d0 * (p1 - p0) / (d1 - d0))
 plt.axvline(x=p_th, color="black", linestyle="--", linewidth=1)
@@ -386,8 +383,8 @@ plt.show()
 # correct them all. To the left (low noise), larger codes perform
 # *better*, and the improvement is exponential with distance.
 #
-# Note that this code-capacity threshold (~15%) is considerably higher than the
-# circuit-level threshold (~0.8%) reported in the pseudo-threshold section. This
+# Note that this code-capacity threshold (``~15%``) is considerably higher than the
+# circuit-level threshold (``~0.8%``) reported in the pseudo-threshold section. This
 # gap arises directly from our code-capacity assumption of instantaneous, perfect
 # syndrome extraction, the real hardware noise would in fact drive the threshold
 # lower. Nevertheless, the qualitative picture remains the same; logical error
@@ -403,7 +400,7 @@ plt.show()
 # curves for different code distances crossing at a single distinct point,
 # is the defining hallmark of the threshold theorem.
 #
-# It is important to remember that our simulation targeted the *code-capacity*
+# It is important to remember that our simulation targeted the code-capacity
 # threshold, which is the theoretical upper bound on the threshold and assumes
 # perfect, instantaneous syndrome extraction. In physical hardware, syndromes
 # are extracted using noisy multi-qubit gates and measurements, which pushes the
