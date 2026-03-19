@@ -35,7 +35,6 @@ code size provides an exponential suppression of errors.
     :width: 85%
     :target: javascript:void(0)
 
-
 Fault-tolerant Threshold Theorem
 ---------------------------------
 
@@ -43,7 +42,8 @@ The threshold theorem is the mathematical bedrock of scalable quantum computing.
 Intuitively, it states that a fault-tolerant quantum computation of any size can be 
 accurately executed on imperfect hardware, provided that the base error rate of the 
 physical operations, :math:`p`, remains strictly below a specific, non-zero constant 
-known as the *threshold*, :math:`p_{th}`.
+known as the *threshold*, :math:`p_{th}`, the rightmost crossing point in the
+schematic above.
 
 More rigorously, assuming a local stochastic error model where :math:`p < p_{th}`,
 we can take any ideal circuit :math:`\mathcal{C}` of size :math:`N` and construct a 
@@ -55,14 +55,14 @@ required hardware overhead, i.e., the total number of physical qubits and time s
 needed for :math:`\mathcal{C}^{\prime}`, grows at most by a polylogarithmic factor,
 :math:`\mathcal{O}(\log^{c}(N/\epsilon))` for some positive constant :math:`c` [#threshold]_.
 
-In simpler terms, this means that as long as your physical hardware is *good enough*,
-i.e., the error rate per physical gate or time step is below the threshold :math:`p_{th}`,
-you can build reliable quantum circuits of any size. Although the original theoretical
-framework relied on specific assumptions like independent stochastic noise, the threshold
-theorem is robust enough to apply to highly realistic, correlated noise environments as well.
-Moreover it assures the required number of physical qubits would grow non-exponentially with
-the size of the computation, which means there is no fundamental physical barrier standing
-in the way of large-scale quantum computers. At least, theoretically!
+In other words, operating in the green region (where :math:`p < p_{th}`) of the schematic
+is not merely better, it is the condition under which arbitrarily large and reliable quantum
+circuits become physically constructable. Although the original theoretical framework relied
+on specific assumptions like independent stochastic noise, the threshold theorem is robust
+enough to apply to highly realistic, correlated noise environments as well. Moreover, it
+assures that the required number of physical qubits grows non-exponentially with the size
+of the computation, which means there is no fundamental physical barrier standing in the
+way of large-scale quantum computers. At least, theoretically!
 
 To test the threshold theorem in practice, we use one of the initial candidates for
 quantum error correction, the *surface code*, which is a topological code where qubits
@@ -156,18 +156,21 @@ print(f"Number of logical qubits: {n_qubits - nx - nz}")
 # --------------------
 #
 # Before sweeping over many code distances to locate the true threshold, it is instructive
-# to first ask a simpler question: is this code worth using at all for my hardware? The answer
-# is given by the *pseudo-threshold*. For a single code of distance :math:`d`, it is referred
-# to as :math:`p_{\text{pseudo}}^{(d)}`, the physical error rate at which the encoded logical
-# error rate (LER) equals the unencoded physical error rate.
+# to first ask a simpler question: is this code worth using at all for my hardware?
+# The answer is given by the *pseudo-threshold*, the leftmost crossing point in the
+# schematic we saw earlier. For a single code of distance :math:`d`, it is referred to
+# as :math:`p_{\text{pseudo}}^{(d)}`, the physical error rate at which the encoded
+# logical error rate (LER) equals the unencoded physical error rate.
 #
-# Below the pseudo-threshold, encoding is actively harmful, i.e., the code introduces
-# more overhead than it corrects. Only above this point does the code provide any benefit over
-# running unprotected qubits. This is the *break-even* point of the code at distance :math:`d`,
-# and gives the lower bound on the true threshold. Therefore, encoding logical qubits into
-# physical qubits is only worthwhile if the pseudo-threshold is below the hardware's physical
-# error rate. Moreover, if :math:`p_{\text{pseudo}}^{(d)}` increases with :math:`d`, we can
-# assess that the code is scalable, even before computing the more expensive asymptotic threshold.
+# Below the pseudo-threshold (green region), the code actively suppresses errors, i.e.,
+# the LER sits beneath the unencoded line and encoding is immediately beneficial. Above
+# it but below $p_\text{th}$ (the amber region), the $d=3$ code becomes a net liability,
+# as it introduces more overhead than it corrects. This makes $p_\text{pseudo}^{(d)}$
+# the *break-even* point for a specific code distance :math:`d` and gives the lower bound
+# on the true threshold. Therefore, encoding is only worthwhile if the hardware's physical
+# error rate is below its pseudo-threshold. Moreover, if :math:`p_{\text{pseudo}}^{(d)}`
+# decreases with increasing :math:`d`, we can assess that the code is scalable,
+# even before computing the more expensive asymptotic threshold.
 #
 # For the rotated surface code, we compute the pseudo-threshold by evaluating the logical
 # error rate of the minimum-distance code (:math:`d=3`) and comparing it against the raw
