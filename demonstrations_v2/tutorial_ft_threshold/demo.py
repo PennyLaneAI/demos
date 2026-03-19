@@ -59,10 +59,16 @@ Here, we specifically look at its *rotated* variant, which requires only :math:`
 data qubits to achieve the exact same distance :math:`d`. This gives a 50% reduction in
 qubit overhead when compared to the standard surface codes.
 
-.. figure::    
-    ../_static/demo_figures/tutorial_ft_threshold/rotated_surface_codes.png
+.. figure::
+    ../_static/demonstration_assets/ft_threshold/rotated_surface_codes.jpg
     :align: center
-    :width: 50%
+    :width: 75%
+    :target: javascript:void(0)
+
+.. figure::
+    ../_static/demonstration_assets/ft_threshold/rotated_surface_code.jpg
+    :align: center
+    :width: 75%
     :target: javascript:void(0)
 
 As shown above for :math:`d=3` and :math:`d=5` rotated surface codes, the bulk plaquettes
@@ -91,25 +97,25 @@ def rotated_surface_code(d: int):
      ], axis=-1)
 
     # Assign X and Z stabilizers in a checkerboard pattern
-    is_x_plaquette = (row + col) % 2 == 0
+    is_x_plaquette = (row + col) % 2 == 1
     x_stabilizers = plaquette_qubits[is_x_plaquette].tolist()
     z_stabilizers = plaquette_qubits[~is_x_plaquette].tolist()
 
-    # Top boundary X-stabilizers sit on the odd indices
+    # Top boundary X-stabilizers sit on the even indices
     top_edges = np.stack([grid_idxs, grid_idxs + 1], axis=-1)
-    x_stabilizers += top_edges[(grid_idxs % 2) != 0].tolist()
+    x_stabilizers += top_edges[(grid_idxs % 2) == 0].tolist()
 
-    # Bottom boundary X-stabilizers sit on the even indices
+    # Bottom boundary X-stabilizers sit on the odd indices
     bottom_edges = np.stack([(d-1)*d + grid_idxs, (d-1)*d + grid_idxs + 1], axis=-1)
-    x_stabilizers += bottom_edges[(grid_idxs % 2) == 0].tolist()
+    x_stabilizers += bottom_edges[(grid_idxs % 2) != 0].tolist()
 
-    # Left boundary Z-stabilizers sit on the even indices
+    # Left boundary Z-stabilizers sit on the odd indices
     left_edges = np.stack([grid_idxs * d, (grid_idxs + 1) * d], axis=-1)
-    z_stabilizers += left_edges[(grid_idxs % 2 == 0)].tolist()
+    z_stabilizers += left_edges[(grid_idxs % 2 != 0)].tolist()
 
-    # Right boundary Z-stabilizers sit on the odd indices
+    # Right boundary Z-stabilizers sit on the even indices
     right_edges = np.stack([grid_idxs*d + (d-1), grid_idxs*d + 2*d - 1], axis=-1)
-    z_stabilizers += right_edges[(grid_idxs % 2 != 0)].tolist()
+    z_stabilizers += right_edges[(grid_idxs % 2 == 0)].tolist()
 
     # Logical X runs top-to-bottom along the left-most column
     # Logical Z runs left-to-right along the top-most row
@@ -131,8 +137,8 @@ nx, nz = len(x_stabs), len(z_stabs)
 print(f"Number of X / Z stabilizers: {nx} | {nz}")
 print(f"Logical X / Z operator: {log_x} | {log_z}")
 
-n_qubits = max(log_x + log_z) + 1
-print(f"Number of data qubits: {n_qubits}")
+n_qubits = max(map(max, (x_stabs + z_stabs))) + 1
+print(f"\nNumber of data qubits: {n_qubits}")
 print(f"Number of logical qubits: {n_qubits - nx - nz}")
 
 ######################################################################
