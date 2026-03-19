@@ -126,18 +126,20 @@ print(f"Syndrome: {syndrome}")
 # stabilizer codes, where the codespace is defined as the ``+1`` eigenspace of a set of commuting
 # multi-qubit Pauli operators called *stabilizers*. A CSS code introduces these stabilizers as two
 # separate sets of parity checks: one containing only Pauli-Z operators to catch bit flips, and
-# another containing only Pauli-X operators to catch phase flips. We can represent these sets using
-# two classical parity-check matrices, :math:`H_Z` and :math:`H_X`, which act as distinct Tanner
-# graphs. These graphs are then combined into a single hypergraph, where the elements are defined
-# as :math:`H^{ij}_{P=\{X,Z\}} = 1` only if the :math:`i^{th}` :math:`P`-type check has support
-# on the :math:`j^{th}` qubit.
+# another containing only Pauli-X operators to catch phase flips.
 #
-# For a CSS code on :math:`n` qubits with :math:`m_1` X-checks and :math:`m_2` Z-checks,
-# we can pack both matrices into a single :math:`(m_1 + m_2) \times (n_1, n_2)`
-# block matrix :math:`H = [0, H_Z;\, H_X, 0]`, where each row directly corresponds to one
-# stabilizer generator. For example, look at the following CSS code known as the `Steane code
-# <https://errorcorrectionzoo.org/c/steane>`_ :math:`[[7,1,3]]`, constructed from the two
-# :math:`m=3` Hamming codes, as shown below:
+# For a CSS code on :math:`n` qubits with :math:`m_X` X-checks and :math:`m_Z` Z-checks, each
+# set is naturally represented as a classical parity-check matrix, :math:`H_X` and :math:`H_Z`
+# respectively. Each defines a bipartite Tanner graph where check nodes connect to the qubit
+# nodes they act on. Since both graphs share the same :math:`n` qubit nodes, they combine into
+# a single unified hypergraph. This hypergraph is captured by its incidence matrix, where
+# :math:`H^{ij}_P = 1` for :math:`P \in \{X, Z\}`, if the :math:`i^{th}` :math:`P`-type
+# check has support on the :math:`j^{th}` qubit, and :math:`0` otherwise. Both incidence
+# matrices pack naturally into a single :math:`(m_X + m_Z) \times 2n` block matrix
+# :math:`H = [0, H_Z;\, H_X, 0]` in the symplectic form, where each row directly
+# corresponds to one stabilizer generator. As an example, consider the following
+# CSS code known as the `Steane code <https://errorcorrectionzoo.org/c/steane>`_
+# :math:`[[7,1,3]]`, constructed from the two :math:`m=3` Hamming codes:
 #
 
 def hamming_code(rank: int) -> np.ndarray:
@@ -152,6 +154,8 @@ css_code = np.hstack((
         np.vstack([np.zeros((m1, n1), dtype=np.uint8), h1]),
         np.vstack([h2, np.zeros((m2, n2), dtype=np.uint8)])
 ))
+
+print(f"Shape of the CSS code: {css_code.shape}")
 
 ######################################################################
 # For these codes, all stabilizers must commute, which is ensured by having each of the
