@@ -128,14 +128,14 @@ print(f"Syndrome: {syndrome}")
 # separate sets of parity checks: one containing only Pauli-Z operators to catch bit flips, and
 # another containing only Pauli-X operators to catch phase flips.
 #
-# For a CSS code on :math:`n` qubits with :math:`m_X` X-checks and :math:`m_Z` Z-checks, each
+# For a CSS code on :math:`n` qubits with :math:`m_1` X-checks and :math:`m_2` Z-checks, each
 # set is naturally represented as a classical parity-check matrix, :math:`H_X` and :math:`H_Z`
 # respectively. Each defines a bipartite Tanner graph where check nodes connect to the qubit
 # nodes they act on. Since both graphs share the same :math:`n` qubit nodes, they combine into
 # a single unified hypergraph. This hypergraph is captured by its incidence matrix, where
 # :math:`H^{ij}_P = 1` for :math:`P \in \{X, Z\}`, if the :math:`i^{th}` :math:`P`-type
 # check has support on the :math:`j^{th}` qubit, and :math:`0` otherwise. Both incidence
-# matrices pack naturally into a single :math:`(m_X + m_Z) \times 2n` block matrix
+# matrices pack naturally into a single :math:`(m_1 + m_2) \times 2n` block matrix
 # :math:`H = [0, H_Z;\, H_X, 0]` in the symplectic form, where each row directly
 # corresponds to one stabilizer generator. As an example, consider the following
 # CSS code known as the `Steane code <https://errorcorrectionzoo.org/c/steane>`_
