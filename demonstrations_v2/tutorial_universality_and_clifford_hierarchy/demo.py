@@ -111,89 +111,89 @@ We have seen how the Clifford hierarchy enables universal and fault-tolerant qua
 #############################################################################
 References
 ---------------------------------
- .. [#anynonclifford]
+.. [#anynonclifford]
 
-     G. Nebe, E.M. Rains, N.J.A. Sloane
-     "The invariants of the Clifford groups"
-     `arXiv:math/0001038v2 <https://arxiv.org/abs/math/0001038v2>`__, 2000.
+    G. Nebe, E.M. Rains, N.J.A. Sloane
+    "The invariants of the Clifford groups"
+    `arXiv:math/0001038v2 <https://arxiv.org/abs/math/0001038v2>`__, 2000.
 
- .. [#universality]
+.. [#universality]
 
-     D. Deutsch, A. Barenco, and A. Ekert
-     "Universality in Quantum Computation"
-     `arXiv:quant-ph/9505018 <https://arxiv.org/abs/quant-ph/9505018>`__, 1995.
+    D. Deutsch, A. Barenco, and A. Ekert
+    "Universality in Quantum Computation"
+    `arXiv:quant-ph/9505018 <https://arxiv.org/abs/quant-ph/9505018>`__, 1995.
 
- .. [#qecbook]
+.. [#qecbook]
 
-     D. Gottesman
-     "Surviving as a Quantum Computer in a Classical World"
-     `Book <https://www.cs.umd.edu/~dgottesm/QECCbook-2024.pdf>`__, 2024.
-     
- .. [#SK_alg]
+    D. Gottesman
+    "Surviving as a Quantum Computer in a Classical World"
+    `Book <https://www.cs.umd.edu/~dgottesm/QECCbook-2024.pdf>`__, 2024.
+    
+.. [#SK_alg]
 
-     C.M. Dawnson and M.A. Nielsen
-     "The Solovay-Kitaev Algorithm"
-     `arXiv:quant-ph/0505030 <https://arxiv.org/pdf/quant-ph/0505030>`__, 2005.
+    C.M. Dawnson and M.A. Nielsen
+    "The Solovay-Kitaev Algorithm"
+    `arXiv:quant-ph/0505030 <https://arxiv.org/pdf/quant-ph/0505030>`__, 2005.
 
- .. [#gridsynth]
+.. [#gridsynth]
 
-     N.J. Ross and P. Selinger
-     "Optimal ancilla-free Clifford+T approximation of z-rotations"
-     `arXiv:1403.2975 <https://arxiv.org/pdf/1403.2975>`__, 2016.
+    N.J. Ross and P. Selinger
+    "Optimal ancilla-free Clifford+T approximation of z-rotations"
+    `arXiv:1403.2975 <https://arxiv.org/pdf/1403.2975>`__, 2016.
 
- .. [#gottesmanchuang]
+.. [#gottesmanchuang]
 
-     D. Gottesman and I.L. Chuang
-     "Quantum teleportation is a universal computational primitive"
-     `arXiv:quant-ph/9908010v1 <https://arxiv.org/abs/quant-ph/9908010v1>`__, 1999.
+    D. Gottesman and I.L. Chuang
+    "Quantum teleportation is a universal computational primitive"
+    `arXiv:quant-ph/9908010v1 <https://arxiv.org/abs/quant-ph/9908010v1>`__, 1999.
 
- .. [#onebit]
+.. [#onebit]
 
-     X. Zhou, D.W. Leung, and I.L. Chuang
-     "Methodology for quantum logic gate construction"
-     `quant-ph/0002039v2 <https://arxiv.org/abs/quant-ph/0002039v2>`__, 2000.
+    X. Zhou, D.W. Leung, and I.L. Chuang
+    "Methodology for quantum logic gate construction"
+    `quant-ph/0002039v2 <https://arxiv.org/abs/quant-ph/0002039v2>`__, 2000.
 
- .. [#semiclifford]
+.. [#semiclifford]
 
-     B. Zeng, X. Chen, and I.L. Chuang
-     "Semi-Clifford operations, structure of C_k hierarchy, and gate complexity for fault-tolerant quantum computation"
-     `0712.2084v2 <https://arxiv.org/abs/0712.2084v2>`__, 2007.
+    B. Zeng, X. Chen, and I.L. Chuang
+    "Semi-Clifford operations, structure of C_k hierarchy, and gate complexity for fault-tolerant quantum computation"
+    `0712.2084v2 <https://arxiv.org/abs/0712.2084v2>`__, 2007.
 
- .. [#diagonal]
+.. [#diagonal]
 
-     S.X. Cui, D. Gottesman, and A. Krishna
-     "Diagonal gates in the Clifford hierarchy"
-     `1608.06596v1 <https://arxiv.org/abs/1608.06596v1>`__, 2016.
+    S.X. Cui, D. Gottesman, and A. Krishna
+    "Diagonal gates in the Clifford hierarchy"
+    `1608.06596v1 <https://arxiv.org/abs/1608.06596v1>`__, 2016.
 
- .. [#pauliframetracking]
+.. [#pauliframetracking]
 
-     C. Chamberland, P. Iyer, and D. Poulin
-     "Fault-tolerant quantum computing in the Pauli or Clifford frame with slow error diagnostics"
-     `1704.06662v2 <https://arxiv.org/pdf/1704.06662>`__, 2017.
+    C. Chamberland, P. Iyer, and D. Poulin
+    "Fault-tolerant quantum computing in the Pauli or Clifford frame with slow error diagnostics"
+    `1704.06662v2 <https://arxiv.org/pdf/1704.06662>`__, 2017.
 
-     
- .. [#climbdiagonal]
+    
+.. [#climbdiagonal]
 
-     J. Hu, Q. Liang, and R. Calderbank
-     "Climbing the Diagonal Clifford Hierarchy"
-     `2110.11923v2  <https://arxiv.org/pdf/2110.11923>`__, 2021.
+    J. Hu, Q. Liang, and R. Calderbank
+    "Climbing the Diagonal Clifford Hierarchy"
+    `2110.11923v2  <https://arxiv.org/pdf/2110.11923>`__, 2021.
 
- .. [#controlledgates]
+.. [#controlledgates]
 
-     J.T. Anderson and M. Weippert
-     "Controlled Gates in the Clifford Hierarchy"
-     `2410.04711v3   <https://arxiv.org/pdf/2410.04711>`__, 2025.
+    J.T. Anderson and M. Weippert
+    "Controlled Gates in the Clifford Hierarchy"
+    `2410.04711v3   <https://arxiv.org/pdf/2410.04711>`__, 2025.
 
- .. [#climb]
+.. [#climb]
 
-     L. Bastioni, S. Glandon, T. Pllaha, M. Stewart, and P. Waitkevich
-     "Climbing the Clifford Hierarchy"
-     `2603.12088v1 <https://arxiv.org/pdf/2603.12088>`__, 2026.
+    L. Bastioni, S. Glandon, T. Pllaha, M. Stewart, and P. Waitkevich
+    "Climbing the Clifford Hierarchy"
+    `2603.12088v1 <https://arxiv.org/pdf/2603.12088>`__, 2026.
 
- .. [#stim]
-    C. Gidney
-    "Stim: a fast stabilizer circuit simulator"
-    `Quantum 5, 497 <https://doi.org/10.22331/q-2021-07-06-497>`__, 2021.
+.. [#stim]
+C. Gidney
+"Stim: a fast stabilizer circuit simulator"
+`Quantum 5, 497 <https://doi.org/10.22331/q-2021-07-06-497>`__, 2021.
 
 
 """
