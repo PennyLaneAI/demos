@@ -1,7 +1,7 @@
 r"""Achieving universality with the Clifford hierarchy
 ==========================
 
-We all know the 'Gottesman-Knill' rule: Clifford circuits are efficient to simulate but cannot provide quantum advantage on their own. We also know we need non-Clifford gates (like the $T$ gate) to reach universality [Cite the paper that says Clifford + non-Clifford suffice]. But why the $T$ gate specifically [Clifford + T]? Why not a random rotation?
+We all know the 'Gottesman-Knill' rule: Clifford circuits are efficient to simulate but cannot provide quantum advantage on their own. We also know we need non-Clifford gates (like the $T$ gate) to reach universality [#anynonclifford]_. But why the `$T$ gate specifically <https://pennylane.ai/compilation/clifford-t-gate-set>`__? Why not a random rotation?
 
 It turns out there is a rigorous structure hidden beneath these gates. The Clifford Hierarchy explains exactly how 'quantum' a gate is, how hard it is to correct, and why specific gates act as the 'magic' fuel for fault-tolerant computation.
 
@@ -11,9 +11,9 @@ In this demo we will dig deeper into the levels of gates that make up the cliffo
 You've probably seen it before
 ---------------------------------
 
-The core idea of the Clifford hierarchy lurks beneath many of the concepts you may know: relationships between different gates can be exploited to simplify computation. For example, Clifford-only quantum circuits are known to be efficiently simulateable classically, as proven by the Gottesman-Knill theorem [wiki]. 
+The core idea of the Clifford hierarchy lurks beneath many of the concepts you may know: relationships between different gates can be exploited to simplify computation. For example, Clifford-only quantum circuits are known to be efficiently simulateable classically, as proven by the `Gottesman-Knill theorem <https://en.wikipedia.org/wiki/Gottesman%E2%80%93Knill_theorem>`__. 
 
-`Stabilizer tableau simulation <https://pennylane.ai/qml/demos/tutorial_clifford_circuit_simulations>`__ is one such method. If $Z$ is a stabilizer corresponding to the state $|0\rangle$, then the application of a Clifford gate such as $H$ transforms the stabilizer to become $HZH^{\dagger} = X$ corresponding to the new state $H|0\rangle = |+\rangle$. For any Clifford gate, $C$, such as the `Hadamard <https://docs.pennylane.ai/en/stable/code/api/pennylane.Hadamard.html>`__ $H$, `Phase <https://docs.pennylane.ai/en/stable/code/api/pennylane.S.html>`__ $S$, or `CNOT <https://docs.pennylane.ai/en/stable/code/api/pennylane.CNOT.html>`__ gate, and for all Pauli gates $\{X,Y,Z\}$, observe that it is always true that the transformation $CPC^{\dagger}$ yields a Pauli gate up to a global phase. 
+`Stabilizer tableau simulation <https://pennylane.ai/qml/demos/tutorial_clifford_circuit_simulations>`__ is one such method. If $Z$ is a stabilizer corresponding to the state $|0\rangle$, then the application of a Clifford gate such as $H$ transforms the stabilizer to become $HZH^{\dagger} = X$ corresponding to the new state $ H |0 \rangle = |+ \rangle$. For any Clifford gate, $C$, such as the `Hadamard <https://docs.pennylane.ai/en/stable/code/api/pennylane.Hadamard.html>`__ $H$, `Phase <https://docs.pennylane.ai/en/stable/code/api/pennylane.S.html>`__ $S$, or `CNOT <https://docs.pennylane.ai/en/stable/code/api/pennylane.CNOT.html>`__ gate, and for all Pauli gates $\{X,Y,Z\}$, observe that it is always true that the transformation $CPC^{\dagger}$ yields a Pauli gate up to a global phase. 
 
 In other words, Clifford gates map Pauli gates to Pauli gates under conjugation. As my colleague wrote in this `demo <https://pennylane.ai/qml/demos/tutorial_clifford_circuit_simulations>`__, one can exploit this fact to efficiently track how stabilizers evolve through a Clifford-only circuit. 
 
@@ -24,7 +24,7 @@ The trouble with universality and quantum error correction
 
 Let us first consider why we might want such a mapping. 
 
-Clifford gates can only achieve $90^{\circ}$ or $180^{\circ}$ rotations of qubits, meaning that arbitrary quantum states cannot be reached with only Clifford gates [quant-ph/9505018]. It turns out that all you need to achieve universal quantum computing are the Clifford gates and at least one non-Clifford gate [Gottesman textbook]! In principle, you could select any non-Clifford gate, but a common gate set is `{Clifford}+T <https://pennylane.ai/compilation/clifford-t-gate-set>`__. The `T gate <https://docs.pennylane.ai/en/stable/code/api/pennylane.T.html>`__ applies a $45^{\circ}$ rotation about the $Z$ axis. On the surface, this doesn’t seem too special. But now you can finally obtain, say, a $1^{\circ}$ rotation about the $Z$ axis to a $1e-3$ error with the sequence: $TBD$. Any state can be approximated, as per the `Solovay-Kitaev theorem <https://en.wikipedia.org/wiki/Solovay%E2%80%93Kitaev_theorem>`__, and the gate sequence can be found with the Solovay-Kitaev algorithm [#SK_alg]_ or gridsynth algorithms [#gridsynth]_. 
+Clifford gates can only achieve $90^{\circ}$ or $180^{\circ}$ rotations of qubits, meaning that arbitrary quantum states cannot be reached with only Clifford gates [#universality]_. It turns out that all you need to achieve universal quantum computing are the Clifford gates and at least one non-Clifford gate [#qecbook]_ ! In principle, you could select any non-Clifford gate, but a common gate set is `{Clifford}+T <https://pennylane.ai/compilation/clifford-t-gate-set>`__. The `T gate <https://docs.pennylane.ai/en/stable/code/api/pennylane.T.html>`__ applies a $45^{\circ}$ rotation about the $Z$ axis. On the surface, this doesn’t seem too special. But now you can finally obtain, say, a $1^{\circ}$ rotation about the $Z$ axis to a $1e-3$ error with the sequence: $TBD$. Any state can be approximated, as per the `Solovay-Kitaev theorem <https://en.wikipedia.org/wiki/Solovay%E2%80%93Kitaev_theorem>`__, and the gate sequence can be found with the Solovay-Kitaev algorithm [#SK_alg]_ or gridsynth algorithms [#gridsynth]_. 
 
 But to achieve fault-tolerant universal quantum computing, quantum states must be encoded with quantum error correction (QEC) codes. Many QEC codes such as the `CSS <https://pennylane.ai/qml/demos/tutorial_stabilizer_codes>`__, colour, surface, and qLDPC [link] codes have transversal (therefore fault-tolerant) implementations of Clifford gates. However, the `Eastin-Knill theorem <https://arxiv.org/pdf/0811.4262>`__ dictates that there can be no quantum error correction code that can implement both Clifford and non-Clifford gates transversally. Therefore, it appears that universal quantum computing is impossible to do with error correction. 
 
@@ -49,7 +49,7 @@ Members of the Clifford group map Pauli gates to Pauli gates under conjugation, 
 
 Formally, $C_2 = \{U: UPU^{\dagger} \in C_1 \forall P \in C_1\}$
 
-Members of this group include the Hadamard gate $H$, phase gate $S = \sqrt{Z}$, and the $\mathrm{CX}$, $\mathrm{CY}$, and $\mathrm{CZ}$ gates. As an example, they conjugate Paulis like so: $HZH^\dagger = X$ and $SXS^\dagger = Y$. Notice that the entire Pauli group lives within the Clifford group (e.g., $XZX^\dagger = -Z$), but the vernacular is that the Clifford group excludes the Pauli group i.e., $C_2 \\ C_1$. 
+Members of this group include the Hadamard gate $H$, phase gate $S = \sqrt{Z}$, and the $\mathrm{CX}$, $\mathrm{CY}$, and $\mathrm{CZ}$ gates. As an example, they conjugate Paulis like so: $HZH^\dagger = X$ and $SXS^\dagger = Y$. Notice that the entire Pauli group lives within the Clifford group (e.g., $XZX^\dagger = -Z$), but the vernacular is that the Clifford group excludes the Pauli group i.e., $C_2 \backslash C_1$. 
 
 
 $C_3$ set
@@ -77,7 +77,7 @@ Achieving universal *and* fault-tolerant quantum computing
 
 With the Clifford hierarchy, we can fault-tolerantly implement a $C_3$ gate with only $C_2$ gates via gate teleportation [#gottesmanchuang]_. Gate teleportation builds on top of `state teleportation <https://pennylane.ai/qml/demos/tutorial_teleportation>`__ à la Alice and Bob. As shown in Figure 1, suppose we apply a gate $U$ on Bob’s half of the Bell state pair on the bottom, and proceed with teleportation as usual. Upon measuring Alice’s two qubits, Bob’s qubit becomes $UP|\psi\rangle$, where $P$ is a uniformly random Pauli $\union ~ I$ error. This can be conjugated to become $UPU^{\dagger}U|\psi\rangle = CU|\psi\rangle$. By the Clifford hierarchy, $C$ must be a Clifford gate. Thus, with the knowledge of $P$ from the Bell state measurement, C^{\dagger} can be applied to yield $U|\psi\rangle$, the desired non-Clifford gate. This procedure, known as magic state injection, generalises to the n-qubit case. 
 
-The challenge of implementing the $C_3$ gate, $U$, fault-tolerantly has been shifted to fault-tolerantly preparing the magic state $(I \otimes U)(|00\rangle+|11\rangle)/\sqrt{2}$. Magic states for $T$ gates are discussed further `here <https://pennylane.ai/qml/demos/tutorial_magic_states>`__ and their fault-tolerant preparation via magic state distillation is discussed `here <https://pennylane.ai/qml/demos/tutorial_magic_state_distillation>`__. The remainder of the circuit consists of Clifford ($C_2$) gates and Bell basis measurements, which have fault-tolerant implementations in common QEC codes. Therefore, we can avoid the Easton-Knill theorem to fault-tolerantly implement both Clifford and non-Clifford gates! 
+The challenge of implementing the $C_3$ gate, $U$, fault-tolerantly has been shifted to fault-tolerantly preparing the magic state $(I \otimes U)(|00\rangle+|11\rangle)/ \sqrt{2} $. Magic states for $T$ gates are discussed further `here <https://pennylane.ai/qml/demos/tutorial_magic_states>`__ and their fault-tolerant preparation via magic state distillation is discussed `here <https://pennylane.ai/qml/demos/tutorial_magic_state_distillation>`__. The remainder of the circuit consists of Clifford ($C_2$) gates and Bell basis measurements, which have fault-tolerant implementations in common QEC codes. Therefore, we can avoid the Easton-Knill theorem to fault-tolerantly implement both Clifford and non-Clifford gates! 
 
 What is more, this teleportation circuit provides a systematic method to teleport any $C_k$ gate, so long as you have access to $C_{k-1}$ gates. If $C_{k-1}$ gates are not fault-tolerantly implemented in your QEC code of choice, then you may use additional teleportation circuits that produce lower level gates until you reach the fault-tolerant gate set. Figure 2 below shows an example of nested teleportation circuits to implement a $C_4$ gate for a QEC code that transversally implements Clifford gates. Higher level gates may be implemented in a recursive manner. 
 
@@ -104,6 +104,24 @@ We have seen how the Clifford hierarchy enables universal and fault-tolerant qua
 #############################################################################
 References
 ---------------------------------
+ .. [#anynonclifford]
+
+     G. Nebe, E.M. Rains, N.J.A. Sloane
+     "The invariants of the Clifford groups"
+     `arXiv:math/0001038v2 <https://arxiv.org/abs/math/0001038v2>`__, 2000.
+
+ .. [#universality]
+
+     D. Deutsch, A. Barenco, and A. Ekert
+     "Universality in Quantum Computation"
+     `arXiv:quant-ph/9505018 <https://arxiv.org/abs/quant-ph/9505018>`__, 1995.
+
+ .. [#qecbook]
+
+     D. Gottesman
+     "Surviving as a Quantum Computer in a Classical World"
+     `Book <https://www.cs.umd.edu/~dgottesm/QECCbook-2024.pdf>`__, 2024.
+     
  .. [#SK_alg]
 
      C.M. Dawnson and M.A. Nielsen
