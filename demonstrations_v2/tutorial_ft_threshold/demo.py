@@ -411,23 +411,30 @@ plt.show()
 # Conclusion
 # ----------
 #
-# In this tutorial, we demonstrated the threshold theorem in practice by
-# simulating both the pseudo-threshold and the asymptotic threshold for the Rotated
-# Surface Code. We saw that below the threshold point, increasing the code distance
-# leads to an exponential suppression of logical errors. This qualitative behavior,
-# curves for different code distances crossing at a single distinct point,
-# is the defining hallmark of the threshold theorem.
+# In this tutorial, we demonstrated the threshold theorem in practice by simulating both
+# the pseudo-threshold and the asymptotic threshold for the rotated surface codes. We saw
+# that below the threshold point $p_{th}$, increasing the code distance $d$ leads to an
+# exponential suppression of logical errors. Visually, this qualitative behavior gets
+# captured by the curves for different code distances crossing at a single distinct point
+# $p_{th}$, which is the hallmark of the threshold theorem. For topological codes like
+# the surface code, this suppression follows the power-law relationship
+# $p_L \propto C \cdot (p / p_{th})^{(d + 1)/2}$, where $C > 0$ is a constant. Since
+# the base is $p / p_{th} < 1$, when operating below the threshold point $p < p_{th}$,
+# the logical error rate $p_L$ drops exponentially as $d$ increases. Therefore,
+# by simply engineering a larger code, we can suppress the logical error rate to
+# arbitrarily low levels.
 #
-# It is essential to recall that our simulation targeted the code-capacity
-# threshold, which is the theoretical upper bound on the threshold and assumes
-# perfect, instantaneous syndrome extraction. In physical hardware, syndromes
-# are extracted using noisy multi-qubit gates and measurements, which pushes the
-# circuit-level threshold lower. In this spirit, while significant engineering
-# challenges remain, particularly in scaling up the number of physical qubits and
-# executing fast, efficient logical operations, the threshold theorem guarantees that
-# we are fighting a winnable battle. By engineering hardware that keeps physical error
-# rates below the threshold, we unlock the path to arbitrarily challenging, reliable
-# quantum computations.
+# Transitioning from the above mathematical scaling to physical hardware depends
+# heavily on how we define and reach that threshold in a laboratory setting. While
+# in our simulations, we targeted the **code-capacity threshold**, which represents
+# a theoretical upper bound by assuming perfect, instantaneous syndrome extraction.
+# In reality, syndromes are extracted using noisy multi-qubit gates and measurements,
+# which would push the circuit-level threshold lower. However, the qualitative picture
+# is still preserved, guaranteeing that we are fighting a winnable battle despite
+# the significant engineering challenges that remain, notably in scaling up the number
+# of physical qubits and executing fast, efficient logical operations. This means that
+# by engineering hardware that keeps physical error rates below the threshold, we can
+# unlock the path to arbitrarily complex, reliable quantum computations.
 #
 # References
 # ----------
