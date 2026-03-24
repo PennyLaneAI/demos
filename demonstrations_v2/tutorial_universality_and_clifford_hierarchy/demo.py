@@ -3,9 +3,9 @@ r"""Achieving universality with the Clifford hierarchy
 
 We all know the 'Gottesman-Knill' rule: Clifford circuits are efficient to simulate but cannot provide quantum advantage on their own. We also know we need non-Clifford gates (like the $T$ gate) to reach universality [#anynonclifford]_. But why the `$T$ gate specifically <https://pennylane.ai/compilation/clifford-t-gate-set>`__? Why not a random rotation?
 
-It turns out there is a rigorous structure hidden beneath these gates. The Clifford Hierarchy explains exactly how 'quantum' a gate is, how hard it is to correct, and why specific gates act as the 'magic' fuel for fault-tolerant computation.
+It turns out there is a rigorous structure hidden beneath these gates. The Clifford hierarchy explains exactly how 'quantum' a gate is, how hard it is to correct, and why specific gates act as the 'magic' fuel for fault-tolerant computation.
 
-In this demo we will dig deeper into the levels of gates that make up the clifford hierarchy (the Pauli group, the Clifford group, non-Clifford sets, and more), see how they are related (and how to implement them with gate teleportation!), and what this all means for FTQC.
+In this demo we will dig deeper into the levels of gates that make up the Clifford hierarchy (the Pauli group, the Clifford group, non-Clifford sets, and more), see how they are related (and how to implement them with gate teleportation!), and what this all means for FTQC.
 
 
 You've probably seen it before
@@ -39,7 +39,7 @@ It turns out that there is a structure connecting infinite classes of gates call
 Pauli group ($C_1$)
 ^^^^^^^^^^^^^^
 
-At the bottom of this hierarchy is the Pauli group, which contains the familiar Pauli gates :math:`C_1 = \{X, Y, Z\}`
+At the bottom of this hierarchy is the Pauli group, which contains the familiar Pauli gates :math:`C_1 = \{X, Y, Z\}`.
 
 
 Clifford group ($C_2$)
@@ -49,7 +49,7 @@ Members of the Clifford group map Pauli gates to Pauli gates under conjugation, 
 
 .. math::
 
-    C_2 = \{U: UPU^{\dagger} \in C_1 \forall P \in C_1\}
+    C_2 = \{U: UPU^{\dagger} \in C_1,~ \forall P \in C_1\}.
     
 
 Members of this group include the Hadamard gate $H$, phase gate :math:`S = \sqrt{Z}`, and the :math:`\mathrm{CX}`, :math:`\mathrm{CY}`, and :math:`\mathrm{CZ}` gates. As an example, they conjugate Paulis like so: :math:`HZH^{\dagger} = X` and :math:`SXS^{\dagger} = Y`. Notice that the entire Pauli group lives within the Clifford group (e.g., :math:`XZX^{\dagger} = -Z`), but the vernacular is that the Clifford group excludes the Pauli group i.e., :math:`C_2 \backslash C_1`. 
@@ -62,7 +62,7 @@ Members of the $C_3$ map $C_2$ gates to $C_1$ gates under conjugation, up to a g
 
 .. math::
 
-    C_3 = \{U: UPU^{\dagger} \in C_2 \forall P \in C_1\}
+    C_3 = \{U: UPU^{\dagger} \in C_2,~ \forall P \in C_1\}.
 
 Examples of members of this group include the :math:`T = \sqrt{S}` gate, Toffoli gate, and :math:`\mathrm{CCX}`, :math:`\mathrm{CCY}`, and :math:`\mathrm{CCZ}` gates. 
 
@@ -74,7 +74,7 @@ More generally, the :math:`k^{\mathrm{th}}` level of the Clifford hierarchy for 
 
 .. math::
     
-    C_k = \{U: UPU^{\dagger} in C_{k-1} \forall P \in C_1 \}.
+    C_k = \{U: UPU^{\dagger} \in C_{k-1},~ \forall P \in C_1 \}.
 
 The Pauli and Clifford groups constitute the foundation of infinitely nested sets of gates. Note that applying a control to the :math:`C^{(k)}X` or :math:`C^{(k)}Z` gate yields a gate in the :math:`k^{\mathrm{th}}` level, as does taking the square root of the :math:`Z^{(1/2)^{k-1}}` rotation gate [#climbdiagonal]_, [#controlledgates]_, [#climb]_. $C_k$ is non-empty because it contains at least :math:`R_Z(m \pi/2^k)` where $m$ is any integer [#qecbook]_. As the result is an uncountably infinite real number, there are infinitely many $C_k$ sets representing increasingly fine $Z$-rotations as $k$ increases. 
 
@@ -82,7 +82,7 @@ The Pauli and Clifford groups constitute the foundation of infinitely nested set
 Achieving universal and fault-tolerant quantum computing
 ---------------------------------
 
-With the Clifford hierarchy, we can fault-tolerantly implement a $C_3$ gate with only $C_2$ gates via gate teleportation [#gottesmanchuang]_. Gate teleportation builds on top of `state teleportation <https://pennylane.ai/qml/demos/tutorial_teleportation>`__ à la Alice and Bob. As shown in Figure 1, suppose we apply a gate $U$ on Bob’s half of the Bell state pair on the bottom, and proceed with teleportation as usual. Upon measuring Alice’s two qubits, Bob’s qubit becomes :math:`UP|\psi\rangle`, where $P$ is a uniformly random Pauli $\cup ~ I$ error. This can be conjugated to become :math:`UPU^{\dagger}U|\psi\rangle = CU|\psi\rangle`. By the Clifford hierarchy, $C$ must be a Clifford gate. Thus, with the knowledge of $P$ from the Bell state measurement, :math:`C^{\dagger}` can be applied to yield :math:`U|\psi\rangle`, the desired non-Clifford gate. This procedure, known as magic state injection, generalises to the n-qubit case. 
+With the Clifford hierarchy, we can fault-tolerantly implement a $C_3$ gate with only $C_2$ gates via gate teleportation [#gottesmanchuang]_. Gate teleportation builds on top of `state teleportation <https://pennylane.ai/qml/demos/tutorial_teleportation>`__ à la Alice and Bob. As shown in Figure 1, suppose we apply a gate $U$ on Bob’s half of the Bell state pair on the bottom, and proceed with teleportation as usual. Upon measuring Alice’s two qubits, Bob’s qubit becomes :math:`UP|\psi\rangle`, where $P$ is a uniformly random Pauli :math:`\cup ~ I` error. This can be conjugated to become :math:`UPU^{\dagger}U|\psi\rangle = CU|\psi\rangle`. By the Clifford hierarchy, $C$ must be a Clifford gate. Thus, with the knowledge of $P$ from the Bell state measurement, :math:`C^{\dagger}` can be applied to yield :math:`U|\psi\rangle`, the desired non-Clifford gate. This procedure, known as magic state injection, generalises to the n-qubit case. 
 
 The challenge of implementing the $C_3$ gate, $U$, fault-tolerantly has been shifted to fault-tolerantly preparing the magic state :math:`(I \otimes U)(|00\rangle+|11\rangle)/\sqrt{2}`. Magic states for $T$ gates are discussed further `here <https://pennylane.ai/qml/demos/tutorial_magic_states>`__ and their fault-tolerant preparation via magic state distillation is discussed `here <https://pennylane.ai/qml/demos/tutorial_magic_state_distillation>`__. The remainder of the circuit consists of Clifford ($C_2$) gates and Bell basis measurements, which have fault-tolerant implementations in common QEC codes. Therefore, we can avoid the Easton-Knill theorem to fault-tolerantly implement both Clifford and non-Clifford gates! 
 
@@ -97,7 +97,7 @@ The one-bit teleportation protocol halves the number of ancilla qubits, measurem
 
 Recursive application of this one-bit teleportation circuit leads to the implementation of semi-Clifford $C_k$ gates, as shown in Figure 4. 
 
-So, what's so special about the :math:`T` gate?
+So, what's so special about the T gate?
 ---------------------------------
 Adding any non-Clifford gate to a set of Clifford gates provides universality. The $T$ gate often appears as the non-Clifford gate of choice, but it’s just a :math:`45^{\circ}` rotation about the $Z$ axis. What’s so special about the T gate? Why not a gate that implements a :math:`1^{\circ}` rotation? 
 
