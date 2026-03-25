@@ -34,7 +34,7 @@ familiar with the fundamentals of QEC, we recommend reading our tutorials on the
 and :doc:`Lattice Surgery <demos/tutorial_lattice_surgery>` that cover them in detail.
 
 .. figure::
-    ../_static/demo_thumbnails/opengraph_demo_thumbnails/pennylane-demo-quantum-lowdensity-parity-check-codes-open-graph.png
+    ../_static/demo_thumbnails/opengraph_demo_thumbnails/pennylane-demo-quantum-lowdensity-paritycheck-open-graph.png
     :align: center
     :width: 50%
     :target: javascript:void(0)
@@ -132,8 +132,8 @@ print(f"Syndrome: {syndrome}")
 # For a CSS code on :math:`n` qubits with :math:`m_1` X-checks and :math:`m_2` Z-checks, each
 # set is naturally represented as a classical parity-check matrix, :math:`H_X` and :math:`H_Z`
 # respectively. Each defines a bipartite Tanner graph where check nodes connect to the qubit
-# nodes they act on. Since both graphs share the same :math:`n` qubit nodes, they combine into
-# a single unified hypergraph. This hypergraph is captured by its incidence matrix, where
+# nodes they act on. Since both graphs share the same :math:`n` qubit nodes, they can be combined
+# into a single unified hypergraph. This hypergraph is captured by its incidence matrix, where
 # :math:`H^{ij}_P = 1` for :math:`P \in \{X, Z\}`, if the :math:`i^{th}` :math:`P`-type
 # check has support on the :math:`j^{th}` qubit, and :math:`0` otherwise. Both incidence
 # matrices pack naturally into a single :math:`(m_1 + m_2) \times 2n` block matrix
@@ -297,7 +297,7 @@ print(f"Physical qubits (n) of the HGP code: {n1*n2 + m1*m2} == {2*dist*(dist-1)
 # physical qubits with distance :math:`d=\min(d_1,d_2,d_1^T,d_2^T)`. This means that
 # the HGP codes achieve a constant encoding rate :math:`R=\Theta(1)`, but their distance
 # grows only as :math:`d=\mathcal{O}(\sqrt{n})`, matching the surface code scaling. Note
-# that, the distance computed here is the classical distance, which is not the same as
+# that the distance computed here is the classical distance, which is not the same as
 # the quantum distance. The latter is more complex to compute as it requires finding
 # the minimum weight of an error that goes undetected by the checks but is not
 # a stabilizer. For HGP codes specifically, the classical distance serves as an
@@ -391,7 +391,7 @@ plt.show()
 # like detectives passing *messages* back and forth. A variable node sends a confidence level
 # message, *"I am 84% sure that I have an error"*. The check node looks at the notes from all
 # connected qubits, applies the parity rule, and replies *"Based on the group's evidence, adjust
-# your confidence to 96%"*. Mathematically, these notes are Log-Likelihood Ratios (LLRs),
+# your confidence to 96%"*. Mathematically, these messages are Log-Likelihood Ratios (LLRs),
 # which are updated iteratively until all parity rules are satisfied (consensus) or a fixed
 # number of iterations is reached, making the whole process executable in polynomial time.
 #
@@ -538,7 +538,7 @@ else:
 ######################################################################
 # In particular, even though the decoder did not perfectly undo the error,
 # the logical state of the qubit is perfectly preserved because any residual
-# that is a stabilizer acts as identity on the codespace.
+# that is a stabilizer acts as the identity on the codespace.
 #
 # Logical Gates for qLDPC Codes
 # ------------------------------
@@ -630,7 +630,7 @@ print("Do Lx and Lz anticommute? ", np.allclose(lx @ lz.T, np.eye(lx.shape[0])))
 # for a given code by testing if (i) it preserves its *codespace*, i.e., the subspace
 # stabilized by all stabilizer generators, and (ii) maps logical operators to valid
 # logical operators. For example, we can check whether the :class:`~.pennylane.SWAP` gate is
-# transversal for the previously constructed Toric code by first verifying the condition (i).
+# transversal for the previously constructed Toric code by first verifying condition (i).
 #
 
 from itertools import product
