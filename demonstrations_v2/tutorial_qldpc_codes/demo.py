@@ -13,8 +13,9 @@ to have the following desirable properties:
 
 1. A high encoding rate :math:`R = k / n`.
 2. Local and low-weight parity checks (= measurements for error detection).
-3. An over-complete universal gate set with as many gates that can be applied transversally, i.e.,
-   applied independently to each physical qubit without coupling qubits within the same code block.
+3. As many gates from the universal gate set as possible should be implementable transversally,
+   i.e., applied independently to each physical qubit without coupling qubits within the same
+   code block.
 4. Linear time classical decoding and corresponding error correction.
 
 Unfortunately, these requirements are not all mutually compatible. For example, widely used
@@ -24,16 +25,16 @@ have high encoding rates.
 It still remains unclear which combination of these options would lead to the best long-term
 solution. But as solving real-world problems requires scaling up to thousands of logical qubits,
 moving beyond strict nearest-neighbor constraints becomes crucial. Quantum low-density parity-check
-(qLDPC) codes are particularly well-suited for this, as they can leverage high-connectivity between
-qubits to drastically reduce qubit overheads, making them preferred codes of choice for the
-hardware platforms that offer such qubit connectivity. In this demo, we will cover
+(qLDPC) codes are particularly well-suited for this, as they can leverage high-connectivity
+between qubits to drastically reduce qubit overheads, making them the codes of choice for
+the hardware platforms that offer such qubit connectivity. In this demo, we will cover
 the basics of qLDPC codes, including their construction and decoding. For the readers who are not
 familiar with the fundamentals of QEC, we recommend reading our tutorials on the :doc:`Surface Code
 <demos/tutorial_game_of_surface_codes>`, :doc:`Stabilizer Codes <demos/tutorial_stabilizer_codes>`,
 and :doc:`Lattice Surgery <demos/tutorial_lattice_surgery>` that cover them in detail.
 
 .. figure::
-    ../_static/demo_thumbnails/opengraph_demo_thumbnails/pennylane-demo-stabilizer-codes-open-graph.png
+    ../_static/demo_thumbnails/opengraph_demo_thumbnails/pennylane-demo-quantum-lowdensity-parity-check-codes-open-graph.png
     :align: center
     :width: 50%
     :target: javascript:void(0)
@@ -52,7 +53,7 @@ A classical LDPC code :math:`C[n,k,d]` protects :math:`k` logical bits by encodi
 :math:`n` physical bits. Here :math:`d` is the minimum distance of the code, which dictates the
 number of errors the code can correct. The encoding rules are defined by an :math:`m\times n`
 parity-check matrix (:math:`H`), where :math:`k = n - m` [#qldpc1]_, where :math:`m` is the
-the number of parity checks. The "low-density" part of their name comes from this matrix being
+number of parity checks. The "low-density" part of their name comes from this matrix being
 overwhelmingly sparse, i.e., filled mostly with zeros, and more specifically, the column/row
 weights (number of 1s in each column/row) are strictly bounded constants independent of :math:`n`.
 
@@ -108,8 +109,8 @@ print(f"Syndrome: {syndrome}")
 # to a handful of data nodes (and vice versa), these codes achieve linear-time decoding complexity.
 # This efficiency is possible because errors can be decoded using local message-passing algorithms
 # sharing probabilistic information along the edges of the Tanner graph until all parity constraints
-# are satisfied. This will come in handy when we learn about decoding, but before that, let's return
-# to first constructing qLDPC codes.
+# are satisfied. This will come in handy when we learn about decoding, but before that, let's first
+# return to constructing qLDPC codes.
 #
 # Calderbank-Shor-Steane (CSS) construction
 # ------------------------------------------
@@ -171,8 +172,8 @@ print(f"Does H_Z * H_X^T = 0? {np.allclose((hz @ hx.T) % 2, 0)}\n")
 
 ######################################################################
 # Finally, we can also confirm that our constructed matrix encodes exactly one logical qubit
-# by computing the code dimension (:math:`k`) by subtracting the linearly independent stabilizer
-# constraints from the total number of physical qubits.
+# by computing the code dimension (:math:`k`), obtained by subtracting the linearly independent
+# stabilizer constraints from the total number of physical qubits.
 #
 
 from pennylane.math import binary_matrix_rank
@@ -253,7 +254,7 @@ plt.show()
 
 ######################################################################
 # This represents the non-local connectivity, which is the defining characteristic of
-# qLDPC code. Next, we determine the code dimension :math:`k`, that follows directly
+# qLDPC codes. Next, we determine the code dimension :math:`k`, that follows directly
 # from the ranks of the seed matrices:
 #
 
@@ -292,8 +293,8 @@ print(f"Physical qubits (n) of the HGP code: {n1*n2 + m1*m2} == {2*dist*(dist-1)
 
 ######################################################################
 # As shown above, the resulting quantum code :math:`Q[[n,k,d]]`, encodes
-# :math:`n = n_1n_2 + m_1m_2` physical qubits into :math:`k = k_1k_2 + k_1^T k_2^T`
-# logical qubits with distance :math:`d=\min(d_1,d_2,d_1^T,d_2^T)`. This means that
+# :math:`k = k_1k_2 + k_1^T k_2^T` logical qubits into :math:`n = n_1n_2 + m_1m_2`
+# physical qubits with distance :math:`d=\min(d_1,d_2,d_1^T,d_2^T)`. This means that
 # the HGP codes achieve a constant encoding rate :math:`R=\Theta(1)`, but their distance
 # grows only as :math:`d=\mathcal{O}(\sqrt{n})`, matching the surface code scaling. Note
 # that, the distance computed here is the classical distance, which is not the same as
@@ -308,7 +309,7 @@ print(f"Physical qubits (n) of the HGP code: {n1*n2 + m1*m2} == {2*dist*(dist-1)
 #
 # To build truly scalable quantum computation devices, we need to at least achieve a linear
 # distance scaling, i.e., :math:`d=\Theta(n)`. In recent years, there has been some progress
-# in towards this goal, primarily through a series of breakthroughs, some of which are:
+# towards this goal, primarily through a series of breakthroughs, some of which are:
 #
 # 1. **Lifted Product (LP) Codes:** To overcome the :math:`\mathcal{O}(\sqrt{n})` distance barrier
 #    of standard HGP codes, LP codes replace the binary scalar entries of a classical seed matrix
@@ -328,8 +329,8 @@ print(f"Physical qubits (n) of the HGP code: {n1*n2 + m1*m2} == {2*dist*(dist-1)
 #    :math:`d = \Theta(n)`, meeting the quantum Gilbert-Varshamov bound.
 #
 # 3. **Bivariate Bicycle (BB) Codes:** These codes bridge the gap between the abstract algebra of
-#    expander graphs that require highly non-local hardware wiring, and the physical reality
-#    of quantum processors [#BBCodes]_.  Built using pairs of low-degree polynomials :math:`A(x,y)`
+#    expander graphs that require highly non-local hardware wiring, and the physical reality of
+#    quantum processors [#BBCodes]_. They are built using pairs of low-degree polynomials :math:`A(x,y)`
 #    and :math:`B(x,y)` over the ring :math:`\mathbb{F}_2[x,y]/(x^\ell - 1, y^m - 1)`, where
 #    :math:`x` and :math:`y` generate cyclic shifts along the two axes of an :math:`\ell \times m`
 #    torus. This ensures that physical qubits can be laid out in a quasi-2D architecture with
@@ -371,7 +372,7 @@ for dist in (distances := range(2, 20)):
 
 plt.figure(figsize=(6, 3))
 plt.plot(distances, ns_hgp, '-o', label="HGP Code")
-plt.plot(distances, ns_tan, '-*',label="Quantum Tanner Code")
+plt.plot(distances, ns_tan, '-*', label="Quantum Tanner Code")
 plt.grid(True, which="both", ls="--", c="lightgray", alpha=0.7)
 plt.ylabel("# Physical qubits")
 plt.xlabel("Rep. code distance")
@@ -452,7 +453,7 @@ class BPOSDDecoder:
         r"""Check-to-variable update via the :math:`\tanh` product rule.
 
         .. math::
-            M_{cv}[i,j] = (-1)^{s_i} \cdot 2 \arctanh{\prod_{j'\neqj}\tanh(M_{vc}[i,j']/2)}
+            M_{cv}[i,j] = (-1)^{s_i}\cdot 2 \arctanh{\prod_{j'\neq j}\tanh(M_{vc}[i,j']/2)}
         """
         parity_matrix, delta = self.H, 1e-15
 
@@ -553,14 +554,14 @@ else:
 # For general CSS codes, including qLDPC code families, we can systematically construct a
 # canonical basis of :math:`k` logical operator pairs :math:`\{(L_X^{(i)}, L_Z^{(i)})\}_{i=1}^{k}`
 # using linear algebra over :math:`\mathbb{F}_2`. The algorithm requires two sequential RREF
-# passes, first on :math:`H_X`, then on the remaining free columns of :math:`H_Z` to identify the
-# the logical sector. By doing this we natively guarantee the canonical anticommutation condition
+# passes, first on :math:`H_X`, then on the remaining free columns of :math:`H_Z` to identify
+# the logical sector. By doing this, we natively guarantee the canonical anticommutation condition
 # :math:`L_X^{(i)} \cdot L_Z^{(j)} = \delta_{ij} \pmod{2}`, where :math:`\delta_{ij}` is the
 # Kronecker delta. For example, below we construct logical operators for a simple Toric code.
 #
 
 def compute_logical_ops(hx: np.ndarray, hz: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
-    """Compute the canonical logical operators for a stabilizer codes."""
+    """Compute the canonical logical operators for stabilizer codes."""
     # Reduced row echelon forms to get X- and Z-stabilizer pivot columns
     n = hx.shape[1]
     hx_rref = binary_finite_reduced_row_echelon(hx)
@@ -592,12 +593,13 @@ print(f"Lx: {lx}")
 print(f"Lz: {lz}")
 
 ######################################################################
-# We can now verify the obtained logical operators by checking the following(anti)commutation relations:
+# We can now verify the obtained logical operators by checking the following
+# anticommutation relations:
 #
 
 print("\nDoes Lx commute with all Z-stabilizers? ", np.allclose((hz @ lx.T) % 2, 0))
 print("Does Lz commute with all X-stabilizers? ", np.allclose((hx @ lz.T) % 2, 0))
-print("Does Lx and Lz anticommute? ", np.allclose(lx @ lz.T, np.eye(lx.shape[0])))
+print("Do Lx and Lz anticommute? ", np.allclose(lx @ lz.T, np.eye(lx.shape[0])))
 
 ######################################################################
 # Transversal Gates for qLDPC Codes
@@ -608,7 +610,7 @@ print("Does Lx and Lz anticommute? ", np.allclose(lx @ lz.T, np.eye(lx.shape[0])
 # code block. For a single logical qubit, this means independent single-qubit gates
 # applied in parallel across all physical qubits. Because each physical qubit
 # is acted on by at most one gate, errors cannot spread within the block, making them
-# inherently fault-tolerant. For example a transversal :math:`T^\dagger` gate in the
+# inherently fault-tolerant. For example, a transversal :math:`T^\dagger` gate in the
 # :math:`[[15, 1, 3]]` quantum `Reed-Muller code <https://errorcorrectionzoo.org/c/stab_15_1_3>`_
 # corresponds to applying the :class:`~.pennylane.T` gate on all physical qubits, i.e.,
 # :math:`T^\dagger_L = T^{\otimes 15}`.
@@ -732,7 +734,7 @@ print(f"\nResult: The gate operation is transversal: {preserved and consistent}"
 # have achieved linear distance scaling, their physical construction remains quite involved in
 # practice. Furthermore, other promising candidates for
 # low-overhead quantum memory, like bivariate bicycle codes, still exhibit asymptotic badness,
-# as their distance scales sub-linearly with the number of physical qubits increases. Beyond these
+# as their distance scales sub-linearly as the number of physical qubits increases. Beyond these
 # structural challenges, more work is needed to design transversal gates that allow for complex
 # logical operations. We also need to improve general-purpose BP-OSD decoders so they can better
 # exploit the specific structure of the code for real-time error correction.

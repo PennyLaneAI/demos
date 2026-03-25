@@ -5,8 +5,8 @@
     }],
     "executable_stable": true,
     "executable_latest": true,
-    "dateOfPublication": "2026-03-18T00:00:00+00:00",
-    "dateOfLastModification": "2026-03-18T00:00:00+00:00",
+    "dateOfPublication": "2026-03-26T00:00:00+00:00",
+    "dateOfLastModification": "2026-03-26T00:00:00+00:00",
     "categories": [
         "Algorithms",
         "Quantum Computing",
@@ -15,14 +15,14 @@
     "tags": [],
     "previewImages": [{
             "type": "thumbnail",
-            "uri": "/_static/demo_thumbnails/regular_demo_thumbnails/pennylane-demo-stabilizer-codes-thumbnail.png"
+            "uri": "/_static/demo_thumbnails/regular_demo_thumbnails/pennylane-demo-quantum-lowdensity-parity-check-codes-thumbnail.png"
         },
         {
             "type": "large_thumbnail",
-            "uri": "/_static/demo_thumbnails/large_demo_thumbnails/pennylane-demo-stabilizer-codes-large-thumbnail.png"
+            "uri": "/_static/demo_thumbnails/large_demo_thumbnails/pennylane-demo-quantum-lowdensity-parity-check-codes-large-thumbnail.png"
         }
     ],
-    "seoDescription": "Learn how to use quantum low-density parity-check (QLDPC) codes for quantum error correction.",
+    "seoDescription": "Learn how to use quantum low-density parity-check (qLDPC) codes for quantum error correction.",
     "doi": "",
     "references": [{
             "id": "qldpc1",
