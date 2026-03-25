@@ -88,10 +88,10 @@ With the Clifford hierarchy, we can fault-tolerantly implement a $C_3$ gate with
 
 .. figure:: ../_static/demonstration_assets/universality_and_clifford_hierarchy/Figure-1-universal-gate-teleportation.png
   :alt: Universal gate teleportation circuit.
-  :width: 70%
+  :width: 95%
   :align: center
 
-  Figure 1: *A universal gate teleportation circuit [#gottesmanchuang]_ applies a gate :math:`U\in C_3` to :math:`|\psi\rangle` using only gates in $C_2$ and measurements, given a magic state left of the dashed line.*
+  Figure 1: *A universal gate teleportation circuit applies a third level gate to the state using only gates in the second level and measurements, given a magic state (left of the dashed line).*
 
 The challenge of implementing the $C_3$ gate, $U$, fault-tolerantly has been shifted to fault-tolerantly preparing the *magic state* :math:`(I \otimes U)(|00\rangle+|11\rangle)/\sqrt{2}`. Magic states for $T$ gates are discussed further `here <https://pennylane.ai/qml/demos/tutorial_magic_states>`__ and their fault-tolerant preparation via magic state distillation is discussed `here <https://pennylane.ai/qml/demos/tutorial_magic_state_distillation>`__. The remainder of the circuit consists of Clifford ($C_2$) gates and Bell basis measurements, which have fault-tolerant implementations in common QEC codes. Therefore, we can avoid the Easton-Knill theorem to fault-tolerantly implement both Clifford and non-Clifford gates! 
 
@@ -100,10 +100,10 @@ What is more, this teleportation circuit provides a systematic method to telepor
 
 .. figure:: ../_static/demonstration_assets/universality_and_clifford_hierarchy/Figure-2-universal-teleportation-c4-gate.png
   :alt: Recursive universal teleportation circuit to apply a C_4 gate.
-  :width: 70%
+  :width: 95%
   :align: center
 
-  Figure 2: *A recursive universal gate teleportation circuit that applies a gate :math:`C_4\in C_4` to :math:`|\psi\rangle` using another teleportation gate to implement :math:`C_3^{\dagger} = (C_4 P_4 C_4^{\dagger})^{\dagger} \in C_3` that itself uses only gates in $C_2$ and measurements.*
+  Figure 2: *A recursive universal gate teleportation circuit that applies a fourth level gate using a nested teleportation gate that implements a third level gate using only gates in the second level and measurements.*
 
 Teleportation is more efficient with semi-Clifford gates
 ---------------------------------
@@ -114,10 +114,10 @@ Teleportation resource cost can be reduced if the gate is semi-Clifford i.e., it
 
 .. figure:: ../_static/demonstration_assets/universality_and_clifford_hierarchy/Figure-3-one-bit-teleportation.png
   :alt: One-bit teleportation circuits.
-  :width: 70%
+  :width: 95%
   :align: center
 
-  Figure 3: *One-bit teleportation circuits [#onebit]_. (a) Z-teleportation, (b) X-teleportation, and (c) $T$ gate teleportation.*
+  Figure 3: *One-bit teleportation circuits. (a) Z-teleportation, (b) X-teleportation, and (c) $T$ gate teleportation.*
 
 
 Here, conjugating the $U$ gate across the :math:`D = \{Z,X\}` Pauli error creates the term :math:`UDU^{\dagger}`, which must be Clifford if $U$ is in $C_3$ and $D$ is Pauli as per the Clifford hierarchy. Therefore, if the magic state is available, then a $T$ gate can be implemented fault-tolerantly. 
@@ -129,10 +129,10 @@ Recursive application of this one-bit teleportation circuit leads to the impleme
 
 .. figure:: ../_static/demonstration_assets/universality_and_clifford_hierarchy/Figure-4-one-bit-teleportation-c4-gate.png
   :alt: Recursive one-bit X-teleportation circuit for applying a C_4 gate.
-  :width: 70%
+  :width: 95%
   :align: center
 
-  Figure 4: *X-teleportation for a $C_4$ gate using a nested X-teleportation circuit for a $C_3$ gate*
+  Figure 4: *Recursive X-teleportation of a fourth level level gate using a nested X-teleportation circuit that implements a third level gate.*
 
 
 So, what's so special about the T gate?
