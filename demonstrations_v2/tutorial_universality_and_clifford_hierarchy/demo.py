@@ -86,12 +86,12 @@ Achieving universal and fault-tolerant quantum computing
 
 With the Clifford hierarchy, we can fault-tolerantly implement a $C_3$ gate with only $C_2$ gates via gate teleportation [#gottesmanchuang]_. Gate teleportation builds on top of `state teleportation <https://pennylane.ai/qml/demos/tutorial_teleportation>`__ à la Alice and Bob. As shown in Figure 1, suppose we apply a gate :math:`U\in C_3` on Bob’s half of the Bell state pair on the bottom, and proceed with :math:`|\psi\rangle` teleportation as usual. Upon measuring the top two qubits, the bottom qubit becomes :math:`UP|\psi\rangle`, where $P$ is a uniformly random Pauli :math:`\cup ~ I` error. This can be conjugated to become :math:`UPU^{\dagger}U|\psi\rangle = CU|\psi\rangle`. By the Clifford hierarchy, $C$ must be a Clifford gate. As discussed above, many QEC codes can implement Clifford gates fault-tolerantly. Thus, with the knowledge of $P$ from the Bell state measurement, :math:`C^{\dagger}` can be applied to produce :math:`U|\psi\rangle`, the desired non-Clifford gate. This procedure, known as magic state injection, generalises to the n-qubit case. 
 
-.. figure:: ../_static/demonstration_assets/universality_and_clifford_hierarchy/figure-1-universal-gate-teleportation.png
+.. figure:: ../_static/demonstration_assets/universality_and_clifford_hierarchy/Figure-1-universal-gate-teleportation.png
   :alt: Universal gate teleportation circuit.
   :width: 70%
   :align: center
 
-  Figure 1: *A universal gate teleportation circuit [#gottesmanchuang]_ applies a gate :math:`U\in C_3` to :math:`|\psi\rangle` using only gates in $C_2$ and measurements, given a magic state left of the dashed line. *
+  Figure 1: *A universal gate teleportation circuit [#gottesmanchuang]_ applies a gate :math:`U\in C_3` to :math:`|\psi\rangle` using only gates in $C_2$ and measurements, given a magic state left of the dashed line.*
 
 The challenge of implementing the $C_3$ gate, $U$, fault-tolerantly has been shifted to fault-tolerantly preparing the *magic state* :math:`(I \otimes U)(|00\rangle+|11\rangle)/\sqrt{2}`. Magic states for $T$ gates are discussed further `here <https://pennylane.ai/qml/demos/tutorial_magic_states>`__ and their fault-tolerant preparation via magic state distillation is discussed `here <https://pennylane.ai/qml/demos/tutorial_magic_state_distillation>`__. The remainder of the circuit consists of Clifford ($C_2$) gates and Bell basis measurements, which have fault-tolerant implementations in common QEC codes. Therefore, we can avoid the Easton-Knill theorem to fault-tolerantly implement both Clifford and non-Clifford gates! 
 
@@ -125,6 +125,7 @@ Here, conjugating the $U$ gate across the :math:`D = \{Z,X\}` Pauli error create
 The one-bit teleportation protocol halves the number of ancilla qubits, measurements, and gates compared to the general two-bit teleportation protocol above. Note that the diagonal $V$ in $U = G_b V G_a$ need not commute with the CNOT gates because you are always free to select $X$-teleportation. All diagonal gates commute with the control part of a CNOT gate. For this reason, this circuit can implement a controlled-Hadamard gate, which does not commute with CNOT [#onebit]_. 
 
 Recursive application of this one-bit teleportation circuit leads to the implementation of semi-Clifford $C_k$ gates. Figure 4 illustrates an example of X-teleportation of a semi-Clifford $C_4$ gate. 
+
 
 .. figure:: ../_static/demonstration_assets/universality_and_clifford_hierarchy/Figure-4-one-bit-teleportation-c4-gate.png
   :alt: Recursive one-bit X-teleportation circuit for applying a C_4 gate.
