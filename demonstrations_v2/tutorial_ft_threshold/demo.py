@@ -67,7 +67,7 @@ way of large-scale quantum computers. At least, theoretically!
 To test the threshold theorem in practice, we use one of the initial candidates for
 quantum error correction, the *surface code*, which is a topological code where qubits
 are arranged on a 2D grid, with stabilizer measurements locally checking for
-parity errors among nearest neighbors. If you had like to deepen your understanding
+parity errors among nearest neighbors. If you would like to deepen your understanding
 of surface codes before proceeding, our `Introducing Lattice Surgery <tutorial_lattice_surgery>`_
 and `A Game of Surface Codes <tutorial_game_of_surface_codes>`_ demos are a great starting point.
 Here, we specifically look at its *rotated* variant, which requires only :math:`d^2`
@@ -259,7 +259,7 @@ def syndrome_decoding(stabilizers, syndrome_results, num_wires, noise_param):
 # :math:`X`-stabilizer syndromes from the :math:`X`/:math:`Z`-stabilizer measurements,
 # which are then decoded using the MWPM decoder defined above [#gottesman]_. We additionally
 # measure the logical operators to obtain the values of logical observables that are used
-# tocompute the logical errors as a final step. More specifically, the ``ler_eval`` function
+# to compute the logical errors as a final step. More specifically, the ``ler_eval`` function
 # below does this by computing the residual :math:`\vec{p} = \vec{e} \oplus \vec{c} \cdot \vec{l}`.
 # It reconstructs the :math:`\vec{e} \cdot \vec{l}` from the circuit output and uses the
 # corrected syndromes from the function above to compute the LER as
@@ -396,7 +396,7 @@ plt.show()
 
 ######################################################################
 # The curves for different distances cross at a single point, the *threshold*.
-# To the right of the crossing (high noise), larger codes perform worse, i.e.,
+# To the right of the crossing (high noise), larger codes perform worse;
 # they have more qubits for errors to strike, but cannot correct them all.
 # To the left (low noise), larger codes perform better, and the improvement
 # is exponential with distance.
@@ -412,23 +412,23 @@ plt.show()
 # ----------
 #
 # In this tutorial, we demonstrated the threshold theorem in practice by simulating both
-# the pseudo-threshold and the asymptotic threshold for the rotated surface codes. We saw
-# that below the threshold point $p_{th}$, increasing the code distance $d$ leads to an
-# exponential suppression of logical errors. Visually, this qualitative behavior gets
-# captured by the curves for different code distances crossing at a single distinct point
-# $p_{th}$, which is the hallmark of the threshold theorem. For topological codes like
-# the surface code, this suppression follows the power-law relationship
-# $p_L \propto C \cdot (p / p_{th})^{(d + 1)/2}$, where $C > 0$ is a constant. Since
-# the base is $p / p_{th} < 1$, when operating below the threshold point $p < p_{th}$,
-# the logical error rate $p_L$ drops exponentially as $d$ increases. Therefore,
-# by simply engineering a larger code, we can suppress the logical error rate to
-# arbitrarily low levels.
+# the pseudo-threshold and the asymptotic threshold for the rotated surface code. We saw
+# that below the threshold point :math:`p_{th}`, increasing the code distance :math:`d`
+# leads to an exponential suppression of logical errors. Visually, this qualitative behavior
+# gets captured by the curves for different code distances crossing at a single distinct
+# point $p_{th}$, which is the hallmark of the threshold theorem. For topological codes
+# like the surface code, this suppression follows the power-law relationship
+# :math:`p_L \propto C \cdot (p / p_{th})^{(d + 1)/2}`, where :math:`C > 0` is a constant.
+# Since the base is :math:`p / p_{th} < 1`, when operating below the threshold point
+# :math:`p < p_{th}`, the logical error rate :math:`p_L` drops exponentially as :math:`d`
+# increases. Therefore, by simply engineering a larger code, we can suppress the logical
+# error rate to arbitrarily low levels.
 #
 # Transitioning from the above mathematical scaling to physical hardware depends
 # heavily on how we define and reach that threshold in a laboratory setting. While
 # in our simulations, we targeted the **code-capacity threshold**, which represents
-# a theoretical upper bound by assuming perfect, instantaneous syndrome extraction.
-# In reality, syndromes are extracted using noisy multi-qubit gates and measurements,
+# a theoretical upper bound by assuming perfect, instantaneous syndrome extraction,
+# in reality, syndromes are extracted using noisy multi-qubit gates and measurements,
 # which would push the circuit-level threshold lower. However, the qualitative picture
 # is still preserved, guaranteeing that we are fighting a winnable battle despite
 # the significant engineering challenges that remain, notably in scaling up the number
