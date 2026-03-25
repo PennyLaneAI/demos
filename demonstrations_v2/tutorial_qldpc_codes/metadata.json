@@ -19,7 +19,7 @@
         },
         {
             "type": "large_thumbnail",
-            "uri": "/_static/demo_thumbnails/large_demo_thumbnails/pennylane-demo-quantum-lowdensity-parity-check-codes-large-thumbnail.png"
+            "uri": "/_static/demo_thumbnails/large_demo_thumbnails/pennylane-demo-quantum-lowdensity-paritycheck-large-thumbnail.png"
         }
     ],
     "seoDescription": "Learn how to use quantum low-density parity-check (qLDPC) codes for quantum error correction.",
