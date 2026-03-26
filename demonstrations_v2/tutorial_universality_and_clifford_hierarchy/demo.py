@@ -220,7 +220,7 @@ References
 
     J.T. Anderson and M. Weippert
     "Controlled Gates in the Clifford Hierarchy"
-    `2410.04711v3   <https://arxiv.org/pdf/2410.04711>`__, 2025.
+    `2410.04711 <https://arxiv.org/abs/2410.04711>`__, 2025.
 
 .. [#climb]
 
