@@ -201,7 +201,7 @@ References
 
     S.X. Cui, D. Gottesman, and A. Krishna
     "Diagonal gates in the Clifford hierarchy"
-    `1608.06596v1 <https://arxiv.org/abs/1608.06596v1>`__, 2016.
+    `1608.06596 <https://arxiv.org/abs/1608.06596>`__, 2016.
 
 .. [#pauliframetracking]
 
