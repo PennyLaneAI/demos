@@ -153,7 +153,7 @@ References
 
     G. Nebe, E.M. Rains, N.J.A. Sloane
     "The invariants of the Clifford groups"
-    `arXiv:math/0001038v2 <https://arxiv.org/abs/math/0001038v2>`__, 2000.
+    `arXiv:math/0001038 <https://arxiv.org/abs/math/0001038>`__, 2000.
 
 .. [#universality]
 
