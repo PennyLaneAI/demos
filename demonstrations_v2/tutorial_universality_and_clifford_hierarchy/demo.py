@@ -189,7 +189,7 @@ References
 
     X. Zhou, D.W. Leung, and I.L. Chuang
     "Methodology for quantum logic gate construction"
-    `quant-ph/0002039v2 <https://arxiv.org/abs/quant-ph/0002039v2>`__, 2000.
+    `quant-ph/0002039 <https://arxiv.org/abs/quant-ph/0002039>`__, 2000.
 
 .. [#semiclifford]
 
