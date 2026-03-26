@@ -171,7 +171,7 @@ References
 
     C.M. Dawnson and M.A. Nielsen
     "The Solovay-Kitaev Algorithm"
-    `arXiv:quant-ph/0505030 <https://arxiv.org/pdf/quant-ph/0505030>`__, 2005.
+    `arXiv:quant-ph/0505030 <https://arxiv.org/abs/quant-ph/0505030>`__, 2005.
 
 .. [#gridsynth]
 
