@@ -177,7 +177,7 @@ References
 
     N.J. Ross and P. Selinger
     "Optimal ancilla-free Clifford+T approximation of z-rotations"
-    `arXiv:1403.2975 <https://arxiv.org/pdf/1403.2975>`__, 2016.
+    `arXiv:1403.2975 <https://arxiv.org/abs/1403.2975>`__, 2016.
 
 .. [#gottesmanchuang]
 
