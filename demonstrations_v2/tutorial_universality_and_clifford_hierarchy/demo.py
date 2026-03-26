@@ -183,7 +183,7 @@ References
 
     D. Gottesman and I.L. Chuang
     "Quantum teleportation is a universal computational primitive"
-    `arXiv:quant-ph/9908010v1 <https://arxiv.org/abs/quant-ph/9908010v1>`__, 1999.
+    `arXiv:quant-ph/9908010 <https://arxiv.org/abs/quant-ph/9908010>`__, 1999.
 
 .. [#onebit]
 
