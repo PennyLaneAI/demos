@@ -226,7 +226,7 @@ References
 
     L. Bastioni, S. Glandon, T. Pllaha, M. Stewart, and P. Waitkevich
     "Climbing the Clifford Hierarchy"
-    `2603.12088v1 <https://arxiv.org/pdf/2603.12088>`__, 2026.
+    `2603.12088 <https://arxiv.org/abs/2603.12088>`__, 2026.
 
 .. [#stim]
     C. Gidney
