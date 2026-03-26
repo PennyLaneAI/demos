@@ -195,7 +195,7 @@ References
 
     B. Zeng, X. Chen, and I.L. Chuang
     "Semi-Clifford operations, structure of :math:`C_k` hierarchy, and gate complexity for fault-tolerant quantum computation"
-    `0712.2084v2 <https://arxiv.org/abs/0712.2084v2>`__, 2007.
+    `0712.2084 <https://arxiv.org/abs/0712.2084>`__, 2008.
 
 .. [#diagonal]
 
