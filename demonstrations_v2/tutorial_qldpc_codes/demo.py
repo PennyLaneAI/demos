@@ -627,7 +627,7 @@ print("Do Lx and Lz anticommute? ", np.allclose(lx @ lz.T, np.eye(lx.shape[0])))
 # :math:`T^\dagger_L = T^{\otimes 15}`.
 #
 # However, the `Eastin-Knill theorem <https://en.wikipedia.org/wiki/Eastin%E2%80%93Knill_theorem>`_
-# restricts the set of the logical unitary product operators that can be applied transversally for
+# restricts the set of logical unitary product operators that can be applied transversally for
 # any nontrivial local-error-detecting quantum code to be non-universal. For most stabilizer codes,
 # the transversal gate set is limited to the Clifford group. The non-Clifford gates such as
 # :class:`~.pennylane.T` must instead be realized indirectly, for example via `magic state injection
@@ -819,5 +819,5 @@ print(f"\nResult: The gate operation is transversal: {preserved and consistent}"
 #
 #     B. Ide, M. G. Gowda, P. J. Nadkarni, G. Dauphinais,
 #     "Fault-tolerant logical measurements via homological measurement",
-#     `Phys. Rev. X 15, 021088 <https://arxiv.org/abs/2410.02753>`__, 2024.
+#     `Phys. Rev. X 15, 021088 <https://journals.aps.org/prx/abstract/10.1103/PhysRevX.15.021088>`__, 2024.
 #
