@@ -8,8 +8,9 @@ Thus, for a fault-tolerant quantum computer to exist and be capable of running
 indefinitely with minimal permissible errors, we need quantum error correction (QEC).
 
 For this purpose, QEC codes encode :math:`k` logical qubits into :math:`n` physical qubits.
-To allow for fault-tolerant computation with these :math:`k` logical qubits, the QEC codes need
-to have the following desirable properties:
+To allow for fault-tolerant computation with these :math:`k` logical qubits, the QEC codes
+must serve as both reliable memory and a substrate for logic. This motivates the need for
+the following four properties:
 
 1. A high encoding rate :math:`R = k / n`.
 2. Local and low-weight parity checks (= measurements for error detection).
@@ -20,18 +21,21 @@ to have the following desirable properties:
 
 Unfortunately, these requirements are not all mutually compatible. For example, widely used
 topological codes, such as surface codes, use local, nearest-neighbour connections, but usually
-have high encoding rates.
+have poor encoding rates.
 
 It still remains unclear which combination of these options would lead to the best long-term
 solution. But as solving real-world problems requires scaling up to thousands of logical qubits,
 moving beyond strict nearest-neighbor constraints becomes crucial. Quantum low-density parity-check
-(qLDPC) codes are particularly well-suited for this, as they can leverage high-connectivity
+(qLDPC) codes are particularly well-suited for this, as they leverage high-connectivity
 between qubits to drastically reduce qubit overheads, making them the codes of choice for
-the hardware platforms that offer such qubit connectivity. In this demo, we will cover
-the basics of qLDPC codes, including their construction and decoding. For the readers who are not
-familiar with the fundamentals of QEC, we recommend reading our tutorials on the :doc:`Surface Code
-<demos/tutorial_game_of_surface_codes>`, :doc:`Stabilizer Codes <demos/tutorial_stabilizer_codes>`,
-and :doc:`Lattice Surgery <demos/tutorial_lattice_surgery>` that cover them in detail.
+the hardware platforms that support such qubit connectivity. While the low-degree constraint
+of qLDPC codes is less essential for platforms with reconfigurable all-to-all connectivity,
+their highly efficient decoding remains a major asset. In this demo, we will cover
+the basics of qLDPC codes, including their construction and decoding. For readers
+unfamiliar with the fundamentals of QEC, we recommend reading our tutorials
+on the :doc:`Surface Code <demos/tutorial_game_of_surface_codes>`,
+:doc:`Stabilizer Codes <demos/tutorial_stabilizer_codes>`, and
+:doc:`Lattice Surgery <demos/tutorial_lattice_surgery>` that cover them in detail.
 
 .. figure::
     ../_static/demo_thumbnails/opengraph_demo_thumbnails/pennylane-demo-quantum-lowdensity-paritycheck-open-graph.png
@@ -56,6 +60,9 @@ parity-check matrix (:math:`H`), where :math:`k = n - m` [#qldpc1]_, where :math
 number of parity checks. The "low-density" part of their name comes from this matrix being
 overwhelmingly sparse, i.e., filled mostly with zeros, and more specifically, the column/row
 weights (number of 1s in each column/row) are strictly bounded constants independent of :math:`n`.
+For a practical code, both must be bounded, because they carry distinct physical meaning: (i) a
+low column weight limits how many parity checks each bit participates in, while (ii) a low row
+weight limits how many bits each parity check involves, keeping decoding local and efficient.
 
 Mathematically, these codes are visualized as `Tanner graphs
 <https://en.wikipedia.org/wiki/Tanner_graph>`_, which are bipartite graphs with edges
@@ -538,7 +545,11 @@ else:
 ######################################################################
 # In particular, even though the decoder did not perfectly undo the error,
 # the logical state of the qubit is perfectly preserved because any residual
-# that is a stabilizer acts as the identity on the codespace.
+# that is a stabilizer acts as the identity on the codespace. It is worth noting that
+# the decoder above assumes a **code-level noise model**, where errors act directly on
+# data qubits and syndromes are read perfectly. In practice, both stabilizer measurements
+# and syndrome readout introduce faults, requiring a circuit-level noise model and a
+# corresponding extension of the decoder to handle imperfect syndrome extraction.
 #
 # Logical Gates for qLDPC Codes
 # ------------------------------
