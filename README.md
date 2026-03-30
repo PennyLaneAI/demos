@@ -36,8 +36,8 @@ Explore the full collection of [PennyLane demos](https://pennylane.ai/qml/demons
 
 ## Support
 
-- **Source Code:** https://github.com/PennyLaneAI/qml
-- **Issue Tracker:** https://github.com/PennyLaneAI/qml/issues
+- **Source Code:** https://github.com/PennyLaneAI/demos
+- **Issue Tracker:** https://github.com/PennyLaneAI/demos/issues
 
 If you encounter any issues, have questions, or wish to suggest improvements, please report them on our GitHub issue tracker.
 
