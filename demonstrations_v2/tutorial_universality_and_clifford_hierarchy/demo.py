@@ -66,7 +66,7 @@ Members of the $C_3$ map $C_1$ gates to $C_2$ gates under conjugation, up to a g
 
     C_3 = \{U: UPU^{\dagger} \in C_2,~ \forall P \in C_1\}.
 
-Examples of members of this group include the :math:`T = \sqrt{S}` gate, Toffoli gate, and :math:`\mathrm{CCX}`, :math:`\mathrm{CCY}`, and :math:`\mathrm{CCZ}` gates. 
+Examples of members of this group include the :math:`T = \sqrt{S}` gate, the Toffoli gate, and :math:`\mathrm{CCZ}` gates. 
 
 
 $C_k$ set
