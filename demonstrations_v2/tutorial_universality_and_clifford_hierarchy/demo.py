@@ -60,7 +60,7 @@ Members of this group include the Hadamard gate $H$, phase gate :math:`S = \sqrt
 $C_3$ set
 ^^^^^^^^^^^^^^
 
-Members of the $C_3$ map $C_2$ gates to $C_1$ gates under conjugation, up to a global phase i.e., 
+Members of the $C_3$ map $C_1$ gates to $C_2$ gates under conjugation, up to a global phase i.e., 
 
 .. math::
 
