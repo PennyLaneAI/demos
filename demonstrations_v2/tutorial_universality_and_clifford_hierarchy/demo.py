@@ -54,7 +54,7 @@ Members of the Clifford group map Pauli gates to Pauli gates under conjugation, 
 
 .. math::
 
-    C_2 = \{U: UPU^{\dagger} \in C_1,~ \forall P \in C_1\}.
+    \mathcal{C}_2 = \{U: UPU^{\dagger} \in \mathcal{C}_1,~ \forall P \in \mathcal{C}_1\}.
     
 
 Members of this group include the Hadamard gate $H$, phase gate :math:`S = \sqrt{Z}`, and the :math:`\mathrm{CX}`, :math:`\mathrm{CY}`, and :math:`\mathrm{CZ}` gates. As an example, they conjugate Paulis like so: :math:`HZH^{\dagger} = X` and :math:`SXS^{\dagger} = Y`. Notice that the entire Pauli group lives within the Clifford group (e.g., :math:`XZX^{\dagger} = -Z`), but the vernacular is that the Clifford group excludes the Pauli group i.e., :math:`C_2 \backslash C_1`. 
