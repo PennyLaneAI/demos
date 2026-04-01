@@ -152,7 +152,20 @@ So, what's so special about the T gate?
 ---------------------------------
 Adding any non-Clifford gate to a set of Clifford gates provides universality. The $T$ gate often appears as the non-Clifford gate of choice, but it’s just a :math:`45^{\circ}` rotation about the $Z$ axis. What’s so special about the $T$ gate? Why not a gate that implements a :math:`1^{\circ}` rotation? Or why not a Toffoli or a controlled-phase gate? 
 
-Gates above $C_3$ in the Clifford hierarchy are eliminated because they require more resources for the nested teleportation gates to implement. A diagonal $C_3$ gate enables more efficient teleportation, which narrows the choices down to the $T$ gate. 
+Gates above :math:`\mathcal{C}_3` in the Clifford hierarchy are eliminated because they require more resources to implement because of the need for nested teleportation circuits, as shown in the above figures. 
+
+Within :math:`\mathcal{C}_3`, we should restrict ourselves to semi-Clifford gates to let us use the more efficient teleportation circuits. That means we should only consider one-, two-, or three-qubit gates [#semiclifford]_, such as the $T$ gate, controlled-phase gate, controlled-Hadamard gate, and Toffoli gates. The gate that requires the fewest resources overall is the $T$ gate because it is a single-qubit diagonal gate (i.e., $G_a=G_b=I$). With these arguments, it is clear why the $T$ is often the non-Clifford gate of choice. 
+
+One can inject a $T$ gate via the circuit presented in Figure 3c, or using the circuit below. Additional explanation of the circuit below can be found [here](https://pennylane.ai/qml/glossary/what-are-magic-states). 
+
+.. figure:: ../_static/demonstration_assets/universality_and_clifford_hierarchy/Figure-5-magic-state-circuit.png
+  :alt: Standard magic state injection circuit
+  :width: 95%
+  :align: center
+
+  Figure 5: *Magic state injection circuit for a T gate.*
+
+
 
 Conclusion
 ---------------------------------
