@@ -150,7 +150,7 @@ Now, we have an efficient method to teleport certain non-Clifford gates!
 
 So, what's so special about the T gate?
 ---------------------------------
-Adding any non-Clifford gate to a set of Clifford gates provides universality. The $T$ gate often appears as the non-Clifford gate of choice, but it’s just a :math:`45^{\circ}` rotation about the $Z$ axis. What’s so special about the $T$ gate? Why not a gate that implements a :math:`1^{\circ}` rotation? 
+Adding any non-Clifford gate to a set of Clifford gates provides universality. The $T$ gate often appears as the non-Clifford gate of choice, but it’s just a :math:`45^{\circ}` rotation about the $Z$ axis. What’s so special about the $T$ gate? Why not a gate that implements a :math:`1^{\circ}` rotation? Or why not a Toffoli or a controlled-phase gate? 
 
 Gates above $C_3$ in the Clifford hierarchy are eliminated because they require more resources for the nested teleportation gates to implement. A diagonal $C_3$ gate enables more efficient teleportation, which narrows the choices down to the $T$ gate. 
 
