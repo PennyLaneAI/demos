@@ -241,7 +241,7 @@ def build(
 
 
 def generate_requirements(
-    ctx: Context, demo: Demo, dev: bool, output_file: Path
+    ctx: Context, demo: Demo, dev: bool, output_file: Path, quiet: bool = False
 ) -> None:
     constraints = [ctx.build_requirements_file]
     if dev:
@@ -258,7 +258,7 @@ def generate_requirements(
         output_file,
         *requirements_in,
         constraints_files=constraints,
-        quiet=False,
+        quiet=quiet,
         prerelease=False,
     )
 
@@ -276,7 +276,7 @@ def _build_demo(
     out_dir = ctx.repo_root / "demos"
     fs.clean_dir(out_dir)
 
-    generate_requirements(ctx, demo, dev, out_dir / "requirements.txt")
+    generate_requirements(ctx, demo, dev, out_dir / "requirements.txt", quiet=quiet)
     if execute:
         cmds.pip_install(
             build_venv.python,
