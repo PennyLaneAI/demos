@@ -145,6 +145,8 @@ Recursive application of this one-bit teleportation circuit leads to the impleme
 
   Figure 4: *Recursive X-teleportation of a fourth level level gate using a nested X-teleportation circuit that implements a third level gate.*
 
+Now, we have an efficient method to teleport certain non-Clifford gates! 
+
 
 So, what's so special about the T gate?
 ---------------------------------
