@@ -181,7 +181,11 @@ def build(
             len(demos),
             execute_demo,
         )
-        build_venv = Virtualenv(ctx.repo_root / venv) if venv else Virtualenv(ctx.build_venv_path)
+        build_venv = (
+            Virtualenv(ctx.repo_root / venv, quiet=quiet)
+            if venv
+            else Virtualenv(ctx.build_venv_path, quiet=quiet)
+        )
         cmds.pip_install(
             build_venv.python,
             requirements=ctx.build_requirements_file,
