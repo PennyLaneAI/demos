@@ -24,16 +24,17 @@ topological codes, such as surface codes, use local, nearest-neighbour connectio
 have poor encoding rates.
 
 It still remains unclear which combination of these options would lead to the best long-term
-solution. But as solving real-world problems requires scaling up to thousands of logical qubits,
-moving beyond strict nearest-neighbor constraints becomes crucial. Quantum low-density parity-check
-(qLDPC) codes are particularly well-suited for this, as they leverage high-connectivity
-between qubits to drastically reduce qubit overheads, making them the codes of choice for
-the hardware platforms that support such qubit connectivity. While the low-degree constraint
-of qLDPC codes is less essential for platforms with reconfigurable all-to-all connectivity,
-their highly efficient decoding remains a major asset. In this demo, we will cover
-the basics of qLDPC codes, including their construction and decoding. For readers
-unfamiliar with the fundamentals of QEC, we recommend reading our tutorials
-on the :doc:`Surface Code <demos/tutorial_game_of_surface_codes>`,
+solution. But as solving real-world problems requires scaling up to thousands of logical
+qubits, moving beyond strict nearest-neighbour constraints becomes crucial. Quantum low-density
+parity-check (qLDPC) codes are particularly well-suited for this, as they leverage high
+connectivity between qubits to drastically reduce qubit overheads, making them the codes of
+choice for the hardware platforms that support such qubit connectivity. As their name implies,
+they enforce a low-degree constraint, meaning each physical qubit participates in only a
+few parity checks, and each check measures only a few qubits. While this constraint is less
+essential for platforms with reconfigurable all-to-all connectivity, their highly efficient
+decoding remains a major asset. In this demo, we will cover the basics of qLDPC codes,
+including their construction and decoding. For readers unfamiliar with the fundamentals of QEC, we
+recommend reading our tutorials on the :doc:`Surface Code <demos/tutorial_game_of_surface_codes>`,
 :doc:`Stabilizer Codes <demos/tutorial_stabilizer_codes>`, and
 :doc:`Lattice Surgery <demos/tutorial_lattice_surgery>` that cover them in detail.
 
@@ -211,10 +212,10 @@ print(f"Code dimension (k): {code_dim}\n")
 #     H_X = (H_1 \otimes I_{n_2} | I_{m_1} \otimes H_2^T),\\
 #     H_Z = (I_{n_1} \otimes H_2 | H_1^T \otimes I_{m_2}).
 #
-# Here the algebraic properties of the tensor product ensure that :math:`H_X` and :math:`H_Z`
+# Here, the algebraic properties of the tensor product ensure that :math:`H_X` and :math:`H_Z`
 # satisfy the symplectic orthogonality condition. Furthermore, the transposed matrix :math:`H_i^T`
-# defines the transpose code, which has its own parameters :math:`[m_i, k_i^T, d_i^T]`, where the
-# superscript :math:`T` simply labels the dimension and distance of this new code.
+# defines the transpose code, which has its own parameters :math:`[m_i, k_i^t, d_i^t]`, where
+# the superscript :math:`t` simply labels the dimension and distance of this new code.
 # For example, look at the following HGP code constructed from two :math:`d_1=3` and :math:`d_2=3`
 # repetition codes, which is equivalent to a Toric code :math:`[[13, 1, 3]]`:
 #
@@ -261,7 +262,7 @@ plt.show()
 
 ######################################################################
 # This represents the non-local connectivity, which is the defining characteristic of
-# qLDPC codes. Next, we determine the code dimension :math:`k`, that follows directly
+# qLDPC codes. Next, we determine the code dimension, :math:`k`, that follows directly
 # from the ranks of the seed matrices:
 #
 
@@ -300,8 +301,8 @@ print(f"Physical qubits (n) of the HGP code: {n1*n2 + m1*m2} == {2*dist*(dist-1)
 
 ######################################################################
 # As shown above, the resulting quantum code :math:`Q[[n,k,d]]`, encodes
-# :math:`k = k_1k_2 + k_1^T k_2^T` logical qubits into :math:`n = n_1n_2 + m_1m_2`
-# physical qubits with distance :math:`d=\min(d_1,d_2,d_1^T,d_2^T)`. This means that
+# :math:`k = k_1k_2 + k_1^t k_2^t` logical qubits into :math:`n = n_1n_2 + m_1m_2`
+# physical qubits with distance :math:`d=\min(d_1,d_2,d_1^t,d_2^t)`. This means that
 # the HGP codes achieve a constant encoding rate :math:`R=\Theta(1)`, but their distance
 # grows only as :math:`d=\mathcal{O}(\sqrt{n})`, matching the surface code scaling. Note
 # that the distance computed here is the classical distance, which is not the same as
@@ -393,14 +394,15 @@ plt.show()
 #
 # As mentioned earlier, Tanner graphs constructed using the parity-check matrix of the code
 # can be used for decoding errors efficiently using an iterative message-passing algorithm
-# like Belief Propagation (BP) [#BProp]_. This decoding process can be thought of as a
-# collaborative exercise, where the variable nodes (qubits) and check nodes (parity rules) act
-# like detectives passing *messages* back and forth. A variable node sends a confidence level
-# message, *"I am 84% sure that I have an error"*. The check node looks at the notes from all
-# connected qubits, applies the parity rule, and replies *"Based on the group's evidence, adjust
-# your confidence to 96%"*. Mathematically, these messages are Log-Likelihood Ratios (LLRs),
-# which are updated iteratively until all parity rules are satisfied (consensus) or a fixed
-# number of iterations is reached, making the whole process executable in polynomial time.
+# like [Belief Propagation (BP)](https://pennylane.ai/qml/demos/tutorial_bp_catalyst) [#BProp]_.
+# This decoding process can be thought of as a collaborative exercise, where the variable nodes
+# (qubits) and check nodes (parity rules) act like detectives passing *messages* back and forth.
+# A variable node sends a confidence level message, *"I am 84% sure that I have an error"*. The
+# check node looks at the notes from all connected qubits, applies the parity rule, and replies
+# *"Based on the group's evidence, adjust your confidence to 96%"*. Mathematically, these messages
+# are Log-Likelihood Ratios (LLRs), which are updated iteratively until all parity rules are
+# satisfied (consensus) or a fixed number of iterations is reached, making the whole process
+# executable in polynomial time.
 #
 # For classical codes, BP is near-optimal and runs in :math:`\mathcal{O}(\log n)` iterations.
 # However, quantum codes suffer from degeneracy, where multiple different error patterns trigger
@@ -412,7 +414,7 @@ plt.show()
 # mathematically force a valid parity solution for the remaining uncertain qubits. Let us define
 # a decoder class that implements this, where the BP is implemented using the ``tanh`` product rule
 # and the OSD-0 uses :func:`~.pennylane.math.binary_finite_reduced_row_echelon` to perform
-# Gaussian elimination.
+# [Gaussian elimination](https://en.wikipedia.org/wiki/Gaussian_elimination).
 #
 
 class BPOSDDecoder:
@@ -485,7 +487,7 @@ class BPOSDDecoder:
         H_permuted = self.H[:, reliability_order]
         augmented_matrix = np.hstack([H_permuted, syndrome.reshape(-1, 1)])
 
-        # Perform Gaussian elimination over GF(2) and extract results
+        # Perform Gaussian elimination over F(2) and extract results
         rref_matrix = binary_finite_reduced_row_echelon(augmented_matrix)
         H_reduced, updated_syndrome = rref_matrix[:, :self.n], rref_matrix[:, -1]
 
@@ -564,9 +566,10 @@ else:
 #
 # For general CSS codes, including qLDPC code families, we can systematically construct a
 # canonical basis of :math:`k` logical operator pairs :math:`\{(L_X^{(i)}, L_Z^{(i)})\}_{i=1}^{k}`
-# using linear algebra over :math:`\mathbb{F}_2`. The algorithm requires two sequential RREF
-# passes, first on :math:`H_X`, then on the remaining free columns of :math:`H_Z` to identify
-# the logical sector. By doing this, we natively guarantee the canonical anticommutation condition
+# using linear algebra over :math:`\mathbb{F}_2`. The algorithm requires two sequential passes
+# of [Gaussian elimination](https://en.wikipedia.org/wiki/Gaussian_elimination), first on
+# :math:`H_X`, then on the remaining free columns of :math:`H_Z`, to identify the logical
+# sector. By doing this, we natively guarantee the canonical anticommutation condition
 # :math:`L_X^{(i)} \cdot L_Z^{(j)} = \delta_{ij} \pmod{2}`, where :math:`\delta_{ij}` is the
 # Kronecker delta. For example, below we construct logical operators for a simple Toric code.
 #
