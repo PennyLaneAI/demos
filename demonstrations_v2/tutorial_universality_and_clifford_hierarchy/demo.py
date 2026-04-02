@@ -81,7 +81,7 @@ More generally, the :math:`k^{\mathrm{th}}` level of the Clifford hierarchy for 
     
     C_k = \{U: UPU^{\dagger} \in C_{k-1},~ \forall P \in C_1 \}.
 
-The Pauli and Clifford groups constitute the foundation of infinitely nested sets of gates. Note that applying a control to the :math:`C^{(k-1)}X` or :math:`C^{(k-1)}Z` gate in :math:`\mathcal{C}_k` yields a gate in the :math:`k+1^{\mathrm{th}}` level, as does taking the square root of the :math:`Z^{(1/2)^{k-1}}\in \mathcal{C}_k` rotation gate [#climbdiagonal]_, [#controlledgates]_, [#climb]_. $\mathcal{C}_k$ is non-empty because it contains at least :math:`R_Z(m \pi/2^k)` where $m$ is any integer [#qecbook]_. Because there can be infinitesimally fine $Z$-rotations, there are infinitely many non-empty $C_k$ sets, and :math:`\mathcal{C}_1 \subset \mathcal{C}_2 \subset \dots \subset \mathcal{C}_k \subset \mathcal{C}_{k+1} \subset \dots`.
+The Pauli and Clifford groups constitute the foundation of infinitely nested sets of gates. Note that applying a control to the :math:`C^{(k-1)}X` or :math:`C^{(k-1)}Z` gate in :math:`\mathcal{C}_k` yields a gate in the :math:`k+1^{\mathrm{th}}` level, as does taking the square root of the :math:`Z^{(1/2)^{k-1}}\in \mathcal{C}_k` rotation gate [#climbdiagonal]_, [#controlledgates]_, [#climb]_. :math:`\mathcal{C}_k` is non-empty because it contains at least :math:`R_Z(m \pi/2^k)` where $m$ is any integer [#qecbook]_. Because there can be infinitesimally fine $Z$-rotations, there are infinitely many non-empty $C_k$ sets, and :math:`\mathcal{C}_1 \subset \mathcal{C}_2 \subset \dots \subset \mathcal{C}_k \subset \mathcal{C}_{k+1} \subset \dots`.
 
 
 Achieving universal and fault-tolerant quantum computing
