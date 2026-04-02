@@ -131,7 +131,7 @@ To explain why semi-Clifford gates can be teleported more efficiently, we firstl
   Figure 3: *One-bit teleportation circuits. (a) Z-teleportation, (b) X-teleportation, and (c) $T$ gate teleportation.*
 
 
-Here, conjugating the $U$ gate across the :math:`D \in \{Z,X\}` Pauli error creates the term :math:`UDU^{\dagger}`, which must be Clifford if $U$ is in :math:`\mathcal{C}_3` and $D$ is Pauli as per the Clifford hierarchy. Therefore, if the magic state is available, then a $T$ gate can be implemented fault-tolerantly. 
+Here, conjugating the $U$ gate across the :math:`D \in \{Z,X\}` Pauli error creates the term :math:`UDU^{\dagger}`, which must be Clifford if $U$ is in :math:`\mathcal{C}_3` and $D$ is Pauli as per the Clifford hierarchy. Semi-Clifford-ness allows us to move the $U$ gate to before the CNOT gate. Just as before, the part of the circuit up to the $U$ gate is called a magic state, which can be prepared in advance. Therefore, if the magic state is available, then a semi-Clifford gate such as the $T$ gate can be implemented fault-tolerantly. 
 
 The one-bit teleportation protocol halves the number of ancilla qubits, measurements, and gates compared to the general two-bit teleportation protocol above. Note that the diagonal $V$ in $U = G_b V G_a$ need not commute with the CNOT gates because you are always free to select $X$-teleportation. All diagonal gates commute with the control part of a CNOT gate. For this reason, this circuit can implement a controlled-Hadamard gate, which does not commute with CNOT [#onebit]_. 
 
