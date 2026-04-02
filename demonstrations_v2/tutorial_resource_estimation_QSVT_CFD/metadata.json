@@ -1,0 +1,96 @@
+{
+    "title": "Optimising QSVT data loading by exploiting structure",
+    "authors": [
+        {
+            "username": "Jay"
+        }
+    ],
+    "executable_stable": true,
+    "executable_latest": true,
+    "dateOfPublication": "2026-03-13T10:00:00+00:00",
+    "dateOfLastModification": "2026-03-13T10:00:00+00:00",
+    "categories": [
+        "Algorithms",
+        "Optimization"
+    ],
+    "tags": [],
+    "previewImages": [
+        {
+            "type": "thumbnail",
+            "uri": "/_static/demo_thumbnails/regular_demo_thumbnails/pennylane-demo-resource-estimation-qsvt-2-thumbnail.png"
+        },
+        {
+            "type": "large_thumbnail",
+            "uri": "/_static/demo_thumbnails/large_demo_thumbnails/pennylane-demo-resource-estimation-qsvt-2-large-thumbnail.png"
+        }
+    ],
+    "seoDescription": "Learn how to estimate cost of matrix inversion with QSVT for CFD applications",
+    "doi": "",
+    "references": [
+        {
+            "id": "chuang2021",
+            "type": "article",
+            "title": "A Grand Unification of Quantum Algorithms",
+            "authors": "John M. Martyn, Zane M. Rossi, Andrew K. Tan, and Isaac L. Chuang",
+            "year": "2021",
+            "journal": "",
+            "url": "https://arxiv.org/pdf/2105.02859"
+        },
+        {
+            "id": "lapworth2022",
+            "type": "article",
+            "title": "A HYBRID QUANTUM-CLASSICAL CFD METHODOLOGY WITH BENCHMARK HHL SOLUTIONS",
+            "authors": "Leigh Lapworth",
+            "year": "2022",
+            "journal": "",
+            "url": "https://arxiv.org/pdf/2206.00419"
+        },
+        {
+            "id": "linaje2025",
+            "type": "article",
+            "title": "Quantum compilation framework for data loading",
+            "authors": "Guillermo Alonso-Linaje, Utkarsh Azad, Jay Soni, Jarrett Smalley, Leigh Lapworth, and Juan Miguel Arrazola",
+            "year": "2025",
+            "journal": "",
+            "url": "https://arxiv.org/pdf/2512.05183"
+        },
+        {
+            "id": "zylberman2025",
+            "type": "article",
+            "title": "Efficient Quantum Circuits for Non-Unitary and Unitary Diagonal Operators with Space-Time-Accuracy trade-offs",
+            "authors": "Julien Zylberman, Ugo Nzongani, Andrea Simonetto, and Fabrice Debbasch",
+            "year": "2025",
+            "journal": "",
+            "url": "https://arxiv.org/pdf/2404.02819"
+        }
+    ],
+    "basedOnPapers": [],
+    "referencedByPapers": [],
+    "relatedContent": [
+        {
+            "type": "demonstration",
+            "id": "tutorial_resource_estimation_QSVT",
+            "weight": 1.0
+        },
+        {
+            "type": "demonstration",
+            "id": "tutorial_intro_qsvt",
+            "weight": 1.0
+        },
+        {
+            "type": "demonstration",
+            "id": "tutorial_apply_qsvt",
+            "weight": 1.0
+        },
+        {
+            "type": "demonstration",
+            "id": "tutorial_lcu_blockencoding",
+            "weight": 1.0
+        },
+        {
+            "type": "demonstration",
+            "id": "tutorial_block_encoding",
+            "weight": 1.0
+        }
+    ]
+}
