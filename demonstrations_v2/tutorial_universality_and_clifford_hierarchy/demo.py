@@ -254,10 +254,6 @@ References
     "Climbing the Clifford Hierarchy"
     `2603.12088 <https://arxiv.org/abs/2603.12088>`__, 2026.
 
-.. [#stim]
-    C. Gidney
-    "Stim: a fast stabilizer circuit simulator"
-    `Quantum 5, 497 <https://doi.org/10.22331/q-2021-07-06-497>`__, 2021.
 
 
 """
