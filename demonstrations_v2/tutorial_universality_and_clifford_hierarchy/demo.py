@@ -174,7 +174,7 @@ We have seen how the Clifford hierarchy enables universal and fault-tolerant qua
 
 Although the Clifford hierarchy was first proposed in the context of universality [#gottesmanchuang]_, its ideas lurk underneath other topics. For example, `Pauli frame tracking <https://pennylane.ai/compilation/pauli-frame-tracking>`__ conjugates Clifford gates to avoid having to physically execute correction Pauli gates [#pauliframetracking]_. 
 
-Not only $T$ gates can be implemented fault-tolerantly; the Clifford hierarchy shows how an enormous class of gates can be implemented fault-tolerantly. For example, the diagonal $C-U$ gates that perform period finding for [Shor’s algorithm](https://pennylane.ai/codebook/shors-algorithm) & in [quantum phase estimation (QPE)](https://pennylane.ai/qml/demos/tutorial_qpe) can be implemented using the teleportation circuits here. 
+Not only $T$ gates can be implemented fault-tolerantly; the Clifford hierarchy shows how an enormous class of gates can be implemented fault-tolerantly. For example, the diagonal $C-U$ gates that perform period finding for `Shor’s algorithm <https://pennylane.ai/codebook/shors-algorithm>`__ & in `quantum phase estimation (QPE) <https://pennylane.ai/qml/demos/tutorial_qpe>`__ can be implemented using the teleportation circuits here. 
 
 
 #############################################################################
