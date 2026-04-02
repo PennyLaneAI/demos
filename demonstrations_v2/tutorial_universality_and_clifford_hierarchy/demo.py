@@ -69,7 +69,7 @@ Members of :math:`\mathcal{C}_3` map :math:`\mathcal{C}_1` gates to :math:`\math
 
     \mathcal{C}_3 = \{U: UPU^{\dagger} \in \mathcal{C}_2,~ \forall P \in \mathcal{C}_1\}.
 
-Examples of members of this group include the :math:`T = \sqrt{S}` gate, the Toffoli gate, and :math:`\mathrm{CCZ}` gates. For example, the $T$ gate conjugates Pauli gates like so: :math:`TXT^{\dagger} = e^{-i \pi/4} SX \sim SX` and :math:`TYT = -e^{-i\pi/4} XS \sim XS` up to a global phase. 
+Examples of members of this group include the :math:`T = \sqrt{S}` gate, the Toffoli gate, and :math:`\mathrm{CCZ}` gate. For example, the $T$ gate conjugates Pauli gates like so: :math:`TXT^{\dagger} = e^{-i \pi/4} SX \sim SX` and :math:`TYT = -e^{-i\pi/4} XS \sim XS` up to a global phase. 
 
 
 :math:`\mathcal{C}_k` set
