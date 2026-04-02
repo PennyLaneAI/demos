@@ -41,7 +41,7 @@ The Clifford Hierarchy
 It turns out that there is a structure connecting infinite classes of gates called the Clifford hierarchy [#gottesmanchuang]_. Exploiting this hierarchy can help us implement any non-Clifford gate fault-tolerantly. 
 
 
-Pauli group ($C_1$)
+Pauli group (:math:`\mathcal{C}_1`)
 ^^^^^^^^^^^^^^
 
 At the bottom of this hierarchy is the Pauli group, which contains the familiar Pauli gates and their tensor products :math:`\mathcal{C}_1 = \{X, Y, Z\}^{\otimes n}`
