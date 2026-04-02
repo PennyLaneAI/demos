@@ -169,7 +169,12 @@ One can inject a $T$ gate via the circuit presented in Figure 3c, or using the c
 
 Conclusion
 ---------------------------------
-We have seen how the Clifford hierarchy enables universal and fault-tolerant quantum computing by mapping higher level gates down to lower level gates. A similar idea can be employed in `Pauli frame tracking <https://pennylane.ai/compilation/pauli-frame-tracking>`__ to avoid having to physically execute correction Pauli gates [#pauliframetracking]_. There are other interesting mathematical quirks of the Clifford hierarchy that are related to phase polynomials. The precise nature of the hierarchy and which gates lie in the hierarchy are still being explored. What we do know is that the diagonal $C-U$ gates that perform period finding for Shor’s algorithm & in quantum phase estimation (QPE) can be implemented using the teleportation circuits here. 
+
+We have seen how the Clifford hierarchy enables universal and fault-tolerant quantum computing by mapping higher level gates down to lower level gates. The same hierarchy also ranks gates by the number of resources needed to implement them fault-tolerantly, thus how 'quantum' they are and how gates can be considered as magic fuel for fault-tolerance. 
+
+Although the Clifford hierarchy was first proposed in the context of universality [#gottesmanchuang]_, its ideas lurk underneath other topics. For example, `Pauli frame tracking <https://pennylane.ai/compilation/pauli-frame-tracking>`__ conjugates Clifford gates to avoid having to physically execute correction Pauli gates [#pauliframetracking]_. 
+
+Not only $T$ gates can be implemented fault-tolerantly; the Clifford hierarchy shows how an enormous class of gates can be implemented fault-tolerantly. For example, the diagonal $C-U$ gates that perform period finding for [Shor’s algorithm](https://pennylane.ai/codebook/shors-algorithm) & in [quantum phase estimation (QPE)](https://pennylane.ai/qml/demos/tutorial_qpe) can be implemented using the teleportation circuits here. 
 
 
 #############################################################################
