@@ -47,7 +47,7 @@ Pauli group ($C_1$)
 At the bottom of this hierarchy is the Pauli group, which contains the familiar Pauli gates and their tensor products :math:`\mathcal{C}_1 = \{X, Y, Z\}^{\otimes n}`
 
 
-Clifford group ($C_2$)
+Clifford group (:math:`\mathcal{C}_2`)
 ^^^^^^^^^^^^^^
 
 Members of the Clifford group map Pauli gates to Pauli gates under conjugation, up to a global phase. Formally, 
