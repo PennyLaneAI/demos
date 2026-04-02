@@ -117,9 +117,9 @@ Teleportation is more efficient with semi-Clifford gates
 
 While the universal teleportation circuit above can implement any non-Clifford gate in the Clifford hierarchy fault-tolerantly, it still isn't clear why the $T$ gate is commonly used to enable universality. To see that, let's be greedy: How can we teleport gates more efficiently? 
 
-It turns out that the resource cost of gate teleportation can be halved if the gate is semi-Clifford i.e., it can be written as $U = G_b V G_a$, where $V$ is a diagonal matrix in :math:`\mathcal{C}_k` and $G_a$ and $G_b$ are each Clifford gates [#onebit]_. All one- and two-qubit gates in :math:`\mathcal{C}_k` are semi-Clifford [#semiclifford]_. 
+If a gate is semi-Clifford i.e., it can be written as $U = G_b V G_a$, where $V$ is a diagonal matrix in :math:`\mathcal{C}_k` and $G_a$ and $G_b$ are each Clifford gates, then the resource cost of gate teleportation can be **halved** [#onebit]_. All one- and two-qubit gates in :math:`\mathcal{C}_k` are semi-Clifford, as are three-qubit gates in :math:`\mathcal{C}_3` [#semiclifford]_. Importantly, the $T$ gate is diagonal, which is a subset of semi-Clifford gates with $G_b = G_a = I$.
 
-Importantly, the $T$ gate is diagonal, which is a subset of semi-Clifford gates with $G_b = G_a = I$. Figure 3a depicts the general one-bit Z-teleportation circuit for $U$, Figure 3b depicts the general one-bit X-teleportation circuit for $U$, and Figure 3c depicts the one-bit teleportation circuit for the $T$ gate. The section within the dashed box is a `magic state <https://pennylane.ai/qml/demos/tutorial_magic_states>`__. 
+To explain why semi-Clifford gates can be teleported more efficiently, we firstly depict these more efficient 'one-bit' teleportation circuits. There are two such flavours: Z-teleportation and X-teleportation, named after the classically controlled correction these circuits apply. Figure 3a depicts the general one-bit Z-teleportation circuit for $U$, Figure 3b depicts the general one-bit X-teleportation circuit for $U$, and Figure 3c depicts the one-bit teleportation circuit for the $T$ gate. The section within the dashed box is a `magic state <https://pennylane.ai/qml/demos/tutorial_magic_states>`__. 
 
 
 
