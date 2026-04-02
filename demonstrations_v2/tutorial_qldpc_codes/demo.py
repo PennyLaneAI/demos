@@ -21,20 +21,20 @@ the following four properties:
 
 Unfortunately, these requirements are not all mutually compatible. For example, widely used
 topological codes, such as surface codes, use local, nearest-neighbour connections, but usually
-have poor encoding rates.
+have poor encoding rates. It remains unclear which combination of these trade-offs will offer
+the best long-term solution. However, because solving real-world problems requires scaling up to
+thousands of logical qubits, moving beyond strict nearest-neighbour constraints has become crucial.
 
-It still remains unclear which combination of these options would lead to the best long-term
-solution. But as solving real-world problems requires scaling up to thousands of logical
-qubits, moving beyond strict nearest-neighbour constraints becomes crucial. Quantum low-density
-parity-check (qLDPC) codes are particularly well-suited for this, as they leverage high
-connectivity between qubits to drastically reduce qubit overheads, making them the codes of
-choice for the hardware platforms that support such qubit connectivity. As their name implies,
-they enforce a low-degree constraint, meaning each physical qubit participates in only a
-few parity checks, and each check measures only a few qubits. While this constraint is less
-essential for platforms with reconfigurable all-to-all connectivity, their highly efficient
-decoding remains a major asset. In this demo, we will cover the basics of qLDPC codes,
-including their construction and decoding. For readers unfamiliar with the fundamentals of QEC, we
-recommend reading our tutorials on the :doc:`Surface Code <demos/tutorial_game_of_surface_codes>`,
+Quantum low-density parity-check (qLDPC) codes are particularly well-suited for this purpose,
+as they leverage high connectivity between qubits to drastically reduce qubit overheads, making
+them the codes of choice for the hardware platforms that support such qubit connectivity.
+As their name implies, they enforce a low-degree constraint, meaning each physical qubit
+participates in only a few parity checks, and each check measures only a few qubits.
+While this constraint is less essential for platforms with reconfigurable all-to-all connectivity,
+their highly efficient decoding remains a major asset. In this demo, we will cover the basics
+of qLDPC codes, including their construction and decoding. For readers unfamiliar with the
+fundamentals of QEC, we recommend reading our tutorials on the
+:doc:`Surface Code <demos/tutorial_game_of_surface_codes>`,
 :doc:`Stabilizer Codes <demos/tutorial_stabilizer_codes>`, and
 :doc:`Lattice Surgery <demos/tutorial_lattice_surgery>` that cover them in detail.
 
