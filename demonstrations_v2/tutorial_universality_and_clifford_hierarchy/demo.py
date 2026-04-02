@@ -60,7 +60,7 @@ Members of the Clifford group map Pauli gates to Pauli gates under conjugation, 
 Members of this group include the Hadamard gate $H$, phase gate :math:`S = \sqrt{Z}`, and the :math:`\mathrm{CX}`, :math:`\mathrm{CY}`, and :math:`\mathrm{CZ}` gates. As an example, they conjugate Paulis like so: :math:`HZH^{\dagger} = X` and :math:`SYS^{\dagger} = -X`. The global phase of :math:`\pm 1` is neglected when determining if a gate resides in a Clifford hierarchy level. Notice that the entire Pauli group lives within the Clifford group (e.g., :math:`XZX^{\dagger} = -Z`), i.e., :math:`\mathcal{C}_1 \subset \mathcal{C}_2`. 
 
 
-$C_3$ set
+:math:`\mathcal{C}_3` set
 ^^^^^^^^^^^^^^
 
 Members of :math:`\mathcal{C}_3` map :math:`\mathcal{C}_1` gates to :math:`\mathcal{C}_2` gates under conjugation, up to a global phase i.e., 
