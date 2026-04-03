@@ -483,7 +483,7 @@ for s in range(steps):
 # create a bar graph:
 
 
-@qml.qnode(dev, interface="autograd")
+@qml.qnode(dev)
 def prob_circuit(params):
     qaoa_circuit(params)
     return qml.probs(wires=dev.wires)
