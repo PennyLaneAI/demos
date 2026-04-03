@@ -449,7 +449,7 @@ def qaoa_circuit(params, **kwargs):
     qml.layer(qaoa_layer, depth, params[0], params[1])
 
 
-@qml.qnode(dev, interface="autograd")
+@qml.qnode(dev)
 def qaoa_expval(params):
     qaoa_circuit(params)
     return qml.expval(cost_h)
