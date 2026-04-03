@@ -195,7 +195,7 @@ def build_hamiltonian(graph):
     graph_c = nx.complement(graph)
 
     for k in graph_c.nodes:
-        # Adds the terms in the first sum (coefficient 3/2 = i * 2 * 3/4)
+        # Adds the terms in the first sum
         for edge in graph_c.edges:
             i, j = edge
             if k == i:
