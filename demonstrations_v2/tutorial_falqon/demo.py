@@ -320,7 +320,7 @@ plt.show()
 # We define the following circuit, feeding in the optimal values of :math:`\beta_k:`
 
 
-@qml.qnode(dev, interface="autograd")
+@qml.qnode(dev)
 def prob_circuit():
     ansatz = build_maxclique_ansatz(cost_h, driver_h, delta_t)
     ansatz(res_beta)
