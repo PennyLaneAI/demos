@@ -202,7 +202,7 @@ def build_hamiltonian(graph):
                 H += 1.5 * (qml.PauliY(k) @ qml.PauliZ(j) - qml.PauliY(k))
             if k == j:
                 H += 1.5 * (qml.PauliZ(i) @ qml.PauliY(k) - qml.PauliY(k))
-        # Adds the terms in the second sum (coefficient 2 = i * 2 * 1)
+        # Adds the terms in the second sum
         H += 2 * qml.PauliY(k)
 
     return H
