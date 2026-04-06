@@ -222,7 +222,6 @@ print(build_hamiltonian(graph))
 #
 #         cost_h, driver_h = qaoa.max_clique(graph, constrained=False)
 #         comm_h = qml.simplify(1j * qml.commutator(driver_h, cost_h))
-#
 
 ######################################################################
 # We can now build the FALQON algorithm. Our goal is to evolve some initial state under the Hamiltonian :math:`H,`
