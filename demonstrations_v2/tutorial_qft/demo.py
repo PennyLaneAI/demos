@@ -123,7 +123,7 @@ plt.show()
 
 
 def prep():
-    """quntum function that prepares the state."""
+    """quantum function that prepares the state."""
     qp.PauliX(wires=0)
     for wire in range(1, 6):
         qp.Hadamard(wires=wire)
