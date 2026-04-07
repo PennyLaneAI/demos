@@ -217,7 +217,7 @@ print(f"Code dimension (k): {code_dim}\n")
 # defines the transpose code, which has its own parameters :math:`[m_i, k_i^t, d_i^t]`, where
 # the superscript :math:`t` simply labels the dimension and distance of this new code.
 # For example, look at the following HGP code constructed from two :math:`d_1=3` and :math:`d_2=3`
-# repetition codes, which is equivalent to a Toric code :math:`[[13, 1, 3]]`:
+# repetition codes, which is equivalent to a toric code :math:`[[13, 1, 3]]`:
 #
 
 from pennylane.qchem.tapering import _kernel as binary_matrix_kernel
@@ -394,7 +394,7 @@ plt.show()
 #
 # As mentioned earlier, Tanner graphs constructed using the parity-check matrix of the code
 # can be used for decoding errors efficiently using an iterative message-passing algorithm
-# like [Belief Propagation (BP)](https://pennylane.ai/qml/demos/tutorial_bp_catalyst) [#BProp]_.
+# like `Belief Propagation (BP) <https://pennylane.ai/qml/demos/tutorial_bp_catalyst>`_ [#BProp]_.
 # This decoding process can be thought of as a collaborative exercise, where the variable nodes
 # (qubits) and check nodes (parity rules) act like detectives passing *messages* back and forth.
 # A variable node sends a confidence level message, *"I am 84% sure that I have an error"*. The
@@ -414,7 +414,7 @@ plt.show()
 # mathematically force a valid parity solution for the remaining uncertain qubits. Let us define
 # a decoder class that implements this, where the BP is implemented using the ``tanh`` product rule
 # and the OSD-0 uses :func:`~.pennylane.math.binary_finite_reduced_row_echelon` to perform
-# [Gaussian elimination](https://en.wikipedia.org/wiki/Gaussian_elimination).
+# `Gaussian elimination <https://en.wikipedia.org/wiki/Gaussian_elimination>`_.
 #
 
 class BPOSDDecoder:
@@ -567,11 +567,11 @@ else:
 # For general CSS codes, including qLDPC code families, we can systematically construct a
 # canonical basis of :math:`k` logical operator pairs :math:`\{(L_X^{(i)}, L_Z^{(i)})\}_{i=1}^{k}`
 # using linear algebra over :math:`\mathbb{F}_2`. The algorithm requires two sequential passes
-# of [Gaussian elimination](https://en.wikipedia.org/wiki/Gaussian_elimination), first on
+# of `Gaussian elimination <https://en.wikipedia.org/wiki/Gaussian_elimination>`_, first on
 # :math:`H_X`, then on the remaining free columns of :math:`H_Z`, to identify the logical
 # sector. By doing this, we natively guarantee the canonical anticommutation condition
 # :math:`L_X^{(i)} \cdot L_Z^{(j)} = \delta_{ij} \pmod{2}`, where :math:`\delta_{ij}` is the
-# Kronecker delta. For example, below we construct logical operators for a simple Toric code.
+# Kronecker delta. For example, below we construct logical operators for a simple toric code.
 #
 
 def compute_logical_ops(hx: np.ndarray, hz: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
@@ -600,7 +600,7 @@ def compute_logical_ops(hx: np.ndarray, hz: np.ndarray) -> tuple[np.ndarray, np.
 
 # 2-bit repetition code on a ring
 h1, h2 = np.ones((2, 2)), np.ones((2, 2))
-hx, hz = hgp_code(h1, h2)  # Toric code
+hx, hz = hgp_code(h1, h2)  # toric code
 lx, lz = compute_logical_ops(hx, hz)
 
 print(f"Lx: {lx}")
@@ -644,7 +644,7 @@ print("Do Lx and Lz anticommute? ", np.allclose(lx @ lz.T, np.eye(lx.shape[0])))
 # for a given code by testing if (i) it preserves its *codespace*, i.e., the subspace
 # stabilized by all stabilizer generators, and (ii) maps logical operators to valid
 # logical operators. For example, we can check whether the :class:`~.pennylane.SWAP` gate is
-# transversal for the previously constructed Toric code by first verifying condition (i).
+# transversal for the previously constructed toric code by first verifying condition (i).
 #
 
 from itertools import product
