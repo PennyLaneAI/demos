@@ -163,9 +163,9 @@ print(f"Number of logical qubits: {n_qubits - nx - nz}")
 # logical error rate (LER) equals the unencoded physical error rate.
 #
 # Below the pseudo-threshold (green region), the code actively suppresses errors, i.e.,
-# the LER sits beneath the unencoded line, and encoding is immediately beneficial. Above
-# it but below $p_\text{th}$ (the amber region), the $d=3$ code becomes a net liability,
-# as it introduces more overhead than it corrects. This makes $p_\text{pseudo}^{(d)}$
+# the LER sits beneath the unencoded line, and encoding is immediately beneficial. Above it
+# but below :math:`p_\text{th}` (the amber region), the :math:`d=3` code becomes a net liability,
+# as it introduces more overhead than it corrects. This makes :math:`p_\text{pseudo}^{(d)}`
 # the *break-even* point for a specific code distance :math:`d` and gives the lower bound
 # on the true threshold. Therefore, encoding is only worthwhile if the hardware's physical
 # error rate is below its pseudo-threshold. Moreover, if :math:`p_{\text{pseudo}}^{(d)}`
@@ -416,7 +416,7 @@ plt.show()
 # that below the threshold point :math:`p_{th}`, increasing the code distance :math:`d`
 # leads to an exponential suppression of logical errors. Visually, this qualitative behavior
 # gets captured by the curves for different code distances crossing at a single distinct
-# point $p_{th}$, which is the hallmark of the threshold theorem. For topological codes
+# point :math:`p_{th}`, which is the hallmark of the threshold theorem. For topological codes
 # like the surface code, this suppression follows the power-law relationship
 # :math:`p_L \propto C \cdot (p / p_{th})^{(d + 1)/2}`, where :math:`C > 0` is a constant.
 # Since the base is :math:`p / p_{th} < 1`, when operating below the threshold point
@@ -443,7 +443,7 @@ plt.show()
 #
 #     D. Aharonov, M. Ben-Or,
 #     "Fault-Tolerant Quantum Computation With Constant Error Rate",
-#     `SIAM J. Comput., 38(4), 1207–1282 <https://arxiv.org/abs/quant-ph/9906129>`__, 2008.
+#     `SIAM J. Comput., 38(4), 1207–1282 <https://epubs.siam.org/doi/10.1137/S0097539799359385>`__, 2008.
 #
 # .. [#gottesman]
 #
@@ -455,11 +455,11 @@ plt.show()
 #
 #     A. G. Fowler, M. Mariantoni, J. M. Martinis, A. N. Cleland,
 #     "Surface codes: Towards practical large-scale quantum computation",
-#     `Phys. Rev. A 86, 032324 <https://arxiv.org/abs/1208.0928>`__, 2012.
+#     `Phys. Rev. A 86, 032324 <https://journals.aps.org/pra/abstract/10.1103/PhysRevA.86.032324>`__, 2012.
 #
 # .. [#pymatching]
 #
 #     O. Higgott,
 #     "PyMatching: A Python package for decoding quantum codes with minimum-weight perfect matching",
-#     `ACM Trans. Quantum Comput. 3(3), 1–16 <https://arxiv.org/abs/2105.13082>`__, 2022.
+#     `ACM Trans. Quantum Comput. 3(3), 1–16 <https://dl.acm.org/doi/10.1145/3505637>`__, 2022.
 #
