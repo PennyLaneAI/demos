@@ -177,7 +177,7 @@ Although the Clifford hierarchy was first proposed in the context of universalit
 Not only $T$ gates can be implemented fault-tolerantly; the Clifford hierarchy shows how an enormous class of gates can be implemented fault-tolerantly. For example, the diagonal $C-U$ gates that perform period finding for `Shor’s algorithm <https://pennylane.ai/codebook/shors-algorithm>`__ & in `quantum phase estimation (QPE) <https://pennylane.ai/qml/demos/tutorial_qpe>`__ can be implemented using the teleportation circuits here. 
 
 
-#############################################################################
+
 References
 ---------------------------------
 .. [#anynonclifford]
