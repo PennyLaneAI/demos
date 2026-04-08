@@ -36,13 +36,13 @@
             "url": "https://arxiv.org/abs/math/0001038"
         },
         {
-        "id": "Fowler",
+        "id": "universality",
         "type": "article",
-        "title": "Surface codes: Towards practical large-scale quantum computation",
-        "authors": "Austin G. Fowler, Matteo Mariantoni, John M. Martinis, Andrew N. Cleland",
-        "year": "2012",
-        "journal": "Phys. Rev. A",
-        "url": "https://journals.aps.org/pra/abstract/10.1103/PhysRevA.86.032324"
+        "title": "Universality in Quantum Computation",
+        "authors": "D. Deutsch, A. Barenco, and A. Ekert",
+        "year": "1995",
+        "journal": "arXiv",
+        "url": "https://arxiv.org/abs/quant-ph/9505018"
     },
     {
         "id": "Gidney2024",
