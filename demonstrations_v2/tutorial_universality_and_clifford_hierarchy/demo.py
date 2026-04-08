@@ -5,7 +5,7 @@ We all know the 'Gottesman-Knill' rule: Clifford circuits are efficient to simul
 
 It turns out there is a rigorous structure hidden beneath these gates. The Clifford hierarchy explains exactly how 'quantum' a gate is, how hard it is to correct, and why specific gates act as the 'magic' fuel for fault-tolerant computation.
 
-In this demo, we will dig deeper into the levels of gates that make up the Clifford hierarchy (the Pauli group, the Clifford group, non-Clifford sets, and more), see how they are related (and how to implement them with gate teleportation!), and what this all means for FTQC.
+In this demo, we will dig deeper into the levels of gates that make up the Clifford hierarchy (the Pauli group, the Clifford group, non-Clifford sets, and more), see how they are related (and how to implement them with gate teleportation!), and what this all means for fault-tolerant quantum computing (FTQC).
 
 
 The trouble with universality and quantum error correction
