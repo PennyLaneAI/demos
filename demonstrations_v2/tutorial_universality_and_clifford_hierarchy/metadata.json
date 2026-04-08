@@ -108,13 +108,13 @@
         "url": "https://arxiv.org/abs/1608.06596"
     },
     {
-        "id": "Hirano2025",
+        "id": "pauliframetracking",
         "type": "article",
-        "title": "Efficient magic state cultivation with lattice surgery",
-        "authors": "Yutaka Hirano, Riki Toshio, Tomohiro Itogawa, Keisuke Fujii",
-        "year": "2025",
+        "title": "Fault-tolerant quantum computing in the Pauli or Clifford frame with slow error diagnostics",
+        "authors": "C. Chamberland, P. Iyer, and D. Poulin",
+        "year": "2017",
         "journal": "arXiv",
-        "url": "https://arxiv.org/abs/2510.24615"
+        "url": "https://arxiv.org/abs/1704.06662"
     },
         {
             "id": "Heinrich2019",
