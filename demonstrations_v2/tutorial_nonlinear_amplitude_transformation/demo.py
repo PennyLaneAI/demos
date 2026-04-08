@@ -165,7 +165,6 @@ r"""#Nonlinear amplitude transformation
 # we move on to applying QSVT polynomials.
 # 
 
-pip install pennylane pyqsp -q
 
 import pennylane as qml
 from pyqsp.poly import PolyTaylorSeries
