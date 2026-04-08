@@ -54,13 +54,13 @@
         "url": "https://www.cs.umd.edu/~dgottesm/QECCbook-2024.pdf"
     },
     {
-        "id": "QuEra2025",
+        "id": "SK_alg",
         "type": "article",
-        "title": "Experimental demonstration of logical magic state distillation",
-        "authors": "Pedro Sales Rodriguez, et al.",
-        "year": "2025",
-        "journal": "Nature",
-        "url": "https://www.nature.com/articles/s41586-025-09367-3"
+        "title": "The Solovay-Kitaev Algorithm",
+        "authors": "C.M. Dawnson and M.A. Nielsen",
+        "year": "2005",
+        "journal": "arXiv",
+        "url": "https://arxiv.org/abs/quant-ph/0505030"
     },
     {
         "id": "Ruiz2025",
