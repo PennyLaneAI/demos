@@ -117,13 +117,31 @@
         "url": "https://arxiv.org/abs/1704.06662"
     },
         {
-            "id": "Heinrich2019",
+            "id": "climbdiagonal",
             "type": "article",
-            "title": "Robustness of Magic and Symmetries of the Stabiliser Polytope",
-            "authors": "Markus Heinrich and David Gross",
+            "title": "Climbing the Diagonal Clifford Hierarchy",
+            "authors": "J. Hu, Q. Liang, and R. Calderbank",
             "year": "2019",
-            "journal": "Quantum",
-            "url": "https://quantum-journal.org/papers/q-2019-04-08-132"
+            "journal": "arXiv",
+            "url": "https://arxiv.org/abs/2110.11923"
+        },
+        {
+            "id": "controlledgates",
+            "type": "article",
+            "title": "Controlled Gates in the Clifford Hierarchy",
+            "authors": "J.T. Anderson and M. Weippert",
+            "year": "2025",
+            "journal": "arXiv",
+            "url": "https://arxiv.org/abs/2410.04711"
+        },
+        {
+            "id": "climb",
+            "type": "article",
+            "title": "Climbing the Clifford Hierarchy",
+            "authors": "L. Bastioni, S. Glandon, T. Pllaha, M. Stewart, and P. Waitkevich",
+            "year": "2026",
+            "journal": "arXiv",
+            "url": "https://arxiv.org/abs/2603.12088"
         }
     ],
     "basedOnPapers": [],
