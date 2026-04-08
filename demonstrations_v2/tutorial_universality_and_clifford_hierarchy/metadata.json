@@ -27,13 +27,13 @@
     "doi": "",
     "references": [
         {
-            "id": "Bravyi2004",
+            "id": "anynonclifford",
             "type": "article",
-            "title": "Universal Quantum Computation with ideal Clifford gates and noisy ancillas",
-            "authors": "Sergei Bravyi and Alexei Kitaev",
-            "year": "2004",
+            "title": "The invariants of the Clifford groups",
+            "authors": "G. Nebe, E.M. Rains, N.J.A. Sloane",
+            "year": "2000",
             "journal": "arXiv",
-            "url": "https://arxiv.org/abs/quant-ph/0403025"
+            "url": "https://arxiv.org/abs/math/0001038"
         },
         {
         "id": "Fowler",
