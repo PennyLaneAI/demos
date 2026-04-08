@@ -50,7 +50,7 @@ def build(
     execute: Annotated[
         bool, typer.Option(help="Whether to execute demos and generate output cells")
     ] = False,
-    quiet: Annotated[bool, typer.Option(help="Suppress sphinx output")] = False,
+    quiet: Annotated[bool, typer.Option(help="Suppress build output")] = False,
     keep_going: Annotated[
         bool, typer.Option(help="Continue if sphinx-build fails for a demo")
     ] = False,
@@ -65,7 +65,7 @@ def build(
         demo_names: List of demo names to build. If None, builds all demos.
         format: Output format for the demos.
         execute: Whether to execute demos and generate output cells.
-        quiet: Suppress sphinx output if True.
+        quiet: Suppress build output if True.
         keep_going: Continue building even if some demos fail.
         dev: Use development dependencies.
         venv: Name of the virtual environment to install build dependencies.
