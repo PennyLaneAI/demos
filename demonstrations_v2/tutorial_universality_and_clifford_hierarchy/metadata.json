@@ -45,13 +45,13 @@
         "url": "https://arxiv.org/abs/quant-ph/9505018"
     },
     {
-        "id": "Gidney2024",
-        "type": "article",
-        "title": "Magic state cultivation: growing T states as cheap as CNOT gates",
-        "authors": "Craig Gidney, Noah Shutty, Cody Jones",
+        "id": "qecbook",
+        "type": "book",
+        "title": "Surviving as a Quantum Computer in a Classical World",
+        "authors": "D. Gottesman",
         "year": "2024",
         "journal": "arXiv",
-        "url": "https://arxiv.org/abs/2409.17595"
+        "url": "https://www.cs.umd.edu/~dgottesm/QECCbook-2024.pdf"
     },
     {
         "id": "QuEra2025",
