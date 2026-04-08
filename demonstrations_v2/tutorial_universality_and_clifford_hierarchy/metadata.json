@@ -63,13 +63,13 @@
         "url": "https://arxiv.org/abs/quant-ph/0505030"
     },
     {
-        "id": "Ruiz2025",
+        "id": "gridsynth",
         "type": "article",
-        "title": "Unfolded distillation: very low-cost magic state preparation for biased-noise qubits",
-        "authors": "Diego Ruiz, Jérémie Guillaud, Christophe Vuillot, Mazyar Mirrahimi",
-        "year": "2025",
+        "title": "Optimal ancilla-free Clifford+T approximation of z-rotations",
+        "authors": "N.J. Ross and P. Selinger",
+        "year": "2016",
         "journal": "arXiv",
-        "url": "https://arxiv.org/abs/2507.12511"
+        "url": "https://arxiv.org/abs/1403.2975"
     },
     {
         "id": "Itogawa2025",
