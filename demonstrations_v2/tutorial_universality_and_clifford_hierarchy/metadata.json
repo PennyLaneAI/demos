@@ -90,13 +90,13 @@
         "url": "https://arxiv.org/abs/quant-ph/0002039"
     },
     {
-        "id": "Google2025",
+        "id": "semiclifford",
         "type": "article",
-        "title": "Magic state cultivation on a superconducting quantum processor",
-        "authors": "Emma Rosenfeld, et al.",
-        "year": "2025",
+        "title": "Semi-Clifford operations, structure of :math:`C_k` hierarchy, and gate complexity for fault-tolerant quantum computation",
+        "authors": "B. Zeng, X. Chen, and I.L. Chuang",
+        "year": "2008",
         "journal": "arXiv",
-        "url": "https://arxiv.org/abs/2512.13908"
+        "url": "https://arxiv.org/abs/0712.2084"
     },
     {
         "id": "Chen2025",
