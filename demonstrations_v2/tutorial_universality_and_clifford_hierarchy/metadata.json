@@ -99,13 +99,13 @@
         "url": "https://arxiv.org/abs/0712.2084"
     },
     {
-        "id": "Chen2025",
+        "id": "diagonal",
         "type": "article",
-        "title": "Efficient Magic State Cultivation on ℝ\u21192",
-        "authors": "Zi-Han Chen, Ming-Cheng Chen, Chao-Yang Lu, Jian-Wei Pan",
-        "year": "2025",
+        "title": "Diagonal gates in the Clifford hierarchy",
+        "authors": "S.X. Cui, D. Gottesman, and A. Krishna",
+        "year": "2016",
         "journal": "arXiv",
-        "url": "https://arxiv.org/abs/2503.18657"
+        "url": "https://arxiv.org/abs/1608.06596"
     },
     {
         "id": "Hirano2025",
