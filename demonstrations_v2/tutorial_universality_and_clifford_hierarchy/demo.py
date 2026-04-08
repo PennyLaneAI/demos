@@ -240,7 +240,7 @@ References
 
     C. Chamberland, P. Iyer, and D. Poulin
     "Fault-tolerant quantum computing in the Pauli or Clifford frame with slow error diagnostics"
-    `1704.06662 <https://arxiv.org/abs/1704.06662>`__, 2017.
+    `arXiv:1704.06662 <https://arxiv.org/abs/1704.06662>`__, 2017.
 
     
 .. [#climbdiagonal]
