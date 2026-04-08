@@ -81,13 +81,13 @@
         "url": "https://journals.aps.org/prxquantum/abstract/10.1103/thxx-njr6"
     },
     {
-        "id": "Hirano2024",
+        "id": "onebit",
         "type": "article",
-        "title": "Leveraging Zero-Level Distillation to Generate High-Fidelity Magic States",
-        "authors": "Yutaka Hirano, Tomohiro Itogawa, Keisuke Fujii",
-        "year": "2024",
+        "title": "Methodology for quantum logic gate construction",
+        "authors": "X. Zhou, D.W. Leung, and I.L. Chuang",
+        "year": "2000",
         "journal": "arXiv",
-        "url": "https://arxiv.org/abs/2404.09740"
+        "url": "https://arxiv.org/abs/quant-ph/0002039"
     },
     {
         "id": "Google2025",
