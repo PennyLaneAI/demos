@@ -247,7 +247,7 @@ References
 
     J. Hu, Q. Liang, and R. Calderbank
     "Climbing the Diagonal Clifford Hierarchy"
-    `2110.11923  <https://arxiv.org/abs/2110.11923>`__, 2021.
+    `arXiv:2110.11923  <https://arxiv.org/abs/2110.11923>`__, 2021.
 
 .. [#controlledgates]
 
