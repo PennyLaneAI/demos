@@ -28,7 +28,7 @@ So, it appears that we are stuck: Either we perform fault-tolerant but non-unive
 
 If only there was some relationship between non-Clifford gates and Clifford gates that we can exploit...
 
-You've probably seen a similar idea before
+Clifford and Pauli gate relations
 ---------------------------------
 
 The core idea of the Clifford hierarchy lurks beneath many of the concepts you may already know: relationships between different gates can be exploited to simplify computation. For example, Clifford-only quantum circuits are known to be efficiently simulatable classically, as proven by the `Gottesman-Knill theorem <https://en.wikipedia.org/wiki/Gottesman%E2%80%93Knill_theorem>`__. 
