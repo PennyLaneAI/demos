@@ -89,7 +89,7 @@ Achieving universal and fault-tolerant quantum computing
 
 With the Clifford hierarchy, we can fault-tolerantly implement a :math:`\mathcal{C}_3` gate with only :math:`\mathcal{C}_2` gates via gate teleportation [#gottesmanchuang]_. Gate teleportation builds on top of `state teleportation <https://pennylane.ai/qml/demos/tutorial_teleportation>`__ à la Alice and Bob. Recalling that many QEC codes cannot implement a non-Clifford gate transversally, Alice cannot simply apply a transversal non-Clifford gate on her top qubit in Figure 1 without possibly introducing irrecoverable noise. 
 
-So, as shown in Figure 1, suppose we apply a gate :math:`U\in \mathcal{C}_3` on Bob’s half of the Bell state pair on the bottom, and proceed with :math:`|\psi\rangle` teleportation as usual. We won't worry about how Bob can apply $U$ but Alice can't just yet. Suffice to say, it's a *magic* state 🪄.
+So, as shown in Figure 1, suppose we apply a gate :math:`U\in \mathcal{C}_3` on Bob’s half of the Bell state pair on the bottom, and proceed with :math:`|\psi\rangle` teleportation as usual. We won't worry about how Bob can apply $U$ but Alice can't just yet. Suffice to say, it's a `*magic* state <https://pennylane.ai/qml/demos/tutorial_magic_states>`__🪄.
 
 Upon measuring the top two qubits, like in standard state teleportation, a Pauli error $P$ occurs on the bottom qubit. There is an equal chance of :math:`P \in \{X,Y,Z,I\}` occurring. For state teleportation, applying :math:`P^{\dagger}=P` removes that error. However, the difference here with gate teleportation is that Bob applied $U$ already. So, after measurement, the bottom qubit becomes :math:`UP|\psi\rangle`. Applying :math:`P^{\dagger}` does not remove the Pauli error. 
 
