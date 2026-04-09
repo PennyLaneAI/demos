@@ -106,6 +106,73 @@ Upon measuring the top two qubits, like in standard state teleportation, a Pauli
 
 To see how we can overcome this, let's apply the identity :math:`I=U^{\dagger} U` to obtain :math:`UP I |\psi\rangle = UPU^{\dagger}U|\psi\rangle = CU|\psi\rangle`. Observe that this method has reversed the order of the gates so that $C$ is now exposed while $U$ is applied to the state :math:`|\psi\rangle` first. By the Clifford hierarchy, $C$ must be a Clifford gate. As discussed above, many QEC codes can implement Clifford gates fault-tolerantly. Thus, with the knowledge of $P$ from the Bell state measurement, :math:`C^{\dagger} = UPU^{\dagger} = C` can be applied to produce :math:`U|\psi\rangle`, the desired non-Clifford gate. This procedure, known as magic state injection, generalises to the n-qubit case. 
 
+An example code for a $C_3$ teleportation circuit is given below: 
+
+import pennylane as qp
+import numpy as np
+
+dev = qp.device('default.qubit', wires=3)
+initial_state = np.array([1, 1]) / np.sqrt(2) # arbitrary initial state
+
+# Define your C_3 gate here. 
+# We chose a T gate. Feel free to change it. 
+def target_gate(wire):
+    qp.T(wires=wire) 
+
+@qp.qnode(dev)
+def universal_teleportation(state):
+    qp.StatePrep(state, wires=0) # initialise the state
+
+    # Prepare magic state using the bottom 2 qubits
+    qp.H(1)
+    qp.CNOT(wires=[1, 2])
+    target_gate(2) # Apply the C_3 gate
+    
+    # Teleport
+    qp.CNOT(wires=[0, 1])
+    qp.H(0)
+
+    # Measure
+    m0 = qp.measure(0) # Z error
+    m1 = qp.measure(1) # X error
+
+    # We must handle U P U^dagger corrections
+    def x_corr():
+        qp.adjoint(target_gate)(2)
+        qp.X(2)
+        target_gate(2)
+
+    def z_corr():
+        qp.adjoint(target_gate)(2)
+        qp.Z(2)
+        target_gate(2)
+
+    def xz_corr():
+        qp.adjoint(target_gate)(2)
+        qp.X(2) 
+        qp.Z(2)
+        target_gate(2)
+
+    # 3. Apply conditionally
+    qp.cond(m1 & (m0 == 0), x_corr)() # If we measure |01>
+    qp.cond(m0 & (m1 == 0), z_corr)() # If we measure |10>
+    qp.cond(m0 & m1, xz_corr)() # If we measure  |11>
+
+    return qp.density_matrix(wires=2)
+
+# Check the circuit gives the expected result
+U_mat = qp.matrix(target_gate, wire_order=[0])(0)
+initial_dm = np.outer(initial_state, np.conj(initial_state))
+correct_answer = U_mat @ initial_dm @ np.conj(U_mat).T
+
+print("Is the circuit behaving as expected?", np.allclose(universal_teleportation(initial_state), correct_answer))
+
+
+##########################################
+# Observe that :math:`(UPU^{\dagger})^{\dagger}` in practice is implemented as simply the reverse of the conjugation. 
+# 
+# 
+
 The challenge of implementing the :math:`\mathcal{C}_3` gate, $U$, fault-tolerantly has been shifted to fault-tolerantly preparing the *magic state* :math:`(I \otimes U)(|00\rangle+|11\rangle)/\sqrt{2}` offline. The key idea is: We can prepare numerous, potentially noisy, candidate magic states in advance, and only allow the sufficiently clean states to be consumed to enable teleportation. Although magic states are a broader idea, the term is often used to mean `magic states for $T$ gates <https://pennylane.ai/qml/demos/tutorial_magic_states>`__ specifically. There are a few ways to prepare magic states fault-tolerantly such as `magic state distillation <https://pennylane.ai/qml/demos/tutorial_magic_state_distillation>`__. The remainder of the circuit consists of Clifford ($C_2$) gates and Bell basis measurements, which have fault-tolerant implementations in common QEC codes. Therefore, we can fault-tolerantly implement both Clifford and non-Clifford gates despite the Eastin-Knill theorem! 
 
 What is more, this teleportation circuit provides a systematic method to teleport any :math:`\mathcal{C}_k` gate, so long as you have access to :math:`\mathcal{C}_{k-1}` gates. If :math:`\mathcal{C}_{k-1}` gates are not fault-tolerantly implemented in your QEC code of choice, then you may use additional teleportation circuits that produce lower level gates until you reach the fault-tolerant gate set. Figure 2 below shows an example of nested teleportation circuits to implement a :math:`\mathcal{C}_4` gate for a QEC code that transversally implements Clifford gates. The first Bell basis measurement applies :math:`C_4 \in \mathcal{C}_4` with some Pauli error $P_4$. Conjugation implies we must apply :math:`C_3^{\dagger} = (C_4 P_4 C_4^{\dagger})^{\dagger} = C_3 \in\mathcal{C}_3` correction gate. For a QEC code that does not implement this type of gate transversally, we use another teleportation circuit. That teleportation circuit induces a Pauli error $P_3$ that must be corrected in the manner described above. It can be confirmed through computation that the final result is :math:`C_4 |\psi\rangle`. Higher level gates may be implemented in a recursive manner. 
