@@ -72,13 +72,13 @@
         "url": "https://arxiv.org/abs/1403.2975"
     },
     {
-        "id": "Itogawa2025",
+        "id": "gottesmanchuang",
         "type": "article",
-        "title": "Efficient magic state distillation by zero-Level distillation",
-        "authors": "Tomohiro Itogawa, Yugo Takada, Yutaka Hirano, Keisuke Fujii",
-        "year": "2025",
-        "journal": "PRX Quantum",
-        "url": "https://journals.aps.org/prxquantum/abstract/10.1103/thxx-njr6"
+        "title": "Quantum teleportation is a universal computational primitive",
+        "authors": "D. Gottesman and I.L. Chuang",
+        "year": "1999",
+        "journal": "arXiv",
+        "url": "https://arxiv.org/abs/quant-ph/9908010"
     },
     {
         "id": "onebit",
