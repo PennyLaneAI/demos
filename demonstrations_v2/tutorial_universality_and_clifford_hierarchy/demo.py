@@ -176,19 +176,19 @@ print("Is the circuit behaving as expected?", np.allclose(universal_teleportatio
 # The challenge of implementing the :math:`\mathcal{C}_3` gate, $U$, fault-tolerantly has been shifted to fault-tolerantly preparing the *magic state* :math:`(I \otimes U)(|00\rangle+|11\rangle)/\sqrt{2}` offline. The key idea is: We can prepare numerous, potentially noisy, candidate magic states in advance, and only allow the sufficiently clean states to be consumed to enable teleportation. Although magic states are a broader idea, the term is often used to mean `magic states for $T$ gates <https://pennylane.ai/qml/demos/tutorial_magic_states>`__ specifically. There are a few ways to prepare magic states fault-tolerantly such as `magic state distillation <https://pennylane.ai/qml/demos/tutorial_magic_state_distillation>`__. The remainder of the circuit consists of Clifford ($C_2$) gates and Bell basis measurements, which have fault-tolerant implementations in common QEC codes. Therefore, we can fault-tolerantly implement both Clifford and non-Clifford gates despite the Eastin-Knill theorem! 
 # 
 # What is more, this teleportation circuit provides a systematic method to teleport any :math:`\mathcal{C}_k` gate, so long as you have access to :math:`\mathcal{C}_{k-1}` gates. If :math:`\mathcal{C}_{k-1}` gates are not fault-tolerantly implemented in your QEC code of choice, then you may use additional teleportation circuits that produce lower level gates until you reach the fault-tolerant gate set. Figure 2 below shows an example of nested teleportation circuits to implement a :math:`\mathcal{C}_4` gate for a QEC code that transversally implements Clifford gates. The first Bell basis measurement applies :math:`C_4 \in \mathcal{C}_4` with some Pauli error $P_4$. Conjugation implies we must apply :math:`C_3^{\dagger} = (C_4 P_4 C_4^{\dagger})^{\dagger} = C_3 \in\mathcal{C}_3` correction gate. For a QEC code that does not implement this type of gate transversally, we use another teleportation circuit. That teleportation circuit induces a Pauli error $P_3$ that must be corrected in the manner described above. It can be confirmed through computation that the final result is :math:`C_4 |\psi\rangle`. Higher level gates may be implemented in a recursive manner. 
-
-
-.. figure:: ../_static/demonstration_assets/universality_and_clifford_hierarchy/Figure-2-universal-teleportation-c4-gate.png
-  :alt: Recursive universal teleportation circuit to apply a C_4 gate.
-  :width: 95%
-  :align: center
-
-  Figure 2: *A recursive universal gate teleportation circuit that applies a fourth level gate using a nested teleportation gate that implements a third level gate using only gates in the second level and measurements.*
-
-Teleportation is more efficient with semi-Clifford gates
----------------------------------
-
-While the universal teleportation circuit above can implement any non-Clifford gate in the Clifford hierarchy fault-tolerantly, it still isn't clear why the $T$ gate is commonly used to enable universality. To see that, let's be greedy: How can we teleport gates more efficiently? 
+# 
+# 
+# .. figure:: ../_static/demonstration_assets/universality_and_clifford_hierarchy/Figure-2-universal-teleportation-c4-gate.png
+#   :alt: Recursive universal teleportation circuit to apply a C_4 gate.
+#   :width: 95%
+#   :align: center
+# 
+#   Figure 2: *A recursive universal gate teleportation circuit that applies a fourth level gate using a nested teleportation gate that implements a third level gate using only gates in the second level and measurements.*
+# 
+# Teleportation is more efficient with semi-Clifford gates
+# ---------------------------------
+# 
+# While the universal teleportation circuit above can implement any non-Clifford gate in the Clifford hierarchy fault-tolerantly, it still isn't clear why the $T$ gate is commonly used to enable universality. To see that, let's be greedy: How can we teleport gates more efficiently? 
 
 If a gate is semi-Clifford i.e., it can be written as $U = G_b V G_a$, where $V$ is a diagonal matrix in :math:`\mathcal{C}_k` and $G_a$ and $G_b$ are each Clifford gates, then the resource cost of gate teleportation can be **halved** [#onebit]_. All one- and two-qubit gates in :math:`\mathcal{C}_k` are semi-Clifford, as are three-qubit gates in :math:`\mathcal{C}_3` [#semiclifford]_. Importantly, the $T$ gate is diagonal, which is a subset of semi-Clifford gates with $G_b = G_a = I$.
 
