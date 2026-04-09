@@ -37,7 +37,7 @@ The core idea of the Clifford hierarchy lurks beneath many of the concepts you m
 
 In other words, Clifford gates map Pauli gates to Pauli gates under conjugation. As my colleague wrote in this `demo <https://pennylane.ai/qml/demos/tutorial_clifford_circuit_simulations>`__, one can exploit this fact to efficiently track how stabilizers evolve through a Clifford-only circuit. 
 
-Can we extend this idea to non-Clifford gates? 
+What do non-Clifford gates Pauli gates to? Does that mapping help us simplify computation too? 
 
 The Clifford Hierarchy
 ---------------------------------
