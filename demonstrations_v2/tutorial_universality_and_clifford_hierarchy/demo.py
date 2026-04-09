@@ -291,32 +291,32 @@ Within :math:`\mathcal{C}_3`, we should restrict ourselves to semi-Clifford gate
 # .. [#onebit]
 # 
 #     X. Zhou, D.W. Leung, and I.L. Chuang
-    "Methodology for quantum logic gate construction"
-    `arXiv:quant-ph/0002039 <https://arxiv.org/abs/quant-ph/0002039>`__, 2000.
-
-.. [#semiclifford]
-
-    B. Zeng, X. Chen, and I.L. Chuang
-    "Semi-Clifford operations, structure of :math:`C_k` hierarchy, and gate complexity for fault-tolerant quantum computation"
-    `arXiv:0712.2084 <https://arxiv.org/abs/0712.2084>`__, 2008.
-
-.. [#diagonal]
-
-    S.X. Cui, D. Gottesman, and A. Krishna
-    "Diagonal gates in the Clifford hierarchy"
-    `arXiv:1608.06596 <https://arxiv.org/abs/1608.06596>`__, 2016.
-
-.. [#pauliframetracking]
-
-    C. Chamberland, P. Iyer, and D. Poulin
-    "Fault-tolerant quantum computing in the Pauli or Clifford frame with slow error diagnostics"
-    `arXiv:1704.06662 <https://arxiv.org/abs/1704.06662>`__, 2017.
-
-    
-.. [#climbdiagonal]
-
-    J. Hu, Q. Liang, and R. Calderbank
-    "Climbing the Diagonal Clifford Hierarchy"
+#     "Methodology for quantum logic gate construction"
+#     `arXiv:quant-ph/0002039 <https://arxiv.org/abs/quant-ph/0002039>`__, 2000.
+# 
+# .. [#semiclifford]
+# 
+#     B. Zeng, X. Chen, and I.L. Chuang
+#     "Semi-Clifford operations, structure of :math:`C_k` hierarchy, and gate complexity for fault-tolerant quantum computation"
+#     `arXiv:0712.2084 <https://arxiv.org/abs/0712.2084>`__, 2008.
+# 
+# .. [#diagonal]
+# 
+#     S.X. Cui, D. Gottesman, and A. Krishna
+#     "Diagonal gates in the Clifford hierarchy"
+#     `arXiv:1608.06596 <https://arxiv.org/abs/1608.06596>`__, 2016.
+# 
+# .. [#pauliframetracking]
+# 
+#     C. Chamberland, P. Iyer, and D. Poulin
+#     "Fault-tolerant quantum computing in the Pauli or Clifford frame with slow error diagnostics"
+#     `arXiv:1704.06662 <https://arxiv.org/abs/1704.06662>`__, 2017.
+# 
+#     
+# .. [#climbdiagonal]
+# 
+#     J. Hu, Q. Liang, and R. Calderbank
+#     "Climbing the Diagonal Clifford Hierarchy"
     `arXiv:2110.11923  <https://arxiv.org/abs/2110.11923>`__, 2021.
 
 .. [#controlledgates]
