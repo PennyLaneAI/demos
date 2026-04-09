@@ -199,21 +199,21 @@ print("Is the circuit behaving as expected?", np.allclose(universal_teleportatio
 #   :alt: One-bit teleportation circuits.
 #   :width: 95%
 #   :align: center
-
-  Figure 3: *One-bit teleportation circuits. (a) Z-teleportation, (b) X-teleportation, and (c) $T$ gate teleportation.*
-
-
-Here, conjugating the $U$ gate across the :math:`D \in \{Z,X\}` Pauli error creates the term :math:`UDU^{\dagger}`, which must be Clifford if $U$ is in :math:`\mathcal{C}_3` and $D$ is Pauli as per the Clifford hierarchy. Semi-Clifford-ness allows us to move the $U$ gate to before the CNOT gate. Just as before, the part of the circuit up to the $U$ gate is called a magic state, which can be prepared in advance. Therefore, if the magic state is available, then a semi-Clifford gate such as the $T$ gate can be implemented fault-tolerantly. 
-
-The one-bit teleportation protocol halves the number of ancilla qubits, measurements, and gates compared to the general two-bit teleportation protocol above. Note that the diagonal $V$ in $U = G_b V G_a$ need not commute with the CNOT gates because you are always free to select $X$-teleportation. All diagonal gates commute with the control part of a CNOT gate. For this reason, this circuit can implement a controlled-Hadamard gate, which does not commute with CNOT [#onebit]_. 
-
-Recursive application of this one-bit teleportation circuit leads to the implementation of semi-Clifford :math:`\mathcal{C}_k` gates. Figure 4 illustrates an example of X-teleportation of a semi-Clifford :math:`C_4\in\mathcal{C}_4` gate. 
-
-
-.. figure:: ../_static/demonstration_assets/universality_and_clifford_hierarchy/Figure-4-one-bit-teleportation-c4-gate.png
-  :alt: Recursive one-bit X-teleportation circuit for applying a C_4 gate.
-  :width: 95%
-  :align: center
+# 
+#   Figure 3: *One-bit teleportation circuits. (a) Z-teleportation, (b) X-teleportation, and (c) $T$ gate teleportation.*
+# 
+# 
+# Here, conjugating the $U$ gate across the :math:`D \in \{Z,X\}` Pauli error creates the term :math:`UDU^{\dagger}`, which must be Clifford if $U$ is in :math:`\mathcal{C}_3` and $D$ is Pauli as per the Clifford hierarchy. Semi-Clifford-ness allows us to move the $U$ gate to before the CNOT gate. Just as before, the part of the circuit up to the $U$ gate is called a magic state, which can be prepared in advance. Therefore, if the magic state is available, then a semi-Clifford gate such as the $T$ gate can be implemented fault-tolerantly. 
+# 
+# The one-bit teleportation protocol halves the number of ancilla qubits, measurements, and gates compared to the general two-bit teleportation protocol above. Note that the diagonal $V$ in $U = G_b V G_a$ need not commute with the CNOT gates because you are always free to select $X$-teleportation. All diagonal gates commute with the control part of a CNOT gate. For this reason, this circuit can implement a controlled-Hadamard gate, which does not commute with CNOT [#onebit]_. 
+# 
+# Recursive application of this one-bit teleportation circuit leads to the implementation of semi-Clifford :math:`\mathcal{C}_k` gates. Figure 4 illustrates an example of X-teleportation of a semi-Clifford :math:`C_4\in\mathcal{C}_4` gate. 
+# 
+# 
+# .. figure:: ../_static/demonstration_assets/universality_and_clifford_hierarchy/Figure-4-one-bit-teleportation-c4-gate.png
+#   :alt: Recursive one-bit X-teleportation circuit for applying a C_4 gate.
+#   :width: 95%
+#   :align: center
 
   Figure 4: *Recursive X-teleportation of a fourth level level gate using a nested X-teleportation circuit that implements a third level gate.*
 
