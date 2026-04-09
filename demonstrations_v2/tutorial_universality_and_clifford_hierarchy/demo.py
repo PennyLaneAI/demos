@@ -227,24 +227,24 @@ Adding any non-Clifford gate to a set of Clifford gates provides universality. T
 Gates above :math:`\mathcal{C}_3` in the Clifford hierarchy are eliminated because they require more resources to implement because of the need for nested teleportation circuits, as shown in the above figures. 
 
 Within :math:`\mathcal{C}_3`, we should restrict ourselves to semi-Clifford gates to let us use the more efficient teleportation circuits. That means we should only consider one-, two-, or three-qubit gates [#semiclifford]_, such as the $T$ gate, controlled-phase gate, controlled-Hadamard gate, and Toffoli gate. The gate that requires the fewest resources overall is the $T$ gate because it is a single-qubit diagonal gate (i.e., $G_a=G_b=I$). With these arguments, it is clear why the $T$ is often the non-Clifford gate of choice. 
-
-One can inject a $T$ gate via the circuit presented in Figure 3c, or using the circuit below. Additional explanation of the circuit below can be found `in this magic states glossary entry <https://pennylane.ai/qml/glossary/what-are-magic-states>`__. 
-
-.. figure:: ../_static/demonstration_assets/universality_and_clifford_hierarchy/Figure-5-magic-state-circuit.png
-  :alt: Standard magic state injection circuit
-  :width: 95%
-  :align: center
-
-  Figure 5: *Magic state injection circuit for a T gate.*
-
-
-
-Conclusion
----------------------------------
-
-We have seen how the Clifford hierarchy enables universal and fault-tolerant quantum computing by mapping higher level gates down to lower level gates. The same hierarchy also ranks gates by the number of resources needed to implement them fault-tolerantly, thus how 'quantum' they are and how gates can be considered as magic fuel for fault-tolerance. 
-
-Although the Clifford hierarchy was first proposed in the context of universality [#gottesmanchuang]_, its ideas lurk underneath other topics. For example, `Pauli frame tracking <https://pennylane.ai/compilation/pauli-frame-tracking>`__ conjugates Clifford gates to avoid having to physically execute correction Pauli gates [#pauliframetracking]_. 
+# 
+# One can inject a $T$ gate via the circuit presented in Figure 3c, or using the circuit below. Additional explanation of the circuit below can be found `in this magic states glossary entry <https://pennylane.ai/qml/glossary/what-are-magic-states>`__. 
+# 
+# .. figure:: ../_static/demonstration_assets/universality_and_clifford_hierarchy/Figure-5-magic-state-circuit.png
+#   :alt: Standard magic state injection circuit
+#   :width: 95%
+#   :align: center
+# 
+#   Figure 5: *Magic state injection circuit for a T gate.*
+# 
+# 
+# 
+# Conclusion
+# ---------------------------------
+# 
+# We have seen how the Clifford hierarchy enables universal and fault-tolerant quantum computing by mapping higher level gates down to lower level gates. The same hierarchy also ranks gates by the number of resources needed to implement them fault-tolerantly, thus how 'quantum' they are and how gates can be considered as magic fuel for fault-tolerance. 
+# 
+# Although the Clifford hierarchy was first proposed in the context of universality [#gottesmanchuang]_, its ideas lurk underneath other topics. For example, `Pauli frame tracking <https://pennylane.ai/compilation/pauli-frame-tracking>`__ conjugates Clifford gates to avoid having to physically execute correction Pauli gates [#pauliframetracking]_. 
 
 Not only $T$ gates can be implemented fault-tolerantly; the Clifford hierarchy shows how an enormous class of gates can be implemented fault-tolerantly. For example, the diagonal $C-U$ gates that perform period finding for `Shor’s algorithm <https://pennylane.ai/codebook/shors-algorithm>`__ and in `quantum phase estimation (QPE) <https://pennylane.ai/qml/demos/tutorial_qpe>`__ can be implemented using the teleportation circuits shown in the above sections. 
 
