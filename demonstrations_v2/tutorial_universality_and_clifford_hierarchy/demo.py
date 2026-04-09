@@ -263,34 +263,34 @@ Within :math:`\mathcal{C}_3`, we should restrict ourselves to semi-Clifford gate
 #     D. Deutsch, A. Barenco, and A. Ekert
 #     "Universality in Quantum Computation"
 #     `arXiv:quant-ph/9505018 <https://arxiv.org/abs/quant-ph/9505018>`__, 1995.
-
-.. [#qecbook]
-
-    D. Gottesman
-    "Surviving as a Quantum Computer in a Classical World"
-    `Book <https://www.cs.umd.edu/~dgottesm/QECCbook-2024.pdf>`__, 2024.
-    
-.. [#SK_alg]
-
-    C.M. Dawnson and M.A. Nielsen
-    "The Solovay-Kitaev Algorithm"
-    `arXiv:quant-ph/0505030 <https://arxiv.org/abs/quant-ph/0505030>`__, 2005.
-
-.. [#gridsynth]
-
-    N.J. Ross and P. Selinger
-    "Optimal ancilla-free Clifford+T approximation of z-rotations"
-    `arXiv:1403.2975 <https://arxiv.org/abs/1403.2975>`__, 2016.
-
-.. [#gottesmanchuang]
-
-    D. Gottesman and I.L. Chuang
-    "Quantum teleportation is a universal computational primitive"
-    `arXiv:quant-ph/9908010 <https://arxiv.org/abs/quant-ph/9908010>`__, 1999.
-
-.. [#onebit]
-
-    X. Zhou, D.W. Leung, and I.L. Chuang
+# 
+# .. [#qecbook]
+# 
+#     D. Gottesman
+#     "Surviving as a Quantum Computer in a Classical World"
+#     `Book <https://www.cs.umd.edu/~dgottesm/QECCbook-2024.pdf>`__, 2024.
+#     
+# .. [#SK_alg]
+# 
+#     C.M. Dawnson and M.A. Nielsen
+#     "The Solovay-Kitaev Algorithm"
+#     `arXiv:quant-ph/0505030 <https://arxiv.org/abs/quant-ph/0505030>`__, 2005.
+# 
+# .. [#gridsynth]
+# 
+#     N.J. Ross and P. Selinger
+#     "Optimal ancilla-free Clifford+T approximation of z-rotations"
+#     `arXiv:1403.2975 <https://arxiv.org/abs/1403.2975>`__, 2016.
+# 
+# .. [#gottesmanchuang]
+# 
+#     D. Gottesman and I.L. Chuang
+#     "Quantum teleportation is a universal computational primitive"
+#     `arXiv:quant-ph/9908010 <https://arxiv.org/abs/quant-ph/9908010>`__, 1999.
+# 
+# .. [#onebit]
+# 
+#     X. Zhou, D.W. Leung, and I.L. Chuang
     "Methodology for quantum logic gate construction"
     `arXiv:quant-ph/0002039 <https://arxiv.org/abs/quant-ph/0002039>`__, 2000.
 
