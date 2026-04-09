@@ -317,20 +317,20 @@ Within :math:`\mathcal{C}_3`, we should restrict ourselves to semi-Clifford gate
 # 
 #     J. Hu, Q. Liang, and R. Calderbank
 #     "Climbing the Diagonal Clifford Hierarchy"
-    `arXiv:2110.11923  <https://arxiv.org/abs/2110.11923>`__, 2021.
-
-.. [#controlledgates]
-
-    J.T. Anderson and M. Weippert
-    "Controlled Gates in the Clifford Hierarchy"
-    `arXiv:2410.04711 <https://arxiv.org/abs/2410.04711>`__, 2025.
-
-.. [#climb]
-
-    L. Bastioni, S. Glandon, T. Pllaha, M. Stewart, and P. Waitkevich
-    "Climbing the Clifford Hierarchy"
-    `arXiv:2603.12088 <https://arxiv.org/abs/2603.12088>`__, 2026.
-
-
-
+#     `arXiv:2110.11923  <https://arxiv.org/abs/2110.11923>`__, 2021.
+# 
+# .. [#controlledgates]
+# 
+#     J.T. Anderson and M. Weippert
+#     "Controlled Gates in the Clifford Hierarchy"
+#     `arXiv:2410.04711 <https://arxiv.org/abs/2410.04711>`__, 2025.
+# 
+# .. [#climb]
+# 
+#     L. Bastioni, S. Glandon, T. Pllaha, M. Stewart, and P. Waitkevich
+#     "Climbing the Clifford Hierarchy"
+#     `arXiv:2603.12088 <https://arxiv.org/abs/2603.12088>`__, 2026.
+# 
+# 
+# 
 """
