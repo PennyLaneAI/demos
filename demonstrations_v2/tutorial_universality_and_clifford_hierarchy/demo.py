@@ -31,7 +31,7 @@ If only there was some relationship between non-Clifford gates and Clifford gate
 You've probably seen a similar idea before
 ---------------------------------
 
-The core idea of the Clifford hierarchy lurks beneath many of the concepts you may know: relationships between different gates can be exploited to simplify computation. For example, Clifford-only quantum circuits are known to be efficiently simulatable classically, as proven by the `Gottesman-Knill theorem <https://en.wikipedia.org/wiki/Gottesman%E2%80%93Knill_theorem>`__. 
+The core idea of the Clifford hierarchy lurks beneath many of the concepts you may already know: relationships between different gates can be exploited to simplify computation. For example, Clifford-only quantum circuits are known to be efficiently simulatable classically, as proven by the `Gottesman-Knill theorem <https://en.wikipedia.org/wiki/Gottesman%E2%80%93Knill_theorem>`__. 
 
 `Stabilizer tableau simulation <https://pennylane.ai/qml/demos/tutorial_clifford_circuit_simulations>`__ is one such method. If $Z$ is a stabilizer corresponding to the state :math:`|0 \rangle`, then the application of a Clifford gate such as $H$ transforms the stabilizer to become :math:`HZH^{\dagger} = X` corresponding to the new state :math:`H |0 \rangle = |+ \rangle`. For any Clifford gate, $C$, and for all Pauli gates :math:`P \in \{X,Y,Z\}`, observe that it is always true that the transformation :math:`CPC^{\dagger}` yields a Pauli gate up to a global phase. 
 
