@@ -245,24 +245,24 @@ Within :math:`\mathcal{C}_3`, we should restrict ourselves to semi-Clifford gate
 # We have seen how the Clifford hierarchy enables universal and fault-tolerant quantum computing by mapping higher level gates down to lower level gates. The same hierarchy also ranks gates by the number of resources needed to implement them fault-tolerantly, thus how 'quantum' they are and how gates can be considered as magic fuel for fault-tolerance. 
 # 
 # Although the Clifford hierarchy was first proposed in the context of universality [#gottesmanchuang]_, its ideas lurk underneath other topics. For example, `Pauli frame tracking <https://pennylane.ai/compilation/pauli-frame-tracking>`__ conjugates Clifford gates to avoid having to physically execute correction Pauli gates [#pauliframetracking]_. 
-
-Not only $T$ gates can be implemented fault-tolerantly; the Clifford hierarchy shows how an enormous class of gates can be implemented fault-tolerantly. For example, the diagonal $C-U$ gates that perform period finding for `Shor’s algorithm <https://pennylane.ai/codebook/shors-algorithm>`__ and in `quantum phase estimation (QPE) <https://pennylane.ai/qml/demos/tutorial_qpe>`__ can be implemented using the teleportation circuits shown in the above sections. 
-
-
-
-References
----------------------------------
-.. [#anynonclifford]
-
-    G. Nebe, E.M. Rains, N.J.A. Sloane
-    "The invariants of the Clifford groups"
-    `arXiv:math/0001038 <https://arxiv.org/abs/math/0001038>`__, 2000.
-
-.. [#universality]
-
-    D. Deutsch, A. Barenco, and A. Ekert
-    "Universality in Quantum Computation"
-    `arXiv:quant-ph/9505018 <https://arxiv.org/abs/quant-ph/9505018>`__, 1995.
+# 
+# Not only $T$ gates can be implemented fault-tolerantly; the Clifford hierarchy shows how an enormous class of gates can be implemented fault-tolerantly. For example, the diagonal $C-U$ gates that perform period finding for `Shor’s algorithm <https://pennylane.ai/codebook/shors-algorithm>`__ and in `quantum phase estimation (QPE) <https://pennylane.ai/qml/demos/tutorial_qpe>`__ can be implemented using the teleportation circuits shown in the above sections. 
+# 
+# 
+# 
+# References
+# ---------------------------------
+# .. [#anynonclifford]
+# 
+#     G. Nebe, E.M. Rains, N.J.A. Sloane
+#     "The invariants of the Clifford groups"
+#     `arXiv:math/0001038 <https://arxiv.org/abs/math/0001038>`__, 2000.
+# 
+# .. [#universality]
+# 
+#     D. Deutsch, A. Barenco, and A. Ekert
+#     "Universality in Quantum Computation"
+#     `arXiv:quant-ph/9505018 <https://arxiv.org/abs/quant-ph/9505018>`__, 1995.
 
 .. [#qecbook]
 
