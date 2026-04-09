@@ -21,7 +21,9 @@ For `noisy intermediate-scale quantum (NISQ) <https://pennylane.ai/blog/2023/06/
 
 Realistic quantum hardware is noisy, and so quantum data must be protected with `quantum error correction (QEC) codes <https://pennylane.ai/codebook/quantum-error-correction>`__ to achieve `fault-tolerance <https://pennylane.ai/topics/fault-tolerant-quantum-computing>`__. Note that a fault-tolerant implementation of a quantum gate can be obtained for free _if_ that gate can be implemented transversally because transversal gates limit the propagation of errors. Many QEC codes such as the `CSS <https://pennylane.ai/qml/demos/tutorial_stabilizer_codes>`__, colour, surface, and qLDPC [link to Utkarsh's upcoming demo] codes have transversal implementations of Clifford gates. 
 
-However, the `Eastin-Knill theorem <https://arxiv.org/pdf/0811.4262>`__ dictates that there can be no quantum error correction code that can implement both Clifford and non-Clifford gates transversally. So, it appears that we are stuck: Either we perform fault-tolerant but non-universal quantum computing, or we perform universal but non-fault-tolerant quantum computing. Is there some way we can implement non-Clifford gates non-transversally yet fault-tolerantly? 
+However, the `Eastin-Knill theorem <https://arxiv.org/pdf/0811.4262>`__ dictates that there can be no quantum error correction code that can implement both Clifford and non-Clifford gates transversally. Hence, the same QEC codes as above that implement Clifford gates fault-tolerantly cannot implement non-Clifford gates fault-tolerantly. 
+
+So, it appears that we are stuck: Either we perform fault-tolerant but non-universal quantum computing, or we perform universal but non-fault-tolerant quantum computing. Is there some way we can implement non-Clifford gates in these QEC codes fault-tolerantly and non-transversally?  
 
 
 If only there was some relationship between non-Clifford gates and Clifford gates that we can exploit...
