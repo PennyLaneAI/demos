@@ -158,7 +158,7 @@ Gates above :math:`\mathcal{C}_3` in the Clifford hierarchy are eliminated becau
 
 Within :math:`\mathcal{C}_3`, we should restrict ourselves to semi-Clifford gates to let us use the more efficient teleportation circuits. That means we should only consider one-, two-, or three-qubit gates [#semiclifford]_, such as the $T$ gate, controlled-phase gate, controlled-Hadamard gate, and Toffoli gate. The gate that requires the fewest resources overall is the $T$ gate because it is a single-qubit diagonal gate (i.e., $G_a=G_b=I$). With these arguments, it is clear why the $T$ is often the non-Clifford gate of choice. 
 
-One can inject a $T$ gate via the circuit presented in Figure 3c, or using the circuit below. Additional explanation of the circuit below can be found `here <https://pennylane.ai/qml/glossary/what-are-magic-states>`__. 
+One can inject a $T$ gate via the circuit presented in Figure 3c, or using the circuit below. Additional explanation of the circuit below can be found `in this magic states glossary entry <https://pennylane.ai/qml/glossary/what-are-magic-states>`__. 
 
 .. figure:: ../_static/demonstration_assets/universality_and_clifford_hierarchy/Figure-5-magic-state-circuit.png
   :alt: Standard magic state injection circuit
