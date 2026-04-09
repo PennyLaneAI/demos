@@ -107,6 +107,7 @@ Upon measuring the top two qubits, like in standard state teleportation, a Pauli
 To see how we can overcome this, let's apply the identity :math:`I=U^{\dagger} U` to obtain :math:`UP I |\psi\rangle = UPU^{\dagger}U|\psi\rangle = CU|\psi\rangle`. Observe that this method has reversed the order of the gates so that $C$ is now exposed while $U$ is applied to the state :math:`|\psi\rangle` first. By the Clifford hierarchy, $C$ must be a Clifford gate. As discussed above, many QEC codes can implement Clifford gates fault-tolerantly. Thus, with the knowledge of $P$ from the Bell state measurement, :math:`C^{\dagger} = UPU^{\dagger} = C` can be applied to produce :math:`U|\psi\rangle`, the desired non-Clifford gate. This procedure, known as magic state injection, generalises to the n-qubit case. 
 
 An example code for a $C_3$ teleportation circuit is given below: 
+"""
 
 import pennylane as qp
 import numpy as np
