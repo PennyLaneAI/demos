@@ -51,7 +51,7 @@ or pick among other `PennyLane devices <https://pennylane.ai/plugins/#built-in-d
 # The number of gates increases with the number of qubits.
 #
 
-import pennylane as qml
+import pennylane as qp
 import numpy as np
 
 # Define the keyword arguments for the MPS method
@@ -69,20 +69,20 @@ theta = 0.5
 phi = 0.1
 
 # Instantiate the device with the MPS method and the specified kwargs
-dev = qml.device("default.tensor", method="mps", **kwargs_mps)
+dev = qp.device("default.tensor", method="mps", **kwargs_mps)
 
 
 # Define the quantum circuit
-@qml.qnode(dev)
+@qp.qnode(dev)
 def circuit(theta, phi, num_qubits):
     for qubit in range(num_qubits - 4):
-        qml.RX(theta, wires=qubit + 1)
-        qml.CNOT(wires=[qubit, qubit + 1])
-        qml.RY(phi, wires=qubit + 1)
-        qml.DoubleExcitation(theta, wires=[qubit, qubit + 1, qubit + 3, qubit + 4])
-        qml.Toffoli(wires=[qubit + 1, qubit + 3, qubit + 4])
-    return qml.expval(
-        qml.X(num_qubits - 1) @ qml.Y(num_qubits - 2) @ qml.Z(num_qubits - 3)
+        qp.RX(theta, wires=qubit + 1)
+        qp.CNOT(wires=[qubit, qubit + 1])
+        qp.RY(phi, wires=qubit + 1)
+        qp.DoubleExcitation(theta, wires=[qubit, qubit + 1, qubit + 3, qubit + 4])
+        qp.Toffoli(wires=[qubit + 1, qubit + 3, qubit + 4])
+    return qp.expval(
+        qp.X(num_qubits - 1) @ qp.Y(num_qubits - 2) @ qp.Z(num_qubits - 3)
     )
 
 
@@ -136,7 +136,7 @@ for num_qubits in range(50, 201, 50):
 # As in the previous circuit, the number of gates increases with the number of qubits.
 #
 
-import pennylane as qml
+import pennylane as qp
 import numpy as np
 
 # Define the keyword arguments for the TN method
@@ -155,23 +155,23 @@ phi = 0.1
 depth = 10
 
 # Instantiate the device with the TN method and the specified kwargs
-dev = qml.device("default.tensor", method="tn", **kwargs_tn)
+dev = qp.device("default.tensor", method="tn", **kwargs_tn)
 
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def circuit(theta, depth, num_qubits):
     for i in range(num_qubits):
-        qml.X(wires=i)
+        qp.X(wires=i)
     for _ in range(1, depth - 1):
         for i in range(0, num_qubits, 2):
-            qml.CNOT(wires=[i, i + 1])
+            qp.CNOT(wires=[i, i + 1])
         for i in range(num_qubits % 5):
-            qml.RZ(theta, wires=i)
+            qp.RZ(theta, wires=i)
         for i in range(1, num_qubits - 1, 2):
-            qml.CZ(wires=[i, i + 1])
+            qp.CZ(wires=[i, i + 1])
     for i in range(num_qubits):
-        qml.CNOT(wires=[i, (i + 1)])
-    return qml.var(qml.X(num_qubits - 1))
+        qp.CNOT(wires=[i, (i + 1)])
+    return qp.var(qp.X(num_qubits - 1))
 
 
 # Simulate the circuit for different numbers of qubits

@@ -58,7 +58,7 @@ But we first need to define the molecular parameters, including atomic symbols a
 Note that the atomic coordinates are in `Bohr <https://en.wikipedia.org/wiki/Bohr_radius>`_.
 """
 
-import pennylane as qml
+import pennylane as qp
 import jax
 import numpy as np
 import time
@@ -111,8 +111,8 @@ print(f"Total number of excitations = {len(singles) + len(doubles)}")
 #
 # We first create the operator pool which contains all single and double excitations.
 
-singles_excitations = [qml.SingleExcitation(0.0, x) for x in singles]
-doubles_excitations = [qml.DoubleExcitation(0.0, x) for x in doubles]
+singles_excitations = [qp.SingleExcitation(0.0, x) for x in singles]
+doubles_excitations = [qp.DoubleExcitation(0.0, x) for x in doubles]
 operator_pool = doubles_excitations + singles_excitations
 
 ##############################################################################
@@ -120,21 +120,21 @@ operator_pool = doubles_excitations + singles_excitations
 # value of the Hamiltonian. We also need to define a device.
 
 hf_state = qchem.hf_state(active_electrons, qubits)
-dev = qml.device("default.qubit", wires=qubits)
-@qml.qnode(dev)
+dev = qp.device("default.qubit", wires=qubits)
+@qp.qnode(dev)
 def circuit():
-    [qml.PauliX(i) for i in np.nonzero(hf_state)[0]]
-    return qml.expval(H)
+    [qp.PauliX(i) for i in np.nonzero(hf_state)[0]]
+    return qp.expval(H)
 
 ##############################################################################
 # We instantiate the optimizer and use it to build the circuit adaptively.
 
-opt = qml.optimize.AdaptiveOptimizer()
+opt = qp.optimize.AdaptiveOptimizer()
 for i in range(len(operator_pool)):
     circuit, energy, gradient = opt.step_and_cost(circuit, operator_pool)
     if i % 3 == 0:
         print("n = {:},  E = {:.8f} H, Largest Gradient = {:.3f}".format(i, energy, gradient))
-        print(qml.draw(circuit, decimals=None)())
+        print(qp.draw(circuit, decimals=None)())
         print()
     if gradient < 3e-3:
         break
@@ -146,17 +146,17 @@ for i in range(len(operator_pool)):
 # gates from the pool. We can set ``drain_pool=True`` to prevent repetition of the gates by
 # removing the selected gate from the operator pool.
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def circuit():
-    [qml.PauliX(i) for i in np.nonzero(hf_state)[0]]
-    return qml.expval(H)
+    [qp.PauliX(i) for i in np.nonzero(hf_state)[0]]
+    return qp.expval(H)
 
-opt = qml.optimize.AdaptiveOptimizer()
+opt = qp.optimize.AdaptiveOptimizer()
 for i in range(len(operator_pool)):
     circuit, energy, gradient = opt.step_and_cost(circuit, operator_pool, drain_pool=True)
     if i % 2 == 0:
         print("n = {:},  E = {:.8f} H, Largest Gradient = {:.3f}".format(i, energy, gradient))
-        print(qml.draw(circuit, decimals=None)())
+        print(qp.draw(circuit, decimals=None)())
         print()
     if gradient < 3e-3:
         break
@@ -185,14 +185,14 @@ H, qubits = qchem.molecular_hamiltonian(
 )
 
 def circuit_1(params, excitations):
-    qml.BasisState(jnp.array(hf_state), wires=range(qubits))
+    qp.BasisState(jnp.array(hf_state), wires=range(qubits))
 
     for i, excitation in enumerate(excitations):
         if len(excitation) == 4:
-            qml.DoubleExcitation(params[i], wires=excitation)
+            qp.DoubleExcitation(params[i], wires=excitation)
         else:
-            qml.SingleExcitation(params[i], wires=excitation)
-    return qml.expval(H)
+            qp.SingleExcitation(params[i], wires=excitation)
+    return qp.expval(H)
 
 ##############################################################################
 # We now construct our first group of gates by including all the double excitations and compute the
@@ -201,8 +201,8 @@ def circuit_1(params, excitations):
 # with respect to the Hartree-Fock state.
 
 
-dev = qml.device("lightning.qubit", wires=qubits)
-cost_fn = qml.QNode(circuit_1, dev, interface="jax")
+dev = qp.device("lightning.qubit", wires=qubits)
+cost_fn = qp.QNode(circuit_1, dev, interface="jax")
 
 circuit_gradient = jax.grad(cost_fn, argnums=0)
 
@@ -246,26 +246,26 @@ for n in range(10):
 
 
 def circuit_2(params, excitations, gates_select, params_select):
-    qml.BasisState(hf_state, wires=range(qubits))
+    qp.BasisState(hf_state, wires=range(qubits))
 
     for i, gate in enumerate(gates_select):
         if len(gate) == 4:
-            qml.DoubleExcitation(params_select[i], wires=gate)
+            qp.DoubleExcitation(params_select[i], wires=gate)
         elif len(gate) == 2:
-            qml.SingleExcitation(params_select[i], wires=gate)
+            qp.SingleExcitation(params_select[i], wires=gate)
 
     for i, gate in enumerate(excitations):
         if len(gate) == 4:
-            qml.DoubleExcitation(params[i], wires=gate)
+            qp.DoubleExcitation(params[i], wires=gate)
         elif len(gate) == 2:
-            qml.SingleExcitation(params[i], wires=gate)
-    return qml.expval(H)
+            qp.SingleExcitation(params[i], wires=gate)
+    return qp.expval(H)
 
 
 ##############################################################################
 #  We now compute the gradients for the single excitation gates.
 
-cost_fn = qml.QNode(circuit_2, dev, interface="jax")
+cost_fn = qp.QNode(circuit_2, dev, interface="jax")
 circuit_gradient = jax.grad(cost_fn, argnums=0)
 params = [0.0] * len(singles)
 
@@ -297,7 +297,7 @@ singles_select
 # We perform a final circuit optimization to get the ground-state energy. The resulting energy
 # should match the exact energy of the ground electronic state of LiH which is -7.8825378193 Ha.
 
-cost_fn = qml.QNode(circuit_1, dev, interface="jax")
+cost_fn = qp.QNode(circuit_1, dev, interface="jax")
 
 params = jnp.zeros(len(doubles_select + singles_select))
 
@@ -350,17 +350,17 @@ excitations = doubles_select + singles_select
 
 params = jnp.zeros(len(excitations))
 
-@qml.qnode(dev, diff_method="parameter-shift", interface="jax")
+@qp.qnode(dev, diff_method="parameter-shift", interface="jax")
 def circuit(params):
-    qml.BasisState(hf_state, wires=range(qubits))
+    qp.BasisState(hf_state, wires=range(qubits))
 
     for i, excitation in enumerate(excitations):
         if len(excitation) == 4:
-            qml.DoubleExcitation(params[i], wires=excitation)
+            qp.DoubleExcitation(params[i], wires=excitation)
         elif len(excitation) == 2:
-            qml.SingleExcitation(params[i], wires=excitation)
+            qp.SingleExcitation(params[i], wires=excitation)
 
-    return qml.expval(qml.SparseHamiltonian(H_sparse, wires=range(qubits)))
+    return qp.expval(qp.SparseHamiltonian(H_sparse, wires=range(qubits)))
 
 
 for n in range(10):

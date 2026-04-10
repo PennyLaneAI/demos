@@ -100,7 +100,7 @@ Let’s get started!
 # using PennyLane
 #
 
-import pennylane as qml
+import pennylane as qp
 from pennylane import qchem
 import numpy as np
 from jax import numpy as jnp
@@ -138,7 +138,7 @@ num_theta = len(singles) + len(doubles)
 
 
 def circuit_VQE(theta, wires):
-    qml.AllSinglesDoubles(
+    qp.AllSinglesDoubles(
         weights=theta, wires=wires, hf_state=hf, singles=singles, doubles=doubles
     )
 
@@ -153,10 +153,10 @@ import jax
 
 jax.config.update("jax_enable_x64", True) # use double-precision numbers
 
-dev = qml.device("lightning.qubit", wires=qubits)
+dev = qp.device("lightning.qubit", wires=qubits)
 
 
-@qml.qjit
+@qp.qjit
 @qml.qnode(dev, interface="jax")
 def cost(theta):
     circuit_VQE(theta, range(qubits))

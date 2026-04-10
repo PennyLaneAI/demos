@@ -43,33 +43,33 @@ simpler quantum circuits. The transforms are based on very basic circuit equival
 To illustrate their combined effect, let us consider the following circuit.
 """
 
-import pennylane as qml
+import pennylane as qp
 import matplotlib.pyplot as plt
 
-dev = qml.device("default.qubit", wires=3)
+dev = qp.device("default.qubit", wires=3)
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def circuit(angles):
-    qml.Hadamard(wires=2)
-    qml.Hadamard(wires=1)
-    qml.CNOT(wires=[1, 0])
-    qml.CNOT(wires=[2, 1])
-    qml.RZ(angles[1], wires=2)
-    qml.RY(angles[0], wires=0)
-    qml.CNOT(wires=[2, 1])
-    qml.RY(-angles[0], wires=0)
-    qml.RX(angles[0], wires=0)
-    qml.RZ(-angles[1], wires=2)
-    qml.CNOT(wires=[1, 0])
-    qml.RX(angles[0], 0)
-    qml.Hadamard(wires=1)
-    qml.CY(wires=[1, 2])
-    qml.CNOT(wires=[1, 0])
-    return qml.expval(qml.PauliZ(wires=0))
+    qp.Hadamard(wires=2)
+    qp.Hadamard(wires=1)
+    qp.CNOT(wires=[1, 0])
+    qp.CNOT(wires=[2, 1])
+    qp.RZ(angles[1], wires=2)
+    qp.RY(angles[0], wires=0)
+    qp.CNOT(wires=[2, 1])
+    qp.RY(-angles[0], wires=0)
+    qp.RX(angles[0], wires=0)
+    qp.RZ(-angles[1], wires=2)
+    qp.CNOT(wires=[1, 0])
+    qp.RX(angles[0], 0)
+    qp.Hadamard(wires=1)
+    qp.CY(wires=[1, 2])
+    qp.CNOT(wires=[1, 0])
+    return qp.expval(qp.PauliZ(wires=0))
 
 
 angles = [0.1, 0.3, 0.5]
-qml.draw_mpl(circuit, decimals=1, style="sketch")(angles)
+qp.draw_mpl(circuit, decimals=1, style="sketch")(angles)
 plt.show()
 
 ######################################################################
@@ -80,9 +80,9 @@ plt.show()
 # towards a ``direction`` (defaults to the right).
 #
 
-new_circuit = qml.transforms.commute_controlled(circuit, direction="right")
+new_circuit = qp.transforms.commute_controlled(circuit, direction="right")
 
-qml.draw_mpl(new_circuit, decimals=1, style="sketch")(angles)
+qp.draw_mpl(new_circuit, decimals=1, style="sketch")(angles)
 plt.show()
 
 ######################################################################
@@ -92,9 +92,9 @@ plt.show()
 # transform, which removes consecutive inverse operations.
 #
 
-new_circuit = qml.transforms.cancel_inverses(new_circuit)
+new_circuit = qp.transforms.cancel_inverses(new_circuit)
 
-qml.draw_mpl(new_circuit, decimals=1, style="sketch")(angles)
+qp.draw_mpl(new_circuit, decimals=1, style="sketch")(angles)
 plt.show()
 
 ######################################################################
@@ -107,9 +107,9 @@ plt.show()
 # with a resulting angle lower than ``atol`` are directly removed.
 #
 
-new_circuit = qml.transforms.merge_rotations(new_circuit, atol=1e-8)
+new_circuit = qp.transforms.merge_rotations(new_circuit, atol=1e-8)
 
-qml.draw_mpl(new_circuit, decimals=1, style="sketch")(angles)
+qp.draw_mpl(new_circuit, decimals=1, style="sketch")(angles)
 plt.show()
 
 ######################################################################
@@ -121,30 +121,30 @@ plt.show()
 # using their decorator forms (beware the reverse order!).
 #
 
-@qml.transforms.merge_rotations(atol=1e-8)
-@qml.transforms.cancel_inverses
-@qml.transforms.commute_controlled(direction="right")
-@qml.qnode(dev)
+@qp.transforms.merge_rotations(atol=1e-8)
+@qp.transforms.cancel_inverses
+@qp.transforms.commute_controlled(direction="right")
+@qp.qnode(dev)
 def qfunc(angles):
-    qml.Hadamard(wires=2)
-    qml.Hadamard(wires=1)
-    qml.CNOT(wires=[1, 0])
-    qml.CNOT(wires=[2, 1])
-    qml.RZ(angles[1], wires=2)
-    qml.RY(angles[0], wires=0)
-    qml.CNOT(wires=[2, 1])
-    qml.RY(-angles[0], wires=0)
-    qml.RX(angles[0], wires=0)
-    qml.RZ(-angles[1], wires=2)
-    qml.CNOT(wires=[1, 0])
-    qml.RX(angles[0], 0)
-    qml.Hadamard(wires=1)
-    qml.CY(wires=[1, 2])
-    qml.CNOT(wires=[1, 0])
-    return qml.expval(qml.PauliZ(wires=0))
+    qp.Hadamard(wires=2)
+    qp.Hadamard(wires=1)
+    qp.CNOT(wires=[1, 0])
+    qp.CNOT(wires=[2, 1])
+    qp.RZ(angles[1], wires=2)
+    qp.RY(angles[0], wires=0)
+    qp.CNOT(wires=[2, 1])
+    qp.RY(-angles[0], wires=0)
+    qp.RX(angles[0], wires=0)
+    qp.RZ(-angles[1], wires=2)
+    qp.CNOT(wires=[1, 0])
+    qp.RX(angles[0], 0)
+    qp.Hadamard(wires=1)
+    qp.CY(wires=[1, 2])
+    qp.CNOT(wires=[1, 0])
+    return qp.expval(qp.PauliZ(wires=0))
 
 
-qml.draw_mpl(qfunc, decimals=1, style="sketch")(angles)
+qp.draw_mpl(qfunc, decimals=1, style="sketch")(angles)
 plt.show()
 
 ######################################################################
@@ -156,15 +156,15 @@ plt.show()
 # be easily reused to transform a circuit:
 #
 
-pipeline = qml.CompilePipeline(
-    qml.transforms.commute_controlled(direction="right"),
-    qml.transforms.cancel_inverses,
-    qml.transforms.merge_rotations(atol=1e-8)
+pipeline = qp.CompilePipeline(
+    qp.transforms.commute_controlled(direction="right"),
+    qp.transforms.cancel_inverses,
+    qp.transforms.merge_rotations(atol=1e-8)
 )
 
 compiled_circuit = pipeline(circuit)
 
-qml.draw_mpl(compiled_circuit, decimals=1, style="sketch")(angles)
+qp.draw_mpl(compiled_circuit, decimals=1, style="sketch")(angles)
 plt.show()
 
 ######################################################################
@@ -178,7 +178,7 @@ plt.show()
 
 compiled_circuit = pipeline(compiled_circuit)
 
-qml.draw_mpl(compiled_circuit, decimals=1, style="sketch")(angles)
+qp.draw_mpl(compiled_circuit, decimals=1, style="sketch")(angles)
 plt.show()
 
 ######################################################################
@@ -189,10 +189,10 @@ plt.show()
 # :class:`~pennylane.CNOT` gate.
 #
 
-new_pipeline = pipeline * 2 + qml.transforms.decompose(gate_set={"CNOT", "RX", "RY", "RZ"})
+new_pipeline = pipeline * 2 + qp.transforms.decompose(gate_set={"CNOT", "RX", "RY", "RZ"})
 compiled_circuit = new_pipeline(circuit)
 
-qml.draw_mpl(compiled_circuit, decimals=1, style="sketch")(angles)
+qp.draw_mpl(compiled_circuit, decimals=1, style="sketch")(angles)
 plt.show()
 
 ######################################################################
