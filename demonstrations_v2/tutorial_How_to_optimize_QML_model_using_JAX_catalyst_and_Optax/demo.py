@@ -165,11 +165,11 @@ for i in range(100):
 
 params = {"weights": weights, "bias": bias}
 
-@qml.qjit
+@qp.qjit
 def optimization(params, data, targets):
     opt_state = opt.init(params)
     args = (params, opt_state, data, targets)
-    (params, opt_state, _, _) = qml.for_loop(0, 100, 1)(update_step)(args)
+    (params, opt_state, _, _) = qp.for_loop(0, 100, 1)(update_step)(args)
     return params
 
 ######################################################################
