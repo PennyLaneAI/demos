@@ -329,7 +329,7 @@ print(f"Heavy output probability = {heavy_output_prob}")
 # using numpy to generate a permutation, and then apply it with the built-in
 # :func:`~.pennylane.Permute` subroutine.
 
-import pennylane as qml
+import pennylane as qp
 
 # Object for random number generation from numpy
 rng = np.random.default_rng()
@@ -337,7 +337,7 @@ rng = np.random.default_rng()
 def permute_qubits(num_qubits):
     # A random permutation
     perm_order = list(rng.permutation(num_qubits))
-    qml.Permute(perm_order, wires=list(range(num_qubits)))
+    qp.Permute(perm_order, wires=list(range(num_qubits)))
 
 
 ##############################################################################
@@ -353,7 +353,7 @@ def apply_random_su4_layer(num_qubits):
     for qubit_idx in range(0, num_qubits, 2):
         if qubit_idx < num_qubits - 1:
             rand_haar_su4 = unitary_group.rvs(4)
-            qml.QubitUnitary(rand_haar_su4, wires=[qubit_idx, qubit_idx + 1])
+            qp.QubitUnitary(rand_haar_su4, wires=[qubit_idx, qubit_idx + 1])
 
 
 ##############################################################################
@@ -378,16 +378,16 @@ def qv_circuit_layer(num_qubits):
 # need to run the same random circuit on two devices independently.
 
 num_qubits = 5
-dev_ideal = qml.device("lightning.qubit", shots=None, wires=num_qubits)
+dev_ideal = qp.device("lightning.qubit", shots=None, wires=num_qubits)
 
 m = 3  # number of qubits
 
-with qml.tape.QuantumTape() as tape:
+with qp.tape.QuantumTape() as tape:
     for _ in range(m):
         qv_circuit_layer(m)
 
-(expanded_tape,), _ = qml.transforms.decompose(tape, gate_set={qml.QubitUnitary, qml.SWAP})
-print(qml.drawer.tape_text(expanded_tape, wire_order=dev_ideal.wires, show_all_wires=True, show_matrices=True))
+(expanded_tape,), _ = qp.transforms.decompose(tape, gate_set={qp.QubitUnitary, qp.SWAP})
+print(qp.drawer.tape_text(expanded_tape, wire_order=dev_ideal.wires, show_all_wires=True, show_matrices=True))
 
 
 ##############################################################################
@@ -485,10 +485,10 @@ def heavy_output_set(m, probs):
 #
 
 # Adds a measurement of the first m qubits to the previous circuit
-tape = tape.copy(measurements=[qml.probs(wires=range(m))])
+tape = tape.copy(measurements=[qp.probs(wires=range(m))])
 
 # Run the circuit, compute heavy outputs, and print results
-[output_probs] = qml.execute([tape], dev_ideal)  # returns a list of result !
+[output_probs] = qp.execute([tape], dev_ideal)  # returns a list of result !
 output_probs = output_probs.reshape(2**m)
 heavy_outputs, prob_heavy_output = heavy_output_set(m, output_probs)
 
@@ -597,7 +597,7 @@ transpile_args = {
     "routing_method": "sabre",
 }
 
-dev_noisy = qml.device("qiskit.remote", wires=5, backend=FakeLimaV2(), **transpile_args)
+dev_noisy = qp.device("qiskit.remote", wires=5, backend=FakeLimaV2(), **transpile_args)
 
 
 ##############################################################################
@@ -621,20 +621,20 @@ for m in range(min_m, max_m + 1):
     for trial in range(num_trials):
 
         # Simulate the circuit analytically
-        with qml.tape.QuantumTape() as tape_probs:
+        with qp.tape.QuantumTape() as tape_probs:
             for _ in range(m):
                 qv_circuit_layer(m)
-            qml.probs(wires=range(m))
+            qp.probs(wires=range(m))
 
-        # when using qml.execute, shots must be on the tape
-        tape_counts = tape_probs.copy(measurements=[qml.counts()], shots=1000)
+        # when using qp.execute, shots must be on the tape
+        tape_counts = tape_probs.copy(measurements=[qp.counts()], shots=1000)
 
-        output_probs = qml.execute([tape_probs], dev_ideal)
+        output_probs = qp.execute([tape_probs], dev_ideal)
         output_probs = output_probs[0].reshape(2**m)
         heavy_outputs, prob_heavy_output = heavy_output_set(m, output_probs)
 
         # Execute circuit on the noisy device
-        [counts] = qml.execute([tape_counts], dev_noisy)
+        [counts] = qp.execute([tape_counts], dev_noisy)
 
         device_heavy_outputs = np.sum(
             [counts[x] if x[:m] in heavy_outputs else 0 for x in counts.keys()]
