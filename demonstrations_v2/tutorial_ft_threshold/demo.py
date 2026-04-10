@@ -24,15 +24,19 @@ logical error rate.
 In this demo, we will learn the theoretical framework of the fault-tolerant threshold
 theorem and observe this phenomenon in action. We will construct a QEC scheme called the
 *rotated surface code*, and subject it to simulated quantum noise across a range of physical
-error rates, computing two key metrics: (i) the pseudo-threshold, which is the break-even
-point where a specific error-correcting code becomes better than doing nothing at all, and
-(ii) the fault-tolerant threshold, the fundamental crossing point below which increasing our
-code size provides an exponential suppression of errors.
+error rates, computing two key metrics: (i) the pseudo-threshold (:math:`p_{pseudo}`), which
+is the break-even point where a specific error-correcting code becomes better than doing
+nothing at all, and (ii) the fault-tolerant threshold (:math:`p_{th}`), the fundamental
+crossing point below which increasing our code size provides an exponential suppression
+of errors.
+
+.. _fig-cartoon-thresholds:
 
 .. figure::
     ../_static/demonstration_assets/ft_threshold/cartoon_thresholds.png
     :align: center
     :width: 85%
+    :caption: Figure 1: Schematic of the fault-tolerant thresholds for rotated surface codes.
     :target: javascript:void(0)
 
 Fault-tolerant Threshold Theorem
@@ -43,19 +47,19 @@ Intuitively, it states that a fault-tolerant quantum computation of any size can
 accurately executed on imperfect hardware, provided that the base error rate of the 
 physical operations, :math:`p`, remains strictly below a specific, non-zero constant 
 known as the *threshold*, :math:`p_{th}`, the rightmost crossing point in the
-schematic above.
+:ref:`Figure 1 <fig-cartoon-thresholds>`.
 
 More rigorously, assuming a local stochastic error model where :math:`p < p_{th}`,
 we can take any ideal circuit :math:`\mathcal{C}` of size :math:`N` and construct a 
 corresponding fault-tolerant circuit :math:`\mathcal{C}^{\prime}`. Even when subjected
 to continuous noise, this corrected circuit is guaranteed to yield an output that deviates
 from the ideal outcome by no more than an arbitrarily small tolerance, :math:`\epsilon > 0`.
-Crucially, the theorem ensures that this correction is practically achievable and the
+Crucially, the theorem ensures that this correction is practically achievable because the
 required hardware overhead, i.e., the total number of physical qubits and time steps
 needed for :math:`\mathcal{C}^{\prime}`, grows at most by a polylogarithmic factor,
 :math:`\mathcal{O}(\log^{c}(N/\epsilon))` for some positive constant :math:`c` [#threshold]_.
 
-In other words, operating in the green region (where :math:`p < p_{th}`) of the schematic
+In other words, operating in the green region (where :math:`p < p_{th}`) of :ref:`Figure 1 <fig-cartoon-thresholds>`
 is not merely better, it is the condition under which arbitrarily large and reliable quantum
 circuits become physically constructable. Although the original theoretical framework relied
 on specific assumptions like independent stochastic noise, the threshold theorem is robust
@@ -78,6 +82,7 @@ qubit overhead when compared to the standard surface codes.
     ../_static/demonstration_assets/ft_threshold/rotated_surface_code.jpg
     :align: center
     :width: 85%
+    :caption: Figure 2: Rotated surface code for :math:`d=3` and :math:`d=5` codes.
     :target: javascript:void(0)
 
 As shown above for :math:`d=3` and :math:`d=5` rotated surface codes, the bulk plaquettes
@@ -164,7 +169,7 @@ print(f"Number of logical qubits: {n_qubits - nx - nz}")
 #
 # Below the pseudo-threshold (green region), the code actively suppresses errors, i.e.,
 # the LER sits beneath the unencoded line, and encoding is immediately beneficial. Above it
-# but below :math:`p_\text{th}` (the amber region), the :math:`d=3` code becomes a net liability,
+# but below :math:`p_{th}` (the amber region), the :math:`d=3` code becomes a net liability,
 # as it introduces more overhead than it corrects. This makes :math:`p_\text{pseudo}^{(d)}`
 # the *break-even* point for a specific code distance :math:`d` and gives the lower bound
 # on the true threshold. Therefore, encoding is only worthwhile if the hardware's physical
@@ -391,7 +396,12 @@ plt.yscale("log")
 plt.xscale("log")
 plt.grid(True, which="both", ls="--", alpha=0.6)
 plt.legend(fontsize=10)
-plt.tight_layout()
+
+caption_text = "Figure 4: Simulated fault-tolerant threshold crossing point."
+plt.figtext(
+    0.5, -0.02, caption_text, wrap=True, horizontalalignment='center', fontsize=10
+)
+plt.tight_layout(rect=[0, 0.05, 1, 1])
 plt.show()
 
 ######################################################################
@@ -416,8 +426,8 @@ plt.show()
 # that below the threshold point :math:`p_{th}`, increasing the code distance :math:`d`
 # leads to an exponential suppression of logical errors. Visually, this qualitative behavior
 # gets captured by the curves for different code distances crossing at a single distinct
-# point :math:`p_{th}`, which is the hallmark of the threshold theorem. For topological codes
-# like the surface code, this suppression follows the power-law relationship
+# point :math:`p_{th}`, which is the hallmark of the threshold theorem. For topological
+# codes like the surface code, this suppression follows the power-law relationship
 # :math:`p_L \propto C \cdot (p / p_{th})^{(d + 1)/2}`, where :math:`C > 0` is a constant.
 # Since the base is :math:`p / p_{th} < 1`, when operating below the threshold point
 # :math:`p < p_{th}`, the logical error rate :math:`p_L` drops exponentially as :math:`d`
