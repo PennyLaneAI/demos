@@ -36,8 +36,9 @@ of errors.
     ../_static/demonstration_assets/ft_threshold/cartoon_thresholds.png
     :align: center
     :width: 85%
-    :caption: Figure 1: Schematic of the fault-tolerant thresholds for rotated surface codes.
     :target: javascript:void(0)
+
+    Figure 1: Schematic of the fault-tolerant thresholds for rotated surface codes.
 
 Fault-tolerant Threshold Theorem
 ---------------------------------
@@ -82,8 +83,9 @@ qubit overhead when compared to the standard surface codes.
     ../_static/demonstration_assets/ft_threshold/rotated_surface_code.jpg
     :align: center
     :width: 85%
-    :caption: Figure 2: Rotated surface code for :math:`d=3` and :math:`d=5` codes.
     :target: javascript:void(0)
+
+    Figure 2: Rotated surface code for :math:`d=3` and :math:`d=5` codes.
 
 As shown above for :math:`d=3` and :math:`d=5` rotated surface codes, the bulk plaquettes
 alternate between :math:`Z`- and :math:`X`-type stabilizers in a checkerboard pattern,
@@ -330,7 +332,11 @@ plt.yscale("log")
 plt.xscale("log")
 plt.grid(True, which="both", ls="--", alpha=0.6)
 plt.legend(fontsize=10)
-plt.tight_layout()
+caption_text = "Figure 3: Simulated pseudo-threshold for the rotated surface code."
+plt.figtext(
+    0.5, 0.018, caption_text, wrap=True, horizontalalignment='center', fontsize=9
+)
+plt.tight_layout(rect=[0, 0.025, 1, 1])
 plt.show()
 
 ######################################################################
@@ -396,12 +402,11 @@ plt.yscale("log")
 plt.xscale("log")
 plt.grid(True, which="both", ls="--", alpha=0.6)
 plt.legend(fontsize=10)
-
-caption_text = "Figure 4: Simulated fault-tolerant threshold crossing point."
+caption_text = "Figure 4: Simulated fault-tolerant threshold for the rotated surface codes."
 plt.figtext(
-    0.5, -0.02, caption_text, wrap=True, horizontalalignment='center', fontsize=10
+    0.5, 0.018, caption_text, wrap=True, horizontalalignment='center', fontsize=9
 )
-plt.tight_layout(rect=[0, 0.05, 1, 1])
+plt.tight_layout(rect=[0, 0.025, 1, 1])
 plt.show()
 
 ######################################################################
