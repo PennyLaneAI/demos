@@ -334,9 +334,9 @@ plt.grid(True, which="both", ls="--", alpha=0.6)
 plt.legend(fontsize=10)
 caption_text = "Figure 3: Simulated pseudo-threshold for the rotated surface code."
 plt.figtext(
-    0.5, 0.018, caption_text, wrap=True, horizontalalignment='center', fontsize=9
+    0.5, 0.008, caption_text, wrap=True, horizontalalignment='center', fontsize=10
 )
-plt.tight_layout(rect=[0, 0.025, 1, 1])
+plt.tight_layout(rect=[0, 0.04, 1, 1])
 plt.show()
 
 ######################################################################
@@ -404,9 +404,9 @@ plt.grid(True, which="both", ls="--", alpha=0.6)
 plt.legend(fontsize=10)
 caption_text = "Figure 4: Simulated fault-tolerant threshold for the rotated surface codes."
 plt.figtext(
-    0.5, 0.018, caption_text, wrap=True, horizontalalignment='center', fontsize=9
+    0.5, 0.008, caption_text, wrap=True, horizontalalignment='center', fontsize=10
 )
-plt.tight_layout(rect=[0, 0.025, 1, 1])
+plt.tight_layout(rect=[0, 0.04, 1, 1])
 plt.show()
 
 ######################################################################
