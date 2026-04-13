@@ -678,7 +678,6 @@ def compute_stabilizer_group(hx: np.ndarray, hz: np.ndarray) -> tuple[list, set]
             if bit:
                 current_pauli *= gen
         full_group.add(str(current_pauli))
-        full_group.add(str(-current_pauli))
     return generators, full_group
 
 def codespace_preservation(operations: list, generators: list, stabilizers: set) -> bool:
