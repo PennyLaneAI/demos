@@ -173,7 +173,7 @@ print(f"Shape of the CSS code: {css_code.shape}")
 # which can easily be verified like so:
 #
 
-hx, hz = css_code[:m1, :n1], css_code[m1:, n1:] # Extract individual components.
+hx, hz = css_code[m1:, :n1], css_code[:m1, n1:] # Extract individual components.
 
 print(f"Does H_X * H_Z^T = 0? {np.allclose((hx @ hz.T) % 2, 0)}")
 print(f"Does H_Z * H_X^T = 0? {np.allclose((hz @ hx.T) % 2, 0)}\n")
@@ -717,11 +717,14 @@ def logical_operators_consistency(operations: list, logical_ops: tuple) -> bool:
     for operation in operations:
         tableau.append(*operation)
 
+    evolved_lxs, evolved_lzs = [], []
     result = True
     for itr, (lx_row, lz_row) in enumerate(zip(*logical_ops)):
         lx_pauli = stim.PauliString(["".join(["I", "X"][bit]) for bit in lx_row])
         lz_pauli = stim.PauliString(["".join(["I", "Z"][bit]) for bit in lz_row])
         evolved_lx, evolved_lz = tableau(lx_pauli), tableau(lz_pauli)
+        evolved_lxs.append(evolved_lx)
+        evolved_lzs.append(evolved_lz)
 
         for label, evolved in [("Lx", evolved_lx), ("Lz", evolved_lz)]:
             commutes = all(evolved.commutes(g) for g in generators)
@@ -732,6 +735,13 @@ def logical_operators_consistency(operations: list, logical_ops: tuple) -> bool:
             if not valid:
                 result = False
                 break
+
+    for ix, elx in enumerate(evolved_lxs):
+        for iz, elz in enumerate(evolved_lzs):
+            if (not elx.commutes(elz)) != (ix == iz):
+                print(f"{{Lx[{ix}], Lz[{iz}]}} anticommutation mismatch!")
+                result = False
+
     return result
 
 consistent = logical_operators_consistency(ops, (lx, lz))
