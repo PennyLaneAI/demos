@@ -165,9 +165,9 @@ print(f"Number of logical qubits: {n_qubits - nx - nz}")
 # Before sweeping over many code distances to locate the true threshold, it is instructive
 # to first ask a simpler question: Is this code worth using at all for my hardware?
 # The answer is given by the *pseudo-threshold*, the leftmost crossing point in the
-# schematic we saw earlier. For a single code of distance :math:`d`, it is referred to
-# as :math:`p_{\text{pseudo}}^{(d)}`, the physical error rate at which the encoded
-# logical error rate (LER) equals the unencoded physical error rate.
+# :ref:`Figure 1 <fig-cartoon-thresholds>`. For a single code of distance :math:`d`,
+# it is referred to as :math:`p_{\text{pseudo}}^{(d)}`, the physical error rate at
+# which the encoded logical error rate (LER) equals the unencoded physical error rate.
 #
 # Below the pseudo-threshold (green region), the code actively suppresses errors, i.e.,
 # the LER sits beneath the unencoded line, and encoding is immediately beneficial. Above it
