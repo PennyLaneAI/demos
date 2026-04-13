@@ -741,12 +741,11 @@ def logical_operators_consistency(operations: list, logical_ops: tuple) -> bool:
             if (not elx.commutes(elz)) != (ix == iz):
                 print(f"{{Lx[{ix}], Lz[{iz}]}} anticommutation mismatch!")
                 result = False
-
     return result
 
 consistent = logical_operators_consistency(ops, (lx, lz))
-print(f"Result: The logical operators are consistent: {consistent}")
-print(f"\nResult: The gate operation is transversal: {preserved and consistent}")
+print(f"\nResult: The logical operators are consistent: {consistent}")
+print(f"Result: The gate operation is transversal: {preserved and consistent}")
 
 ######################################################################
 # In addition to the gate operations being transversal, there's active work being done to develop
