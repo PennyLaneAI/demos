@@ -3,7 +3,7 @@
     "authors": [{
         "username": "whatsis"
     }],
-    "executable_stable": false,
+    "executable_stable": true,
     "executable_latest": true,
     "dateOfPublication": "2026-04-13T00:00:00+00:00",
     "dateOfLastModification": "2026-04-13T00:00:00+00:00",

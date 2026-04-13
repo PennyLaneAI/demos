@@ -184,7 +184,17 @@ print(f"Does H_Z * H_X^T = 0? {np.allclose((hz @ hx.T) % 2, 0)}\n")
 # stabilizer constraints from the total number of physical qubits.
 #
 
-from pennylane.math import binary_matrix_rank
+def binary_matrix_rank(binary_matrix: np.ndarray) -> int:
+    r"""Returns the rank of a binary matrix over :math:`\mathbb{Z}_2`."""
+    rank, matrix = 0, np.asarray(binary_matrix, dtype=bool).copy()
+    while len(matrix):
+        matrix, pivot = matrix[:-1], matrix[-1]
+        if not pivot.any():
+            continue
+        rank += 1 # New pivot found
+        rows_with_bit = matrix[:, np.flatnonzero(pivot)[-1]]
+        matrix[rows_with_bit] ^= pivot
+    return rank
 
 code_dim = hx.shape[1] - binary_matrix_rank(hx) - binary_matrix_rank(hz)
 print(f"Code dimension (k): {code_dim}\n")
