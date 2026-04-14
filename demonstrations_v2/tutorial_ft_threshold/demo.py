@@ -27,11 +27,10 @@ theorem and observe this phenomenon in action. We will construct a QEC scheme ca
 error rates, computing two key metrics: (i) the pseudo-threshold (:math:`p_{pseudo}`), which
 is the break-even point where a specific error-correcting code becomes better than doing
 nothing at all, and (ii) the fault-tolerant threshold (:math:`p_{th}`), the fundamental
-crossing point below which increasing our code size provides an exponential suppression
-of errors. For a hardware engineer eager to implement the first near-term algorithms, observing
-the former metric and achieving break-even is the immediate milestone for a good enough error
-correction scheme, whereas observing the latter metric is the ultimate goal for building a
-scalable, utility-scale quantum computer.
+crossing point below which increasing our code size guarantees an exponential suppression
+of errors. For a hardware engineer eager to implement near-term algorithms, achieving the 
+pseudo-threshold is the immediate milestone. In contrast, reaching the fault-tolerant 
+threshold is the ultimate goal for building a utility-scale quantum computer.
 
 .. _fig-cartoon-thresholds:
 
@@ -55,7 +54,7 @@ physical operations, :math:`p`, remains strictly below a specific, non-zero cons
 known as the *threshold*, :math:`p_{th}`, the leftmost crossing point in the
 :ref:`Figure 1 <fig-cartoon-thresholds>`.
 
-More rigorously: assuming a local stochastic error model, we can take any
+More rigorously, assuming a local stochastic error model, we can take any
 mathematically ideal (noiseless) circuit :math:`\mathcal{C}` of size :math:`N` and
 construct a corresponding fault-tolerant circuit :math:`\mathcal{C}^{\prime}` to execute
 on real hardware. Provided that the physical operations comprising this fault-tolerant
