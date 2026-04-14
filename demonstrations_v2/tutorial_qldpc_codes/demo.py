@@ -173,7 +173,7 @@ print(f"Shape of the CSS code: {css_code.shape}")
 # which can easily be verified like so:
 #
 
-hx, hz = css_code[:m1, :n1], css_code[m1:, n1:] # Extract individual components.
+hx, hz = css_code[m1:, :n1], css_code[:m1, n1:] # Extract individual components.
 
 print(f"Does H_X * H_Z^T = 0? {np.allclose((hx @ hz.T) % 2, 0)}")
 print(f"Does H_Z * H_X^T = 0? {np.allclose((hz @ hx.T) % 2, 0)}\n")
@@ -184,7 +184,17 @@ print(f"Does H_Z * H_X^T = 0? {np.allclose((hz @ hx.T) % 2, 0)}\n")
 # stabilizer constraints from the total number of physical qubits.
 #
 
-from pennylane.math import binary_matrix_rank
+def binary_matrix_rank(binary_matrix: np.ndarray) -> int:
+    r"""Returns the rank of a binary matrix over :math:`\mathbb{Z}_2`."""
+    rank, matrix = 0, np.asarray(binary_matrix, dtype=bool).copy()
+    while len(matrix):
+        matrix, pivot = matrix[:-1], matrix[-1]
+        if not pivot.any():
+            continue
+        rank += 1 # New pivot found
+        rows_with_bit = matrix[:, np.flatnonzero(pivot)[-1]]
+        matrix[rows_with_bit] ^= pivot
+    return rank
 
 code_dim = hx.shape[1] - binary_matrix_rank(hx) - binary_matrix_rank(hz)
 print(f"Code dimension (k): {code_dim}\n")
@@ -668,7 +678,6 @@ def compute_stabilizer_group(hx: np.ndarray, hz: np.ndarray) -> tuple[list, set]
             if bit:
                 current_pauli *= gen
         full_group.add(str(current_pauli))
-        full_group.add(str(-current_pauli))
     return generators, full_group
 
 def codespace_preservation(operations: list, generators: list, stabilizers: set) -> bool:
@@ -707,11 +716,14 @@ def logical_operators_consistency(operations: list, logical_ops: tuple) -> bool:
     for operation in operations:
         tableau.append(*operation)
 
+    evolved_lxs, evolved_lzs = [], []
     result = True
     for itr, (lx_row, lz_row) in enumerate(zip(*logical_ops)):
         lx_pauli = stim.PauliString(["".join(["I", "X"][bit]) for bit in lx_row])
         lz_pauli = stim.PauliString(["".join(["I", "Z"][bit]) for bit in lz_row])
         evolved_lx, evolved_lz = tableau(lx_pauli), tableau(lz_pauli)
+        evolved_lxs.append(evolved_lx)
+        evolved_lzs.append(evolved_lz)
 
         for label, evolved in [("Lx", evolved_lx), ("Lz", evolved_lz)]:
             commutes = all(evolved.commutes(g) for g in generators)
@@ -722,11 +734,17 @@ def logical_operators_consistency(operations: list, logical_ops: tuple) -> bool:
             if not valid:
                 result = False
                 break
+
+    for ix, elx in enumerate(evolved_lxs):
+        for iz, elz in enumerate(evolved_lzs):
+            if (not elx.commutes(elz)) != (ix == iz):
+                print(f"{{Lx[{ix}], Lz[{iz}]}} anticommutation mismatch!")
+                result = False
     return result
 
 consistent = logical_operators_consistency(ops, (lx, lz))
-print(f"Result: The logical operators are consistent: {consistent}")
-print(f"\nResult: The gate operation is transversal: {preserved and consistent}")
+print(f"\nResult: The logical operators are consistent: {consistent}")
+print(f"Result: The gate operation is transversal: {preserved and consistent}")
 
 ######################################################################
 # In addition to the gate operations being transversal, there's active work being done to develop
