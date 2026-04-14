@@ -7,7 +7,7 @@ susceptible to stray environmental interactions and imperfect gate operations. T
 barrage of noise causes delicate quantum states to rapidly decohere, corrupting the system
 with computational errors.
 
-Building a fault-tolerant quantum computer requires Quantum Error Correction (QEC),
+Building a fault-tolerant quantum computer requires quantum error correction (QEC),
 which involves redundantly encoding a single logical qubit across many physical qubits
 so that errors can be detected and corrected without ever directly reading the encoded
 information. But because the physical operations performing this encoding are themselves
@@ -457,10 +457,10 @@ plt.show()
 # As we saw earlier, our code-capacity simulations represent a theoretical upper bound;
 # real circuit-level thresholds are considerably lower once noisy syndrome extraction is
 # accounted for. Nevertheless, the qualitative picture is preserved, and the threshold
-# theorem guarantees that we are fighting a winnable battle. Significant engineering
-# challenges remain — scaling up the number of physical qubits and executing fast,
-# efficient logical operations — but by keeping physical error rates below the threshold,
-# we can unlock the path to arbitrarily complex, reliable quantum computations.
+# theorem guarantees that we are fighting a winnable battle. While significant engineering
+# challenges remain, such as scaling up the number of physical qubits and executing fast,
+# efficient logical operations, we can unlock the path to arbitrarily complex, reliable
+# quantum computations by keeping physical error rates below the threshold.
 #
 # References
 # ----------
