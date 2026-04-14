@@ -141,7 +141,7 @@ def make_cost(N, seed):
         """Cost function on N qubits with N frequencies."""
         qml.StatePrep(random_state(N, seed), wires=dev.wires)
         for w in dev.wires:
-            qml.RZ(x, wires=w, id="x")
+            qml.fourier.mark(qml.RZ(x, wires=w), "x")
         return qml.expval(qml.Hermitian(random_observable(N, seed), wires=dev.wires))
 
     return cost
