@@ -28,7 +28,10 @@ error rates, computing two key metrics: (i) the pseudo-threshold (:math:`p_{pseu
 is the break-even point where a specific error-correcting code becomes better than doing
 nothing at all, and (ii) the fault-tolerant threshold (:math:`p_{th}`), the fundamental
 crossing point below which increasing our code size provides an exponential suppression
-of errors.
+of errors. For a hardware engineer eager to implement the first near-term algorithms, observing
+the former metric and achieving break-even is the immediate milestone for a good enough error
+correction scheme, whereas observing the latter metric is the ultimate goal for building a
+scalable, utility-scale quantum computer.
 
 .. _fig-cartoon-thresholds:
 
@@ -38,7 +41,9 @@ of errors.
     :width: 85%
     :target: javascript:void(0)
 
-    Figure 1: Schematic of the fault-tolerant thresholds for rotated surface codes.
+    Figure 1: Schematic of the fault-tolerant thresholds for rotated surface codes, where
+    :math:`p` is the error probability per physical operation and :math:`p_{L}` is the
+    probability that the decoded logical state of the encoded qubit is wrong.
 
 Fault-tolerant Threshold Theorem
 ---------------------------------
@@ -47,37 +52,40 @@ The threshold theorem is the mathematical bedrock of scalable quantum computing.
 Intuitively, it states that a fault-tolerant quantum computation of any size can be 
 accurately executed on imperfect hardware, provided that the base error rate of the 
 physical operations, :math:`p`, remains strictly below a specific, non-zero constant 
-known as the *threshold*, :math:`p_{th}`, the rightmost crossing point in the
+known as the *threshold*, :math:`p_{th}`, the leftmost crossing point in the
 :ref:`Figure 1 <fig-cartoon-thresholds>`.
 
-More rigorously, assuming a local stochastic error model where :math:`p < p_{th}`,
-we can take any ideal circuit :math:`\mathcal{C}` of size :math:`N` and construct a 
-corresponding fault-tolerant circuit :math:`\mathcal{C}^{\prime}`. Even when subjected
-to continuous noise, this corrected circuit is guaranteed to yield an output that deviates
-from the ideal outcome by no more than an arbitrarily small tolerance, :math:`\epsilon > 0`.
-Crucially, the theorem ensures that this correction is practically achievable because the
+More rigorously: assuming a local stochastic error model, we can take any
+mathematically ideal (noiseless) circuit :math:`\mathcal{C}` of size :math:`N` and
+construct a corresponding fault-tolerant circuit :math:`\mathcal{C}^{\prime}` to execute
+on real hardware. Provided that the physical operations comprising this fault-tolerant
+circuit have an error rate :math:`p < p_{th}`, the computation is guaranteed to yield an
+output that deviates from the ideal outcome by no more than an arbitrarily small
+tolerance, :math:`\epsilon > 0`.
+
+Crucially, the theorem ensures that this correction is practically achievable. The
 required hardware overhead, i.e., the total number of physical qubits and time steps
 needed for :math:`\mathcal{C}^{\prime}`, grows at most by a polylogarithmic factor,
 :math:`\mathcal{O}(\log^{c}(N/\epsilon))` for some positive constant :math:`c` [#threshold]_.
+Although the original theoretical framework relied on specific assumptions like independent
+stochastic noise, the threshold theorem is robust enough to apply to highly realistic,
+correlated noise environments as well.
 
-In other words, operating in the green region (where :math:`p < p_{th}`) of :ref:`Figure 1 <fig-cartoon-thresholds>`
-is not merely better, it is the condition under which arbitrarily large and reliable quantum
-circuits become physically constructable. Although the original theoretical framework relied
-on specific assumptions like independent stochastic noise, the threshold theorem is robust
-enough to apply to highly realistic, correlated noise environments as well. Moreover, it
-assures that the required number of physical qubits grows non-exponentially with the size
-of the computation, which means there is no fundamental physical barrier standing in the
-way of large-scale quantum computers. At least, theoretically!
+In simpler terms, operating in the green region of :ref:`Figure 1 <fig-cartoon-thresholds>`
+(where :math:`p < p_{th}`) guarantees that the required number of physical qubits grows
+non-exponentially with the size of the computation. This assures us that there is no
+fundamental physical barrier standing in the way of large-scale quantum computers.
+At least, theoretically!
 
-To test the threshold theorem in practice, we use one of the initial candidates for
+To test the threshold theorem in practice, we use one of the leading candidates for
 quantum error correction, the *surface code*, which is a topological code where qubits
-are arranged on a 2D grid, with stabilizer measurements locally checking for
-parity errors among nearest neighbors. If you would like to deepen your understanding
+are arranged on a 2D grid, with stabilizer measurements locally checking for parity
+errors among nearest neighbors. If you would like to deepen your understanding
 of surface codes before proceeding, our `Introducing Lattice Surgery <tutorial_lattice_surgery>`_
 and `A Game of Surface Codes <tutorial_game_of_surface_codes>`_ demos are a great starting point.
 Here, we specifically look at its *rotated* variant, which requires only :math:`d^2`
-data qubits to achieve the same distance :math:`d`. This gives a 50% reduction in
-qubit overhead when compared to the standard surface codes.
+data qubits to achieve the same distance :math:`d`, giving a 50% reduction in qubit
+overhead compared to the standard surface code.
 
 .. figure::
     ../_static/demonstration_assets/ft_threshold/rotated_surface_code.jpg
@@ -162,22 +170,24 @@ print(f"Number of logical qubits: {n_qubits - nx - nz}")
 # The Pseudo-Threshold
 # --------------------
 #
-# Before sweeping over many code distances to locate the true threshold, it is instructive
-# to first ask a simpler question: Is this code worth using at all for my hardware?
-# The answer is given by the *pseudo-threshold*, the leftmost crossing point in the
-# :ref:`Figure 1 <fig-cartoon-thresholds>`. For a single code of distance :math:`d`,
-# it is referred to as :math:`p_{\text{pseudo}}^{(d)}`, the physical error rate at
-# which the encoded logical error rate (LER) equals the unencoded physical error rate.
+# Before sweeping over many code distances to locate the true asymptotic threshold, it is
+# instructive to first ask a simpler question: Is this specific code worth using at all for
+# my hardware? The answer is given by the *pseudo-threshold*. As seen in :ref:`Figure 1
+# <fig-cartoon-thresholds>`, each code distance has its own distinct pseudo-threshold,
+# represented by the points on the right where the individual QEC curves cross the dashed
+# unencoded baseline. For a single code of distance :math:`d`, it is referred to as
+# :math:`p_{\text{pseudo}}^{(d)}`, the physical error rate at which the encoded logical
+# error rate (LER) precisely equals the unencoded physical error rate, where the LER is
+# defined as the probability that an error persists on the encoded, logical qubit *after*
+# the entire QEC decoding process is applied.
 #
-# Below the pseudo-threshold (green region), the code actively suppresses errors, i.e.,
-# the LER sits beneath the unencoded line, and encoding is immediately beneficial. Above it
-# but below :math:`p_{th}` (the amber region), the :math:`d=3` code becomes a net liability,
-# as it introduces more overhead than it corrects. This makes :math:`p_\text{pseudo}^{(d)}`
-# the *break-even* point for a specific code distance :math:`d` and gives the lower bound
-# on the true threshold. Therefore, encoding is only worthwhile if the hardware's physical
-# error rate is below its pseudo-threshold. Moreover, if :math:`p_{\text{pseudo}}^{(d)}`
-# decreases with increasing :math:`d`, we can assess that the code is scalable,
-# even before computing the more expensive asymptotic threshold.
+# Below :math:`p_{\text{pseudo}}^{(d)}`, encoding actively suppresses errors, i.e., the LER
+# sits beneath the unencoded line, and QEC is doing *something* helpful. Above it, the extra
+# circuit operations introduce more noise than they correct, making the code a net liability.
+# Therefore, encoding with a distance-:math:`d` code is only worthwhile if the hardware's
+# physical error rate stays strictly below :math:`p_{\text{pseudo}}^{(d)}`. Moreover, if
+# :math:`p_{\text{pseudo}}^{(d)}` decreases with increasing :math:`d`, we can assess that
+# the code family is scalable, even before computing the more expensive asymptotic threshold.
 #
 # For the rotated surface code, we compute the pseudo-threshold by evaluating the logical
 # error rate of the minimum-distance code (:math:`d=3`) and comparing it against the raw
@@ -411,10 +421,16 @@ plt.show()
 
 ######################################################################
 # The curves for different distances cross at a single point, the *threshold*.
-# To the right of the crossing (high noise), larger codes perform worse;
-# they have more qubits for errors to strike, but cannot correct them all.
-# To the left (low noise), larger codes perform better, and the improvement
-# is exponential with distance.
+# Because standard error models behave mathematically like a phase transition,
+# all logical error rates for a code family converge at this single critical
+# point. This creates three distinct regions, mirroring our schematic in
+# :ref:`Figure 1 <fig-cartoon-thresholds>`, where below the fault-tolerant threshold
+# (the green region), larger codes perform exponentially better; above the rightmost
+# pseudo-threshold (the red region), all QEC is actively harmful and raw qubits are
+# better, and in the transition region between them (the amber region), the noise
+# is too high to support the massive gate overhead  of a :math:`d=7` code, making
+# it perform worse than doing nothing, while a smaller :math:`d=3` code carries less
+# overhead and can still manage to break even.
 #
 # Note that this code-capacity threshold (``~15%``) is considerably higher than the
 # circuit-level threshold (``~0.8%``) reported in the pseudo-threshold section. This
@@ -439,17 +455,13 @@ plt.show()
 # increases. Therefore, by simply engineering a larger code, we can suppress the logical
 # error rate to arbitrarily low levels.
 #
-# Transitioning from the above mathematical scaling to physical hardware depends
-# heavily on how we define and reach that threshold in a laboratory setting. While
-# in our simulations, we targeted the **code-capacity threshold**, which represents
-# a theoretical upper bound by assuming perfect, instantaneous syndrome extraction,
-# in reality, syndromes are extracted using noisy multi-qubit gates and measurements,
-# which would push the circuit-level threshold lower. However, the qualitative picture
-# is still preserved, guaranteeing that we are fighting a winnable battle despite
-# the significant engineering challenges that remain, notably in scaling up the number
-# of physical qubits and executing fast, efficient logical operations. This means that
-# by engineering hardware that keeps physical error rates below the threshold, we can
-# unlock the path to arbitrarily complex, reliable quantum computations.
+# As we saw earlier, our code-capacity simulations represent a theoretical upper bound;
+# real circuit-level thresholds are considerably lower once noisy syndrome extraction is
+# accounted for. Nevertheless, the qualitative picture is preserved, and the threshold
+# theorem guarantees that we are fighting a winnable battle. Significant engineering
+# challenges remain — scaling up the number of physical qubits and executing fast,
+# efficient logical operations — but by keeping physical error rates below the threshold,
+# we can unlock the path to arbitrarily complex, reliable quantum computations.
 #
 # References
 # ----------
