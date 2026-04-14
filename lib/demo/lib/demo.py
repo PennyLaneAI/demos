@@ -7,6 +7,8 @@ from demo.lib import fs, cmds
 from demo.lib.virtual_env import Virtualenv
 import os
 import sys
+import time
+from datetime import datetime
 from logging import getLogger
 import subprocess
 from enum import Enum
@@ -363,9 +365,21 @@ def _build_demo(
     else:
         stdout, stderr, text = None, None, None
 
+    logger.info(
+        "Starting Sphinx build for '%s' at %s",
+        demo.name,
+        datetime.now().astimezone().isoformat(timespec="seconds"),
+    )
+    t0 = time.perf_counter()
+
     subprocess.run(
         cmd, env=sphinx_env, stdout=stdout, stderr=stderr, text=text
     ).check_returncode()
+
+    elapsed = time.perf_counter() - t0
+    logger.info(
+        "Sphinx build for '%s' completed in %.2fs", demo.name, elapsed
+    )
 
     if package:
         _package_demo(
