@@ -349,14 +349,14 @@ print(f"Cost:{cost}")
 
 # -----------------------------   QAOA circuit ------------------------------------
 from collections import defaultdict
-import pennylane as qp
+import pennylane as qml
 
 shots = 5000  # Number of samples used
-dev = qp.device("default.qubit")
+dev = qml.device("default.qubit")
 
 
-@qp.set_shots(shots)
-@qp.qnode(dev)
+@qml.set_shots(shots)
+@qml.qnode(dev)
 def qaoa_circuit(gammas, betas, h, J, num_qubits):
     wmax = max(
         np.max(np.abs(list(h.values()))), np.max(np.abs(list(h.values())))
@@ -364,20 +364,20 @@ def qaoa_circuit(gammas, betas, h, J, num_qubits):
     p = len(gammas)
     # Apply the initial layer of Hadamard gates to all qubits
     for i in range(num_qubits):
-        qp.Hadamard(wires=i)
+        qml.Hadamard(wires=i)
     # repeat p layers the circuit shown in Fig. 1
     for layer in range(p):
         # ---------- COST HAMILTONIAN ----------
         for ki, v in h.items():  # single-qubit terms
-            qp.RZ(2 * gammas[layer] * v / wmax, wires=ki[0])
+            qml.RZ(2 * gammas[layer] * v / wmax, wires=ki[0])
         for kij, vij in J.items():  # two-qubit terms
-            qp.CNOT(wires=[kij[0], kij[1]])
-            qp.RZ(2 * gammas[layer] * vij / wmax, wires=kij[1])
-            qp.CNOT(wires=[kij[0], kij[1]])
+            qml.CNOT(wires=[kij[0], kij[1]])
+            qml.RZ(2 * gammas[layer] * vij / wmax, wires=kij[1])
+            qml.CNOT(wires=[kij[0], kij[1]])
         # ---------- MIXER HAMILTONIAN ----------
         for i in range(num_qubits):
-            qp.RX(-2 * betas[layer], wires=i)
-    return qp.sample()
+            qml.RX(-2 * betas[layer], wires=i)
+    return qml.sample()
 
 
 def samples_dict(samples, n_items):

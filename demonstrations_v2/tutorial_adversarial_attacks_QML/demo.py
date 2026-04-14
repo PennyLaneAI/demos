@@ -77,7 +77,7 @@ r"""Adversarial attacks and robustness for quantum machine learning
 # PennyLane:
 #
 
-import pennylane as qp
+import pennylane as qml
 from pennylane import numpy as np
 import torch
 from matplotlib import pyplot as plt
@@ -98,7 +98,7 @@ from matplotlib import pyplot as plt
 #
 
 # we can use the dataset hosted on PennyLane
-[pm] = qp.data.load('other', name='plus-minus')
+[pm] = qml.data.load('other', name='plus-minus')
 
 X_train = pm.img_train  # shape (1000,16,16)
 X_test = pm.img_test  # shape (200,16,16)
@@ -172,18 +172,18 @@ class QML_classifier(torch.nn.Module):
         self.num_qubits = num_qubits
         self.output_dim = output_dim
         self.num_layers = num_layers
-        self.device = qp.device("lightning.qubit", wires=self.num_qubits)
-        self.weights_shape = qp.StronglyEntanglingLayers.shape(
+        self.device = qml.device("lightning.qubit", wires=self.num_qubits)
+        self.weights_shape = qml.StronglyEntanglingLayers.shape(
             n_layers=self.num_layers, n_wires=self.num_qubits
         )
 
-        @qp.qnode(self.device)
+        @qml.qnode(self.device)
         def circuit(inputs, weights, bias):
             inputs = torch.reshape(inputs, self.weights_shape)
-            qp.StronglyEntanglingLayers(
+            qml.StronglyEntanglingLayers(
                 weights=weights * inputs + bias, wires=range(self.num_qubits)
             )
-            return [qp.expval(qp.PauliZ(i)) for i in range(self.output_dim)]
+            return [qml.expval(qml.PauliZ(i)) for i in range(self.output_dim)]
 
         param_shapes = {"weights": self.weights_shape, "bias": self.weights_shape}
         init_vals = {
@@ -192,7 +192,7 @@ class QML_classifier(torch.nn.Module):
         }
 
         # initialize the quantum circuit
-        self.qcircuit = qp.qnn.TorchLayer(
+        self.qcircuit = qml.qnn.TorchLayer(
             qnode=circuit, weight_shapes=param_shapes, init_method=init_vals
         )
 

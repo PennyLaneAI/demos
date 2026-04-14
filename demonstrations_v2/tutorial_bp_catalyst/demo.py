@@ -16,7 +16,7 @@ This tutorial walks you through a simplified error correction cycle using the St
 code. You’ll encode a logical qubit, introduce noise, extract syndromes, and apply decoding using
 two different strategies: a simple lookup table and a belief propagation (BP) decoder. Both decoders
 are implemented in JAX and JIT-compiled by Catalyst, allowing everything to run inside a single
-``@qp.qjit`` circuit.
+``@qml.qjit`` circuit.
 
 Why is this exciting? Quantum error correction (QEC) is essential for building reliable quantum
 computers, but it requires more than just quantum operations. Fast classical feedback is needed as well.
@@ -102,29 +102,29 @@ By the end of this tutorial, you’ll have:
 
 from typing import Callable, Optional, Dict, Union, Sequence
 
-import pennylane as qp
+import pennylane as qml
 
 syndromes = ["XXZIZIX", "XXIIZZI"]
-dev = qp.device("lightning.qubit", wires := max(map(len, syndromes)) + 1)
+dev = qml.device("lightning.qubit", wires := max(map(len, syndromes)) + 1)
 
 
-@qp.qnode(device=dev)
+@qml.qnode(device=dev)
 def ancilla_assisted_syndrome_extraction(syndromes: list[str]):
     ancilla = wires - 1
     for i, syndrome in enumerate(syndromes):
-        qp.Hadamard(ancilla)
+        qml.Hadamard(ancilla)
         for i, s in enumerate(syndrome):
             if s == "X":
-                qp.CNOT(wires=[ancilla, i])
+                qml.CNOT(wires=[ancilla, i])
             elif s == "Z":
-                qp.CZ(wires=[ancilla, i])
-        qp.Hadamard(ancilla)
-        qp.measure(ancilla)
-        qp.Barrier()
+                qml.CZ(wires=[ancilla, i])
+        qml.Hadamard(ancilla)
+        qml.measure(ancilla)
+        qml.Barrier()
         ancilla += 1
 
 
-print(qp.draw(ancilla_assisted_syndrome_extraction, show_all_wires=True)(syndromes))
+print(qml.draw(ancilla_assisted_syndrome_extraction, show_all_wires=True)(syndromes))
 
 ######################################################################
 # Decoding: The Classical Half of QEC
@@ -739,14 +739,14 @@ print(f"Decoding success rate: {success_rate * 100:.2f}%")
 # generators.
 #
 
-import pennylane as qp
+import pennylane as qml
 from jax import random
 import catalyst
 
 r, n = H_steane.shape
 n_wires = n + r
 
-dev = qp.device("lightning.qubit", wires=n_wires)
+dev = qml.device("lightning.qubit", wires=n_wires)
 
 
 def measure_x_stabilizers(H: ArrayLike):
@@ -759,19 +759,19 @@ def measure_x_stabilizers(H: ArrayLike):
     # Encode logical |0>
     # (Hadamard on ancillas, controlled X stabilizers)
     for a in range(r):
-        qp.H(wires=n + a)
+        qml.H(wires=n + a)
     for a, row in enumerate(H):
         for q, x in enumerate(row):
             if x:
-                qp.CNOT(wires=[n + a, q])
+                qml.CNOT(wires=[n + a, q])
     for a in range(r):
-        qp.H(wires=n + a)
+        qml.H(wires=n + a)
 
     # Measure + reset ancillas (X stabilizers)
     sx = jnp.stack([catalyst.measure(n + a) for a in range(r)])
     for a, bit in enumerate(sx):
         if bit:
-            qp.PauliX(wires=n + a)  # reset ancilla
+            qml.PauliX(wires=n + a)  # reset ancilla
 
     # Z‑correction
     # Since the BP and LUT decoder
@@ -780,14 +780,14 @@ def measure_x_stabilizers(H: ArrayLike):
     rec_z = lut_steane(sx)
     for q, bit in enumerate(rec_z):
         if bit:
-            qp.PauliZ(wires=q)
+            qml.PauliZ(wires=q)
 
 
-@qp.qjit(autograph=True)
-@qp.qnode(dev)
+@qml.qjit(autograph=True)
+@qml.qnode(dev)
 def encode_zero_steane():
     measure_x_stabilizers(H_steane)
-    return qp.state()
+    return qml.state()
 
 
 ######################################################################
@@ -867,11 +867,11 @@ def noise_channel(n: int, p_err: float, key: random.PRNGKey):
 
     for idx, outcome in enumerate(outcomes):
         if outcome == 1:
-            qp.X(wires=idx)
+            qml.X(wires=idx)
         elif outcome == 2:
-            qp.Z(wires=idx)
+            qml.Z(wires=idx)
         elif outcome == 3:
-            qp.Y(wires=idx)
+            qml.Y(wires=idx)
 
 
 # this is a helper function to get the specific error we used in a given round based on the key
@@ -882,12 +882,12 @@ def get_error(n: int, p_err: float, key: random.PRNGKey):
 
     for idx, outcome in enumerate(outcomes):
         if outcome == 1:
-            err.append(qp.X(wires=idx))
+            err.append(qml.X(wires=idx))
         elif outcome == 2:
-            err.append(qp.Z(wires=idx))
+            err.append(qml.Z(wires=idx))
         elif outcome == 3:
-            err.append(qp.Y(wires=idx))
-    return qp.ops.prod(*err)
+            err.append(qml.Y(wires=idx))
+    return qml.ops.prod(*err)
 
 
 ######################################################################
@@ -901,17 +901,17 @@ def measure_z_stabilizers(H):
     for a, row in enumerate(H):
         for q, x in enumerate(row):
             if x:
-                qp.CNOT(wires=[q, n + a])
+                qml.CNOT(wires=[q, n + a])
 
     sz = jnp.stack([catalyst.measure(n + a) for a in range(r)])
     for a, bit in enumerate(sz):
         if bit:
-            qp.PauliX(wires=n + a)
+            qml.PauliX(wires=n + a)
 
     rec_x = lut_steane(sz)
     for q, bit in enumerate(rec_x):
         if bit:
-            qp.PauliX(wires=q)
+            qml.PauliX(wires=q)
 
 
 ######################################################################
@@ -920,8 +920,8 @@ def measure_z_stabilizers(H):
 #
 
 
-@qp.qjit(autograph=True)
-@qp.qnode(dev, interface="jax")
+@qml.qjit(autograph=True)
+@qml.qnode(dev, interface="jax")
 def qec_round(H: ArrayLike, p_err=1e-3, key=random.PRNGKey(0)):
     """One round of Steane code QEC with LUT decoding."""
 
@@ -930,7 +930,7 @@ def qec_round(H: ArrayLike, p_err=1e-3, key=random.PRNGKey(0)):
     measure_x_stabilizers(H)  # correct X errors
     measure_z_stabilizers(H)  # correct Z errors
 
-    return qp.state()
+    return qml.state()
 
 
 p_err = 0.1
