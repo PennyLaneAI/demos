@@ -457,9 +457,9 @@ plt.show()
 # As we saw earlier, our code-capacity simulations represent a theoretical upper bound;
 # real circuit-level thresholds are considerably lower once noisy syndrome extraction is
 # accounted for. Nevertheless, the qualitative picture is preserved, and the threshold
-# theorem guarantees that we are fighting a winnable battle. Significant engineering
-# challenges remain — scaling up the number of physical qubits and executing fast,
-# efficient logical operations — but by keeping physical error rates below the threshold,
+# theorem guarantees that we are fighting a winnable battle. While significant engineering
+# challenges remain, such as scaling up the number of physical qubits and executing fast,
+# efficient logical operations, by keeping physical error rates below the threshold,
 # we can unlock the path to arbitrarily complex, reliable quantum computations.
 #
 # References
