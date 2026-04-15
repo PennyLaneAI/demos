@@ -5,10 +5,10 @@
             "username": "alowe"
         }
     ],
-    "executable_stable": true,
+    "executable_stable": false,
     "executable_latest": true,
     "dateOfPublication": "2019-10-11T00:00:00+00:00",
-    "dateOfLastModification": "2025-10-15T00:00:00+00:00",
+    "dateOfLastModification": "2026-04-14T00:00:00+00:00",
     "categories": [
         "Optimization"
     ],

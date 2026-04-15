@@ -294,3 +294,9 @@ for i, samples in enumerate([int_samples1, int_samples2], start=1):
 plt.tight_layout()
 plt.show()
 
+##############################################################################
+# Resource Estimation
+# ~~~~~~~~~~~~~~~~~~~
+# In this section we use the ``estimator`` module to estimate the resources for QAOA.
+
+
