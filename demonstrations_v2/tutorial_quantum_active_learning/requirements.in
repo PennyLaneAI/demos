@@ -1,0 +1,4 @@
+pennylane>=0.38
+scikit-learn>=1.4
+numpy>=1.24
+matplotlib>=3.7

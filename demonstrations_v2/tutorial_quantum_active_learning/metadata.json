@@ -1,0 +1,93 @@
+{
+    "title": "Quantum Active Learning via Measurement Variance Sampling",
+    "authors": [
+        {
+            "username": "marco_margarucci"
+        }
+    ],
+    "executable_stable": true,
+    "executable_latest": true,
+    "dateOfPublication": "2026-04-15T10:00:00+00:00",
+    "dateOfLastModification": "2026-04-15T10:00:00+00:00",
+    "categories": [
+        "Quantum Machine Learning"
+    ],
+    "tags": [
+        "active learning",
+        "variational circuits",
+        "uncertainty sampling",
+        "classification",
+        "two-moons"
+    ],
+    "previewImages": [
+        {
+            "type": "thumbnail",
+            "uri": "/_static/demo_thumbnails/regular_demo_thumbnails/thumbnail_quantum_active_learning.png"
+        },
+        {
+            "type": "large_thumbnail",
+            "uri": "/_static/demo_thumbnails/large_demo_thumbnails/thumbnail_large_quantum_active_learning.png"
+        }
+    ],
+    "seoDescription": "Learn how to implement quantum variance sampling — a zero-overhead active learning criterion derived from the identity Var[Z] = 1 − ⟨Z⟩² — and compare it against random and classical confidence strategies on the two-moons benchmark using PennyLane.",
+    "doi": "",
+    "references": [
+        {
+            "id": "settles2009",
+            "type": "article",
+            "title": "Active Learning Literature Survey",
+            "authors": "Burr Settles",
+            "year": "2009",
+            "journal": "Computer Sciences Technical Report 1648, University of Wisconsin-Madison",
+            "url": "http://burrsettles.com/pub/settles.activelearning.pdf"
+        },
+        {
+            "id": "cohn1996",
+            "type": "article",
+            "title": "Active learning with statistical models",
+            "authors": "David Cohn, Zoubin Ghahramani, Michael Jordan",
+            "year": "1996",
+            "journal": "Journal of Artificial Intelligence Research",
+            "doi": "10.1613/jair.295",
+            "url": "https://doi.org/10.1613/jair.295"
+        },
+        {
+            "id": "cerezo2021",
+            "type": "article",
+            "title": "Variational quantum algorithms",
+            "authors": "M. Cerezo, A. Arrasmith, R. Babbush et al.",
+            "year": "2021",
+            "journal": "Nature Reviews Physics",
+            "doi": "10.1038/s42254-021-00348-9",
+            "url": "https://arxiv.org/abs/2012.09265"
+        },
+        {
+            "id": "bergholm2018",
+            "type": "article",
+            "title": "PennyLane: Automatic differentiation of hybrid quantum-classical computations",
+            "authors": "V. Bergholm, J. Izaac, M. Schuld et al.",
+            "year": "2018",
+            "journal": "arXiv preprint",
+            "url": "https://arxiv.org/abs/1811.04968"
+        }
+    ],
+    "basedOnPapers": [],
+    "referencedByPapers": [],
+    "relatedContent": [
+        {
+            "type": "demonstration",
+            "id": "tutorial_variational_classifier",
+            "weight": 1.0
+        },
+        {
+            "type": "demonstration",
+            "id": "tutorial_data_reuploading_classifier",
+            "weight": 1.0
+        },
+        {
+            "type": "demonstration",
+            "id": "tutorial_kernel_based_training",
+            "weight": 0.8
+        }
+    ]
+}
