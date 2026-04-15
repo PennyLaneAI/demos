@@ -196,9 +196,6 @@ ax3.legend(fontsize=9)
 
 plt.suptitle("Two-moons dataset overview", fontsize=13, y=1.01)
 plt.tight_layout()
-plt.savefig(
-    "_static/quantum_active_learning/fig0_dataset_overview.png", dpi=300, bbox_inches="tight"
-)
 plt.show()
 
 ##############################################################################
@@ -277,7 +274,6 @@ ax_circ.set_title(
     fontsize=11,
 )
 plt.tight_layout()
-plt.savefig("_static/quantum_active_learning/fig1_circuit.png", dpi=300, bbox_inches="tight")
 plt.show()
 
 ##############################################################################
@@ -527,9 +523,6 @@ ax.set_xlim(n_labeled[0] - 0.4, n_labeled[-1] + 0.4)
 ax.set_xticks(n_labeled)
 ax.grid(axis="y", linestyle=":", alpha=0.45)
 plt.tight_layout()
-plt.savefig(
-    "_static/quantum_active_learning/fig2_learning_curves.png", dpi=300, bbox_inches="tight"
-)
 plt.show()
 
 ##############################################################################
@@ -565,9 +558,6 @@ plt.suptitle(
     fontsize=12,
 )
 plt.tight_layout()
-plt.savefig(
-    "_static/quantum_active_learning/fig3_pertrial_heatmap.png", dpi=300, bbox_inches="tight"
-)
 plt.show()
 
 ##############################################################################
@@ -661,9 +651,6 @@ ax.set_ylabel(r"$x_2$ (angle-scaled)")
 ax.set_title("Decision boundary and queried points\n(quantum variance strategy)")
 
 plt.tight_layout()
-plt.savefig(
-    "_static/quantum_active_learning/fig4_decision_boundary.png", dpi=300, bbox_inches="tight"
-)
 plt.show()
 
 ##############################################################################
@@ -747,9 +734,6 @@ axes[1].legend(fontsize=9, loc="lower right")
 
 plt.suptitle("Feature-space heatmaps — final trained weights", fontsize=13)
 plt.tight_layout()
-plt.savefig(
-    "_static/quantum_active_learning/fig5_variance_heatmap.png", dpi=300, bbox_inches="tight"
-)
 plt.show()
 
 ##############################################################################
@@ -785,9 +769,6 @@ ax.set_ylabel(r"Quantum variance  $1 - \langle\hat{Z}_0\rangle^2$")
 ax.set_title("Variance vs. boundary proximity")
 ax.legend(fontsize=10)
 plt.tight_layout()
-plt.savefig(
-    "_static/quantum_active_learning/fig6_variance_correlation.png", dpi=300, bbox_inches="tight"
-)
 plt.show()
 
 ##############################################################################
@@ -850,9 +831,6 @@ plt.suptitle(
     fontsize=12,
 )
 plt.tight_layout()
-plt.savefig(
-    "_static/quantum_active_learning/fig7_summary_heatmap.png", dpi=300, bbox_inches="tight"
-)
 plt.show()
 
 ##############################################################################
