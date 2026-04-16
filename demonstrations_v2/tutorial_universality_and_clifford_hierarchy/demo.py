@@ -1,7 +1,7 @@
 r"""Achieving universality with the Clifford hierarchy
 ==========================
 
-Maybe you have heard of the 'Gottesman-Knill' rule: :doc:`Clifford circuits are efficient to simulate <tutorial_clifford_circuit_simulations>` but cannot provide quantum advantage on their own. We also know we need non-Clifford gates (like the $T$ gate) to reach universality [#anynonclifford]_. But why the `$T$ gate specifically <https://pennylane.ai/compilation/clifford-t-gate-set>`__? Why not a random rotation?
+Maybe you have heard of the 'Gottesman-Knill' rule: :doc:`Clifford circuits are efficient to simulate <demos/tutorial_clifford_circuit_simulations>` but cannot provide quantum advantage on their own. We also know we need non-Clifford gates (like the $T$ gate) to reach universality [#anynonclifford]_. But why the `$T$ gate specifically <https://pennylane.ai/compilation/clifford-t-gate-set>`__? Why not a random rotation?
 
 It turns out there is a rigorous structure hidden beneath these gates. The Clifford hierarchy explains exactly how 'quantum' a gate is, how hard it is to correct, and why specific gates act as the 'magic' fuel for fault-tolerant computation.
 
