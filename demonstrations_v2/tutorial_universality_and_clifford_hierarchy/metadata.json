@@ -20,7 +20,7 @@
         },
         {
             "type": "large_thumbnail",
-            "uri": "/_static/demo_thumbnails/large_demo_thumbnails/pennylane-demo-magic-states-large-thumbnail.png"
+            "uri": "/_static/demo_thumbnails/large_demo_thumbnails/pennylane-demo-universality-and-clifford-hierarchy-large-thumbnail.png"
         }
     ],
     "seoDescription": "Learn about a hidden mathematical structure connecting many quantum gates that enables universal and fault-tolerant quantum computing: the Clifford hierarchy",
