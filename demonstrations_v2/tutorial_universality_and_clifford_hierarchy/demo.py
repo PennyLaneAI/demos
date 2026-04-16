@@ -197,6 +197,15 @@ print(np.allclose(result, correct_answer)
 # 
 #   Figure 2: *A recursive universal gate teleportation circuit that applies a fourth level gate using a nested teleportation gate that implements a third level gate using only gates in the second level and measurements.*
 # 
+# Most generally, this teleportation circuit can be applied indefinitely to apply arbitrarily high level gates using the same idea outlined in Figure 2. Figure 3 below illustrates this idea artistically. It's turtles all the way down!
+# 
+# .. figure:: ../_static/demonstration_assets/universality_and_clifford_hierarchy/Figure-6-recursive-teleportation.png
+#   :alt: Recursive universal teleportation circuit to apply an arbitrary high level gate.
+#   :width: 95%
+#   :align: center
+#
+#   Figure 3: *A universal teleportation circuit for applying an arbitrary high level gate*
+# 
 # Teleportation is more efficient with semi-Clifford gates
 # ---------------------------------
 # 
