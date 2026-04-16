@@ -177,7 +177,7 @@ print(correct_answer)
 
 result = universal_teleportation(initial_state)
 print(result)
-print(np.allclose(result, correct_answer)
+print(np.allclose(result, correct_answer))
 
 
 ##########################################
