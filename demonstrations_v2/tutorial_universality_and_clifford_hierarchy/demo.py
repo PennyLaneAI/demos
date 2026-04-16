@@ -221,7 +221,7 @@ print(np.allclose(result, correct_answer)
 #   :width: 95%
 #   :align: center
 # 
-#   Figure 3: *One-bit teleportation circuits. (a) Z-teleportation, (b) X-teleportation, and (c) $T$ gate teleportation.*
+#   Figure 4: *One-bit teleportation circuits. (a) Z-teleportation, (b) X-teleportation, and (c) $T$ gate teleportation.*
 # 
 # 
 # Here, conjugating the $U$ gate across the :math:`D \in \{Z,X\}` Pauli error creates the term :math:`UDU^{\dagger}`, which must be Clifford if $U$ is in :math:`\mathcal{C}_3` and $D$ is Pauli as per the Clifford hierarchy. Semi-Clifford-ness allows us to move the $U$ gate to before the CNOT gate. Just as before, the part of the circuit up to the $U$ gate is called a magic state, which can be prepared in advance. Therefore, if the magic state is available, then a semi-Clifford gate such as the $T$ gate can be implemented fault-tolerantly. 
