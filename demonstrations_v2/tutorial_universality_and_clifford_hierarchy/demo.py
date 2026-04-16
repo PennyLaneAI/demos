@@ -256,7 +256,7 @@ print(np.allclose(result, correct_answer)
 #   :width: 95%
 #   :align: center
 # 
-#   Figure 5: *Magic state injection circuit for a T gate.*
+#   Figure 6: *Magic state injection circuit for a T gate.*
 # 
 # 
 # 
