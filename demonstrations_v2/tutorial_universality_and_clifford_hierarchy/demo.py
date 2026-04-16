@@ -35,7 +35,7 @@ The core idea of the Clifford hierarchy lurks beneath many of the concepts you m
 
 :doc:`Stabilizer tableau simulation <demos/tutorial_clifford_circuit_simulations>` is one such method. If $Z$ is a stabilizer corresponding to the state :math:`|0 \rangle`, then the application of a Clifford gate such as $H$ transforms the stabilizer to become :math:`HZH^{\dagger} = X` corresponding to the new state :math:`H |0 \rangle = |+ \rangle`. For any Clifford gate, $C$, and for all Pauli gates :math:`P \in \{X,Y,Z\}`, observe that it is always true that the transformation :math:`CPC^{\dagger}` yields a Pauli gate up to a global phase. 
 
-In other words, Clifford gates map Pauli gates to Pauli gates under conjugation. As my colleague wrote in this :doc:`demo <tutorial_clifford_circuit_simulations>`, one can exploit this fact to efficiently track how stabilizers evolve through a Clifford-only circuit. 
+In other words, Clifford gates map Pauli gates to Pauli gates under conjugation. As my colleague wrote in this :doc:`demo <demos/tutorial_clifford_circuit_simulations>`, one can exploit this fact to efficiently track how stabilizers evolve through a Clifford-only circuit. 
 
 What do non-Clifford gates Pauli gates to? Does that mapping help us simplify computation too? 
 
