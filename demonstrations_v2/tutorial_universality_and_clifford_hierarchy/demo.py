@@ -161,12 +161,23 @@ def universal_teleportation(state):
 
     return qp.density_matrix(wires=2)
 
-# Check the circuit gives the expected result
+##########################################
+# Let's now check the circuit gives the expected result,
+# by computing the correct answer directly from the
+# density matrix:
+
 U_mat = qp.matrix(target_gate, wire_order=[0])(0)
 initial_dm = np.outer(initial_state, np.conj(initial_state))
 correct_answer = U_mat @ initial_dm @ np.conj(U_mat).T
+print(correct_answer)
 
-print("Is the circuit behaving as expected?", np.allclose(universal_teleportation(initial_state), correct_answer))
+##########################################
+# Comparing this to our universal teleportation circuit,
+# we can see that it matches:
+
+result = universal_teleportation(initial_state)
+print(result)
+print(np.allclose(result, correct_answer)
 
 
 ##########################################
