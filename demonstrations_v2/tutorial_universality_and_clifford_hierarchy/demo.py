@@ -91,7 +91,7 @@ The Pauli and Clifford groups constitute the foundation of infinitely nested set
 Achieving universal FTQC with the Clifford hierarchy
 ---------------------------------
 
-With the Clifford hierarchy, we can fault-tolerantly implement a :math:`\mathcal{C}_3` gate with only :math:`\mathcal{C}_2` gates via gate teleportation [#gottesmanchuang]_. Gate teleportation builds on top of :doc:`state teleportation <tutorial_teleportation>` à la Alice and Bob. Recalling that many QEC codes cannot implement a non-Clifford gate transversally, Alice cannot simply apply a transversal non-Clifford gate on her top qubit in Figure 1 without possibly introducing irrecoverable noise. 
+With the Clifford hierarchy, we can fault-tolerantly implement a :math:`\mathcal{C}_3` gate with only :math:`\mathcal{C}_2` gates via gate teleportation [#gottesmanchuang]_. Gate teleportation builds on top of :doc:`state teleportation <demos/tutorial_teleportation>` à la Alice and Bob. Recalling that many QEC codes cannot implement a non-Clifford gate transversally, Alice cannot simply apply a transversal non-Clifford gate on her top qubit in Figure 1 without possibly introducing irrecoverable noise. 
 
 .. figure:: ../_static/demonstration_assets/universality_and_clifford_hierarchy/Figure-1-universal-gate-teleportation.png
   :alt: Universal gate teleportation circuit.
