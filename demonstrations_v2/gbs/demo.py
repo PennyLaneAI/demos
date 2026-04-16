@@ -136,7 +136,7 @@ import numpy as np
 np.random.seed(42)
 
 # import PennyLane
-import pennylane as qp
+import pennylane as qml
 
 ##############################################################################
 # We must define the unitary matrix we would like to embed in the circuit.
@@ -172,18 +172,18 @@ print(U)
 n_wires = 4
 cutoff = 10
 
-dev = qp.device("strawberryfields.gaussian", wires=n_wires, cutoff_dim=cutoff)
+dev = qml.device("strawberryfields.gaussian", wires=n_wires, cutoff_dim=cutoff)
 
 
-@qp.qnode(dev)
+@qml.qnode(dev)
 def gbs_circuit():
     # prepare the input squeezed states
     for i in range(n_wires):
-        qp.Squeezing(1.0, 0.0, wires=i)
+        qml.Squeezing(1.0, 0.0, wires=i)
 
     # linear interferometer
-    qp.InterferometerUnitary(U, wires=range(n_wires))
-    return qp.probs(wires=range(n_wires))
+    qml.InterferometerUnitary(U, wires=range(n_wires))
+    return qml.probs(wires=range(n_wires))
 
 
 ##############################################################################
