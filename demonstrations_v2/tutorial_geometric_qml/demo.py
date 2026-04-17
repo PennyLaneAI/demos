@@ -493,84 +493,84 @@ with torch.no_grad():
 # the symmetry classes we defined over the single-site and two-site measurements.
 
 
-import pennylane as qml
+import pennylane as qp
 import matplotlib.pyplot as plt
 
 # Set up a nine-qubit system
-dev = qml.device("default.qubit", wires=9)
+dev = qp.device("default.qubit", wires=9)
 
-ob_center = qml.PauliZ(4)
-ob_corner = (qml.PauliZ(0) + qml.PauliZ(2) + qml.PauliZ(6) + qml.PauliZ(8)) * (1 / 4)
-ob_edge = (qml.PauliZ(1) + qml.PauliZ(3) + qml.PauliZ(5) + qml.PauliZ(7)) * (1 / 4)
+ob_center = qp.PauliZ(4)
+ob_corner = (qp.PauliZ(0) + qp.PauliZ(2) + qp.PauliZ(6) + qp.PauliZ(8)) * (1 / 4)
+ob_edge = (qp.PauliZ(1) + qp.PauliZ(3) + qp.PauliZ(5) + qp.PauliZ(7)) * (1 / 4)
 
 
 # Now let's encode the data in the following qubit models, first with symmetry
-@qml.qnode(dev)
+@qp.qnode(dev)
 def circuit(x, p):
 
-    qml.RX(x[0], wires=0)
-    qml.RX(x[1], wires=1)
-    qml.RX(x[2], wires=2)
-    qml.RX(x[3], wires=3)
-    qml.RX(x[4], wires=4)
-    qml.RX(x[5], wires=5)
-    qml.RX(x[6], wires=6)
-    qml.RX(x[7], wires=7)
-    qml.RX(x[8], wires=8)
+    qp.RX(x[0], wires=0)
+    qp.RX(x[1], wires=1)
+    qp.RX(x[2], wires=2)
+    qp.RX(x[3], wires=3)
+    qp.RX(x[4], wires=4)
+    qp.RX(x[5], wires=5)
+    qp.RX(x[6], wires=6)
+    qp.RX(x[7], wires=7)
+    qp.RX(x[8], wires=8)
 
     # Centre single-qubit rotation
-    qml.RX(p[0], wires=4)
-    qml.RY(p[1], wires=4)
+    qp.RX(p[0], wires=4)
+    qp.RY(p[1], wires=4)
 
     # Corner single-qubit rotation
-    qml.RX(p[2], wires=0)
-    qml.RX(p[2], wires=2)
-    qml.RX(p[2], wires=6)
-    qml.RX(p[2], wires=8)
+    qp.RX(p[2], wires=0)
+    qp.RX(p[2], wires=2)
+    qp.RX(p[2], wires=6)
+    qp.RX(p[2], wires=8)
 
-    qml.RY(p[3], wires=0)
-    qml.RY(p[3], wires=2)
-    qml.RY(p[3], wires=6)
-    qml.RY(p[3], wires=8)
+    qp.RY(p[3], wires=0)
+    qp.RY(p[3], wires=2)
+    qp.RY(p[3], wires=6)
+    qp.RY(p[3], wires=8)
 
     # Edge single-qubit rotation
-    qml.RX(p[4], wires=1)
-    qml.RX(p[4], wires=3)
-    qml.RX(p[4], wires=5)
-    qml.RX(p[4], wires=7)
+    qp.RX(p[4], wires=1)
+    qp.RX(p[4], wires=3)
+    qp.RX(p[4], wires=5)
+    qp.RX(p[4], wires=7)
 
-    qml.RY(p[5], wires=1)
-    qml.RY(p[5], wires=3)
-    qml.RY(p[5], wires=5)
-    qml.RY(p[5], wires=7)
+    qp.RY(p[5], wires=1)
+    qp.RY(p[5], wires=3)
+    qp.RY(p[5], wires=5)
+    qp.RY(p[5], wires=7)
 
     # Entagling two-qubit gates
     # circling the edge of the board
-    qml.CRY(p[6], wires=[0, 1])
-    qml.CRY(p[6], wires=[2, 1])
-    qml.CRY(p[6], wires=[2, 5])
-    qml.CRY(p[6], wires=[8, 5])
-    qml.CRY(p[6], wires=[8, 7])
-    qml.CRY(p[6], wires=[6, 7])
-    qml.CRY(p[6], wires=[6, 3])
-    qml.CRY(p[6], wires=[0, 3])
+    qp.CRY(p[6], wires=[0, 1])
+    qp.CRY(p[6], wires=[2, 1])
+    qp.CRY(p[6], wires=[2, 5])
+    qp.CRY(p[6], wires=[8, 5])
+    qp.CRY(p[6], wires=[8, 7])
+    qp.CRY(p[6], wires=[6, 7])
+    qp.CRY(p[6], wires=[6, 3])
+    qp.CRY(p[6], wires=[0, 3])
 
     # To the corners from the centre
-    qml.CRY(p[7], wires=[4, 0])
-    qml.CRY(p[7], wires=[4, 2])
-    qml.CRY(p[7], wires=[4, 6])
-    qml.CRY(p[7], wires=[4, 8])
+    qp.CRY(p[7], wires=[4, 0])
+    qp.CRY(p[7], wires=[4, 2])
+    qp.CRY(p[7], wires=[4, 6])
+    qp.CRY(p[7], wires=[4, 8])
 
     # To the centre from the edges
-    qml.CRY(p[8], wires=[1, 4])
-    qml.CRY(p[8], wires=[3, 4])
-    qml.CRY(p[8], wires=[5, 4])
-    qml.CRY(p[8], wires=[7, 4])
+    qp.CRY(p[8], wires=[1, 4])
+    qp.CRY(p[8], wires=[3, 4])
+    qp.CRY(p[8], wires=[5, 4])
+    qp.CRY(p[8], wires=[7, 4])
 
-    return [qml.expval(ob_center), qml.expval(ob_corner), qml.expval(ob_edge)]
+    return [qp.expval(ob_center), qp.expval(ob_corner), qp.expval(ob_edge)]
 
 
-fig, ax = qml.draw_mpl(circuit)([0] * 9, 18 * [0])
+fig, ax = qp.draw_mpl(circuit)([0] * 9, 18 * [0])
 
 ######################################################################
 # Let's also look at the same series of gates but this time they
@@ -579,22 +579,22 @@ fig, ax = qml.draw_mpl(circuit)([0] * 9, 18 * [0])
 # more parameters, as previously groups of gates were updated together.
 
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def circuit_no_sym(x, p):
 
-    qml.RX(x[0], wires=0)
-    qml.RX(x[1], wires=1)
-    qml.RX(x[2], wires=2)
-    qml.RX(x[3], wires=3)
-    qml.RX(x[4], wires=4)
-    qml.RX(x[5], wires=5)
-    qml.RX(x[6], wires=6)
-    qml.RX(x[7], wires=7)
-    qml.RX(x[8], wires=8)
+    qp.RX(x[0], wires=0)
+    qp.RX(x[1], wires=1)
+    qp.RX(x[2], wires=2)
+    qp.RX(x[3], wires=3)
+    qp.RX(x[4], wires=4)
+    qp.RX(x[5], wires=5)
+    qp.RX(x[6], wires=6)
+    qp.RX(x[7], wires=7)
+    qp.RX(x[8], wires=8)
 
     # Centre single-qubit rotation
-    qml.RX(p[0], wires=4)
-    qml.RY(p[1], wires=4)
+    qp.RX(p[0], wires=4)
+    qp.RY(p[1], wires=4)
 
     # Note in this circuit the parameters aren't all the same.
     # Previously they were identical to ensure they were applied
@@ -602,54 +602,54 @@ def circuit_no_sym(x, p):
     # here means we aren't respecting the symmetry.
 
     # Corner single-qubit rotation
-    qml.RX(p[2], wires=0)
-    qml.RX(p[3], wires=2)
-    qml.RX(p[4], wires=6)
-    qml.RX(p[5], wires=8)
+    qp.RX(p[2], wires=0)
+    qp.RX(p[3], wires=2)
+    qp.RX(p[4], wires=6)
+    qp.RX(p[5], wires=8)
 
-    qml.RY(p[6], wires=0)
-    qml.RY(p[7], wires=2)
-    qml.RY(p[8], wires=6)
-    qml.RY(p[9], wires=8)
+    qp.RY(p[6], wires=0)
+    qp.RY(p[7], wires=2)
+    qp.RY(p[8], wires=6)
+    qp.RY(p[9], wires=8)
 
     # Edge single-qubit rotation
-    qml.RX(p[10], wires=1)
-    qml.RX(p[11], wires=3)
-    qml.RX(p[12], wires=5)
-    qml.RX(p[13], wires=7)
+    qp.RX(p[10], wires=1)
+    qp.RX(p[11], wires=3)
+    qp.RX(p[12], wires=5)
+    qp.RX(p[13], wires=7)
 
-    qml.RY(p[14], wires=1)
-    qml.RY(p[15], wires=3)
-    qml.RY(p[16], wires=5)
-    qml.RY(p[17], wires=7)
+    qp.RY(p[14], wires=1)
+    qp.RY(p[15], wires=3)
+    qp.RY(p[16], wires=5)
+    qp.RY(p[17], wires=7)
 
     # Entagling two-qubit gates
     # circling the edge of the board
-    qml.CRY(p[18], wires=[0, 1])
-    qml.CRY(p[19], wires=[2, 1])
-    qml.CRY(p[20], wires=[2, 5])
-    qml.CRY(p[21], wires=[8, 5])
-    qml.CRY(p[22], wires=[8, 7])
-    qml.CRY(p[23], wires=[6, 7])
-    qml.CRY(p[24], wires=[6, 3])
-    qml.CRY(p[25], wires=[0, 3])
+    qp.CRY(p[18], wires=[0, 1])
+    qp.CRY(p[19], wires=[2, 1])
+    qp.CRY(p[20], wires=[2, 5])
+    qp.CRY(p[21], wires=[8, 5])
+    qp.CRY(p[22], wires=[8, 7])
+    qp.CRY(p[23], wires=[6, 7])
+    qp.CRY(p[24], wires=[6, 3])
+    qp.CRY(p[25], wires=[0, 3])
 
     # To the corners from the centre
-    qml.CRY(p[26], wires=[4, 0])
-    qml.CRY(p[27], wires=[4, 2])
-    qml.CRY(p[28], wires=[4, 6])
-    qml.CRY(p[29], wires=[4, 8])
+    qp.CRY(p[26], wires=[4, 0])
+    qp.CRY(p[27], wires=[4, 2])
+    qp.CRY(p[28], wires=[4, 6])
+    qp.CRY(p[29], wires=[4, 8])
 
     # To the centre from the edges
-    qml.CRY(p[30], wires=[1, 4])
-    qml.CRY(p[31], wires=[3, 4])
-    qml.CRY(p[32], wires=[5, 4])
-    qml.CRY(p[33], wires=[7, 4])
+    qp.CRY(p[30], wires=[1, 4])
+    qp.CRY(p[31], wires=[3, 4])
+    qp.CRY(p[32], wires=[5, 4])
+    qp.CRY(p[33], wires=[7, 4])
 
-    return [qml.expval(ob_center), qml.expval(ob_corner), qml.expval(ob_edge)]
+    return [qp.expval(ob_center), qp.expval(ob_corner), qp.expval(ob_edge)]
 
 
-fig, ax = qml.draw_mpl(circuit_no_sym)([0] * 9, [0] * 34)
+fig, ax = qp.draw_mpl(circuit_no_sym)([0] * 9, [0] * 34)
 
 
 ######################################################################

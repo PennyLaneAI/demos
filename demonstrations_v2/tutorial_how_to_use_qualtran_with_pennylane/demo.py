@@ -46,10 +46,10 @@ PennyLane ``QNodes``.
 # may not have wires defined. But PennyLane operations do apply to specific wires, so we need to
 # provide qubit information to :class:`~pennylane.FromBloq` via the ``wires`` argument.
 
-import pennylane as qml
+import pennylane as qp
 from qualtran.bloqs.basic_gates import XGate
 
-bloq_as_op = qml.FromBloq(XGate(), wires=0)
+bloq_as_op = qp.FromBloq(XGate(), wires=0)
 print(bloq_as_op)
 
 ######################################################################
@@ -59,7 +59,7 @@ print(bloq_as_op)
 # When wire requirements are complicated, you can use the :func:`~.pennylane.bloq_registers` 
 # helper function to generate the input values for ``wires``:
 
-print(qml.bloq_registers(XGate()))
+print(qp.bloq_registers(XGate()))
 
 ######################################################################
 # This will create register names in accordance to the Bloq's signature. Here, the function created
@@ -79,23 +79,23 @@ print(qml.bloq_registers(XGate()))
 from qualtran.bloqs.gf_arithmetic import GF2Addition
 
 arithmetic_bloq = GF2Addition(4)
-wires = qml.bloq_registers(arithmetic_bloq) # This gives us 2 registers, 'x' and 'y'
+wires = qp.bloq_registers(arithmetic_bloq) # This gives us 2 registers, 'x' and 'y'
 print(wires)
 
 ######################################################################
 five = [0, 1, 0, 1] # 5 in binary
 ten = [1, 0, 1, 0] # 10 in binary
 
-@qml.set_shots(1)
-@qml.qnode(qml.device('default.qubit'))
+@qp.set_shots(1)
+@qp.qnode(qp.device('default.qubit'))
 def circuit():
     # Prepare the input registers for 5 and 10
-    qml.BasisState(five + ten, wires=wires['x']+wires['y'])
+    qp.BasisState(five + ten, wires=wires['x']+wires['y'])
     # Sum the two registers
-    qml.FromBloq(arithmetic_bloq, wires=wires['x']+wires['y'])
+    qp.FromBloq(arithmetic_bloq, wires=wires['x']+wires['y'])
     # Measure the output binary string
-    a = [qml.measure(i) for i in range(len(wires['x']+wires['y']))]
-    return qml.sample(a)
+    a = [qp.measure(i) for i in range(len(wires['x']+wires['y']))]
+    return qp.sample(a)
 
 # Simulate the circuit and process binary output to integer
 binary_string = "".join([str(bit) for bit in circuit()[0]])
@@ -139,13 +139,13 @@ print("GF2Addition of 5 + 10 =", int(binary_string[len(wires['x']):],2))
 # Smart defaults
 # ~~~~~~~~~~~~~~
 #
-# By default, ``qml.to_bloq`` tries its best to translate PennyLane objects to Qualtran-native
+# By default, ``qp.to_bloq`` tries its best to translate PennyLane objects to Qualtran-native
 # objects. This makes certain Qualtran functionalities, such as gate counting and
 # `generalizers <https://qualtran.readthedocs.io/en/latest/reference/qualtran/resource_counting/generalizers.html>`_,
 # work more seamlessly. In the following example, PennyLane's :class:`~pennylane.PauliX` operator is
 # mapped directly to Qualtran's ``XGate``.
 
-op_as_bloq = qml.to_bloq(qml.X(0))
+op_as_bloq = qp.to_bloq(qp.X(0))
 print(op_as_bloq)
 
 ######################################################################
@@ -157,10 +157,10 @@ print(op_as_bloq)
 # `QubitizationQPE <https://qualtran.readthedocs.io/en/latest/bloqs/phase_estimation/qubitization_qpe.html>`_. 
 # In cases where the mapping is ambiguous, we get the smart default:
 
-unitary = qml.RY(phi=0.3, wires=[0])
+unitary = qp.RY(phi=0.3, wires=[0])
 estimation_wires = [1, 2, 3]
-op = qml.QuantumPhaseEstimation(unitary=unitary, estimation_wires=estimation_wires)
-qpe_bloq = qml.to_bloq(op)
+op = qp.QuantumPhaseEstimation(unitary=unitary, estimation_wires=estimation_wires)
+qpe_bloq = qp.to_bloq(op)
 print(qpe_bloq)
 
 ######################################################################
@@ -200,12 +200,12 @@ from qualtran.bloqs.phase_estimation.text_book_qpe import TextbookQPE
 
 custom_map = {
     op: TextbookQPE(
-        unitary=qml.to_bloq(qml.RY(phi=0.3, wires=[0])), 
+        unitary=qp.to_bloq(qp.RY(phi=0.3, wires=[0])), 
         ctrl_state_prep=LPResourceState(3)
     )
 }
 
-qpe_bloq = qml.to_bloq(op, custom_mapping=custom_map)
+qpe_bloq = qp.to_bloq(op, custom_mapping=custom_map)
 print(qpe_bloq)
 
 ######################################################################
@@ -228,10 +228,10 @@ print(qpe_bloq)
 # or smart default -- the circuit is wrapped as a :class:`~pennylane.io.ToBloq` object.
 
 def circ():
-    qml.X(0)
-    qml.X(1)
+    qp.X(0)
+    qp.X(1)
 
-qfunc_as_bloq = qml.to_bloq(circ)
+qfunc_as_bloq = qp.to_bloq(circ)
 print(type(qfunc_as_bloq))
 
 ######################################################################
@@ -244,10 +244,10 @@ print(type(qfunc_as_bloq))
 # ``map_ops`` to ``False``. This wraps the operators as a ``ToBloq`` object and keeps the original
 # PennyLane object information.
 
-unitary = qml.RY(phi=0.3, wires=[0])
+unitary = qp.RY(phi=0.3, wires=[0])
 estimation_wires = [1, 2, 3]
-op = qml.QuantumPhaseEstimation(unitary=unitary, estimation_wires=estimation_wires)
-wrapped_qpe_bloq = qml.to_bloq(op, map_ops=False)
+op = qp.QuantumPhaseEstimation(unitary=unitary, estimation_wires=estimation_wires)
+wrapped_qpe_bloq = qp.to_bloq(op, map_ops=False)
 print(wrapped_qpe_bloq)
 
 ######################################################################

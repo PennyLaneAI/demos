@@ -72,7 +72,7 @@ The hidden cut problem for locating unentanglement
 import galois
 import matplotlib.pyplot as plt
 import numpy as np
-import pennylane as qml
+import pennylane as qp
 from scipy.stats import unitary_group
 
 # set random seed
@@ -257,31 +257,31 @@ print(f'Created {n} qubit state with qubits {partitions[0]} unentangled from {pa
 # array ``M``:
 # 
 
-dev = qml.device('default.qubit')
+dev = qp.device('default.qubit')
 
-@qml.set_shots(100)
-@qml.qnode(dev)
+@qp.set_shots(100)
+@qp.qnode(dev)
 def circuit():
     # Initialize psi x psi in registers 2 and 3
-    qml.StatePrep(state, wires=range(n, 2*n))
-    qml.StatePrep(state, wires=range(2*n, 3*n))
+    qp.StatePrep(state, wires=range(n, 2*n))
+    qp.StatePrep(state, wires=range(2*n, 3*n))
                             
     # Hadamards
     for a in range(n):
-        qml.Hadamard(a)
+        qp.Hadamard(a)
 
     # Controlled swaps
     for c in range(n):
         a = c + n
         b = c + 2*n
-        qml.ctrl(qml.SWAP, c, control_values=1)(wires=(a,b))
+        qp.ctrl(qp.SWAP, c, control_values=1)(wires=(a,b))
 
     # Hadamards
     for a in range(n):
-        qml.Hadamard(a)
+        qp.Hadamard(a)
 
     # Measure
-    return qml.sample(wires=range(n))
+    return qp.sample(wires=range(n))
 
 M = circuit()
 

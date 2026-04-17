@@ -10,7 +10,7 @@ The non-unique nature of these representations allows quantum computing librarie
 different approaches for storing and building Kraus operators to construct noise models. 
 In this how-to guide, we will first compare the construction of noise models in
 `Qiskit <https://docs.quantum.ibm.com/>`_ and
-`PennyLane <https://docs.pennylane.ai/en/stable/code/qml.html>`_. Then, we will learn how to
+`PennyLane <https://docs.pennylane.ai/en/stable/code/qp.html>`_. Then, we will learn how to
 convert a Qiskit noise model into an equivalent PennyLane one, allowing users to import any
 custom user-defined or fake backend-based noise models.
 """
@@ -75,25 +75,25 @@ print(model_qk)
 # :doc:`how-to for noise models in PennyLane <demos/tutorial_how_to_use_noise_models>`. 🧑‍🏫
 #
 
-import pennylane as qml
+import pennylane as qp
 
 # Depolarization error for single-qubit gates
-gate1_fcond = qml.noise.op_in(["U1", "U2", "U3"]) & qml.noise.wires_in(range(n_qubits))
-gate1_noise = qml.noise.partial_wires(qml.DepolarizingChannel, prob_depol)
+gate1_fcond = qp.noise.op_in(["U1", "U2", "U3"]) & qp.noise.wires_in(range(n_qubits))
+gate1_noise = qp.noise.partial_wires(qp.DepolarizingChannel, prob_depol)
 
 # Bit flip errors for two-qubit gate
-gate2_fcond = qml.noise.op_eq("CNOT")
+gate2_fcond = qp.noise.op_eq("CNOT")
 def gate2_noise(op, **metadata):
-    qml.BitFlip(prob_bit_flip, op.wires[1])
+    qp.BitFlip(prob_bit_flip, op.wires[1])
 
 # Readout errors for measurements
-rmeas_fcond = qml.noise.meas_eq(qml.counts)
+rmeas_fcond = qp.noise.meas_eq(qp.counts)
 def rmeas_noise(op, **metadata):
     for wire in op.wires:
-        qml.GeneralizedAmplitudeDamping(prob_ampl_damp[wire], exc_population, wire)
+        qp.GeneralizedAmplitudeDamping(prob_ampl_damp[wire], exc_population, wire)
 
 # Building the PennyLane noise model
-model_pl = qml.NoiseModel(
+model_pl = qp.NoiseModel(
     {gate1_fcond: gate1_noise, gate2_fcond: gate2_noise}, {rmeas_fcond: rmeas_noise},
 )
 
@@ -112,19 +112,19 @@ print(model_pl)
 
 # Preparing the devices
 n_shots = int(2e6)
-dev_pl_ideal = qml.device("default.mixed", wires=n_qubits)
-dev_qk_noisy = qml.device("qiskit.aer", wires=n_qubits, noise_model=model_qk)
+dev_pl_ideal = qp.device("default.mixed", wires=n_qubits)
+dev_qk_noisy = qp.device("qiskit.aer", wires=n_qubits, noise_model=model_qk)
 
 def GHZcircuit():
-    qml.U2(0, np.pi, wires=[0])
+    qp.U2(0, np.pi, wires=[0])
     for wire in range(n_qubits-1):
-        qml.CNOT([wire, wire + 1])
-    return qml.counts(wires=range(n_qubits), all_outcomes=True)
+        qp.CNOT([wire, wire + 1])
+    return qp.counts(wires=range(n_qubits), all_outcomes=True)
 
 # Preparing the circuits
-pl_ideal_circ = qml.set_shots(qml.QNode(GHZcircuit, dev_pl_ideal), shots = n_shots)
-pl_noisy_circ = qml.add_noise(pl_ideal_circ, noise_model=model_pl)
-qk_noisy_circ = qml.set_shots(qml.QNode(GHZcircuit, dev_qk_noisy), shots = n_shots)
+pl_ideal_circ = qp.set_shots(qp.QNode(GHZcircuit, dev_pl_ideal), shots = n_shots)
+pl_noisy_circ = qp.add_noise(pl_ideal_circ, noise_model=model_pl)
+qk_noisy_circ = qp.set_shots(qp.QNode(GHZcircuit, dev_qk_noisy), shots = n_shots)
 
 # Preparing the results
 pl_noisy_res, qk_noisy_res = pl_noisy_circ(), qk_noisy_circ()
@@ -169,7 +169,7 @@ print(qk_noise_model)
 # To import this noise model as a PennyLane one, we simply do:
 #
 
-pl_noise_model = qml.from_qiskit_noise(qk_noise_model)
+pl_noise_model = qp.from_qiskit_noise(qk_noise_model)
 print(pl_noise_model)
 
 ######################################################################
