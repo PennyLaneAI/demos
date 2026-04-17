@@ -1,4 +1,4 @@
-r"""#Nonlinear amplitude transformation
+r"""Nonlinear amplitude transformation
 """
 
 ######################################################################
