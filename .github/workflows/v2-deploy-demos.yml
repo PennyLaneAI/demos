@@ -64,7 +64,7 @@ jobs:
         run: pip install -r .github/workflows/qml_pipeline_v2/requirements.txt
       
       - name: Fetch demo build artifact
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: ${{ inputs.artifact-name }}
           run-id: ${{ inputs.workflow-run-id }}
