@@ -10,8 +10,8 @@ r"""Nonlinear amplitude transformation
 # 
 # As also described in previous demos, :doc:`block
 # encoding <demos/tutorial_block_encoding>`
-# [`1 <https://arxiv.org/abs/1804.01973>`__] and `quantum singular value
-# transformation <https://pennylane.ai/qml/demos/tutorial_intro_qsvt>`__
+# [`1 <https://arxiv.org/abs/1804.01973>`__] and :doc:`quantum singular value
+# transformation <demos/tutorial_intro_qsvt>`
 # [`2 <https://arxiv.org/abs/1806.01838>`__] have become the “gold standard” for implementing matrix
 # functions. However, these techniques primarily transform the singular values (or eigenvalues) of an
 # operator. In many quantum machine learning settings - especially amplitude encoding - the data isn’t
