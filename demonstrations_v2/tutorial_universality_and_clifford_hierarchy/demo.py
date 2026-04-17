@@ -197,6 +197,109 @@ print(np.allclose(result, correct_answer))
 # 
 #   Figure 2: *A recursive universal gate teleportation circuit that applies a fourth level gate using a nested teleportation gate that implements a third level gate using only gates in the second level and measurements.*
 # 
+# An example code that implements this doubly-nested $C_4$ teleportation circuit is below: 
+
+import pennylane as qp
+import jax.numpy as jnp
+from catalyst import qjit
+
+dev = qp.device('lightning.qubit', wires=5)
+
+def conjugate(gate_fn, pauli_fn):
+    # Applies U  P  U^dagger
+    def conjugated_gate(wire):
+        qp.adjoint(gate_fn)(wire)
+        pauli_fn(wire)
+        gate_fn(wire)
+    return conjugated_gate
+
+# Helper redefinitions
+def pauli_x(wire): qp.X(wire)
+def pauli_z(wire): qp.Z(wire)
+def pauli_xz(wire):
+    qp.X(wire)
+    qp.Z(wire)
+
+# Define the C_4 gate. We chose sqrt(T) here. 
+# Feel free to change it
+def l4_gate(wire):
+    qp.PhaseShift(jnp.pi / 8, wires=wire)
+
+# Automatically generate C_3 corrections (C_4 P_4 C_4^\dagger)
+l3_x_corr = conjugate(l4_gate, pauli_x)
+
+# Automatically generate C_2 corrections for the nested C_3 (C_3 P_3 C_3^\dagger)
+l2_z_corr = conjugate(l3_x_corr, pauli_z)
+l2_x_corr = conjugate(l3_x_corr, pauli_x)
+l2_xz_corr = conjugate(l3_x_corr, pauli_xz)
+
+# Nested teleportation
+@qjit
+@qp.qnode(dev)
+def c4_teleportation(state):
+    qp.StatePrep(state, wires=0)
+
+    # C_4 Teleportation
+    qp.Hadamard(1)
+    qp.CNOT(wires=[1, 2])
+    l4_gate(2)
+    
+    qp.CNOT(wires=[0, 1])
+    qp.Hadamard(0)
+
+    m0 = qp.measure(0) 
+    m1 = qp.measure(1) 
+
+    # 2. Nested C_3 Teleportation
+    def apply_nested_l3_correction():
+        qp.Hadamard(3)
+        qp.CNOT(wires=[3, 4])
+        
+        # Apply C_3 = C_4 P_4 C_4^\dagger 
+        l3_x_corr(4)
+
+        qp.CNOT(wires=[2, 3])
+        qp.Hadamard(2)
+
+        n0 = qp.measure(2) 
+        n1 = qp.measure(3) 
+
+        # Apply C_2 = C_3 P_3 C_3^\dagger
+        def apply_z(): l2_z_corr(4)
+        def apply_x(): l2_x_corr(4)
+        def apply_xz(): l2_xz_corr(4)
+
+        qp.cond(n0 & (n1 == 0), apply_z)()
+        qp.cond(n1 & (n0 == 0), apply_x)()
+        qp.cond(n0 & n1, apply_xz)()
+
+        qp.cond(m0 == 1, pauli_z)(4)
+
+    def skip_nested_l3_correction():
+        qp.cond(m0 == 1, pauli_z)(2)
+        qp.SWAP(wires=[2, 4])
+
+    # 3. Branching Execution
+    qp.cond(m1 == 1, apply_nested_l3_correction, skip_nested_l3_correction)()
+
+    return qp.state()
+
+##########################################
+# What is the expected correct density matrix? 
+
+initial_state = jnp.array([1, 1]) / jnp.sqrt(2) # arbitrary initial state
+correct_state = qp.matrix(l4_gate, wire_order=[0])(0) @ jnp.expand_dims(initial_state, axis=1)
+correct_density_matrix = qp.math.reduce_statevector(output_probs, indices=[4])
+print("The correct density matrix is:", jnp.round(correct_density_matrix , 3))
+
+##########################################
+# Let us see if the circuit produces the same density matrix. Indeed, we can see that the results match. 
+output_state = qp.math.reduce_statevector(c4_teleportation(initial_state), indices=[4])
+print("The circuit output density matrix is: ", jnp.round(output_state , 3))
+print(np.allclose(output_state , correct_density_matrix ))
+
+##########################################
+# 
 # Most generally, this teleportation circuit can be applied indefinitely to apply arbitrarily high level gates using the same idea outlined in Figure 2. Figure 3 below illustrates this idea artistically. It's turtles all the way down!
 # 
 # .. figure:: ../_static/demonstration_assets/universality_and_clifford_hierarchy/Figure-6-recursive-teleportation.png
