@@ -289,7 +289,7 @@ def c4_teleportation(state):
 
 initial_state = jnp.array([1, 1]) / jnp.sqrt(2) # arbitrary initial state
 correct_state = qp.matrix(l4_gate, wire_order=[0])(0) @ jnp.expand_dims(initial_state, axis=1)
-correct_density_matrix = qp.math.reduce_statevector(output_probs, indices=[4])
+correct_density_matrix = jnp.outer(correct_state , jnp.conj(correct_state))
 print("The correct density matrix is:", jnp.round(correct_density_matrix , 3))
 
 ##########################################
