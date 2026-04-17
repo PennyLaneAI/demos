@@ -5,8 +5,8 @@
     }],
     "executable_stable": true,
     "executable_latest": true,
-    "dateOfPublication": "2026-03-17T00:00:00+00:00",
-    "dateOfLastModification": "2026-03-17T00:00:00+00:00",
+    "dateOfPublication": "2026-04-17T00:00:00+00:00",
+    "dateOfLastModification": "2026-04-17T00:00:00+00:00",
     "categories": [
         "Quantum Computing",
         "Compilation",
@@ -15,11 +15,11 @@
     "tags": [],
     "previewImages": [{
             "type": "thumbnail",
-            "uri": "/_static/demo_thumbnails/regular_demo_thumbnails/thumbnail_game_of_surface_codes.png"
+            "uri": "/_static/demo_thumbnails/regular_demo_thumbnails/pennylane-demo-fault-tolerant-threshold-thumbnail.png"
         },
         {
             "type": "large_thumbnail",
-            "uri": "/_static/demo_thumbnails/large_demo_thumbnails/thumbnail_large_game_of_surface_codes.png"
+            "uri": "/_static/demo_thumbnails/large_demo_thumbnails/pennylane-demo-fault-tolerant-threshold-large-thumbnail.png"
         }
     ],
     "seoDescription": "Understanding Fault-tolerant Threshold Theorem in Practice",
