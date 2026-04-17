@@ -434,7 +434,7 @@ def get_training_cycler(Xtr: torch.Tensor, batch_size: int, seed: int = GLOBAL_S
 # appendix of [#Cîrstoiu2020]_), we create the electron:
 #
 
-import pennylane as qml
+import pennylane as qp
 from itertools import combinations
 
 
@@ -451,18 +451,18 @@ def D(gamma: torch.Tensor, n_qubits: int, k: int = None, get_probs: bool = False
     for i in range(1, k + 1):
         for comb in combinations(range(n_qubits), i):
             if len(comb) == 1:
-                qml.RZ(gamma[cnt], wires=[comb[0]])
+                qp.RZ(gamma[cnt], wires=[comb[0]])
                 cnt += 1
             elif len(comb) > 1:
                 cnots = [comb[i : i + 2] for i in range(len(comb) - 1)]
                 for j in cnots:
-                    qml.CNOT(wires=j)
-                qml.RZ(gamma[cnt], wires=[comb[-1]])
+                    qp.CNOT(wires=j)
+                qp.RZ(gamma[cnt], wires=[comb[-1]])
                 cnt += 1
                 for j in cnots[::-1]:
-                    qml.CNOT(wires=j)
+                    qp.CNOT(wires=j)
     if get_probs:
-        return qml.probs(wires=range(n_qubits))
+        return qp.probs(wires=range(n_qubits))
 
 
 ######################################################################
@@ -470,9 +470,9 @@ def D(gamma: torch.Tensor, n_qubits: int, k: int = None, get_probs: bool = False
 # qubit in this tutorial, the resulting circuit is merely a single :math:`R_z(\theta)` gate.
 
 n_qubits = 1
-dev = qml.device("default.qubit", wires=n_qubits)
-D_one_qubit = qml.qnode(dev)(D)
-_ = qml.draw_mpl(D_one_qubit, decimals=2)(torch.tensor([1, 0]), 1, 1, True)
+dev = qp.device("default.qubit", wires=n_qubits)
+D_one_qubit = qp.qnode(dev)(D)
+_ = qp.draw_mpl(D_one_qubit, decimals=2)(torch.tensor([1, 0]), 1, 1, True)
 
 ######################################################################
 # You may find the general function for :math:`D`` useful in case you want to experiment
@@ -486,7 +486,7 @@ _ = qml.draw_mpl(D_one_qubit, decimals=2)(torch.tensor([1, 0]), 1, 1, True)
 
 
 @ct.electron
-@qml.qnode(dev, interface="torch", diff_method="backprop")
+@qp.qnode(dev, interface="torch", diff_method="backprop")
 def get_probs(
     xt: torch.Tensor,
     t: float,
@@ -505,8 +505,8 @@ def get_probs(
     U(xt, wires=range(n_qubits))
     W(alpha, wires=range(n_qubits))
     D(gamma * t, n_qubits, k)
-    qml.adjoint(W)(alpha, wires=range(n_qubits))
-    return qml.probs(range(n_qubits))
+    qp.adjoint(W)(alpha, wires=range(n_qubits))
+    return qp.probs(range(n_qubits))
 
 
 ######################################################################
@@ -776,8 +776,8 @@ def training_workflow(
 #
 
 general_options = {
-    "U": qml.AngleEmbedding,
-    "W": qml.StronglyEntanglingLayers,
+    "U": qp.AngleEmbedding,
+    "W": qp.StronglyEntanglingLayers,
     "D": D,
     "n_qubits": 1,
     "probs_func": get_probs,
