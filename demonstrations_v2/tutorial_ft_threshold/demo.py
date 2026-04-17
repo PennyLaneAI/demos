@@ -35,7 +35,7 @@ threshold is the ultimate goal for building a utility-scale quantum computer.
 .. _fig-cartoon-thresholds:
 
 .. figure::
-    ../_static/demonstration_assets/ft_threshold/cartoon_thresholds.png
+    ../_static/demonstration_assets/fault-tolerant-threshold/cartoon_thresholds.png
     :align: center
     :width: 85%
     :target: javascript:void(0)
@@ -87,7 +87,7 @@ data qubits to achieve the same distance :math:`d`, giving a 50% reduction in qu
 overhead compared to the standard surface code.
 
 .. figure::
-    ../_static/demonstration_assets/ft_threshold/rotated_surface_code.jpg
+    ../_static/demonstration_assets/fault-tolerant-threshold/rotated_surface_code.jpg
     :align: center
     :width: 85%
     :target: javascript:void(0)
