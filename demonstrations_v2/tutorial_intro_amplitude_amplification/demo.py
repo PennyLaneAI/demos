@@ -138,24 +138,24 @@ n = len(values)
 # This is a uniform superposition of all possible subsets so solutions are guaranteed to have non-zero amplitudes
 # in :math:`|\Psi\rangle.` Let's generate the state and visualize it.
 
-import pennylane as qml
+import pennylane as qp
 import matplotlib.pyplot as plt
 plt.style.use('pennylane.drawer.plot')
 
-@qml.prod
+@qp.prod
 # This decorator converts the quantum function U into an operator.
 # It is useful for later use in the AmplitudeAmplification template.
 def U(wires):
     # create the generator U, such that U|0⟩ = |Ψ⟩
     for wire in wires:
-        qml.Hadamard(wires=wire)
+        qp.Hadamard(wires=wire)
 
-dev = qml.device("default.qubit")
+dev = qp.device("default.qubit")
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def circuit():
     U(wires = range(n))
-    return qml.state()
+    return qp.state()
 
 output = circuit()[:64].real
 
@@ -184,11 +184,11 @@ plt.show()
 import numpy as np
 
 def Sum(wires_subset, wires_sum):
-    qml.QFT(wires = wires_sum)
+    qp.QFT(wires = wires_sum)
     for i, value in enumerate(values):
         for j in range(len(wires_sum)):
-            qml.CRZ(value * np.pi / (2 ** j), wires=[wires_subset[i], wires_sum[j]])
-    qml.adjoint(qml.QFT)(wires=wires_sum)
+            qp.CRZ(value * np.pi / (2 ** j), wires=[wires_subset[i], wires_sum[j]])
+    qp.adjoint(qp.QFT)(wires=wires_sum)
 
 ##############################################################################
 # To create the oracle  that performs the reflection around :math:`|\phi^{\perp}\rangle,`  we apply the :math:`\text{Sum}` operator to the
@@ -196,19 +196,19 @@ def Sum(wires_subset, wires_sum):
 # This allows us to mark the searched elements. Then we apply the inverse of the sum to clean the auxiliary qubits.
 #
 
-@qml.prod
+@qp.prod
 def oracle(wires_subset, wires_sum):
     # Reflection on |ϕ⟂⟩
     Sum(wires_subset, wires_sum)
-    qml.FlipSign(0, wires=wires_sum)
-    qml.adjoint(Sum)(wires_subset, wires_sum)
+    qp.FlipSign(0, wires=wires_sum)
+    qp.adjoint(Sum)(wires_subset, wires_sum)
 
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def circuit():
     U(wires=range(n))                 # Generate initial state
     oracle(range(n), range(n, n+5))   # Apply the reflection on |ϕ⟂⟩
-    return qml.state()
+    return qp.state()
 
 
 output = circuit()[0::2 ** 5].real
@@ -232,12 +232,12 @@ plt.show()
 #
 
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def circuit():
     U(wires=range(n))                  # Generate initial state
     oracle(range(n), range(n, n + 5))  # Apply the reflection on |ϕ⟂⟩
-    qml.Reflection(U(wires=range(n)))  # Reflect on |Ψ⟩
-    return qml.state()
+    qp.Reflection(U(wires=range(n)))  # Reflect on |Ψ⟩
+    return qp.state()
 
 ##############################################################################
 # Let's now look at the state :math:`|\Psi\rangle` and see how it is changed.
@@ -261,14 +261,14 @@ plt.show()
 # to :math:`|\phi^{\perp}\rangle` (i.e. the oracle), and the number of iterations.
 # We increase the number of iterations in order to study the evolution of the initial state:
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def circuit(iters):
     U(wires=range(n))
-    qml.AmplitudeAmplification(U = U(wires = range(n)),
+    qp.AmplitudeAmplification(U = U(wires = range(n)),
                                O = oracle(range(n), range(n, n + 5)),
                                iters = iters)
 
-    return qml.probs(wires = range(n))
+    return qp.probs(wires = range(n))
 
 fig, axs = plt.subplots(2, 2, figsize=(14, 10))
 for i in range(1,9,2):
@@ -308,16 +308,16 @@ plt.show()
 # To use this variant we simply set ``fixed_point = True`` and indicate the auxiliary qubit.
 # Let's see what happens with the same example as before:
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def circuit(iters):
     U(wires=range(n))
-    qml.AmplitudeAmplification(U = U(wires = range(n)),
+    qp.AmplitudeAmplification(U = U(wires = range(n)),
                                O = oracle(range(n), range(n, n + 5)),
                                iters = iters,
                                fixed_point=True,
                                work_wire = n + 5)
 
-    return qml.probs(wires = range(n))
+    return qp.probs(wires = range(n))
 
 fig, axs = plt.subplots(2, 2, figsize=(14, 10))
 for i in range(1,9,2):
