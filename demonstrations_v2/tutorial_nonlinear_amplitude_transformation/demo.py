@@ -8,8 +8,8 @@ r"""Nonlinear amplitude transformation
 # evolution of a closed system is always governed by unitary operators. A central challenge in quantum
 # algorithm design is bridging this gap to implement nonlinear transformations on a quantum computer.
 # 
-# As also described in previous demos, `block
-# encoding <https://pennylane.ai/qml/demos/tutorial_block_encoding>`__
+# As also described in previous demos, :doc:`block
+# encoding <demos/tutorial_block_encoding>`
 # [`1 <https://arxiv.org/abs/1804.01973>`__] and `quantum singular value
 # transformation <https://pennylane.ai/qml/demos/tutorial_intro_qsvt>`__
 # [`2 <https://arxiv.org/abs/1806.01838>`__] have become the “gold standard” for implementing matrix
