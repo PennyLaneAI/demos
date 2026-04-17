@@ -61,7 +61,7 @@ First, let’s write a function to generate a pure :math:`|T_0\rangle` state via
 and a phase shift:
 """
 
-import pennylane as qml
+import pennylane as qp
 
 import jax; jax.config.update('jax_platform_name', 'cpu')
 from jax import numpy as jnp
@@ -70,8 +70,8 @@ from jax import random
 b = 0.5 * jnp.arccos(1 / jnp.sqrt(3))
 
 def generate_T0(wire):
-    qml.RY(2 * b, wires=wire)
-    qml.PhaseShift(jnp.pi / 4, wires=wire)
+    qp.RY(2 * b, wires=wire)
+    qp.PhaseShift(jnp.pi / 4, wires=wire)
 
 ######################################################################
 # Now, let’s create up a *faulty* :math:`| T_0\rangle` state-generating function. We can do this by
@@ -84,11 +84,11 @@ def generate_T0(wire):
 def faulty_generate_T0(wire, key, r):
     key, subkey = random.split(key)
     disturbance = random.uniform(subkey, minval=-r, maxval=r)
-    qml.RY(2 * (b + disturbance), wires=wire)
+    qp.RY(2 * (b + disturbance), wires=wire)
 
     key, subkey = random.split(key)
     disturbance = random.uniform(subkey, minval=-r, maxval=r)
-    qml.PhaseShift(jnp.pi / 4 + disturbance, wires=wire)
+    qp.PhaseShift(jnp.pi / 4 + disturbance, wires=wire)
     return key
 
 ######################################################################
@@ -128,30 +128,30 @@ def error_correction_decoder(wires):
     """
     w0, w1, w2, w3, w4 = wires
 
-    qml.CNOT(wires=[w1, w0])
-    qml.CZ(wires=[w1, w0])
-    qml.CZ(wires=[w1, w2])
-    qml.CZ(wires=[w1, w4])
+    qp.CNOT(wires=[w1, w0])
+    qp.CZ(wires=[w1, w0])
+    qp.CZ(wires=[w1, w2])
+    qp.CZ(wires=[w1, w4])
 
-    qml.CNOT(wires=[w2, w0])
-    qml.CZ(wires=[w2, w3])
-    qml.CZ(wires=[w2, w4])
+    qp.CNOT(wires=[w2, w0])
+    qp.CZ(wires=[w2, w3])
+    qp.CZ(wires=[w2, w4])
 
-    qml.CNOT(wires=[w3, w0])
+    qp.CNOT(wires=[w3, w0])
 
-    qml.CNOT(wires=[w4, w0])
-    qml.CZ(wires=[w4, w0])
+    qp.CNOT(wires=[w4, w0])
+    qp.CZ(wires=[w4, w0])
 
-    qml.PauliZ(wires=w0)
-    qml.PauliZ(wires=w1)
-    qml.PauliZ(wires=w4)
+    qp.PauliZ(wires=w0)
+    qp.PauliZ(wires=w1)
+    qp.PauliZ(wires=w4)
 
-    qml.Hadamard(wires=w1)
-    qml.Hadamard(wires=w2)
-    qml.Hadamard(wires=w3)
-    qml.Hadamard(wires=w4)
+    qp.Hadamard(wires=w1)
+    qp.Hadamard(wires=w2)
+    qp.Hadamard(wires=w3)
+    qp.Hadamard(wires=w4)
 
-print(qml.draw(error_correction_decoder)(range(5)))
+print(qp.draw(error_correction_decoder)(range(5)))
 
 ######################################################################
 # We’ll also define some helper functions to perform a conditional reset of a qubit into the
@@ -168,7 +168,7 @@ def measure_and_reset(wire):
     m = measure(wire)
 
     if m:
-        qml.PauliX(wires=wire)
+        qp.PauliX(wires=wire)
 
     return m
 
@@ -191,10 +191,10 @@ def measure_and_reset(wire):
 # operations.
 #
 
-dev = qml.device("lightning.qubit", wires=5)
+dev = qp.device("lightning.qubit", wires=5)
 
-@qml.qjit(autograph=True)
-@qml.qnode(dev)
+@qp.qjit(autograph=True)
+@qp.qnode(dev)
 def state_distillation(random_key, r):
     key = random_key
     syndrome = True
@@ -228,10 +228,10 @@ def state_distillation(random_key, r):
 
     # We can convert the T1 state back to T0
     # by applying a Hadamard and Pauli-Y rotation
-    qml.Hadamard(wires=0)
-    qml.PauliY(wires=0)
+    qp.Hadamard(wires=0)
+    qp.PauliY(wires=0)
 
-    return qml.state()
+    return qp.state()
 
 ######################################################################
 # Benchmark
@@ -246,19 +246,19 @@ def state_distillation(random_key, r):
 import matplotlib.pyplot as plt
 import os
 
-dev_5_qubits = qml.device("default.qubit", wires=5)
+dev_5_qubits = qp.device("default.qubit", wires=5)
 
 @jax.jit
-@qml.qnode(dev_5_qubits, interface="jax")
+@qp.qnode(dev_5_qubits, interface="jax")
 def T0_state():
     generate_T0(0)
-    return qml.state()
+    return qp.state()
 
 @jax.jit
-@qml.qnode(dev_5_qubits, interface="jax")
+@qp.qnode(dev_5_qubits, interface="jax")
 def faulty_T0_state(random_key, r):
     faulty_generate_T0(0, random_key, r)
-    return qml.state()
+    return qp.state()
 
 exact_T0_state = T0_state()
 perturbations = jnp.linspace(0, 1, 20)
