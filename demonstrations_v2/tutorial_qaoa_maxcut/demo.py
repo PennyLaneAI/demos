@@ -296,11 +296,11 @@ plt.show()
 
 ##############################################################################
 # Resource Estimation
-# ~~~~~~~~~~~~~~~~~~~
+# -------------------
 # In this section we use the ``estimator`` module to estimate the resources for QAOA.
 # We begin by defining the unitary operators :math:`U_B` and :math:`U_C`. For the purpose of
 # resource estimation, we don't need to know the concrete value of the input parameters
-# (:math:`beta`, :math:`gamma`); instead we need to specify ``precision`` which informs how 
+# (:math:`\beta`, :math:`\gamma`); instead we need to specify ``precision`` which informs how 
 # accurately the single qubit rotation operators would get further compiled to hardware native gates.
 
 import pennylane.estimator as qre  # the estimator module
