@@ -295,7 +295,7 @@ print(jnp.round(correct_density_matrix , 3))
 ##########################################
 # Let us see if the circuit produces the same density matrix. Indeed, we can see that the results match. 
 output_state = qp.math.reduce_statevector(c4_teleportation(initial_state), indices=[4])
-print("The circuit output density matrix is: ", jnp.round(output_state , 3))
+print(jnp.round(output_state , 3))
 print(np.allclose(output_state, correct_density_matrix))
 
 ##########################################
