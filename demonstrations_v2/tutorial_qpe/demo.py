@@ -207,11 +207,11 @@ and its eigenstate :math:`|1\rangle` with corresponding phase :math:`\theta=0.2`
 
 """
 
-import pennylane as qml
+import pennylane as qp
 import numpy as np
 
 def U(wires):
-    return qml.PhaseShift(2 * np.pi / 5, wires=wires)
+    return qp.PhaseShift(2 * np.pi / 5, wires=wires)
 
 ##############################################################################
 # We construct a uniform superposition by applying Hadamard gates followed by a :class:`~.ControlledSequence`
@@ -220,21 +220,21 @@ def U(wires):
 # return the probability of each computational basis state.
 
 
-dev = qml.device("default.qubit")
+dev = qp.device("default.qubit")
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def circuit_qpe(estimation_wires):
     # initialize to state |1>
-    qml.PauliX(wires=0)
+    qp.PauliX(wires=0)
 
     for wire in estimation_wires:
-        qml.Hadamard(wires=wire)
+        qp.Hadamard(wires=wire)
 
-    qml.ControlledSequence(U(wires=0), control=estimation_wires)
+    qp.ControlledSequence(U(wires=0), control=estimation_wires)
 
-    qml.adjoint(qml.QFT)(wires=estimation_wires)
+    qp.adjoint(qp.QFT)(wires=estimation_wires)
 
-    return qml.probs(wires=estimation_wires)
+    return qp.probs(wires=estimation_wires)
 
 ##############################################################################
 # Let's run the circuit and plot the results. We use 4 estimation qubits.

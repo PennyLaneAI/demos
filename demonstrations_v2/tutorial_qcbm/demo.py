@@ -233,23 +233,23 @@ plt.show()
 # will act as a generative model, thus, realize a Born machine.
 #
 
-import pennylane as qml
+import pennylane as qp
 
 np.random.seed(42)
 
 
 n_qubits = size
-dev = qml.device("default.qubit", wires=n_qubits)
+dev = qp.device("default.qubit", wires=n_qubits)
 
 n_layers = 6
-wshape = qml.StronglyEntanglingLayers.shape(n_layers=n_layers, n_wires=n_qubits)
+wshape = qp.StronglyEntanglingLayers.shape(n_layers=n_layers, n_wires=n_qubits)
 weights = np.random.random(size=wshape)
 
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def circuit(weights):
-    qml.StronglyEntanglingLayers(weights=weights, ranges=[1] * n_layers, wires=range(n_qubits))
-    return qml.probs()
+    qp.StronglyEntanglingLayers(weights=weights, ranges=[1] * n_layers, wires=range(n_qubits))
+    return qp.probs()
 
 
 jit_circuit = jax.jit(circuit)
@@ -384,13 +384,13 @@ plt.show()
 
 
 def circuit(weights):
-    qml.StronglyEntanglingLayers(weights=weights, ranges=[1] * n_layers, wires=range(n_qubits))
-    return qml.sample()
+    qp.StronglyEntanglingLayers(weights=weights, ranges=[1] * n_layers, wires=range(n_qubits))
+    return qp.sample()
 
 
 for N in [2000, 20000]:
-    dev = qml.device("default.qubit", wires=n_qubits)
-    circ = qml.set_shots(qml.QNode(circuit, device=dev), shots = N)
+    dev = qp.device("default.qubit", wires=n_qubits)
+    circ = qp.set_shots(qp.QNode(circuit, device=dev), shots = N)
     preds = circ(weights)
     mask = np.any(np.all(preds[:, None] == data, axis=2), axis=1)  # Check for row-wise equality
     chi = np.sum(mask) / N
@@ -462,25 +462,25 @@ plt.show()
 # we will create an ansatz and measure probabilities.
 #
 
-dev = qml.device("default.qubit", wires=n_qubits)
+dev = qp.device("default.qubit", wires=n_qubits)
 
 n_layers = 4
-wshape = qml.StronglyEntanglingLayers.shape(n_layers=n_layers, n_wires=n_qubits)
+wshape = qp.StronglyEntanglingLayers.shape(n_layers=n_layers, n_wires=n_qubits)
 weights = np.random.random(size=wshape)
 
 
-@qml.set_shots(N)
-@qml.qnode(dev)
+@qp.set_shots(N)
+@qp.qnode(dev)
 def circuit(weights):
-    qml.StronglyEntanglingLayers(
+    qp.StronglyEntanglingLayers(
         weights=weights, ranges=[1] * n_layers, wires=range(n_qubits)
     )
-    return qml.probs()
+    return qp.probs()
 
 
 jit_circuit = jax.jit(circuit)
 
-qml.draw_mpl(circuit, level="device")(weights)
+qp.draw_mpl(circuit, level="device")(weights)
 plt.show()
 
 ######################################################################
