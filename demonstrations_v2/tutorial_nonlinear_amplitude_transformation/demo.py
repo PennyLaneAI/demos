@@ -32,7 +32,7 @@ r"""Nonlinear amplitude transformation
 # application to a canonical quantum machine learning task of binary classification on downscaled
 # MNIST-style images.
 # 
-# .. figure:: ../_static/demonstration_assets/nonlinear_amplitude_transform/pennylane-demo-nonlinear-transformation-qsvt-method.png
+# .. figure:: ../_static/demonstration_assets/nonlinear-amplitude-transformation/pennylane-demo-nonlinear-transformation-qsvt-method.png
 #   :alt: Schematic of the nonlinear amplitude transformation with QSVT
 #   :width: 95%
 #   :align: center
