@@ -1,8 +1,11 @@
 r"""Nonlinear amplitude transformation
+
+
+
+The macroscopic world is inherently nonlinear. From the complex dynamics of financial markets to the
 """
 
 ######################################################################
-# The macroscopic world is inherently nonlinear. From the complex dynamics of financial markets to the
 # activation functions in neural networks, nonlinear functions are the backbone of engineering,
 # optimization, and machine learning. In contrast, quantum mechanics is fundamentally linear: the
 # evolution of a closed system is always governed by unitary operators. A central challenge in quantum
