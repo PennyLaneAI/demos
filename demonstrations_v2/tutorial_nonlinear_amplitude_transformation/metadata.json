@@ -23,7 +23,7 @@
             "uri": "/_static/demo_thumbnails/large_demo_thumbnails/pennylane-demo-nonlinear-transformation-qsvt-large-thumbnail.png"
         }
     ],
-    "seoDescription": "Learn what magic states are and why they are so important for Fault-tolerant quantum computing (FTQC)",
+    "seoDescription": "Learn about the nonlinear amplitude transformation using QSVT",
     "doi": "",
     "references": [
         {
