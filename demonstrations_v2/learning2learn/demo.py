@@ -139,7 +139,7 @@ You can check out a great tutorial on
 #
 
 # Quantum Machine Learning
-import pennylane as qml
+import pennylane as qp
 from pennylane import qaoa
 
 # Classical Machine Learning
@@ -236,18 +236,18 @@ def qaoa_from_graph(graph, n_layers=1):
     # Creates the actual quantum circuit for the QAOA algorithm
     def circuit(params, **kwargs):
         for w in wires:
-            qml.Hadamard(wires=w)
-        qml.layer(qaoa_layer, n_layers, params[0], params[1])
-        return qml.expval(cost_h)
+            qp.Hadamard(wires=w)
+        qp.layer(qaoa_layer, n_layers, params[0], params[1])
+        return qp.expval(cost_h)
 
     # Evaluates the cost Hamiltonian
     def hamiltonian(params, **kwargs):
         """Evaluate the cost Hamiltonian, given the angles and the graph."""
 
-        dev = qml.device("default.qubit", wires=len(graph.nodes))
+        dev = qp.device("default.qubit", wires=len(graph.nodes))
 
         # This qnode evaluates the expectation value of the cost hamiltonian operator
-        cost = qml.QNode(circuit, dev, diff_method="backprop", interface="tf")
+        cost = qp.QNode(circuit, dev, diff_method="backprop", interface="tf")
 
         return cost(params)
 

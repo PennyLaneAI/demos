@@ -155,7 +155,7 @@ and using that for training instead. That is what we will do in the rest of this
 # from :math:`\{R_X, R_Y, R_Z\}` with the right dimension.
 # Finally, ``build_ansatz`` puts the pieces together. 
 
-import pennylane as qml
+import pennylane as qp
 from pennylane import numpy as np
 from barren_gadgets.barren_gadgets import PerturbativeGadgets
 from barren_gadgets.layered_ansatz import (
@@ -176,8 +176,8 @@ np.random.seed(3)
 # :class:`~pennylane.Hamiltonian` class.
 
 
-H_target = qml.PauliX(0) @ qml.PauliX(1) @ qml.PauliY(2) @ qml.PauliZ(3) \
-         + qml.PauliZ(0) @ qml.PauliY(1) @ qml.PauliX(2) @ qml.PauliX(3)
+H_target = qp.PauliX(0) @ qp.PauliX(1) @ qp.PauliY(2) @ qp.PauliZ(3) \
+         + qp.PauliZ(0) @ qp.PauliY(1) @ qp.PauliX(2) @ qp.PauliX(3)
 
 ##############################################################################
 # Now we can check that we constructed what we wanted.
@@ -224,7 +224,7 @@ H_gadget
 # So, let us construct the two Hamiltonians of interest.
 
 
-H_target = 1 * qml.PauliX(0) @ qml.PauliX(1) @ qml.PauliY(2) @ qml.PauliZ(3)
+H_target = 1 * qp.PauliX(0) @ qp.PauliX(1) @ qp.PauliY(2) @ qp.PauliZ(3)
 gadgetizer = PerturbativeGadgets(perturbation_factor=10)
 H_gadget = gadgetizer.gadgetize(H_target)
 
@@ -234,7 +234,7 @@ H_gadget = gadgetizer.gadgetize(H_target)
 # the cost function, the optimizer with its step size, the number of
 # optimization steps, and the device to run the circuit on.
 # For an ansatz, we will use a variation of the
-# `qml.SimplifiedTwoDesign <https://pennylane.readthedocs.io/en/latest/code/api/pennylane.SimplifiedTwoDesign.html>`_,
+# `qp.SimplifiedTwoDesign <https://pennylane.readthedocs.io/en/latest/code/api/pennylane.SimplifiedTwoDesign.html>`_,
 # which was proposed in previous
 # works on cost-function-dependent barren plateaus [#cerezo2021]_.
 # I will skip the details of the construction, since it is not our focus here,
@@ -246,13 +246,13 @@ init_weights = [np.pi / 4] * shapes[0][0]
 weights = np.random.uniform(0, np.pi, size=shapes[1])
 
 
-@qml.qnode(qml.device("default.qubit", wires=range(5)))
+@qp.qnode(qp.device("default.qubit", wires=range(5)))
 def display_circuit(weights):
     build_ansatz(initial_layer_weights=init_weights, weights=weights, wires=range(5))
-    return qml.expval(qml.PauliZ(wires=0))
+    return qp.expval(qp.PauliZ(wires=0))
 
 import matplotlib.pyplot as plt
-qml.draw_mpl(display_circuit)(weights)
+qp.draw_mpl(display_circuit)(weights)
 plt.show()
 
 ##############################################################################
@@ -266,7 +266,7 @@ num_qubits = 4 + 1 * 4
 shapes = get_parameter_shape(n_layers=num_qubits, n_wires=num_qubits)
 init_weights = [np.pi / 4] * shapes[0][0]
 weights = np.random.uniform(0, np.pi, size=shapes[1])
-random_gate_sequence = generate_random_gate_sequence(qml.math.shape(weights))
+random_gate_sequence = generate_random_gate_sequence(qp.math.shape(weights))
 
 ##############################################################################
 # For the classical optimization, we will use the standard gradient descent
@@ -275,9 +275,9 @@ random_gate_sequence = generate_random_gate_sequence(qml.math.shape(weights))
 # `default.qubit <https://docs.pennylane.ai/en/stable/code/api/pennylane.device.html>`_
 # simulator.
 
-opt = qml.GradientDescentOptimizer(stepsize=0.1)
+opt = qp.GradientDescentOptimizer(stepsize=0.1)
 max_iter = 500
-dev = qml.device("default.qubit", wires=range(num_qubits))
+dev = qp.device("default.qubit", wires=range(num_qubits))
 
 ##############################################################################
 # Finally, we will use two cost functions and create a
@@ -291,7 +291,7 @@ dev = qml.device("default.qubit", wires=range(num_qubits))
 
 
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def training_cost(weights):
     build_ansatz(
         initial_layer_weights=init_weights,
@@ -299,10 +299,10 @@ def training_cost(weights):
         wires=range(num_qubits),
         gate_sequence=random_gate_sequence,
     )
-    return qml.expval(H_gadget)
+    return qp.expval(H_gadget)
 
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def monitoring_cost(weights):
     build_ansatz(
         initial_layer_weights=init_weights,
@@ -310,7 +310,7 @@ def monitoring_cost(weights):
         wires=range(num_qubits),
         gate_sequence=random_gate_sequence,
     )
-    return qml.expval(H_target)
+    return qp.expval(H_target)
 
 
 ##############################################################################

@@ -116,7 +116,7 @@ plt.show()
 # :math:`H` for the model we have instantiated above.
 #
 
-import pennylane as qml
+import pennylane as qp
 
 def Hamiltonian(J_mat):
     coeffs, ops = [], []
@@ -124,10 +124,10 @@ def Hamiltonian(J_mat):
     for i, j in it.combinations(range(ns), r=2):
         coeff = J_mat[i, j]
         if coeff:
-            for op in [qml.PauliX, qml.PauliY, qml.PauliZ]:
+            for op in [qp.PauliX, qp.PauliY, qp.PauliZ]:
                 coeffs.append(coeff)
                 ops.append(op(i) @ op(j))
-    H = qml.Hamiltonian(coeffs, ops)
+    H = qp.Hamiltonian(coeffs, ops)
     return H
 
 print(f"Hamiltonian =\n{Hamiltonian(J_mat)}")
@@ -151,11 +151,11 @@ print(f"Hamiltonian =\n{Hamiltonian(J_mat)}")
 
 def corr_function(i, j):
     ops = []
-    for op in [qml.PauliX, qml.PauliY, qml.PauliZ]:
+    for op in [qp.PauliX, qp.PauliY, qp.PauliZ]:
         if i != j:
             ops.append(op(i) @ op(j))
         else:
-            ops.append(qml.Identity(i))
+            ops.append(qp.Identity(i))
     return ops
 
 ######################################################################
@@ -186,14 +186,14 @@ psi0 = eigvecs[:, np.argmin(eigvals)]
 # state and measures the expectation value of the provided set of observables.
 #
 
-dev_exact = qml.device("default.qubit", wires=num_qubits) # for exact simulation
+dev_exact = qp.device("default.qubit", wires=num_qubits) # for exact simulation
 
 def circuit(psi, observables):
     psi = psi / np.linalg.norm(psi) # normalize the state
-    qml.StatePrep(psi, wires=range(num_qubits))
-    return [qml.expval(o) for o in observables]
+    qp.StatePrep(psi, wires=range(num_qubits))
+    return [qp.expval(o) for o in observables]
 
-circuit_exact = qml.QNode(circuit, dev_exact)
+circuit_exact = qp.QNode(circuit, dev_exact)
 
 
 ######################################################################
@@ -284,8 +284,8 @@ plt.show()
 # a ``QNode`` utilizing a device that performs single-shot measurements.
 #
 
-dev_oshot = qml.device("default.qubit", wires=num_qubits)
-circuit_oshot = qml.set_shots(qml.QNode(circuit, dev_oshot), shots = 1)
+dev_oshot = qp.device("default.qubit", wires=num_qubits)
+circuit_oshot = qp.set_shots(qp.QNode(circuit, dev_oshot), shots = 1)
 
 
 ######################################################################
@@ -297,7 +297,7 @@ circuit_oshot = qml.set_shots(qml.QNode(circuit, dev_oshot), shots = 1)
 
 def gen_class_shadow(circ_template, circuit_params, num_shadows, num_qubits):
     # prepare the complete set of available Pauli operators
-    unitary_ops = [qml.PauliX, qml.PauliY, qml.PauliZ]
+    unitary_ops = [qp.PauliX, qp.PauliY, qp.PauliZ]
     # sample random Pauli measurements uniformly
     unitary_ensmb = np.random.randint(0, 3, size=(num_shadows, num_qubits), dtype=int)
 
@@ -345,9 +345,9 @@ print("First five measurement bases =\n", basis[:5])
 def snapshot_state(meas_list, obs_list):
     # undo the rotations done for performing Pauli measurements in the specific basis
     rotations = [
-        qml.matrix(qml.Hadamard(wires=0)), # X-basis
-        qml.matrix(qml.Hadamard(wires=0)) @ qml.matrix(qml.adjoint(qml.S(wires=0))), # Y-basis
-        qml.matrix(qml.Identity(wires=0)), # Z-basis
+        qp.matrix(qp.Hadamard(wires=0)), # X-basis
+        qp.matrix(qp.Hadamard(wires=0)) @ qp.matrix(qp.adjoint(qp.S(wires=0))), # Y-basis
+        qp.matrix(qp.Identity(wires=0)), # Z-basis
     ]
 
     # reconstruct snapshot from local Pauli measurements
@@ -409,7 +409,7 @@ def estimate_shadow_obs(shadow, observable, k=10):
 
     # convert Pennylane observables to indices
     map_name_to_int = {"PauliX": 0, "PauliY": 1, "PauliZ": 2}
-    if isinstance(observable, (qml.PauliX, qml.PauliY, qml.PauliZ)):
+    if isinstance(observable, (qp.PauliX, qp.PauliY, qp.PauliZ)):
         target_obs = np.array([map_name_to_int[observable.name]])
         target_locs = np.array([observable.wires[0]])
     else:

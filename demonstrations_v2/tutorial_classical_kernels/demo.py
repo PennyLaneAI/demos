@@ -120,7 +120,7 @@ approximate on the quantum computer.
 Start importing the usual suspects:
 """
 
-import pennylane as qml
+import pennylane as qp
 from pennylane import numpy as np
 import matplotlib.pyplot as plt
 np.random.seed(53173)
@@ -149,7 +149,7 @@ np.random.seed(53173)
 # Now let's write a few lines to plot the Gaussian kernel:
 
 def gaussian_kernel(delta):
-    return qml.math.exp(-delta ** 2)
+    return qp.math.exp(-delta ** 2)
 
 def make_data(n_samples, lower=-np.pi, higher=np.pi):
     x = np.linspace(lower, higher, n_samples)
@@ -325,7 +325,7 @@ plt.show()
 
 def S(x, thetas, wires):
     for (i, wire) in enumerate(wires):
-        qml.RZ(thetas[i] * x, wires = [wire])
+        qp.RZ(thetas[i] * x, wires = [wire])
 ###############################################################################
 # By setting the ``thetas`` properly, we achieve the integer-valued spectrum,
 # as required by the Fourier series expansion of a function of period
@@ -351,7 +351,7 @@ def make_thetas(n_wires):
 # :math:`\lVert a\rVert^2=1.`
 
 def W(features, wires):
-    qml.templates.state_preparations.MottonenStatePreparation(features, wires)
+    qp.templates.state_preparations.MottonenStatePreparation(features, wires)
 
 ###############################################################################
 # With that, we have the feature map onto the Hilbert space of the quantum
@@ -374,7 +374,7 @@ def W(features, wires):
 def ansatz(x1, x2, thetas, amplitudes, wires):
     W(amplitudes, wires)
     S(x1 - x2, thetas, wires)
-    qml.adjoint(W)(amplitudes, wires)
+    qp.adjoint(W)(amplitudes, wires)
 
 ###############################################################################
 # Since this kernel is by construction real-valued, we also have
@@ -408,20 +408,20 @@ n_wires = 5
 ###############################################################################
 # We initialize the quantum simulator:
 
-dev = qml.device("lightning.qubit", wires = n_wires)
+dev = qp.device("lightning.qubit", wires = n_wires)
 
 ###############################################################################
 # Next, we construct the quantum node:
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def QK_circuit(x1, x2, thetas, amplitudes):
     ansatz(x1, x2, thetas, amplitudes, wires = range(n_wires))
-    return qml.probs(wires = range(n_wires))
+    return qp.probs(wires = range(n_wires))
 
 ###############################################################################
 # Recall that the output of a QK is defined as the probability of obtaining
 # the outcome :math:`\lvert0\rangle` when measuring in the computational basis.
-# That corresponds to the :math:`0^\text{th}` entry of ``qml.probs`:`
+# That corresponds to the :math:`0^\text{th}` entry of ``qp.probs`:`
 
 def QK_2(x1, x2, thetas, amplitudes):
     return QK_circuit(x1, x2, thetas, amplitudes)[0]
@@ -699,7 +699,7 @@ plt.show()
 
 def fourier_q(d, thetas, amplitudes):
     def QK_partial(x):
-        squeezed_x = qml.math.squeeze(x)
+        squeezed_x = qp.math.squeeze(x)
         return QK(squeezed_x, thetas, amplitudes)
     return np.real(coefficients(QK_partial, 1, d-1))
 

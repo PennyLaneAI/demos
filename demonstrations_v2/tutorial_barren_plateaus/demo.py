@@ -75,7 +75,7 @@ Exploring the barren plateau problem with PennyLane
 First, we import PennyLane, NumPy, and Matplotlib
 """
 
-import pennylane as qml
+import pennylane as qp
 from pennylane import numpy as np
 import matplotlib.pyplot as plt
 
@@ -87,8 +87,8 @@ import matplotlib.pyplot as plt
 np.random.seed(42)
 
 num_qubits = 4
-dev = qml.device("default.qubit", wires=num_qubits)
-gate_set = [qml.RX, qml.RY, qml.RZ]
+dev = qp.device("default.qubit", wires=num_qubits)
+gate_set = [qp.RX, qp.RY, qp.RZ]
 
 
 def rand_circuit(params, random_gate_sequence=None, num_qubits=None):
@@ -103,18 +103,18 @@ def rand_circuit(params, random_gate_sequence=None, num_qubits=None):
         float: the expectation value of the target observable
     """
     for i in range(num_qubits):
-        qml.RY(np.pi / 4, wires=i)
+        qp.RY(np.pi / 4, wires=i)
 
     for i in range(num_qubits):
         random_gate_sequence[i](params[i], wires=i)
 
     for i in range(num_qubits - 1):
-        qml.CZ(wires=[i, i + 1])
+        qp.CZ(wires=[i, i + 1])
 
     H = np.zeros((2 ** num_qubits, 2 ** num_qubits))
     H[0, 0] = 1
     wirelist = [i for i in range(num_qubits)]
-    return qml.expval(qml.Hermitian(H, wirelist))
+    return qp.expval(qp.Hermitian(H, wirelist))
 
 
 ##############################################################################
@@ -130,8 +130,8 @@ num_samples = 200
 
 for i in range(num_samples):
     gate_sequence = {i: np.random.choice(gate_set) for i in range(num_qubits)}
-    qcircuit = qml.QNode(rand_circuit, dev, interface="autograd")
-    grad = qml.grad(qcircuit, argnums=0)
+    qcircuit = qp.QNode(rand_circuit, dev, interface="autograd")
+    grad = qp.grad(qcircuit, argnums=0)
     params = np.random.uniform(0, 2 * np.pi, size=num_qubits)
     gradient = grad(params, random_gate_sequence=gate_sequence, num_qubits=num_qubits)
     grad_vals.append(gradient[-1])
@@ -158,11 +158,11 @@ variances = []
 for num_qubits in qubits:
     grad_vals = []
     for i in range(num_samples):
-        dev = qml.device("default.qubit", wires=num_qubits)
-        qcircuit = qml.QNode(rand_circuit, dev, interface="autograd")
-        grad = qml.grad(qcircuit, argnums=0)
+        dev = qp.device("default.qubit", wires=num_qubits)
+        qcircuit = qp.QNode(rand_circuit, dev, interface="autograd")
+        grad = qp.grad(qcircuit, argnums=0)
 
-        gate_set = [qml.RX, qml.RY, qml.RZ]
+        gate_set = [qp.RX, qp.RY, qp.RZ]
         random_gate_sequence = {i: np.random.choice(gate_set) for i in range(num_qubits)}
 
         params = np.random.uniform(0, np.pi, size=num_qubits)
