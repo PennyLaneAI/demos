@@ -53,7 +53,7 @@ we can iteratively progress to lower and lower values of the function.
 The Parameter-Shift Rule
 ------------------------
 
-In the quantum case, the expectation value of a circuit with respect to an measurement operator
+In the quantum case, the expectation value of a circuit with respect to a measurement operator
 :math:`\hat{C}` depends smoothly on the the circuit's gate parameters :math:`\theta.` We can write this
 expectation value as :math:`\langle \hat{C}(\theta)\rangle.` This means that the derivatives
 :math:`\nabla_\theta \langle \hat{C} \rangle` exist and gradient descent can be used.
