@@ -172,7 +172,7 @@ The macroscopic world is inherently nonlinear. From the complex dynamics of fina
 # we move on to applying QSVT polynomials.
 # 
 
-import pennylane as qml
+import pennylane as qp
 from pyqsp.poly import PolyTaylorSeries
 import matplotlib.pyplot as plt
 from pennylane import numpy as pnp
@@ -189,7 +189,7 @@ rot_wire = [0]
 ancilla_wires = list(range(1, main_qubits + 3))
 main_wires = list(range(main_qubits + 3, 2 * main_qubits + 3))
 all_wires = list(range(2 * main_qubits + 3))
-dev = qml.device("lightning.qubit", wires = all_wires)
+dev = qp.device("lightning.qubit", wires = all_wires)
 
 
 
@@ -202,7 +202,7 @@ dev = qml.device("lightning.qubit", wires = all_wires)
 def MultiControlledZ(wires, control_values=None):
     if control_values is None:
         control_values = [0] * (len(wires) - 1)
-    qml.ctrl(qml.Z(wires=wires[-1]),
+    qp.ctrl(qp.Z(wires=wires[-1]),
              control=wires[:-1],
              control_values=control_values)
 
@@ -210,37 +210,37 @@ def MultiControlledZ(wires, control_values=None):
 def R(wires):
     assert len(wires) % 2 == 1
     n = len(wires)//2
-    qml.PauliX(wires=wires[0])
+    qp.PauliX(wires=wires[0])
     MultiControlledZ(wires=wires[1:n+1]+[wires[0]])
-    qml.PauliX(wires=wires[0])
+    qp.PauliX(wires=wires[0])
 
 # Apply U on the data register conditioned on ancilla B=0.  U can be a callable
 # or an Operator.  Additional arguments are passed through via *args, **kwargs.
 def Uc(base, wires, *args, **kwargs):
     assert len(wires) % 2 == 1
     n = len(wires)//2
-    if isinstance(base, qml.typing.TensorLike):
-        qml.ControlledQubitUnitary(base,
+    if isinstance(base, qp.typing.TensorLike):
+        qp.ControlledQubitUnitary(base,
                                    control_wires=wires[n],
                                    wires=wires[:n],
                                    control_values=[0],
                                    unitary_check=True)
-    elif isinstance(base, qml.operation.Operator) or callable(base):
-        qml.ctrl(base, control=wires[n],
+    elif isinstance(base, qp.operation.Operator) or callable(base):
+        qp.ctrl(base, control=wires[n],
                  control_values=[0])(wires=wires[:n], *args, **kwargs)
 
 # Adjoint of U on the data register controlled on ancilla B=0.
 def Uc_adj(base, wires, *args, **kwargs):
     assert len(wires) % 2 == 1
     n = len(wires)//2
-    if isinstance(base, qml.typing.TensorLike):
-        qml.adjoint(qml.ControlledQubitUnitary)(base,
+    if isinstance(base, qp.typing.TensorLike):
+        qp.adjoint(qp.ControlledQubitUnitary)(base,
                                                 control_wires=wires[n],
                                                 wires=wires[:n],
                                                 control_values=[0],
                                                 unitary_check=True)
-    elif isinstance(base, qml.operation.Operator) or callable(base):
-        qml.ctrl(qml.adjoint(base),
+    elif isinstance(base, qp.operation.Operator) or callable(base):
+        qp.ctrl(qp.adjoint(base),
                  control=wires[n],
                  control_values=[0])(wires=wires[:n], *args, **kwargs)
 
@@ -250,38 +250,38 @@ def C(wires):
     assert len(wires) % 2 == 1
     n = len(wires)//2
     for i in range(n):
-        qml.Toffoli(wires=[wires[n], wires[n+i+1], wires[i]])
+        qp.Toffoli(wires=[wires[n], wires[n+i+1], wires[i]])
 
 # The adjoint of C_to_data, reversing the coherent copy.
 def C_adj(wires):
     assert len(wires) % 2 == 1
     n = len(wires)//2
     for i in range(n-1, -1, -1):
-        qml.Toffoli(wires=[wires[n], wires[n+i+1], wires[i]])
+        qp.Toffoli(wires=[wires[n], wires[n+i+1], wires[i]])
 
 # One step of the W operator.  If p_flag=1 an S gate is applied to the ancilla B
 # to pick up a phase for the imaginary part.
 def W(base, wires, p, *args, **kwargs):
     assert len(wires) % 2 == 1
     n = len(wires)//2
-    qml.Hadamard(wires[n])
+    qp.Hadamard(wires[n])
     Uc(base, wires, *args, **kwargs)
     C(wires)
     if bool(p):
-        qml.S(wires[n])
-    qml.Hadamard(wires[n])
+        qp.S(wires[n])
+    qp.Hadamard(wires[n])
 
 
 # Adjoint of W_block.
 def W_adj(base, wires, p, *args, **kwargs):
     assert len(wires) % 2 == 1
     n = len(wires)//2
-    qml.Hadamard(wires[n])
+    qp.Hadamard(wires[n])
     if bool(p):
-        qml.adjoint(qml.S)(wires[n])
+        qp.adjoint(qp.S)(wires[n])
     C_adj(wires)
     Uc_adj(base, wires, *args, **kwargs)
-    qml.Hadamard(wires[n])
+    qp.Hadamard(wires[n])
 
 
 # G_block implements the operator G = W S0 W^† Z_B.  Its adjoint is defined
@@ -289,7 +289,7 @@ def W_adj(base, wires, p, *args, **kwargs):
 def G(base, wires, p, *args, **kwargs):
     assert len(wires) % 2 == 1
     n = len(wires)//2
-    qml.PauliZ(wires[n])
+    qp.PauliZ(wires[n])
     W_adj(base, wires, p, *args, **kwargs)
     R(wires)
     W(base, wires, p, *args, **kwargs)
@@ -301,27 +301,27 @@ def G_adj(base, wires, p, *args, **kwargs):
     W_adj(base, wires, p, *args, **kwargs)
     R(wires)
     W(base, wires, p, *args, **kwargs)
-    qml.PauliZ(wires[n])
+    qp.PauliZ(wires[n])
 
 # RealDiagonalBlockEncoding wraps the above primitives to encode the real part
 # of the amplitudes. p=1 switches to the imaginary part.
 def RealDiagonalBlockEncoding(U, wires, ancilla_wires, p=0, *args, **kwargs):
     assert len(ancilla_wires) == len(wires) + 2
-    qml.Hadamard(wires=ancilla_wires[0])
+    qp.Hadamard(wires=ancilla_wires[0])
     W(base=U,
         wires=ancilla_wires[1:]+wires,
         p=p, *args, **kwargs)
-    qml.ctrl(G, control=ancilla_wires[0],
+    qp.ctrl(G, control=ancilla_wires[0],
                 control_values=[0])(base=U, wires=ancilla_wires[1:]+wires,
                                     p=p, **kwargs)
-    qml.ctrl(G_adj, control=ancilla_wires[0],
+    qp.ctrl(G_adj, control=ancilla_wires[0],
                 control_values=[1])(base=U, wires=ancilla_wires[1:]+wires,
                                     p=p, *args, **kwargs)
-    qml.Hadamard(wires=ancilla_wires[0])
+    qp.Hadamard(wires=ancilla_wires[0])
     W_adj(base=U, wires=ancilla_wires[1:]+wires, p=p, *args, **kwargs)
-    qml.PauliX(wires=ancilla_wires[0])
-    qml.PauliZ(wires=ancilla_wires[0])
-    qml.PauliX(wires=ancilla_wires[0])
+    qp.PauliX(wires=ancilla_wires[0])
+    qp.PauliZ(wires=ancilla_wires[0])
+    qp.PauliX(wires=ancilla_wires[0])
 
 ######################################################################
 # Below we create a simple block‑encoding for :math:`n=2` and inspect its matrix to confirm that its
@@ -330,20 +330,20 @@ def RealDiagonalBlockEncoding(U, wires, ancilla_wires, p=0, *args, **kwargs):
 
 feature_vector = [1, 2, 3, 4]
 feature_vector = feature_vector/pnp.linalg.norm(feature_vector)
-block_encoding = qml.prod(RealDiagonalBlockEncoding)(
-    qml.AmplitudeEmbedding, wires=main_wires,
+block_encoding = qp.prod(RealDiagonalBlockEncoding)(
+    qp.AmplitudeEmbedding, wires=main_wires,
     ancilla_wires=ancilla_wires,
     features=feature_vector,
     normalize=True)
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def be_circuit(feature_vector, main_wires, ancilla_wires):
     RealDiagonalBlockEncoding(
-    qml.AmplitudeEmbedding, wires=main_wires,
+    qp.AmplitudeEmbedding, wires=main_wires,
     ancilla_wires=ancilla_wires,
     features=feature_vector,
     normalize=True)
-    return qml.probs(ancilla_wires)
+    return qp.probs(ancilla_wires)
 
 ######################################################################
 # We now compute the matrix of the full unitary and extract its top-left :math:`4\times 4` block,
@@ -351,13 +351,13 @@ def be_circuit(feature_vector, main_wires, ancilla_wires):
 # amplitudes.
 # 
 
-qml.matrix(be_circuit)(feature_vector, main_wires, ancilla_wires)[:4,:4]
+qp.matrix(be_circuit)(feature_vector, main_wires, ancilla_wires)[:4,:4]
 
 ######################################################################
 # We draw the block encoding circuit in its entirety.
 # 
 
-qml.draw_mpl(be_circuit)(feature_vector, main_wires, ancilla_wires)
+qp.draw_mpl(be_circuit)(feature_vector, main_wires, ancilla_wires)
 
 ######################################################################
 # Nonlinear amplitude transformation
@@ -423,11 +423,11 @@ qml.draw_mpl(be_circuit)(feature_vector, main_wires, ancilla_wires)
 # ~~~~~~~~~~~~~~~~~
 # 
 # PennyLane provides tools to implement QSVT once a block encoding is available. The function
-# ``qml.poly_to_angles`` computes QSVT phase angles from the polynomial coefficients (ordered from
+# ``qp.poly_to_angles`` computes QSVT phase angles from the polynomial coefficients (ordered from
 # lowest to highest power). The resulting angles can be used to build the projector phases and apply
-# the transformation via ``qml.QSVT``. See the PennyLane API docs
+# the transformation via ``qp.QSVT``. See the PennyLane API docs
 # [`6 <https://docs.pennylane.ai/en/stable/code/api/pennylane.qsvt.html?utm_source=chatgpt.com>`__,\ `7 <https://docs.pennylane.ai/en/stable/code/api/pennylane.poly_to_angles.html?utm_source=chatgpt.com>`__]
-# for ``qml.poly_to_angles`` and ``qml.qsvt`` for details.
+# for ``qp.poly_to_angles`` and ``qp.qsvt`` for details.
 # 
 
 ######################################################################
@@ -443,10 +443,10 @@ qml.draw_mpl(be_circuit)(feature_vector, main_wires, ancilla_wires)
 # 
 
 def ProjCtrlPhaseShift(control_wires, target_wire, phi):
-    qml.MultiControlledX(wires=control_wires + target_wire,
+    qp.MultiControlledX(wires=control_wires + target_wire,
                          control_values=[0] * len(control_wires))
-    qml.RZ(phi = 2 * phi, wires=target_wire)
-    qml.MultiControlledX(wires=control_wires + target_wire,
+    qp.RZ(phi = 2 * phi, wires=target_wire)
+    qp.MultiControlledX(wires=control_wires + target_wire,
                          control_values=[0] * len(control_wires))
 
 def generate_poly(deg, func, odd):
@@ -487,23 +487,23 @@ def generate_poly(deg, func, odd):
 deg = 4
 tanh_poly = generate_poly(deg, pnp.tanh, odd=True)
 tanh_div_x_poly = generate_poly(deg, lambda x: pnp.tanh(x)/x, odd=False)
-tanh_angles = qml.poly_to_angles(tanh_poly, "QSVT", angle_solver="root-finding")
-tanh_div_x_angles = qml.poly_to_angles(tanh_div_x_poly, "QSVT", angle_solver="root-finding")
+tanh_angles = qp.poly_to_angles(tanh_poly, "QSVT", angle_solver="root-finding")
+tanh_div_x_angles = qp.poly_to_angles(tanh_div_x_poly, "QSVT", angle_solver="root-finding")
 
-tanh_projectors = [qml.prod(ProjCtrlPhaseShift)(ancilla_wires, rot_wire, tanh_angles[i]) for i in range(len(tanh_angles))]
-tanh_div_x_projectors = [qml.prod(ProjCtrlPhaseShift)(ancilla_wires, rot_wire, tanh_div_x_angles[i]) for i in range(len(tanh_div_x_angles))]
+tanh_projectors = [qp.prod(ProjCtrlPhaseShift)(ancilla_wires, rot_wire, tanh_angles[i]) for i in range(len(tanh_angles))]
+tanh_div_x_projectors = [qp.prod(ProjCtrlPhaseShift)(ancilla_wires, rot_wire, tanh_div_x_angles[i]) for i in range(len(tanh_div_x_angles))]
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def circuit(block_encoding, projectors, main_wires, ancilla_wires, rot_wire, importance=False):
     if importance:
-        qml.AmplitudeEmbedding(feature_vector, main_wires, normalize=True)
+        qp.AmplitudeEmbedding(feature_vector, main_wires, normalize=True)
     else:
         for wire in main_wires:
-            qml.Hadamard(wire)
-    qml.Hadamard(rot_wire)
-    qml.QSVT(block_encoding, projectors)
-    qml.Hadamard(rot_wire)
-    return qml.state(), qml.probs(rot_wire + ancilla_wires)
+            qp.Hadamard(wire)
+    qp.Hadamard(rot_wire)
+    qp.QSVT(block_encoding, projectors)
+    qp.Hadamard(rot_wire)
+    return qp.state(), qp.probs(rot_wire + ancilla_wires)
 
 state, probs = circuit(block_encoding, tanh_projectors, main_wires, ancilla_wires, rot_wire)
 uniform_state = state[:dim]/pnp.sqrt(probs[0])
@@ -600,20 +600,20 @@ plt.show()
 # that design pattern, focused on making the role of a nonlinear activation layer explicit.
 # 
 
-[ds] = qml.data.load("other", name="downscaled-mnist")
+[ds] = qp.data.load("other", name="downscaled-mnist")
 
 data = pnp.array(ds.train['4']['inputs'][:1000])
 labels = (pnp.array(ds.train['4']['labels'][:1000])+1)/2
-dev = qml.device("default.qubit", wires = all_wires)
+dev = qp.device("default.qubit", wires = all_wires)
 
 def embedding(weights, features, wires):
-    qml.AmplitudeEmbedding(features, wires, normalize=True)
-    qml.BasicEntanglerLayers(weights, wires)
+    qp.AmplitudeEmbedding(features, wires, normalize=True)
+    qp.BasicEntanglerLayers(weights, wires)
 
-@qml.qnode(dev,interface="jax")
+@qp.qnode(dev,interface="jax")
 def qnn(weights, features, angles, main_wires, ancilla_wires, rot_wire):
     embedding(weights[:,:,0], features, main_wires)
-    qml.Hadamard(rot_wire)
+    qp.Hadamard(rot_wire)
     ProjCtrlPhaseShift(control_wires=ancilla_wires,
                        target_wire=rot_wire,
                        phi=angles[-1])
@@ -626,9 +626,9 @@ def qnn(weights, features, angles, main_wires, ancilla_wires, rot_wire):
         ProjCtrlPhaseShift(control_wires=ancilla_wires,
                            target_wire=rot_wire,
                            phi=angles[-i-1])
-    qml.Hadamard(rot_wire)
-    qml.StronglyEntanglingLayers(weights[:,:,1:], main_wires)
-    return qml.state(), qml.probs(rot_wire + ancilla_wires)
+    qp.Hadamard(rot_wire)
+    qp.StronglyEntanglingLayers(weights[:,:,1:], main_wires)
+    return qp.state(), qp.probs(rot_wire + ancilla_wires)
 
 @jax.jit
 def bce_loss(weights, features, targets):
