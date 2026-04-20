@@ -43,9 +43,12 @@ The macroscopic world is inherently nonlinear. From the complex dynamics of fina
 # Diagonal block encoding of amplitudes
 # -------------------------------------
 # 
-# The introduction highlighted a basic mismatch: - QSVT applies a polynomial to the singular values or
-# eigenvalues of an operator. - In amplitude encoding, the data live directly in the amplitudes of a
-# quantum state. Before QSVT becomes useful, the amplitudes must be re-expressed as spectral data of
+# The introduction highlighted a basic mismatch: 
+# 
+# - QSVT applies a polynomial to the singular values or eigenvalues of an operator. 
+# - In amplitude encoding, the data live directly in the amplitudes of a quantum state. 
+# 
+# Before QSVT becomes useful, the amplitudes must be re-expressed as spectral data of
 # an operator that can be block-encoded.
 # 
 # From amplitude encoding to an operator QSVT can transform
