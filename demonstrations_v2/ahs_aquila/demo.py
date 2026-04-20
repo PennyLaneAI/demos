@@ -211,9 +211,9 @@ we can start defining our pulse program.
 
 """
 
-import pennylane as qml
+import pennylane as qp
 
-aquila = qml.device(
+aquila = qp.device(
     "braket.aws.ahs",
     device_arn="arn:aws:braket:us-east-1::device/qpu/quera/Aquila",
     wires=3,
@@ -229,7 +229,7 @@ aquila = qml.device(
 #        warnings.warn(
 #
 
-rydberg_simulator = qml.device("braket.local.ahs", wires=3)
+rydberg_simulator = qp.device("braket.local.ahs", wires=3)
 
 ######################################################################
 # Creating a Rydberg Hamiltonian
@@ -331,7 +331,7 @@ settings
 # .. math:: \hat{H} = \sum_{j=1}^{N-1}\sum_{k=j+1}^{N} \frac{C_6}{R^6_{jk}}\hat{n}_j\hat{n}_k
 #
 
-H_interaction = qml.pulse.rydberg_interaction(coordinates, **settings)
+H_interaction = qp.pulse.rydberg_interaction(coordinates, **settings)
 
 ######################################################################
 # Driving field
@@ -478,7 +478,7 @@ plt.show()
 # We can then define our drive using via :func:`~pennylane.pulse.rydberg_drive`:
 #
 
-global_drive = qml.pulse.rydberg_drive(amplitude=gaussian_fn, phase=0, detuning=0, wires=[0, 1, 2])
+global_drive = qp.pulse.rydberg_drive(amplitude=gaussian_fn, phase=0, detuning=0, wires=[0, 1, 2])
 
 ######################################################################
 # With only amplitude as non-zero, the overall driven Hamiltonian in this case simplifies to:
@@ -520,14 +520,14 @@ amplitude_params = [max_amplitude, displacement, sigma]
 params = [amplitude_params]
 ts = [0.0, 1.75]
 
-default_qubit = qml.device("default.qubit", wires=3)
+default_qubit = qp.device("default.qubit", wires=3)
 
 
-@qml.set_shots(1000)
-@qml.qnode(default_qubit, interface="jax")
+@qp.set_shots(1000)
+@qp.qnode(default_qubit, interface="jax")
 def circuit(parameters):
-    qml.evolve(global_drive)(parameters, ts)
-    return qml.counts()
+    qp.evolve(global_drive)(parameters, ts)
+    return qp.counts()
 
 
 circuit(params)
@@ -551,12 +551,12 @@ circuit(params)
 
 
 def circuit(params):
-    qml.evolve(H_interaction + global_drive)(params, ts)
-    return qml.counts()
+    qp.evolve(H_interaction + global_drive)(params, ts)
+    return qp.counts()
 
 
-circuit_qml = qml.set_shots(qml.QNode(circuit, default_qubit, interface="jax"), shots=1000)
-circuit_ahs = qml.QNode(circuit, rydberg_simulator)
+circuit_qml = qp.set_shots(qp.QNode(circuit, default_qubit, interface="jax"), shots=1000)
+circuit_ahs = qp.QNode(circuit, rydberg_simulator)
 
 print(f"PennyLane simulation: {circuit_qml(params)}")
 print(f"AWS local simulation: {circuit_ahs(params)}")
@@ -644,8 +644,8 @@ print(f"maximum rate of change: {max_rate:.3} MHz/s")
 # defining the window; we’ll use ``windows=[0.01, 1.749]``. Our modified global drive is then:
 #
 
-amp_fn = qml.pulse.rect(gaussian_fn, windows=[0.01, 1.749])
-global_drive = qml.pulse.rydberg_drive(amplitude=amp_fn, phase=0, detuning=0, wires=[0, 1, 2])
+amp_fn = qp.pulse.rect(gaussian_fn, windows=[0.01, 1.749])
+global_drive = qp.pulse.rydberg_drive(amplitude=amp_fn, phase=0, detuning=0, wires=[0, 1, 2])
 
 ######################################################################
 # At this point we could skip directly to defining a ``qnode`` using the ``aquila`` device and running our
@@ -656,7 +656,7 @@ global_drive = qml.pulse.rydberg_drive(amplitude=amp_fn, phase=0, detuning=0, wi
 # To do this, we create the operator we will be using in our circuit, and pass it to a method on the
 # hardware device that creates an AHS program for upload:
 #
-op = qml.evolve(H_interaction + global_drive)(params, ts)
+op = qp.evolve(H_interaction + global_drive)(params, ts)
 ahs_program = aquila.create_ahs_program(op)
 
 ######################################################################
@@ -712,7 +712,7 @@ amp_setpoints = ahs_program.hamiltonian.amplitude.time_series
 # values for plotting the function defined in PennyLane for amplitude
 input_times = np.linspace(*ts, 1000)
 input_amplitudes = [
-    qml.pulse.rect(gaussian_fn, windows=[0.01, 1.749])(amplitude_params, _t) for _t in input_times
+    qp.pulse.rect(gaussian_fn, windows=[0.01, 1.749])(amplitude_params, _t) for _t in input_times
 ]
 
 # plot PL input and hardware setpoints for comparison
@@ -754,11 +754,11 @@ plt.show()
 #
 
 
-# @qml.qnode(rydberg_simulator)
-@qml.qnode(aquila)
+# @qp.qnode(rydberg_simulator)
+@qp.qnode(aquila)
 def circuit(params):
-    qml.evolve(H_interaction + global_drive)(params, ts)
-    return qml.counts()
+    qp.evolve(H_interaction + global_drive)(params, ts)
+    return qp.counts()
 
 
 circuit(params)

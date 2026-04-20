@@ -41,14 +41,14 @@ platform. We will learn how to:
 # they can be used just like any other device offered in PennyLane!
 # Currently, there are three devices available — ``Aer``, ``BasicSim`` and ``Remote`` — that can be initialized
 # as follows:
-import pennylane as qml
+import pennylane as qp
 from qiskit_aer import AerSimulator
 
 qubits = 4
-dev_aer = qml.device("qiskit.aer", wires=qubits)
-dev_basicsim = qml.device("qiskit.basicsim", wires=qubits)
+dev_aer = qp.device("qiskit.aer", wires=qubits)
+dev_basicsim = qp.device("qiskit.basicsim", wires=qubits)
 try:
-    dev_remote = qml.device("qiskit.remote", wires=qubits, backend=AerSimulator())
+    dev_remote = qp.device("qiskit.remote", wires=qubits, backend=AerSimulator())
 except Exception as e:
     print(e)
 
@@ -62,7 +62,7 @@ except Exception as e:
 # To specify which machine or computational framework these devices actually connect to, we can
 # use the ``backend`` argument.
 
-dev_aer = qml.device("qiskit.aer", wires=qubits)
+dev_aer = qp.device("qiskit.aer", wires=qubits)
 
 ##############################################################################
 # For the Aer device, different quantum computers can be used by changing the backend to the name
@@ -137,10 +137,10 @@ print(Aer.backends())
 from pennylane import numpy as pnp
 from qiskit_ibm_runtime import QiskitRuntimeService
 
-import pennylane as qml
+import pennylane as qp
 
 # Obtaining the Hamiltonian for H2 from PennyLane QChem dataset
-[dataset] = qml.data.load("qchem", molname="H2", bondlength=0.742, basis="STO-3G")
+[dataset] = qp.data.load("qchem", molname="H2", bondlength=0.742, basis="STO-3G")
 H = dataset.hamiltonian
 qubits = 4
 
@@ -153,7 +153,7 @@ backend = service.backend("ibmq_qasm_simulator")
 try:
     # Our device supports a maximum of 31 qubits
     NUM_QUBITS_SUPPORTED = 31
-    dev = qml.device("qiskit.remote", wires=NUM_QUBITS_SUPPORTED, backend=backend)
+    dev = qp.device("qiskit.remote", wires=NUM_QUBITS_SUPPORTED, backend=backend)
 except Exception as e:
     print(e)
 
@@ -171,30 +171,30 @@ except Exception as e:
 
 def four_qubit_ansatz(theta):
     # initial state 1100:
-    qml.PauliX(wires=0)
-    qml.PauliX(wires=1)
+    qp.PauliX(wires=0)
+    qp.PauliX(wires=1)
 
     # change of basis
-    qml.RX(pnp.pi / 2, wires=0)
-    qml.Hadamard(wires=1)
-    qml.Hadamard(wires=2)
-    qml.Hadamard(wires=3)
+    qp.RX(pnp.pi / 2, wires=0)
+    qp.Hadamard(wires=1)
+    qp.Hadamard(wires=2)
+    qp.Hadamard(wires=3)
 
-    qml.CNOT(wires=[3, 2])
-    qml.CNOT(wires=[2, 1])
-    qml.CNOT(wires=[1, 0])
+    qp.CNOT(wires=[3, 2])
+    qp.CNOT(wires=[2, 1])
+    qp.CNOT(wires=[1, 0])
 
-    qml.RZ(theta, wires=0)
+    qp.RZ(theta, wires=0)
 
-    qml.CNOT(wires=[1, 0])
-    qml.CNOT(wires=[2, 1])
-    qml.CNOT(wires=[3, 2])
+    qp.CNOT(wires=[1, 0])
+    qp.CNOT(wires=[2, 1])
+    qp.CNOT(wires=[3, 2])
 
     # invert change of basis
-    qml.RX(-pnp.pi / 2, wires=0)
-    qml.Hadamard(wires=1)
-    qml.Hadamard(wires=2)
-    qml.Hadamard(wires=3)
+    qp.RX(-pnp.pi / 2, wires=0)
+    qp.Hadamard(wires=1)
+    qp.Hadamard(wires=2)
+    qp.Hadamard(wires=3)
 
 
 ##############################################################################
@@ -206,15 +206,15 @@ def four_qubit_ansatz(theta):
 from pennylane_qiskit import qiskit_session
 
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def cost_fn(theta):
     four_qubit_ansatz(theta)
-    return qml.expval(H)
+    return qp.expval(H)
 
 
 max_iterations = 40
 theta = pnp.array(0.0, requires_grad=True)
-opt = qml.GradientDescentOptimizer(stepsize=0.4)
+opt = qp.GradientDescentOptimizer(stepsize=0.4)
 energies = []
 
 with qiskit_session(dev) as session:
@@ -244,28 +244,28 @@ with qiskit_session(dev) as session:
 # finite number of shots to estimate the energy in each iteration, rather than performing an exact
 # calculation using the information hidden in the vector representation of the quantum state.
 
-dev1 = qml.device("default.qubit", wires=4)
+dev1 = qp.device("default.qubit", wires=4)
 shots = 8000
-dev2 = qml.device("qiskit.aer", wires=4)
+dev2 = qp.device("qiskit.aer", wires=4)
 
 
-@qml.qnode(dev1)
+@qp.qnode(dev1)
 def cost_fn_1(theta):
     four_qubit_ansatz(theta)
-    return qml.expval(H)
+    return qp.expval(H)
 
 
-@qml.set_shots(shots)
-@qml.qnode(dev2)
+@qp.set_shots(shots)
+@qp.qnode(dev2)
 def cost_fn_2(theta):
     four_qubit_ansatz(theta)
-    return qml.expval(H)
+    return qp.expval(H)
 
 
 # we can also use the qnode to draw the circuit
 import matplotlib.pyplot as plt
 
-qml.draw_mpl(cost_fn_1, decimals=2)(theta=1.0)
+qp.draw_mpl(cost_fn_1, decimals=2)(theta=1.0)
 plt.show()
 
 ##############################################################################
@@ -278,7 +278,7 @@ plt.show()
 
 stepsize = 0.4
 max_iterations = 40
-opt = qml.GradientDescentOptimizer(stepsize=stepsize)
+opt = qp.GradientDescentOptimizer(stepsize=stepsize)
 theta_1 = pnp.array(0.0, requires_grad=True)
 theta_2 = pnp.array(0.0, requires_grad=True)
 energies_1 = []
@@ -346,7 +346,7 @@ plt.plot(energies_1, color="r", label="default.qubit")
 plt.plot(energies_2, color="b", label="qiskit.aer")
 
 # min energy = min eigenvalue
-min_energy = min(qml.eigvals(H))
+min_energy = min(qp.eigvals(H))
 z = [min_energy] * max_iterations
 
 plt.plot(z, "--", color="k", label="Exact answer")

@@ -30,7 +30,7 @@ Here, we will create a simple QML model for our optimization. In particular:
    target predictions given by ``target``.
 """
 
-import pennylane as qml
+import pennylane as qp
 from jax import numpy as jnp
 import optax
 import catalyst
@@ -39,37 +39,37 @@ n_wires = 5
 data = jnp.sin(jnp.mgrid[-2:2:0.2].reshape(n_wires, -1)) ** 3
 targets = jnp.array([-0.2, 0.4, 0.35, 0.2])
 
-dev = qml.device("lightning.qubit", wires=n_wires)
+dev = qp.device("lightning.qubit", wires=n_wires)
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def circuit(data, weights):
     """Quantum circuit ansatz"""
 
-    @qml.for_loop(0, n_wires, 1)
+    @qp.for_loop(0, n_wires, 1)
     def data_embedding(i):
-        qml.RY(data[i], wires=i)
+        qp.RY(data[i], wires=i)
 
     data_embedding()
 
-    @qml.for_loop(0, n_wires, 1)
+    @qp.for_loop(0, n_wires, 1)
     def ansatz(i):
-        qml.RX(weights[i, 0], wires=i)
-        qml.RY(weights[i, 1], wires=i)
-        qml.RX(weights[i, 2], wires=i)
-        qml.CNOT(wires=[i, (i + 1) % n_wires])
+        qp.RX(weights[i, 0], wires=i)
+        qp.RY(weights[i, 1], wires=i)
+        qp.RX(weights[i, 2], wires=i)
+        qp.CNOT(wires=[i, (i + 1) % n_wires])
 
     ansatz()
 
     # we use a sum of local Z's as an observable since a
     # local Z would only be affected by params on that qubit.
-    return qml.expval(qml.sum(*[qml.PauliZ(i) for i in range(n_wires)]))
+    return qp.expval(qp.sum(*[qp.PauliZ(i) for i in range(n_wires)]))
 
 ######################################################################
 # The :func:`catalyst.vmap` function allows us to specify that the first argument to circuit (``data``)
 # contains a batch dimension. In this example, the batch dimension is the second axis (axis 1).
 #
 
-circuit = qml.qjit(catalyst.vmap(circuit, in_axes=(1, None)))
+circuit = qp.qjit(catalyst.vmap(circuit, in_axes=(1, None)))
 
 ######################################################################
 # We will define a simple cost function that computes the overlap between model output and target
@@ -79,7 +79,7 @@ circuit = qml.qjit(catalyst.vmap(circuit, in_axes=(1, None)))
 def my_model(data, weights, bias):
     return circuit(data, weights) + bias
 
-@qml.qjit
+@qp.qjit
 def loss_fn(params, data, targets):
     predictions = my_model(data, params["weights"], params["bias"])
     loss = jnp.sum((targets - predictions) ** 2 / len(data))
@@ -110,7 +110,7 @@ params = {"weights": weights, "bias": bias}
 
 loss_fn(params, data, targets)
 
-print(qml.qjit(catalyst.grad(loss_fn, method="fd"))(params, data, targets))
+print(qp.qjit(catalyst.grad(loss_fn, method="fd"))(params, data, targets))
 
 ######################################################################
 # Create the optimizer
@@ -130,7 +130,7 @@ print(qml.qjit(catalyst.grad(loss_fn, method="fd"))(params, data, targets))
 
 opt = optax.adam(learning_rate=0.3)
 
-@qml.qjit
+@qp.qjit
 def update_step(i, args):
     params, opt_state, data, targets = args
 
@@ -165,11 +165,11 @@ for i in range(100):
 
 params = {"weights": weights, "bias": bias}
 
-@qml.qjit
+@qp.qjit
 def optimization(params, data, targets):
     opt_state = opt.init(params)
     args = (params, opt_state, data, targets)
-    (params, opt_state, _, _) = qml.for_loop(0, 100, 1)(update_step)(args)
+    (params, opt_state, _, _) = qp.for_loop(0, 100, 1)(update_step)(args)
     return params
 
 ######################################################################

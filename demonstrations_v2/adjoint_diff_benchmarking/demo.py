@@ -18,7 +18,7 @@ Adjoint Differentiation
 
 import timeit
 import matplotlib.pyplot as plt
-import pennylane as qml
+import pennylane as qp
 import pennylane.numpy as pnp
 
 plt.style.use("bmh")
@@ -27,7 +27,7 @@ n_samples = 5
 
 
 def get_time(qnode, params):
-    globals_dict = {"grad": qml.grad, "circuit": qnode, "params": params}
+    globals_dict = {"grad": qp.grad, "circuit": qnode, "params": params}
     return timeit.timeit("grad(circuit)(params)", globals=globals_dict, number=n_samples)
 
 
@@ -39,19 +39,19 @@ def wires_scaling(n_wires, n_layers):
     t_backprop = []
 
     def circuit(params, wires):
-        qml.StronglyEntanglingLayers(params, wires=range(wires))
-        return qml.expval(qml.PauliZ(0) @ qml.PauliZ(1) @ qml.PauliZ(2))
+        qp.StronglyEntanglingLayers(params, wires=range(wires))
+        return qp.expval(qp.PauliZ(0) @ qp.PauliZ(1) @ qp.PauliZ(2))
 
     for i_wires in n_wires:
-        dev = qml.device("lightning.qubit", wires=i_wires)
-        dev_python = qml.device("default.qubit", wires=i_wires)
+        dev = qp.device("lightning.qubit", wires=i_wires)
+        dev_python = qp.device("default.qubit", wires=i_wires)
 
-        circuit_adjoint = qml.QNode(lambda x: circuit(x, wires=i_wires), dev, diff_method="adjoint")
-        circuit_ps = qml.QNode(lambda x: circuit(x, wires=i_wires), dev, diff_method="parameter-shift")
-        circuit_backprop = qml.QNode(lambda x: circuit(x, wires=i_wires), dev_python, diff_method="backprop")
+        circuit_adjoint = qp.QNode(lambda x: circuit(x, wires=i_wires), dev, diff_method="adjoint")
+        circuit_ps = qp.QNode(lambda x: circuit(x, wires=i_wires), dev, diff_method="parameter-shift")
+        circuit_backprop = qp.QNode(lambda x: circuit(x, wires=i_wires), dev_python, diff_method="backprop")
 
         # set up the parameters
-        param_shape = qml.StronglyEntanglingLayers.shape(n_wires=i_wires, n_layers=n_layers)
+        param_shape = qp.StronglyEntanglingLayers.shape(n_wires=i_wires, n_layers=n_layers)
         params = rng.normal(size=pnp.prod(param_shape), requires_grad=True).reshape(param_shape)
 
         t_adjoint.append(get_time(circuit_adjoint, params))
@@ -64,24 +64,24 @@ def wires_scaling(n_wires, n_layers):
 def layers_scaling(n_wires, n_layers):
     rng = pnp.random.default_rng(12345)
 
-    dev = qml.device("lightning.qubit", wires=n_wires)
-    dev_python = qml.device("default.qubit", wires=n_wires)
+    dev = qp.device("lightning.qubit", wires=n_wires)
+    dev_python = qp.device("default.qubit", wires=n_wires)
 
     t_adjoint = []
     t_ps = []
     t_backprop = []
 
     def circuit(params):
-        qml.StronglyEntanglingLayers(params, wires=range(n_wires))
-        return qml.expval(qml.PauliZ(0) @ qml.PauliZ(1) @ qml.PauliZ(2))
+        qp.StronglyEntanglingLayers(params, wires=range(n_wires))
+        return qp.expval(qp.PauliZ(0) @ qp.PauliZ(1) @ qp.PauliZ(2))
 
-    circuit_adjoint = qml.QNode(circuit, dev, diff_method="adjoint")
-    circuit_ps = qml.QNode(circuit, dev, diff_method="parameter-shift")
-    circuit_backprop = qml.QNode(circuit, dev_python, diff_method="backprop")
+    circuit_adjoint = qp.QNode(circuit, dev, diff_method="adjoint")
+    circuit_ps = qp.QNode(circuit, dev, diff_method="parameter-shift")
+    circuit_backprop = qp.QNode(circuit, dev_python, diff_method="backprop")
 
     for i_layers in n_layers:
         # set up the parameters
-        param_shape = qml.StronglyEntanglingLayers.shape(n_wires=n_wires, n_layers=i_layers)
+        param_shape = qp.StronglyEntanglingLayers.shape(n_wires=n_wires, n_layers=i_layers)
         params = rng.normal(size=pnp.prod(param_shape), requires_grad=True).reshape(param_shape)
 
         t_adjoint.append(get_time(circuit_adjoint, params))

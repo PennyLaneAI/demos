@@ -79,7 +79,7 @@ We evolve the state in the Bloch sphere from :math:`|0\rangle` with a constant p
 for :math:`1 \text{ ns}.` We choose :math:`\omega = 5 \times 2\pi \text{ GHz}` as the drive and qubit frequency (i.e. we are at resonance :math:`\omega - \nu = 0`).
 """
 
-import pennylane as qml
+import pennylane as qp
 import numpy as np
 import jax.numpy as jnp
 import jax
@@ -87,7 +87,7 @@ import jax
 jax.config.update("jax_enable_x64", True)
 import matplotlib.pyplot as plt
 
-X, Y, Z = qml.PauliX(0), qml.PauliY(0), qml.PauliZ(0)
+X, Y, Z = qp.PauliX(0), qp.PauliY(0), qp.PauliZ(0)
 
 omega = 2 * jnp.pi * 5.0
 
@@ -103,17 +103,17 @@ def amp(nu):
     return wrapped
 
 
-H = -omega / 2 * qml.PauliZ(0)
-H += amp(omega) * qml.PauliY(0)
+H = -omega / 2 * qp.PauliZ(0)
+H += amp(omega) * qp.PauliY(0)
 
 
 # We generate a qnode that evolves the qubit state according to the time-dependent
 # Hamiltonian H.
 @jax.jit
-@qml.qnode(qml.device("default.qubit", wires=1), interface="jax")
+@qp.qnode(qp.device("default.qubit", wires=1), interface="jax")
 def trajectory(params, t):
-    qml.evolve(H)((params,), t, return_intermediate=True)
-    return [qml.expval(op) for op in [X, Y, Z]]
+    qp.evolve(H)((params,), t, return_intermediate=True)
+    return [qp.expval(op) for op in [X, Y, Z]]
 
 
 # By setting ``return_intermediate=True``, we can output all intermediate time steps.
@@ -155,17 +155,17 @@ def amp(nu):
     return wrapped
 
 
-H1 = -omega / 2 * qml.PauliZ(0)
+H1 = -omega / 2 * qp.PauliZ(0)
 H1 += amp(omega) * Y
 
 
 # This time we compute the full evolution until the final time after 20ns
 # return_intermediate=False is the default, so we dont have to set it explicitly.
 @jax.jit
-@qml.qnode(qml.device("default.qubit", wires=1), interface="jax")
+@qp.qnode(qp.device("default.qubit", wires=1), interface="jax")
 def trajectory(Omega0, phi):
-    qml.evolve(H1)([[Omega0, phi]], 20.0)
-    return [qml.expval(op) for op in [X, Y, Z]]
+    qp.evolve(H1)([[Omega0, phi]], 20.0)
+    return [qp.expval(op) for op in [X, Y, Z]]
 
 
 # We use ``jax.vmap`` to efficiently evaluate the ``trajectory`` function for all amplitudes
@@ -217,8 +217,8 @@ ax.legend()
 # We start by setting up the real device and a simulation device and perform all measurements on qubit 5.
 
 wire = 5
-dev_sim = qml.device("default.qubit", wires=[wire])
-dev_lucy = qml.device(
+dev_sim = qp.device("default.qubit", wires=[wire])
+dev_lucy = qp.device(
     "braket.aws.qubit",
     device_arn="arn:aws:braket:eu-west-2::device/qpu/oqc/Lucy",
     wires=range(8))
@@ -232,30 +232,30 @@ qubit_freq = dev_lucy.pulse_settings["qubit_freq"][wire]
 # :func:`~.pennylane.pulse.transmon_interaction` and :func:`~.pennylane.pulse.transmon_drive`.
 
 # This corresponds to the Z term for a single qubit with no interactions.
-H0 = qml.pulse.transmon_interaction(
+H0 = qp.pulse.transmon_interaction(
     qubit_freq=[qubit_freq], connections=[], coupling=[], wires=[wire]
 )
 
 # This corresponds to the drive term proportional to Y.
 # We can control the amplitude and phase via a callable parameter.
 # The drive frequency is set equal to the qubit's resonance frequency.
-Hd0 = qml.pulse.transmon_drive(
-    amplitude=qml.pulse.constant,
-    phase=qml.pulse.constant,
+Hd0 = qp.pulse.transmon_drive(
+    amplitude=qp.pulse.constant,
+    phase=qp.pulse.constant,
     freq=qubit_freq,
     wires=[wire],
 )
 
 
 def circuit(params, duration):
-    qml.evolve(H0 + Hd0)(params, t=duration)
-    return qml.expval(qml.PauliZ(wire))
+    qp.evolve(H0 + Hd0)(params, t=duration)
+    return qp.expval(qp.PauliZ(wire))
 
 
 # We create two qunodes, one that executes on the remote device
 # and one in simulation for comparison.
-qnode_sim = jax.jit(qml.QNode(circuit, dev_sim, interface="jax"))
-qnode_lucy = qml.set_shots(qml.QNode(circuit, dev_lucy, interface="jax"), shots = 1000)
+qnode_sim = jax.jit(qp.QNode(circuit, dev_sim, interface="jax"))
+qnode_lucy = qp.set_shots(qp.QNode(circuit, dev_lucy, interface="jax"), shots = 1000)
 
 ##############################################################################
 # We are going to fit the resulting Rabi oscillations to a sinusoid. For this we use
@@ -425,30 +425,30 @@ def amplitude(p, t):
     return attenuation * p
 
 
-Hd_attenuated = qml.pulse.transmon_drive(
-    amplitude, qml.pulse.constant, qubit_freq, wires=[wire]
+Hd_attenuated = qp.pulse.transmon_drive(
+    amplitude, qp.pulse.constant, qubit_freq, wires=[wire]
 )
 
 
 @jax.jit
-@qml.qnode(dev_sim, interface="jax")
+@qp.qnode(dev_sim, interface="jax")
 def qnode_sim(params, duration=15.0):
-    qml.evolve(H0 + Hd_attenuated)(params, t=duration, atol=1e-12)
+    qp.evolve(H0 + Hd_attenuated)(params, t=duration, atol=1e-12)
     return [
-        qml.expval(qml.PauliX(wire)),
-        qml.expval(qml.PauliY(wire)),
-        qml.expval(qml.PauliZ(wire)),
+        qp.expval(qp.PauliX(wire)),
+        qp.expval(qp.PauliY(wire)),
+        qp.expval(qp.PauliZ(wire)),
     ]
 
 
-@qml.set_shots(1000)
-@qml.qnode(dev_lucy, interface="jax")
+@qp.set_shots(1000)
+@qp.qnode(dev_lucy, interface="jax")
 def qnode_lucy(params, duration=15.0):
-    qml.evolve(H0 + Hd0)(params, t=duration)
+    qp.evolve(H0 + Hd0)(params, t=duration)
     return [
-        qml.expval(qml.PauliX(wire)),
-        qml.expval(qml.PauliY(wire)),
-        qml.expval(qml.PauliZ(wire)),
+        qp.expval(qp.PauliX(wire)),
+        qp.expval(qp.PauliY(wire)),
+        qp.expval(qp.PauliZ(wire)),
     ]
 
 
