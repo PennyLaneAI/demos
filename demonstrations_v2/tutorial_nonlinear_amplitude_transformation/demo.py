@@ -25,9 +25,13 @@ The macroscopic world is inherently nonlinear. From the complex dynamics of fina
 # that QSVT can act on, by building a block-encoding whose relevant spectrum contains the amplitude
 # values we care about.
 # 
-# In this demo, we will: - construct a block-encoding of amplitude data starting from a
-# state-preparation unitary, - use QSVT to apply a polynomial approximation of a nonlinear function
-# (e.g., a smooth activation) to those amplitudes, - validate the transformation numerically via an
+# In this demo, we will: 
+# 
+# - construct a block-encoding of amplitude data starting from a
+# state-preparation unitary, 
+# - use QSVT to apply a polynomial approximation of a nonlinear function
+# (e.g., a smooth activation) to those amplitudes, 
+# - validate the transformation numerically via an
 # application to a canonical quantum machine learning task of binary classification on downscaled
 # MNIST-style images.
 # 
