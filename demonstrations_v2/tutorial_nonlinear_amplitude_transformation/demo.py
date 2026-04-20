@@ -707,13 +707,10 @@ accuracy(best_weight, data, labels)
 # toy example, applied a :math:`\tanh` nonlinearity via QSVT, and integrated the activation as a layer
 # inside a small quantum classifier trained on downscaled MNIST.
 # 
-# Key Takeaways: - A systematic bridge from amplitudes to nonlinearity: NTCA enables elementwise maps
-# :math:`\psi_i \mapsto f(\psi_i)` by turning amplitudes into an operator spectrum that QSVT can
-# transform. - Clear resource story: the block-encoding construction uses a constant number of calls
-# to the state-preparation routine, while the main accuracy–cost knob is the polynomial degree
-# :math:`d` (QSVT uses :math:`O(d)` applications of the block encoding). - Broad applicability: while
-# we demonstrated :math:`\tanh`, the same workflow applies to many bounded functions that admit good
-# polynomial approximations on :math:`[-1,1]`. - QML integration: NTCA can be used as an activation
-# layer between trainable “linear” quantum layers, enabling MLP-style architectures in amplitude-based
-# quantum pipelines.
+# Key Takeaways: 
+# 
+# - A systematic bridge from amplitudes to nonlinearity: NTCA enables elementwise maps :math:`\psi_i \mapsto f(\psi_i)` by turning amplitudes into an operator spectrum that QSVT can transform. 
+# - Clear resource story: the block-encoding construction uses a constant number of calls to the state-preparation routine, while the main accuracy–cost knob is the polynomial degree :math:`d` (QSVT uses :math:`O(d)` applications of the block encoding). 
+#- Broad applicability: while we demonstrated :math:`\tanh`, the same workflow applies to many bounded functions that admit good polynomial approximations on :math:`[-1,1]`. 
+# - QML integration: NTCA can be used as an activation layer between trainable “linear” quantum layers, enabling MLP-style architectures in amplitude-based quantum pipelines.
 # 
