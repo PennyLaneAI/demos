@@ -37,17 +37,17 @@ Later in this tutorial we will show a larger example — a 26-qubit circuit that
 Here is the example circuit we will be simulating:
 """
 
-import pennylane as qml
+import pennylane as qp
 import matplotlib.pyplot as plt
 import numpy as np
 
 
 def bell_pair():
-    qml.Hadamard(0)
-    qml.CNOT(wires=(0, 1))
-    return qml.probs()
+    qp.Hadamard(0)
+    qp.CNOT(wires=(0, 1))
+    return qp.probs()
 
-fig = qml.draw_mpl(bell_pair)()
+fig = qp.draw_mpl(bell_pair)()
 
 
 ##############################################################################
@@ -64,9 +64,9 @@ bluequbit.logger.setLevel("ERROR")
 
 # STEP 2: Initialize the bluequbit device!
 # Using a guest token here. Replace it with your own token for a better experience.
-bq_dev = qml.device("bluequbit.cpu", wires=2, token="3hmIGLWGKzKdWmxLoJ5F24P3rivGL04d")
+bq_dev = qp.device("bluequbit.cpu", wires=2, token="3hmIGLWGKzKdWmxLoJ5F24P3rivGL04d")
 
-bell_qnode = qml.QNode(bell_pair, bq_dev)
+bell_qnode = qp.QNode(bell_pair, bq_dev)
 
 # STEP 3: Simulate the circuit!
 result = bell_qnode()
@@ -112,24 +112,24 @@ def draper_adder(wires_a, wires_b, kind="fixed", include_qft=True, include_iqft=
         wires_sum = wires_b
     # QFT part
     if include_qft:
-        qml.QFT(wires=wires_sum)
+        qp.QFT(wires=wires_sum)
     # Controlled rotations
     for j in range(m):
         for k in range(n - j):
             lam = np.pi / (2**k)
-            qml.ControlledPhaseShift(lam, wires=[wires_a[-j-1], wires_sum[j+k]])
+            qp.ControlledPhaseShift(lam, wires=[wires_a[-j-1], wires_sum[j+k]])
     if kind == "half":
         for j in range(m):
             lam = np.pi / (2 ** (j + 1 + n - m))
-            qml.ControlledPhaseShift(lam, wires=[wires_a[j], wires_sum[-1]])
+            qp.ControlledPhaseShift(lam, wires=[wires_a[j], wires_sum[-1]])
     # Inverse QFT part
     if include_iqft:
-        qml.adjoint(qml.QFT)(wires=wires_sum)
+        qp.adjoint(qp.QFT)(wires=wires_sum)
 
 # Using a guest token here. Replace it with your own token for a better experience.
-dev = qml.device("bluequbit.cpu", wires = 26, token="3hmIGLWGKzKdWmxLoJ5F24P3rivGL04d")
+dev = qp.device("bluequbit.cpu", wires = 26, token="3hmIGLWGKzKdWmxLoJ5F24P3rivGL04d")
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def add_4_6qubit_uniforms():
     regs = [list(range(0,6)),
            list(range(6,12)),
@@ -138,12 +138,12 @@ def add_4_6qubit_uniforms():
     # make each register uniform 0-63
     for reg in regs:
         for j in range(6):
-            qml.Hadamard(reg[-j-1])
+            qp.Hadamard(reg[-j-1])
     # calcualte sum
     draper_adder(regs[0], regs[3][-6:], kind="half")
     draper_adder(regs[1], regs[3][-7:], kind="half", include_iqft=False)
     draper_adder(regs[2], regs[3], include_qft=False) # skip I=QFT+iQFT, a small optimization
-    return qml.probs(wires=regs[3])
+    return qp.probs(wires=regs[3])
 
 res = add_4_6qubit_uniforms()
 plt.figure(figsize=(32, 8))

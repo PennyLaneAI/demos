@@ -99,12 +99,12 @@ device_arn = "arn:aws:braket:::device/quantum-simulator/amazon/sv1"
 ##############################################################################
 # SV1 can now be loaded with the standard PennyLane :func:`~.pennylane.device`:
 
-import pennylane as qml
+import pennylane as qp
 from pennylane import numpy as np
 
 n_wires = 25
 
-dev_remote = qml.device(
+dev_remote = qp.device(
     "braket.aws.qubit",
     device_arn=device_arn,
     wires=n_wires,
@@ -115,7 +115,7 @@ dev_remote = qml.device(
 # Note the ``parallel=True`` argument. This setting allows us to unlock the power of parallel
 # execution on SV1 for gradient calculations. We'll also load ``default.qubit`` for comparison.
 
-dev_local = qml.device("default.qubit", wires=n_wires)
+dev_local = qp.device("default.qubit", wires=n_wires)
 
 ##############################################################################
 # Note that a local Braket device ``braket.local.qubit`` is also available. See the
@@ -130,13 +130,13 @@ dev_local = qml.device("default.qubit", wires=n_wires)
 
 def circuit(params):
     for i in range(n_wires):
-        qml.RX(params[i], wires=i)
+        qp.RX(params[i], wires=i)
     for i in range(n_wires):
-        qml.CNOT(wires=[i, (i + 1) % n_wires])
+        qp.CNOT(wires=[i, (i + 1) % n_wires])
 
     # Measure all qubits to make sure all's good with Braket
-    observables = [qml.PauliZ(n_wires - 1)] + [qml.Identity(i) for i in range(n_wires - 1)]
-    return qml.expval(qml.prod(*observables))
+    observables = [qp.PauliZ(n_wires - 1)] + [qp.Identity(i) for i in range(n_wires - 1)]
+    return qp.expval(qp.prod(*observables))
 
 
 ##############################################################################
@@ -154,8 +154,8 @@ def circuit(params):
 #
 # The next step is to convert the above circuit into a PennyLane :func:`~.pennylane.QNode`.
 
-qnode_remote = qml.QNode(circuit, dev_remote)
-qnode_local = qml.QNode(circuit, dev_local)
+qnode_remote = qp.QNode(circuit, dev_remote)
+qnode_local = qp.QNode(circuit, dev_local)
 
 ##############################################################################
 # .. note::
@@ -216,7 +216,7 @@ print("Execution time on local device (seconds):", t_1_local - t_0_local)
 #
 # First, consider the remote device:
 
-d_qnode_remote = qml.grad(qnode_remote)
+d_qnode_remote = qp.grad(qnode_remote)
 
 t_0_remote_grad = time.time()
 d_qnode_remote(params)
@@ -241,7 +241,7 @@ print(
 #     Evaluating the gradient with ``default.qubit`` will take a long time, consider
 #     commenting-out the following lines unless you are happy to wait.
 
-d_qnode_local = qml.grad(qnode_local)
+d_qnode_local = qp.grad(qnode_local)
 
 t_0_local_grad = time.time()
 d_qnode_local(params)
@@ -308,7 +308,7 @@ nx.draw(g, with_labels=True, pos=positions)
 # We will use the remote SV1 device to help us optimize our QAOA circuit as quickly as possible.
 # First, the device is loaded again for 20 qubits
 
-dev = qml.device(
+dev = qp.device(
     "braket.aws.qubit",
     device_arn=device_arn,
     wires=n_wires,
@@ -330,25 +330,25 @@ dev = qml.device(
 # The QAOA problem can then be set up following the standard pattern, as discussed in detail in
 # the :doc:`QAOA tutorial<demos/tutorial_qaoa_intro>`.
 
-cost_h, mixer_h = qml.qaoa.maxcut(g)
+cost_h, mixer_h = qp.qaoa.maxcut(g)
 n_layers = 2
 
 
 def qaoa_layer(gamma, alpha):
-    qml.qaoa.cost_layer(gamma, cost_h)
-    qml.qaoa.mixer_layer(alpha, mixer_h)
+    qp.qaoa.cost_layer(gamma, cost_h)
+    qp.qaoa.mixer_layer(alpha, mixer_h)
 
 
 def circuit(params, **kwargs):
     for i in range(n_wires):  # Prepare an equal superposition over all qubits
-        qml.Hadamard(wires=i)
+        qp.Hadamard(wires=i)
 
-    qml.layer(qaoa_layer, n_layers, params[0], params[1])
-    return qml.expval(cost_h)
+    qp.layer(qaoa_layer, n_layers, params[0], params[1])
+    return qp.expval(cost_h)
 
 
-cost_function = qml.QNode(circuit, dev)
-optimizer = qml.AdagradOptimizer(stepsize=0.01)
+cost_function = qp.QNode(circuit, dev)
+optimizer = qp.AdagradOptimizer(stepsize=0.01)
 
 ##############################################################################
 # We're now set up to train the circuit! Note, if you are training this circuit yourself, you may
@@ -481,17 +481,17 @@ def qaoa_training(n_iterations, n_layers=2):
     braket_tasks_cost = Tracker().start()  # track Braket quantum tasks costs
 
     # declare PennyLane device
-    dev = qml.device("lightning.qubit", wires=n_wires)
+    dev = qp.device("lightning.qubit", wires=n_wires)
 
-    @qml.qnode(dev)
+    @qp.qnode(dev)
     def cost_function(params, **kwargs):
         for i in range(n_wires):  # Prepare an equal superposition over all qubits
-            qml.Hadamard(wires=i)
-        qml.layer(qaoa_layer, n_layers, params[0], params[1])
-        return qml.expval(cost_h)
+            qp.Hadamard(wires=i)
+        qp.layer(qaoa_layer, n_layers, params[0], params[1])
+        return qp.expval(cost_h)
 
     params = 0.01 * np.random.uniform(size=[2, n_layers])
-    optimizer = qml.AdagradOptimizer(stepsize=0.01)
+    optimizer = qp.AdagradOptimizer(stepsize=0.01)
 
     # run the classical-quantum iterations
     for i in range(n_iterations):

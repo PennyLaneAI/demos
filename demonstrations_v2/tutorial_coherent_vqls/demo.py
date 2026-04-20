@@ -200,7 +200,7 @@ This Python code requires *PennyLane* and the plotting library *matplotlib*.
 
 """
 
-import pennylane as qml
+import pennylane as qp
 from pennylane import numpy as np
 import matplotlib.pyplot as plt
 
@@ -247,16 +247,16 @@ def U_c():
     """Unitary matrix rotating the ground state of the ancillary qubits
     to |sqrt(c)> = U_c |0>."""
     # Circuit mapping |00> to sqrt_c[0] |00> + sqrt_c[1] |01> + sqrt_c[2] |10>
-    qml.RY(-2 * np.arccos(sqrt_c[0]), wires=ancilla_idx)
-    qml.CRY(-2 * np.arctan(sqrt_c[2] / sqrt_c[1]), wires=[ancilla_idx, ancilla_idx + 1])
-    qml.CNOT(wires=[ancilla_idx + 1, ancilla_idx])
+    qp.RY(-2 * np.arccos(sqrt_c[0]), wires=ancilla_idx)
+    qp.CRY(-2 * np.arctan(sqrt_c[2] / sqrt_c[1]), wires=[ancilla_idx, ancilla_idx + 1])
+    qp.CNOT(wires=[ancilla_idx + 1, ancilla_idx])
 
 
 def U_c_dagger():
     """Adjoint of U_c."""
-    qml.CNOT(wires=[ancilla_idx + 1, ancilla_idx])
-    qml.CRY(2 * np.arctan(sqrt_c[2] / sqrt_c[1]), wires=[ancilla_idx, ancilla_idx + 1])
-    qml.RY(2 * np.arccos(sqrt_c[0]), wires=ancilla_idx)
+    qp.CNOT(wires=[ancilla_idx + 1, ancilla_idx])
+    qp.CRY(2 * np.arctan(sqrt_c[2] / sqrt_c[1]), wires=[ancilla_idx, ancilla_idx + 1])
+    qp.RY(2 * np.arccos(sqrt_c[0]), wires=ancilla_idx)
 
 
 ##############################################################################
@@ -269,11 +269,11 @@ def U_c_dagger():
 def CA_all():
     """Controlled application of all the unitary components A_l of the problem matrix A."""
     # Controlled-A_1
-    qml.CNOT(wires=[ancilla_idx, 0])
-    qml.CZ(wires=[ancilla_idx, 1])
+    qp.CNOT(wires=[ancilla_idx, 0])
+    qp.CZ(wires=[ancilla_idx, 1])
 
     # Controlled-A2
-    qml.CNOT(wires=[ancilla_idx + 1, 0])
+    qp.CNOT(wires=[ancilla_idx + 1, 0])
 
 
 ##############################################################################
@@ -284,7 +284,7 @@ def U_b():
     """Unitary matrix rotating the system ground state to the
     problem vector |b> = U_b |0>."""
     for idx in range(n_qubits):
-        qml.Hadamard(wires=idx)
+        qp.Hadamard(wires=idx)
 
 
 ##############################################################################
@@ -308,11 +308,11 @@ def variational_block(weights):
     """Variational circuit mapping the ground state |0> to the ansatz state |x>."""
     # We first prepare an equal superposition of all the states of the computational basis
     for idx in range(n_qubits):
-        qml.Hadamard(wires=idx)
+        qp.Hadamard(wires=idx)
 
     # A very minimal variational circuit
     for idx, element in enumerate(weights):
-        qml.RY(element, wires=idx)
+        qp.RY(element, wires=idx)
 
 
 ##############################################################################
@@ -357,25 +357,25 @@ def full_circuit(weights):
 # To evaluate the two probabilities appearing on the right hand side of the previous equation
 # we initialize a ``default.qubit`` device and we define two different ``qnode`` circuits.
 
-dev = qml.device("default.qubit", wires=tot_qubits)
+dev = qp.device("default.qubit", wires=tot_qubits)
 
-@qml.qnode(dev, interface="autograd")
+@qp.qnode(dev, interface="autograd")
 def global_ground(weights):
     # Circuit gates
     full_circuit(weights)
     # Projector on the global ground state
     P = np.zeros((2 ** tot_qubits, 2 ** tot_qubits))
     P[0, 0] = 1.0
-    return qml.expval(qml.Hermitian(P, wires=range(tot_qubits)))
+    return qp.expval(qp.Hermitian(P, wires=range(tot_qubits)))
 
-@qml.qnode(dev, interface="autograd")
+@qp.qnode(dev, interface="autograd")
 def ancilla_ground(weights):
     # Circuit gates
     full_circuit(weights)
     # Projector on the ground state of the ancillary system
     P_anc = np.zeros((2 ** m, 2 ** m))
     P_anc[0, 0] = 1.0
-    return qml.expval(qml.Hermitian(P_anc, wires=range(n_qubits, tot_qubits)))
+    return qp.expval(qp.Hermitian(P_anc, wires=range(n_qubits, tot_qubits)))
 
 
 ##############################################################################
@@ -399,7 +399,7 @@ def cost(weights):
 
 ##############################################################################
 # To minimize the cost function we use the gradient-descent optimizer.
-opt = qml.GradientDescentOptimizer(eta)
+opt = qp.GradientDescentOptimizer(eta)
 
 ##############################################################################
 # We initialize the variational weights with random parameters (with a fixed seed).
@@ -485,10 +485,10 @@ c_probs = (x / np.linalg.norm(x)) ** 2
 # For this task, we initialize a new PennyLane device and define the associated
 # QNode.
 
-dev_x = qml.device("default.qubit", wires=n_qubits)
+dev_x = qp.device("default.qubit", wires=n_qubits)
 
-@qml.set_shots(n_shots)
-@qml.qnode(dev_x, interface="autograd")
+@qp.set_shots(n_shots)
+@qp.qnode(dev_x, interface="autograd")
 def prepare_and_sample(weights):
 
     # Variational circuit generating a guess for the solution vector |x>
@@ -497,7 +497,7 @@ def prepare_and_sample(weights):
     # We assume that the system is measured in the computational basis.
     # Therefore, sampling from the device will give us a value of 0 or 1 for each qubit (n_qubits)
     # this will be repeated for the total number of shots provided (n_shots).
-    return qml.sample()
+    return qp.sample()
 
 
 ##############################################################################

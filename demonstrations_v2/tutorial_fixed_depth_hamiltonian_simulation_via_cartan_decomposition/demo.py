@@ -72,7 +72,7 @@ from datetime import datetime
 import matplotlib.pyplot as plt
 
 import numpy as np
-import pennylane as qml
+import pennylane as qp
 from pennylane import X, Y, Z
 from pennylane.liealg import even_odd_involution, cartan_decomp, horizontal_cartan_subalgebra
 
@@ -86,9 +86,9 @@ gens = [X(i) @ X(i+1) for i in range(n_wires-1)]
 gens += [Y(i) @ Y(i+1) for i in range(n_wires-1)]
 gens += [Z(i) @ Z(i+1) for i in range(n_wires-1)]
 
-H = qml.sum(*gens)
+H = qp.sum(*gens)
 
-g = qml.lie_closure(gens)
+g = qp.lie_closure(gens)
 g = [op.pauli_rep for op in g]
 
 ##############################################################################
@@ -196,8 +196,8 @@ len(g), len(k), len(mtilde), len(h)
 
 gammas = [np.pi**i % 2 for i in range(1, len(h)+1)]
 
-v = qml.dot(gammas, h)
-v_m = qml.matrix(v, wire_order=range(n_wires))
+v = qp.dot(gammas, h)
+v_m = qp.matrix(v, wire_order=range(n_wires))
 v_m = jnp.array(v_m)
 
 
@@ -261,16 +261,16 @@ def run_opt(
 ##############################################################################
 # We can now implement the cost function and find a minimum via gradient descent.
 
-H_m = qml.matrix(H, wire_order=range(n_wires))
+H_m = qp.matrix(H, wire_order=range(n_wires))
 H_m = jnp.array(H_m)
 
 def K(theta, k):
     for th, k_j in zip(theta, k):
-        qml.exp(-1j * th * k_j.operation())
+        qp.exp(-1j * th * k_j.operation())
 
 @jax.jit
 def loss(theta):
-    K_m = qml.matrix(K, wire_order=range(n_wires))(theta, k)
+    K_m = qp.matrix(K, wire_order=range(n_wires))(theta, k)
     A = K_m @ v_m @ K_m.conj().T
     return jnp.trace(A.conj().T @ H_m).real
 
@@ -288,7 +288,7 @@ plt.show()
 # This gives us the optimal values of the parameters :math:`\theta_\text{opt}` of :math:`K(\theta_\text{opt}) =: K_c.`
 
 theta_opt = thetas[-1]
-Kc_m = qml.matrix(K, wire_order=range(n_wires))(theta_opt, k)
+Kc_m = qp.matrix(K, wire_order=range(n_wires))(theta_opt, k)
 
 ##############################################################################
 # The special element :math:`h_0` from the Cartan subalgebra :math:`\mathfrak{h}` is given by
@@ -299,15 +299,15 @@ Kc_m = qml.matrix(K, wire_order=range(n_wires))(theta_opt, k)
 h_0_m = Kc_m.conj().T @ H_m @ Kc_m
 
 # decompose h_0_m in terms of the basis of h
-basis = [qml.matrix(op, wire_order=range(n_wires)) for op in h]
-coeffs = qml.pauli.trace_inner_product(h_0_m, basis)
+basis = [qp.matrix(op, wire_order=range(n_wires)) for op in h]
+coeffs = qp.pauli.trace_inner_product(h_0_m, basis)
 
 # ensure that decomposition is correct, i.e. h_0_m is truely an element of just h
 h_0_m_recomposed = np.sum([c * op for c, op in zip(coeffs, basis)], axis=0)
 print("Decomposition of h_0 is faithful: ", np.allclose(h_0_m_recomposed, h_0_m, atol=1e-10))
 
 # sanity check that the horizontal CSA is Abelian, i.e. all its elements commute
-print("All elements in h commute with each other: ", qml.liealg.check_abelian(h))
+print("All elements in h commute with each other: ", qp.liealg.check_abelian(h))
 
 
 ##############################################################################
@@ -334,16 +334,16 @@ np.allclose(H_re, H_m)
 #
 
 t = 1.
-U_exact = qml.exp(-1j * t * H)
-U_exact_m = qml.matrix(U_exact, wire_order=range(n_wires))
-h_0  = qml.dot(coeffs, h)
+U_exact = qp.exp(-1j * t * H)
+U_exact_m = qp.matrix(U_exact, wire_order=range(n_wires))
+h_0  = qp.dot(coeffs, h)
 
 def U_kak(theta_opt, t):
-    qml.adjoint(K)(theta_opt, k)
-    qml.exp(-1j * t * h_0)
+    qp.adjoint(K)(theta_opt, k)
+    qp.exp(-1j * t * h_0)
     K(theta_opt, k)
 
-U_kak_m = qml.matrix(U_kak, wire_order=range(n_wires))(theta_opt, t)
+U_kak_m = qp.matrix(U_kak, wire_order=range(n_wires))(theta_opt, t)
 
 def trace_distance(A, B):
     return 1 - np.abs(np.trace(A.conj().T @ B))/len(A)
@@ -378,14 +378,14 @@ trace_distance(U_exact_m, U_kak_m)
 
 ts = jnp.linspace(1., 5., 10)
 
-Us_exact = jax.vmap(lambda t: qml.matrix(qml.exp(-1j * t * H), wire_order=range(n_wires)))(ts)
+Us_exact = jax.vmap(lambda t: qp.matrix(qp.exp(-1j * t * H), wire_order=range(n_wires)))(ts)
 
 def Us_kak(t):
     return Kc_m @ jax.scipy.linalg.expm(-1j * t * h_0_m) @ Kc_m.conj().T
 
 Us_kak = jax.vmap(Us_kak)(ts)
-Us_trotter5 = jax.vmap(lambda t: qml.matrix(qml.TrotterProduct(H, time=-t, n=5, order=4), wire_order=range(n_wires)))(ts)
-Us_trotter50 = jax.vmap(lambda t: qml.matrix(qml.TrotterProduct(H, time=-t, n=50, order=4), wire_order=range(n_wires)))(ts)
+Us_trotter5 = jax.vmap(lambda t: qp.matrix(qp.TrotterProduct(H, time=-t, n=5, order=4), wire_order=range(n_wires)))(ts)
+Us_trotter50 = jax.vmap(lambda t: qp.matrix(qp.TrotterProduct(H, time=-t, n=50, order=4), wire_order=range(n_wires)))(ts)
 
 def compute_res(Us):
     # vectorized trace inner product

@@ -138,7 +138,7 @@ Quantum models as Fourier series
 #
 
 import matplotlib.pyplot as plt
-import pennylane as qml
+import pennylane as qp
 from pennylane import numpy as np
 
 np.random.seed(42)
@@ -273,20 +273,20 @@ plt.show()
 
 scaling = 1
 
-dev = qml.device("default.qubit", wires=1)
+dev = qp.device("default.qubit", wires=1)
 
 
 def S(x):
     """Data-encoding circuit block."""
-    qml.RX(scaling * x, wires=0)
+    qp.RX(scaling * x, wires=0)
 
 
 def W(theta):
     """Trainable circuit block."""
-    qml.Rot(theta[0], theta[1], theta[2], wires=0)
+    qp.Rot(theta[0], theta[1], theta[2], wires=0)
 
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def serial_quantum_model(weights, x):
 
     for theta in weights[:-1]:
@@ -296,7 +296,7 @@ def serial_quantum_model(weights, x):
     # (L+1)'th unitary
     W(weights[-1])
 
-    return qml.expval(qml.PauliZ(wires=0))
+    return qp.expval(qp.PauliZ(wires=0))
 
 
 ######################################################################
@@ -338,7 +338,7 @@ plt.show()
 # Finally, let's look at the circuit we just created:
 #
 
-print(qml.draw(serial_quantum_model)(weights, x[-1]))
+print(qp.draw(serial_quantum_model)(weights, x[-1]))
 
 
 ######################################################################
@@ -359,7 +359,7 @@ def cost(weights, x, y):
 
 
 max_steps = 50
-opt = qml.AdamOptimizer(0.3)
+opt = qp.AdamOptimizer(0.3)
 batch_size = 25
 cst = [cost(weights, x, target_y)]  # initial cost
 
@@ -493,17 +493,17 @@ from pennylane.templates import StronglyEntanglingLayers
 n_ansatz_layers = 2
 n_qubits = 3
 
-dev = qml.device("default.qubit", wires=4)
+dev = qp.device("default.qubit", wires=4)
 
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def ansatz(weights):
     StronglyEntanglingLayers(weights, wires=range(n_qubits))
-    return qml.expval(qml.Identity(wires=0))
+    return qp.expval(qp.Identity(wires=0))
 
 
 weights_ansatz = 2 * np.pi * np.random.random(size=(n_ansatz_layers, n_qubits, 3))
-print(qml.draw(ansatz, level="device")(weights_ansatz))
+print(qp.draw(ansatz, level="device")(weights_ansatz))
 
 
 ######################################################################
@@ -513,13 +513,13 @@ print(qml.draw(ansatz, level="device")(weights_ansatz))
 scaling = 1
 r = 3
 
-dev = qml.device("default.qubit", wires=r)
+dev = qp.device("default.qubit", wires=r)
 
 
 def S(x):
     """Data-encoding circuit block."""
     for w in range(r):
-        qml.RX(scaling * x, wires=w)
+        qp.RX(scaling * x, wires=w)
 
 
 def W(theta):
@@ -527,14 +527,14 @@ def W(theta):
     StronglyEntanglingLayers(theta, wires=range(r))
 
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def parallel_quantum_model(weights, x):
 
     W(weights[0])
     S(x)
     W(weights[1])
 
-    return qml.expval(qml.PauliZ(wires=0))
+    return qp.expval(qp.PauliZ(wires=0))
 
 
 ######################################################################
@@ -573,7 +573,7 @@ def cost(weights, x, y):
 
 
 max_steps = 70
-opt = qml.AdamOptimizer(0.3)
+opt = qp.AdamOptimizer(0.3)
 batch_size = 25
 cst = [cost(weights, x, target_y)]  # initial cost
 
@@ -675,13 +675,13 @@ from pennylane.templates import BasicEntanglerLayers
 scaling = 1
 n_qubits = 4
 
-dev = qml.device("default.qubit", wires=n_qubits)
+dev = qp.device("default.qubit", wires=n_qubits)
 
 
 def S(x):
     """Data encoding circuit block."""
     for w in range(n_qubits):
-        qml.RX(scaling * x, wires=w)
+        qp.RX(scaling * x, wires=w)
 
 
 def W(theta):
@@ -689,14 +689,14 @@ def W(theta):
     BasicEntanglerLayers(theta, wires=range(n_qubits))
 
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def quantum_model(weights, x):
 
     W(weights[0])
     S(x)
     W(weights[1])
 
-    return qml.expval(qml.PauliZ(wires=0))
+    return qp.expval(qp.PauliZ(wires=0))
 
 
 ######################################################################
@@ -804,26 +804,26 @@ plt.show()
 
 var = 2
 n_ansatz_layers = 1
-dev_cv = qml.device("default.gaussian", wires=1)
+dev_cv = qp.device("default.gaussian", wires=1)
 
 
 def S(x):
-    qml.Rotation(x, wires=0)
+    qp.Rotation(x, wires=0)
 
 
 def W(theta):
     """Trainable circuit block."""
     for r_ in range(n_ansatz_layers):
-        qml.Displacement(theta[0], theta[1], wires=0)
-        qml.Squeezing(theta[2], theta[3], wires=0)
+        qp.Displacement(theta[0], theta[1], wires=0)
+        qp.Squeezing(theta[2], theta[3], wires=0)
 
 
-@qml.qnode(dev_cv)
+@qp.qnode(dev_cv)
 def quantum_model(weights, x):
     W(weights[0])
     S(x)
     W(weights[1])
-    return qml.expval(qml.QuadX(wires=0))
+    return qp.expval(qp.QuadX(wires=0))
 
 
 def random_weights():
@@ -840,7 +840,7 @@ def random_weights():
 #
 #     .. code-block:: python
 #
-#         dev_cv = qml.device('strawberryfields.fock', wires=1, cutoff_dim=50)
+#         dev_cv = qp.device('strawberryfields.fock', wires=1, cutoff_dim=50)
 #
 
 

@@ -89,26 +89,26 @@ measuring qubit-wise-commuting observables. Before that, let us demonstrate how 
 PennyLane implementation
 ------------------------
 
-There are two ways of computing expectation values with classical shadows in PennyLane. The first is to return :func:`qml.shadow_expval <pennylane.shadow_expval>` directly from the qnode.
+There are two ways of computing expectation values with classical shadows in PennyLane. The first is to return :func:`qp.shadow_expval <pennylane.shadow_expval>` directly from the qnode.
 This has the advantage that it preserves the typical PennyLane syntax *and* is differentiable.
 """
 
-import pennylane as qml
+import pennylane as qp
 import pennylane.numpy as np
 from matplotlib import pyplot as plt
 from pennylane import classical_shadow, shadow_expval, ClassicalShadow
 
 np.random.seed(666)
 
-H = qml.Hamiltonian([1., 1.], [qml.PauliZ(0) @ qml.PauliZ(1), qml.PauliX(0) @ qml.PauliX(1)])
+H = qp.Hamiltonian([1., 1.], [qp.PauliZ(0) @ qp.PauliZ(1), qp.PauliX(0) @ qp.PauliX(1)])
 
-dev = qml.device("default.qubit", wires=range(2))
-@qml.set_shots(10000)
-@qml.qnode(dev, interface="autograd")
+dev = qp.device("default.qubit", wires=range(2))
+@qp.set_shots(10000)
+@qp.qnode(dev, interface="autograd")
 def qnode(x, H):
-    qml.Hadamard(0)
-    qml.CNOT((0,1))
-    qml.RX(x, wires=0)
+    qp.Hadamard(0)
+    qp.CNOT((0,1))
+    qp.RX(x, wires=0)
     return shadow_expval(H)
 
 x = np.array(0.5, requires_grad=True)
@@ -116,27 +116,27 @@ x = np.array(0.5, requires_grad=True)
 ##############################################################################
 # Compute expectation values and derivatives thereof in the common way in PennyLane.
 
-print(qnode(x, H), qml.grad(qnode)(x, H))
+print(qnode(x, H), qp.grad(qnode)(x, H))
 
 ##############################################################################
-# Each call of :func:`qml.shadow_expval <pennylane.shadow_expval>` performs the number of shots dictated by the device.
-# So to avoid unnecessary device executions you can provide a list of observables to :func:`qml.shadow_expval <pennylane.shadow_expval>`.
+# Each call of :func:`qp.shadow_expval <pennylane.shadow_expval>` performs the number of shots dictated by the device.
+# So to avoid unnecessary device executions you can provide a list of observables to :func:`qp.shadow_expval <pennylane.shadow_expval>`.
 
-Hs = [H, qml.PauliX(0), qml.PauliY(0), qml.PauliZ(0)]
+Hs = [H, qp.PauliX(0), qp.PauliY(0), qp.PauliZ(0)]
 print(qnode(x, Hs))
-print(qml.jacobian(qnode)(x, Hs))
+print(qp.jacobian(qnode)(x, Hs))
 
 ##############################################################################
 # Alternatively, you can compute expectation values by first performing the shadow measurement and then perform classical post-processing using the :class:`~.pennylane.ClassicalShadow`
 # class methods.
 
-dev = qml.device("default.qubit", wires=range(2))
-@qml.set_shots(1000)
-@qml.qnode(dev, interface="autograd")
+dev = qp.device("default.qubit", wires=range(2))
+@qp.set_shots(1000)
+@qp.qnode(dev, interface="autograd")
 def qnode(x):
-    qml.Hadamard(0)
-    qml.CNOT((0,1))
-    qml.RX(x, wires=0)
+    qp.Hadamard(0)
+    qp.CNOT((0,1))
+    qp.RX(x, wires=0)
     return classical_shadow(wires=range(2))
 
 bits, recipes = qnode(0.5)
@@ -147,12 +147,12 @@ print(bits.shape, recipes.shape)
 # After recording these ``T=1000`` quantum measurements, we can post-process the results to arbitrary local expectation values of Pauli strings.
 # For example, we can compute the expectation value of a Pauli string
 
-print(shadow.expval(qml.PauliX(0) @ qml.PauliX(1)))
+print(shadow.expval(qp.PauliX(0) @ qp.PauliX(1)))
 
 ##############################################################################
 # or of a Hamiltonian:
 
-H = qml.Hamiltonian([1., 1.], [qml.PauliZ(0) @ qml.PauliZ(1), qml.PauliX(0) @ qml.PauliX(1)])
+H = qp.Hamiltonian([1., 1.], [qp.PauliZ(0) @ qp.PauliZ(1), qp.PauliX(0) @ qp.PauliX(1)])
 print(shadow.expval(H))
 
 ##############################################################################
@@ -187,19 +187,19 @@ n_wires = 10
 x = np.arange(2*n_wires, dtype="float64")
 def circuit():
     for i in range(n_wires):
-        qml.RY(x[i], i)
+        qp.RY(x[i], i)
     for i in range(n_wires-1):
-        qml.CNOT((i, i+1))
+        qp.CNOT((i, i+1))
     for i in range(n_wires):
-        qml.RY(x[i+n_wires], i)
+        qp.RY(x[i+n_wires], i)
 
-obs = qml.PauliX(0) @ qml.PauliZ(3) @ qml.PauliX(6) @ qml.PauliZ(7)
+obs = qp.PauliX(0) @ qp.PauliZ(3) @ qp.PauliX(6) @ qp.PauliZ(7)
 
-dev_ideal = qml.device("default.qubit", wires=range(n_wires))
-@qml.qnode(dev_ideal, interface="autograd")
+dev_ideal = qp.device("default.qubit", wires=range(n_wires))
+@qp.qnode(dev_ideal, interface="autograd")
 def qnode_ideal():
     circuit()
-    return qml.expval(obs)
+    return qp.expval(obs)
 
 exact = qnode_ideal()
 
@@ -212,19 +212,19 @@ shotss = range(100, 1000, 100)
 for shots in shotss:
     for _ in range(10):
         # repeating experiment 10 times to obtain averages and standard deviations
-        dev = qml.device("default.qubit", wires=range(10))
+        dev = qp.device("default.qubit", wires=range(10))
 
-        @qml.set_shots(shots)
-        @qml.qnode(dev, interface="autograd")
+        @qp.set_shots(shots)
+        @qp.qnode(dev, interface="autograd")
         def qnode_finite():
             circuit()
-            return qml.expval(obs)
+            return qp.expval(obs)
 
-        @qml.set_shots(shots)
-        @qml.qnode(dev, interface="autograd")
+        @qp.set_shots(shots)
+        @qp.qnode(dev, interface="autograd")
         def qnode_shadow():
             circuit()
-            return qml.shadow_expval(obs)
+            return qp.shadow_expval(obs)
 
         finite.append(rmsd(qnode_finite(), exact))
         shadow.append(rmsd(qnode_shadow(), exact))
@@ -267,7 +267,7 @@ for w in combinations(range(n), q):
 
     # Create all combinations of possible Pauli products P_i P_j P_k.... for wires w
     for obs in product(
-        *[[qml.PauliX, qml.PauliY, qml.PauliZ] for _ in range(len(w))]
+        *[[qp.PauliX, qp.PauliY, qp.PauliZ] for _ in range(len(w))]
         ):
         # Perform tensor product (((P_i @ P_j) @ P_k ) @ ....)
         observables.append(reduce(lambda a, b: a @ b, [ob(wire) for ob, wire in zip(obs, w)]))
@@ -281,28 +281,28 @@ for observable in all_observables[:10]:
 # groups. We need this number to make a fair comparison with classical shadows as we allow for only ``T/n_groups`` shots per group, such that
 # the total number of shots is the same as for the classical shadow execution. We again compare both approaches.
 
-n_groups = len(qml.pauli.group_observables(all_observables))
+n_groups = len(qp.pauli.group_observables(all_observables))
 
-dev_ideal = qml.device("default.qubit", wires=range(n))
+dev_ideal = qp.device("default.qubit", wires=range(n))
 
 x = np.random.rand(n*2)
 def circuit():
     for i in range(n):
-        qml.RX(x[i], i)
+        qp.RX(x[i], i)
 
     for i in range(n):
-        qml.CNOT((i, (i+1)%n))
+        qp.CNOT((i, (i+1)%n))
 
     for i in range(n):
-        qml.RY(x[i+n], i)
+        qp.RY(x[i+n], i)
 
     for i in range(n):
-        qml.CNOT((i, (i+1)%n))
+        qp.CNOT((i, (i+1)%n))
 
-@qml.qnode(dev_ideal, interface="autograd")
+@qp.qnode(dev_ideal, interface="autograd")
 def qnode_ideal():
     circuit()
-    return qml.expval(H)
+    return qp.expval(H)
 
 exact = qnode_ideal()
 finite = []
@@ -311,30 +311,30 @@ shotss = range(100, 10000, 2000)
 for shots in shotss:
     # random Hamiltonian with all q-local observables
     coeffs = np.random.rand(len(all_observables))
-    H = qml.Hamiltonian(coeffs, all_observables, grouping_type="qwc")
+    H = qp.Hamiltonian(coeffs, all_observables, grouping_type="qwc")
 
-    @qml.qnode(dev_ideal, interface="autograd")
+    @qp.qnode(dev_ideal, interface="autograd")
     def qnode_ideal():
         circuit()
-        return qml.expval(H)
+        return qp.expval(H)
 
     exact = qnode_ideal()
 
     for _ in range(10):
-        dev = qml.device("default.qubit", wires=range(5))
+        dev = qp.device("default.qubit", wires=range(5))
 
-        @qml.set_shots(shots)
-        @qml.qnode(dev, interface="autograd")
+        @qp.set_shots(shots)
+        @qp.qnode(dev, interface="autograd")
         def qnode_finite():
             circuit()
-            return qml.expval(H)
+            return qp.expval(H)
 
-        dev = qml.device("default.qubit", wires=range(5))
-        @qml.set_shots(shots*n_groups)
-        @qml.qnode(dev, interface="autograd")
+        dev = qp.device("default.qubit", wires=range(5))
+        @qp.set_shots(shots*n_groups)
+        @qp.qnode(dev, interface="autograd")
         def qnode_shadow():
             circuit()
-            return qml.shadow_expval(H)
+            return qp.shadow_expval(H)
 
         finite.append(rmsd(qnode_finite(), exact))
         shadow.append(rmsd(qnode_shadow(), exact))
@@ -368,9 +368,9 @@ symbols = ["H", "O", "H"]
 coordinates = np.array([[-0.0399, -0.0038, 0.0], [1.5780, 0.8540, 0.0], [2.7909, -0.5159, 0.0]])
 basis_set = "sto-3g"
 
-molecule = qml.qchem.Molecule(symbols, coordinates, basis_name=basis_set)
+molecule = qp.qchem.Molecule(symbols, coordinates, basis_name=basis_set)
 
-H, n_wires = qml.qchem.molecular_hamiltonian(
+H, n_wires = qp.qchem.molecular_hamiltonian(
     molecule,
     active_electrons=4,
     active_orbitals=4,
@@ -379,9 +379,9 @@ H, n_wires = qml.qchem.molecular_hamiltonian(
 )
 
 coeffs, obs = H.terms()
-H_qwc = qml.Hamiltonian(coeffs, obs, grouping_type="qwc")
+H_qwc = qp.Hamiltonian(coeffs, obs, grouping_type="qwc")
 
-groups = qml.pauli.group_observables(obs)
+groups = qp.pauli.group_observables(obs)
 n_groups = len(groups)
 print(f"number of ops in H: {len(obs)}, number of qwc groups: {n_groups}")
 print(f"Each group has sizes {[len(_) for _ in groups]}")
@@ -390,8 +390,8 @@ print(f"Each group has sizes {[len(_) for _ in groups]}")
 # We use a pre-prepared Ansatz that approximates the :math:`\text{H}_2\text{O}` ground state for the given geometry. You can construct this Ansatz by running VQE, see :doc:`demos/tutorial_vqe.`
 # We ran this once on an ideal simulator to get the exact result of the energy for the given Ansatz.
 
-singles, doubles = qml.qchem.excitations(electrons=4, orbitals=n_wires)
-hf = qml.qchem.hf_state(4, n_wires)
+singles, doubles = qp.qchem.excitations(electrons=4, orbitals=n_wires)
+hf = qp.qchem.hf_state(4, n_wires)
 theta = np.array([ 2.20700008e-02,  8.29716448e-02,  2.19227085e+00,
     3.19128513e+00, -1.35370403e+00,  6.61615333e-03,
     7.40317830e-01, -3.73367029e-01,  4.35206518e-02,
@@ -404,7 +404,7 @@ theta = np.array([ 2.20700008e-02,  8.29716448e-02,  2.19227085e+00,
 
 res_exact = -74.57076341
 def circuit():
-    qml.AllSinglesDoubles(weights = theta,
+    qp.AllSinglesDoubles(weights = theta,
         wires = range(n_wires),
         hf_state = hf,
         singles = singles,
@@ -422,26 +422,26 @@ for shots in shotss:
     for _ in range(10):
 
         # execute qwc measurements
-        dev_finite = qml.device("default.qubit", wires=range(n_wires))
+        dev_finite = qp.device("default.qubit", wires=range(n_wires))
 
-        @qml.set_shots(int(shots))
-        @qml.qnode(dev_finite, interface="autograd")
+        @qp.set_shots(int(shots))
+        @qp.qnode(dev_finite, interface="autograd")
         def qnode_finite(H):
             circuit()
-            return qml.expval(H)
+            return qp.expval(H)
 
-        with qml.Tracker(dev_finite) as tracker_finite:
+        with qp.Tracker(dev_finite) as tracker_finite:
             res_finite = qnode_finite(H_qwc)
 
         # execute shadows measurements
-        dev_shadow = qml.device("default.qubit", wires=range(n_wires))
-        @qml.set_shots(int(shots)*n_groups)
-        @qml.qnode(dev_shadow, interface="autograd")
+        dev_shadow = qp.device("default.qubit", wires=range(n_wires))
+        @qp.set_shots(int(shots)*n_groups)
+        @qp.qnode(dev_shadow, interface="autograd")
         def qnode():
             circuit()
             return classical_shadow(wires=range(n_wires))
         
-        with qml.Tracker(dev_shadow) as tracker_shadows:
+        with qp.Tracker(dev_shadow) as tracker_shadows:
             bits, recipes = qnode()
 
         shadow = ClassicalShadow(bits, recipes)

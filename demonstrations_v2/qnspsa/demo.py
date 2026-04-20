@@ -186,7 +186,7 @@ for noisy intermediate-scale quantum (NISQ) devices.
 
 # initialize a graph for the max cut problem
 import networkx as nx
-import pennylane as qml
+import pennylane as qp
 from pennylane import qaoa
 
 nodes = n_qubits = 4
@@ -197,7 +197,7 @@ g = nx.gnm_random_graph(nodes, edges, seed=seed)
 cost_h, mixer_h = qaoa.maxcut(g)
 depth = 2
 # define device to be the PennyLane lightning local simulator
-dev = qml.device("lightning.qubit", wires=n_qubits)
+dev = qp.device("lightning.qubit", wires=n_qubits)
 
 
 def qaoa_layer(gamma, alpha):
@@ -208,19 +208,19 @@ def qaoa_layer(gamma, alpha):
 def qaoa_circuit(params, n_qubits, depth):
     # initialize all qubits into +X eigenstate.
     for w in range(n_qubits):
-        qml.Hadamard(wires=w)
+        qp.Hadamard(wires=w)
     gammas = params[0]
     alphas = params[1]
     # stack building blocks for depth times.
-    qml.layer(qaoa_layer, depth, gammas, alphas)
+    qp.layer(qaoa_layer, depth, gammas, alphas)
 
 
 # define ansatz and loss function
-@qml.set_shots(1000)
-@qml.qnode(dev)
+@qp.set_shots(1000)
+@qp.qnode(dev)
 def cost_function(params):
     qaoa_circuit(params, n_qubits, depth)
-    return qml.expval(cost_h)
+    return qp.expval(cost_h)
 
 
 ######################################################################
@@ -356,14 +356,14 @@ print("Estimated SPSA gradient:\n", grad)
 #
 
 def get_overlap_tape(qnode, params1, params2):
-    tape_forward = qml.workflow.construct_tape(qnode)(params1)
-    tape_inv = qml.workflow.construct_tape(qnode)(params2)
+    tape_forward = qp.workflow.construct_tape(qnode)(params1)
+    tape_inv = qp.workflow.construct_tape(qnode)(params2)
 
-    ops = tape_forward.operations + list(qml.adjoint(op) for op in reversed(tape_inv.operations))
-    return qml.tape.QuantumTape(ops, [qml.probs(wires=tape_forward.wires)])
+    ops = tape_forward.operations + list(qp.adjoint(op) for op in reversed(tape_inv.operations))
+    return qp.tape.QuantumTape(ops, [qp.probs(wires=tape_forward.wires)])
 
 def get_state_overlap(tape):
-    return qml.execute([tape], dev, None)[0][0]
+    return qp.execute([tape], dev, None)[0][0]
 
 
 ######################################################################
@@ -616,10 +616,10 @@ if loss_curr + tol < loss_next:
 # ``QNode.__call__()`` function (in this example, ``cost_function()``). In
 # a handwavy argument, each ``QNode.__call__()`` does the following two
 # things: (1) it constructs a tape with the given parameters, and (2)
-# calls ``qml.execute()`` to execute the single tape.
+# calls ``qp.execute()`` to execute the single tape.
 #
 # However, in this use case, the better practice is to group the tapes and
-# call one ``qml.execute()`` on all the tapes. This practice utilizes the
+# call one ``qp.execute()`` on all the tapes. This practice utilizes the
 # batch execution feature from PennyLane, and has a few potential
 # advantages. Some simulators provide parallelization support, so that the
 # grouped tapes can be executed simutaneously. As an example, utilizing
@@ -635,7 +635,7 @@ if loss_curr + tol < loss_next:
 #
 
 import random
-import pennylane as qml
+import pennylane as qp
 from pennylane import numpy as np
 from scipy.linalg import sqrtm
 import warnings
@@ -698,7 +698,7 @@ class QNSPSA:
             measurements are required for the updates for the case.
 
         Args:
-            cost (qml.QNode): the QNode wrapper for the objective function for
+            cost (qp.QNode): the QNode wrapper for the objective function for
             optimization
             params (np.array): Parameter before update.
 
@@ -723,7 +723,7 @@ class QNSPSA:
         the corresponding objective function value after the step.
 
         Args:
-            cost (qml.QNode): the QNode wrapper for the objective function for
+            cost (qp.QNode): the QNode wrapper for the objective function for
                 optimization
             params (np.array): Parameter before update.
 
@@ -750,7 +750,7 @@ class QNSPSA:
         for i in range(self.resamplings):
             grad_tapes, grad_dir = self.__get_spsa_grad_tapes(cost, params)
             metric_tapes, tensor_dirs = self.__get_tensor_tapes(cost, params)
-            raw_results = qml.execute(grad_tapes + metric_tapes, cost.device, None)
+            raw_results = qp.execute(grad_tapes + metric_tapes, cost.device, None)
             grad = self.__post_process_grad(raw_results[:2], grad_dir)
             metric_tensor = self.__post_process_tensor(raw_results[2:], tensor_dirs)
             grad_avg = grad_avg * i / (i + 1) + grad / (i + 1)
@@ -765,7 +765,7 @@ class QNSPSA:
         grad_avg = np.zeros(params.shape)
         for i in range(self.resamplings):
             grad_tapes, grad_dir = self.__get_spsa_grad_tapes(cost, params)
-            raw_results = qml.execute(grad_tapes, cost.device, None)
+            raw_results = qp.execute(grad_tapes, cost.device, None)
             grad = self.__post_process_grad(raw_results, grad_dir)
             grad_avg = grad_avg * i / (i + 1) + grad / (i + 1)
         return params - self.stepsize * grad_avg
@@ -818,8 +818,8 @@ class QNSPSA:
         # used to estimate the gradient per optimization step. The sampled
         # direction is of the shape of the input parameter.
         direction = self.__get_perturbation_direction(params)
-        tape_forward = qml.workflow.construct_tape(cost)(params + self.finite_diff_step * direction)
-        tape_backward = qml.workflow.construct_tape(cost)(params - self.finite_diff_step * direction)
+        tape_forward = qp.workflow.construct_tape(cost)(params + self.finite_diff_step * direction)
+        tape_backward = qp.workflow.construct_tape(cost)(params - self.finite_diff_step * direction)
         return [tape_forward, tape_backward], direction
 
     def __update_tensor(self, tensor_raw):
@@ -862,10 +862,10 @@ class QNSPSA:
 
     def __apply_blocking(self, cost, params_curr, params_next):
         # For numerical stability: apply the blocking condition on the parameter update.
-        tape_loss_curr = qml.workflow.construct_tape(cost)(params_curr)
-        tape_loss_next = qml.workflow.construct_tape(cost)(params_next)
+        tape_loss_curr = qp.workflow.construct_tape(cost)(params_curr)
+        tape_loss_next = qp.workflow.construct_tape(cost)(params_next)
 
-        loss_curr, loss_next = qml.execute([tape_loss_curr, tape_loss_next], cost.device, None)
+        loss_curr, loss_next = qp.execute([tape_loss_curr, tape_loss_next], cost.device, None)
         # self.k has been updated earlier.
         ind = (self.k - 2) % self.history_length
         self.last_n_steps[ind] = loss_curr
