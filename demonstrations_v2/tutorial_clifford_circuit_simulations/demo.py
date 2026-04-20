@@ -131,21 +131,21 @@ performs several measurements.
 
 """
 
-import pennylane as qml
+import pennylane as qp
 
-dev = qml.device("default.clifford", wires=2, tableau=True)
+dev = qp.device("default.clifford", wires=2, tableau=True)
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def circuit(return_state=True):
-    qml.X(wires=[0])
-    qml.CNOT(wires=[0, 1])
-    qml.Hadamard(wires=[0])
-    qml.Hadamard(wires=[1])
+    qp.X(wires=[0])
+    qp.CNOT(wires=[0, 1])
+    qp.Hadamard(wires=[0])
+    qp.Hadamard(wires=[1])
     return [
-        qml.expval(op=qml.X(0) @ qml.X(1)),
-        qml.var(op=qml.Z(0) @ qml.Z(1)),
-        qml.probs(),
-    ] + ([qml.state()] if return_state else [])
+        qp.expval(op=qp.X(0) @ qp.X(1)),
+        qp.var(op=qp.Z(0) @ qp.Z(1)),
+        qp.probs(),
+    ] + ([qp.state()] if return_state else [])
 
 
 expval, var, probs, state = circuit(return_state=True)
@@ -163,9 +163,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Get the results with 10000 shots and assert them
-shot_result = qml.set_shots(circuit, shots=10000)(return_state=False)
+shot_result = qp.set_shots(circuit, shots=10000)(return_state=False)
 shot_exp, shot_var, shot_probs = shot_result
-assert qml.math.allclose([shot_exp, shot_var], [expval, var], atol=1e-3)
+assert qp.math.allclose([shot_exp, shot_var], [expval, var], atol=1e-3)
 
 # Define computational basis states
 basis_states = ["|00⟩", "|01⟩", "|10⟩", "|11⟩"]
@@ -203,15 +203,15 @@ plt.show()
 # preparation circuit:
 #
 
-dev = qml.device("default.clifford")
+dev = qp.device("default.clifford")
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def GHZStatePrep(num_wires):
     """Prepares the GHZ State"""
-    qml.Hadamard(wires=[0])
+    qp.Hadamard(wires=[0])
     for wire in range(num_wires):
-        qml.CNOT(wires=[wire, wire + 1])
-    return qml.expval(qml.Z(0) @ qml.Z(num_wires - 1))
+        qp.CNOT(wires=[wire, wire + 1])
+    return qp.expval(qp.Z(0) @ qp.Z(num_wires - 1))
 
 
 ######################################################################
@@ -221,7 +221,7 @@ def GHZStatePrep(num_wires):
 
 from timeit import timeit
 
-dev = qml.device("default.clifford")
+dev = qp.device("default.clifford")
 
 num_shots = [None, 100000]
 num_wires = [10, 100, 1000, 10000]
@@ -232,7 +232,7 @@ shots_times = np.zeros((len(num_shots), len(num_wires)))
 for ind, num_shot in enumerate(num_shots):
     for idx, num_wire in enumerate(num_wires):
         shots_times[ind][idx] = timeit(
-            "qml.set_shots(GHZStatePrep, shots=num_shot)(num_wire)", number=5, globals=globals()
+            "qp.set_shots(GHZStatePrep, shots=num_shot)(num_wire)", number=5, globals=globals()
         ) / 5 # average over 5 trials
 
 # Figure set up
@@ -320,23 +320,23 @@ tableau_to_pauli_rep(state)
 # As previously suggested, the evolution of the stabilizer tableau after the application of
 # each Clifford gate operation can be understood by learning how the generator set is
 # transformed based on their Clifford tableaus. For example, the first circuit operation
-# ``qml.X(0)`` has the following tableau:
+# ``qp.X(0)`` has the following tableau:
 #
 
 def clifford_tableau(op):
     """Prints a Clifford Tableau representation for a given operation."""
     # Print the op and set up Pauli operators to be conjugated
     print(f"Tableau: {op.name}({', '.join(map(str, op.wires))})")
-    pauli_ops = [pauli(wire) for wire in op.wires for pauli in [qml.X, qml.Z]]
+    pauli_ops = [pauli(wire) for wire in op.wires for pauli in [qp.X, qp.Z]]
     # obtain conjugation of Pauli op and decompose it in Pauli basis
     for pauli in pauli_ops:
-        conjugate = qml.prod(qml.adjoint(op), pauli, op).simplify()
-        decompose = qml.pauli_decompose(conjugate.matrix(), wire_order=op.wires)
+        conjugate = qp.prod(qp.adjoint(op), pauli, op).simplify()
+        decompose = qp.pauli_decompose(conjugate.matrix(), wire_order=op.wires)
         decompose_coeffs, decompose_ops = decompose.terms()
         phase = "+" if list(decompose_coeffs)[0] >= 0 else "-"
         print(pauli, "-—>", phase, list(decompose_ops)[0])
 
-clifford_tableau(qml.X(0))
+clifford_tableau(qp.X(0))
 
 ######################################################################
 # We now have the two key components for studying the evolution of the stabilizer tableau of the
@@ -347,26 +347,26 @@ clifford_tableau(qml.X(0))
 # :func:`~pennylane.snapshots` in the circuit using the following transform.
 #
 
-@qml.transform
+@qp.transform
 def state_at_each_step(tape):
     """Transforms a circuit to access state after every operation"""
-    # This builds list with a qml.Snapshot operation before every tape operation
+    # This builds list with a qp.Snapshot operation before every tape operation
     operations = []
     for op in tape.operations:
-        operations.append(qml.Snapshot())
+        operations.append(qp.Snapshot())
         operations.append(op)
-    operations.append(qml.Snapshot()) # add a final qml.Snapshot operation at end
+    operations.append(qp.Snapshot()) # add a final qp.Snapshot operation at end
     new_tape = type(tape)(operations, tape.measurements, shots=tape.shots)
     postprocessing = lambda results: results[0] # func for processing results
     return [new_tape], postprocessing
 
-snapshots = qml.snapshots(state_at_each_step(circuit))()
+snapshots = qp.snapshots(state_at_each_step(circuit))()
 
 ######################################################################
 # We can now access the tableau state via the ``snapshots`` dictionary, where the integer keys
 # represent each step. The step ``0`` corresponds to the initial all zero :math:`|00\rangle`
 # state, which is stabilized by the Pauli operators :math:`Z_0` and :math:`Z_1.` Evolving
-# it by a ``qml.X(0)`` would correspond to transforming its stabilizer generators
+# it by a ``qp.X(0)`` would correspond to transforming its stabilizer generators
 # from :math:`+Z_0` to :math:`-Z_0,` while keeping the destabilizer generators the same.
 #
 
@@ -381,7 +381,7 @@ print("Applying X(0): ", tableau_to_pauli_rep(snapshots[1]))
 # Let's examine the remaining operations to confirm this.
 #
 
-tape = qml.workflow.construct_tape(circuit)()
+tape = qp.workflow.construct_tape(circuit)()
 circuit_ops = tape.operations
 print("Circ. Ops: ", circuit_ops)
 
@@ -410,18 +410,18 @@ for step in range(1, len(circuit_ops)):
 # Let's see this in action for the following two-qubit parameterized circuit:
 #
 
-dev = qml.device("default.qubit")
-@qml.qnode(dev)
+dev = qp.device("default.qubit")
+@qp.qnode(dev)
 def original_circuit(x, y):
-    qml.RX(x, 0)
-    qml.CNOT([0, 1])
-    qml.RY(y, 0)
-    return qml.probs()
+    qp.RX(x, 0)
+    qp.CNOT([0, 1])
+    qp.RY(y, 0)
+    return qp.probs()
 
 x, y = np.pi / 2, np.pi / 4
-unrolled_circuit = qml.transforms.clifford_t_decomposition(original_circuit)
+unrolled_circuit = qp.transforms.clifford_t_decomposition(original_circuit)
 
-qml.draw_mpl(unrolled_circuit, decimals=2, style="pennylane")(x, y)
+qp.draw_mpl(unrolled_circuit, decimals=2, style="pennylane")(x, y)
 plt.show()
 
 ######################################################################
@@ -434,7 +434,7 @@ plt.show()
 #
 
 original_probs, unrolled_probs = original_circuit(x, y), unrolled_circuit(x, y)
-assert qml.math.allclose(original_probs, unrolled_probs, atol=1e-3)
+assert qp.math.allclose(original_probs, unrolled_probs, atol=1e-3)
 
 ######################################################################
 # Ultimately, one can use this decomposition to perform some basic resource analysis for
@@ -446,7 +446,7 @@ assert qml.math.allclose(original_probs, unrolled_probs, atol=1e-3)
 # `Eastin-Knill <https://en.wikipedia.org/wiki/Eastin%E2%80%93Knill_theorem>`__ theorem.
 #
 
-with qml.Tracker(dev) as tracker:
+with qp.Tracker(dev) as tracker:
     unrolled_circuit(x, y)
 
 resources_lst = tracker.history["resources"]

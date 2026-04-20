@@ -22,7 +22,7 @@ and more. And you can also already explore some of these models in detail using 
 # ---------------------
 # PennyLane provides a set of built-in
 # `functions <https://docs.pennylane.ai/en/latest/code/qml_spin.html#hamiltonian-functions>`__
-# in the `qml.spin <https://docs.pennylane.ai/en/latest/code/qml_spin.html>`__ module for
+# in the `qp.spin <https://docs.pennylane.ai/en/latest/code/qml_spin.html>`__ module for
 # constructing spin Hamiltonians with minimal input needed from the user: we only need to specify
 # the lattice that describes spin sites and the parameters that describe the interactions in our
 # system. Let’s look at some examples for the models that are currently supported in PennyLane.
@@ -58,13 +58,13 @@ and more. And you can also already explore some of these models in detail using 
 # :math:`2 \times 2 = 4` sites in total. We will provide more details on constructing lattices in
 # the following sections.
 
-import pennylane as qml
+import pennylane as qp
 
 n_cells = [2, 2]
 hopping = 0.2
 onsite = 0.3
 
-hamiltonian = qml.spin.fermi_hubbard('square', n_cells, hopping, onsite)
+hamiltonian = qp.spin.fermi_hubbard('square', n_cells, hopping, onsite)
 print('Hamiltonian:\n')
 hamiltonian
 
@@ -103,7 +103,7 @@ def plot(lattice, figsize=None, showlabel=True):
     plt.axis("off")
     plt.show()
 
-lattice = qml.spin.generate_lattice('square', n_cells)
+lattice = qp.spin.generate_lattice('square', n_cells)
 plot(lattice)
 
 ######################################################################
@@ -125,9 +125,9 @@ plot(lattice)
 # can be constructed on a ``triangle`` lattice as follows.
 
 coupling = [0.5, 0.5, 0.5]
-hamiltonian = qml.spin.heisenberg('triangle', n_cells, coupling)
+hamiltonian = qp.spin.heisenberg('triangle', n_cells, coupling)
 
-lattice = qml.spin.generate_lattice('triangle', n_cells)
+lattice = qp.spin.generate_lattice('triangle', n_cells)
 plot(lattice)
 
 ######################################################################
@@ -146,9 +146,9 @@ plot(lattice)
 # ``honeycomb`` lattice as follows.
 
 coupling, h = 0.5, 1.0
-hamiltonian = qml.spin.transverse_ising('honeycomb', n_cells, coupling, h)
+hamiltonian = qp.spin.transverse_ising('honeycomb', n_cells, coupling, h)
 
-lattice = qml.spin.generate_lattice('honeycomb', n_cells)
+lattice = qp.spin.generate_lattice('honeycomb', n_cells)
 plot(lattice)
 
 ######################################################################
@@ -167,7 +167,7 @@ plot(lattice)
 # are the coupling constants in each direction. The Hamiltonian can be constructed as follows.
 
 coupling = [0.5, 0.6, 0.7]
-hamiltonian = qml.spin.kitaev(n_cells, coupling)
+hamiltonian = qp.spin.kitaev(n_cells, coupling)
 
 ######################################################################
 # Haldane model
@@ -192,9 +192,9 @@ hamiltonian = qml.spin.kitaev(n_cells, coupling)
 hopping = 0.5
 hopping_next = 1.0
 phi = 0.1
-hamiltonian = qml.spin.haldane('kagome', n_cells, hopping, hopping_next, phi)
+hamiltonian = qp.spin.haldane('kagome', n_cells, hopping, hopping_next, phi)
 
-lattice = qml.spin.generate_lattice('kagome', n_cells)
+lattice = qp.spin.generate_lattice('kagome', n_cells)
 plot(lattice)
 
 ######################################################################
@@ -220,9 +220,9 @@ plot(lattice)
 hopping = 0.5
 coulomb = 1.0
 intersite_coupling = 0.2
-hamiltonian = qml.spin.emery('lieb', n_cells, hopping, coulomb, intersite_coupling)
+hamiltonian = qp.spin.emery('lieb', n_cells, hopping, coulomb, intersite_coupling)
 
-lattice = qml.spin.generate_lattice('lieb', n_cells)
+lattice = qp.spin.generate_lattice('lieb', n_cells)
 plot(lattice)
 
 ######################################################################
@@ -252,7 +252,7 @@ plot(lattice)
 # :math:`3 \times 3 = 9` cells. Because each cell of the ``square`` lattice contains only one
 # site, we get :math:`9` sites in total, which are all connected to their nearest neighbor.
 
-lattice = qml.spin.generate_lattice('square', [3, 3])
+lattice = qp.spin.generate_lattice('square', [3, 3])
 
 ######################################################################
 # To visualize this lattice, we use the plotting function we created before.
@@ -368,7 +368,7 @@ print(lattice.edges)
 # Now we pass the lattice object to the :func:`~.pennylane.spin.spin_hamiltonian` function, which is
 # a helper function that constructs a Hamiltonian from a lattice object.
 
-hamiltonian = qml.spin.spin_hamiltonian(lattice=lattice)
+hamiltonian = qp.spin.spin_hamiltonian(lattice=lattice)
 
 ######################################################################
 # Alternatively, you can build the Hamiltonian manually by looping over the custom edges
@@ -386,7 +386,7 @@ hamiltonian
 
 ######################################################################
 # You can see that it is easy and intuitive to construct this anisotropic Hamiltonian with the tools
-# available in the `qml.spin <https://docs.pennylane.ai/en/latest/code/qml_spin.html>`__ module. You can
+# available in the `qp.spin <https://docs.pennylane.ai/en/latest/code/qml_spin.html>`__ module. You can
 # use these tools to construct custom Hamiltonians for other interesting systems.
 #
 # Conclusion

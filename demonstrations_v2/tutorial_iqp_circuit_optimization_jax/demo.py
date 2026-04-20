@@ -113,7 +113,7 @@ gates = [[[0]], [[1]], [[2]], [[0,1]], [[0,2]], [[1,2]]]
 # Additionally, we can evaluate expectation values of tensor products of Pauli Z operators
 # specified by lists of the form ``op`` above with the following
 #
-import pennylane as qml
+import pennylane as qp
 import numpy as np
 
 # Suppress the warning caused by iqpopt
@@ -121,30 +121,30 @@ import warnings
 from pennylane.exceptions import PennyLaneDeprecationWarning
 warnings.filterwarnings("ignore", category=PennyLaneDeprecationWarning)
 
-def penn_obs(op: np.ndarray) -> qml.operation.Operator:
+def penn_obs(op: np.ndarray) -> qp.operation.Operator:
     """Returns a PennyLane observable from a bitstring representation.
 
     Args:
         op (np.ndarray): Bitstring representation of the Z operator.
 
     Returns:
-        qml.Observable: PennyLane observable.
+        qp.Observable: PennyLane observable.
     """
     for i, z in enumerate(op):
         if i==0:
             if z:
-                obs = qml.Z(i)
+                obs = qp.Z(i)
             else:
-                obs = qml.I(i)
+                obs = qp.I(i)
         else:
             if z:
-                obs @= qml.Z(i)
+                obs @= qp.Z(i)
     return obs
 
 ######################################################################
 # Now we have our circuit as
 #
-def penn_iqp_circuit(params: np.ndarray, gates: list, op: np.ndarray, n_qubits: int) -> qml.measurements.ExpectationMP:
+def penn_iqp_circuit(params: np.ndarray, gates: list, op: np.ndarray, n_qubits: int) -> qp.measurements.ExpectationMP:
     """Defines the circuit that calculates the expectation value of the operator with the IQP circuit with PennyLane tools.
 
     Args:
@@ -154,11 +154,11 @@ def penn_iqp_circuit(params: np.ndarray, gates: list, op: np.ndarray, n_qubits: 
         n_qubits (int): The total number of qubits in the circuit.
 
     Returns:
-        qml.measurements.ExpectationMP: PennyLane circuit with an expectation value.
+        qp.measurements.ExpectationMP: PennyLane circuit with an expectation value.
     """
-    qml.IQP(weights=params, num_wires=n_qubits, pattern=gates)
+    qp.IQP(weights=params, num_wires=n_qubits, pattern=gates)
     obs = penn_obs(op)
-    return qml.expval(obs)
+    return qp.expval(obs)
 
 def penn_iqp_op_expval(params: np.ndarray, gates: list, op: np.ndarray, n_qubits: int) -> float:
     """Calculates the expectation value of the operator with the IQP circuit with PennyLane tools.
@@ -172,8 +172,8 @@ def penn_iqp_op_expval(params: np.ndarray, gates: list, op: np.ndarray, n_qubits
     Returns:
         float: Expectation value.
     """
-    dev = qml.device("lightning.qubit", wires=n_qubits)
-    penn_iqp_circuit_exe = qml.QNode(penn_iqp_circuit, dev)
+    dev = qp.device("lightning.qubit", wires=n_qubits)
+    penn_iqp_circuit_exe = qp.QNode(penn_iqp_circuit, dev)
     return penn_iqp_circuit_exe(params, gates, op, n_qubits)
 
 ######################################################################
@@ -261,7 +261,7 @@ print("Standard error: ", std)
 
 ######################################################################
 # Since the calculation is stochastic, the result is not exactly the same as
-# the one obtained with PennyLane's ``qml.expval`` method. However, as we can see, they are within the standard error `std`. You can try
+# the one obtained with PennyLane's ``qp.expval`` method. However, as we can see, they are within the standard error `std`. You can try
 # increasing ``n_samples`` in order to obtain a more accurate approximation.
 #
 # Additionally, this function supports fast batch evaluation of expectation values. By specifying a batch of operators ``ops`` as an array, we can compute expectation values and errors in parallel using the same syntax.

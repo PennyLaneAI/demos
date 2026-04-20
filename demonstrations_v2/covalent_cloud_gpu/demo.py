@@ -32,7 +32,7 @@ r"""Running GPU-accelerated quantum circuit simulations on Covalent Cloud using 
 import covalent as ct
 import covalent_cloud as cc
 import matplotlib.pyplot as plt
-import pennylane as qml
+import pennylane as qp
 from matplotlib.colors import ListedColormap
 from pennylane import numpy as np
 from sklearn.datasets import make_blobs
@@ -124,11 +124,11 @@ QML_DEVICE = "lightning.qubit"
 
 def get_kernel_circuit(n_wires):
 
-    @qml.qnode(qml.device(QML_DEVICE, wires=n_wires, shots=None))
+    @qp.qnode(qp.device(QML_DEVICE, wires=n_wires, shots=None))
     def circuit(x1, x2):
-        qml.IQPEmbedding(x1, wires=range(n_wires), n_repeats=4)
-        qml.adjoint(qml.IQPEmbedding)(x2, wires=range(n_wires), n_repeats=4)
-        return qml.probs(wires=range(n_wires))
+        qp.IQPEmbedding(x1, wires=range(n_wires), n_repeats=4)
+        qp.adjoint(qp.IQPEmbedding)(x2, wires=range(n_wires), n_repeats=4)
+        return qp.probs(wires=range(n_wires))
 
     return lambda x1, x2: circuit(x1, x2)[0]  # |0..0> state probability
 
@@ -173,7 +173,7 @@ DISP_SETTINGS = {
 def classify_with_qsvm(Xtr, Xte, ytr, yte):
     kernel = get_kernel_circuit(n_wires=Xtr.shape[1])
 
-    kernel_matrix_fn = lambda X, Z: qml.kernels.kernel_matrix(X, Z, kernel)
+    kernel_matrix_fn = lambda X, Z: qp.kernels.kernel_matrix(X, Z, kernel)
     svc = SVC(kernel=kernel_matrix_fn).fit(Xtr, ytr)
 
     # train/test accuracy
@@ -265,7 +265,7 @@ decision_boundary_figure
 #    import covalent as ct
 #    import covalent_cloud as cc
 #    import matplotlib.pyplot as plt
-#    import pennylane as qml
+#    import pennylane as qp
 #    from matplotlib.colors import ListedColormap
 #    from pennylane import numpy as np
 #    from sklearn.datasets import make_blobs
@@ -308,11 +308,11 @@ decision_boundary_figure
 #
 #    def get_kernel_circuit(n_wires):
 #
-#        @qml.qnode(qml.device(QML_DEVICE, wires=n_wires, shots=None))
+#        @qp.qnode(qp.device(QML_DEVICE, wires=n_wires, shots=None))
 #        def circuit(x1, x2):
-#            qml.IQPEmbedding(x1, wires=range(n_wires), n_repeats=4)
-#            qml.adjoint(qml.IQPEmbedding)(x2, wires=range(n_wires), n_repeats=4)
-#            return qml.probs(wires=range(n_wires))
+#            qp.IQPEmbedding(x1, wires=range(n_wires), n_repeats=4)
+#            qp.adjoint(qp.IQPEmbedding)(x2, wires=range(n_wires), n_repeats=4)
+#            return qp.probs(wires=range(n_wires))
 #
 #        return lambda x1, x2: circuit(x1, x2)[0]  # |0..0> state probability
 #
@@ -335,7 +335,7 @@ decision_boundary_figure
 #    def classify_with_qsvm(Xtr, Xte, ytr, yte):
 #        kernel = get_kernel_circuit(n_wires=Xtr.shape[1])
 #
-#        kernel_matrix_fn = lambda X, Z: qml.kernels.kernel_matrix(X, Z, kernel)
+#        kernel_matrix_fn = lambda X, Z: qp.kernels.kernel_matrix(X, Z, kernel)
 #        svc = SVC(kernel=kernel_matrix_fn).fit(Xtr, ytr)
 #
 #        # train/test accuracy

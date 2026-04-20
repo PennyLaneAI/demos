@@ -43,7 +43,7 @@ We will briefly introduce these functionalities and afterwards go more in depth 
 We start by initializing a noisy device using a noise model with :class:`~.pennylane.DepolarizingChannel` errors:
 """
 
-import pennylane as qml
+import pennylane as qp
 import pennylane.numpy as np
 from pennylane.noise import mitigate_with_zne
 
@@ -53,22 +53,22 @@ n_wires = 4
 np.random.seed(1234)
 
 # Describe noise model
-fcond = qml.noise.wires_in(range(n_wires))
-noise = qml.noise.partial_wires(qml.DepolarizingChannel, 0.05)
-noise_model = qml.NoiseModel({fcond: noise})
+fcond = qp.noise.wires_in(range(n_wires))
+noise = qp.noise.partial_wires(qp.DepolarizingChannel, 0.05)
+noise_model = qp.NoiseModel({fcond: noise})
 
 # Load devices
-dev_ideal = qml.device("default.mixed", wires=n_wires)
-dev_noisy = qml.add_noise(dev_ideal, noise_model=noise_model)
+dev_ideal = qp.device("default.mixed", wires=n_wires)
+dev_noisy = qp.add_noise(dev_ideal, noise_model=noise_model)
 
 ##############################################################################
 # We are going to use the transverse field Ising model Hamiltonian :math:`H = - \sum_i X_i X_{i+1} + 0.5 \sum_i Z_i` as our observable:
 
 coeffs = [1.0] * (n_wires - 1) + [0.5] * n_wires
-observables = [qml.PauliX(i) @ qml.PauliX(i + 1) for i in range(n_wires - 1)]
-observables += [qml.PauliZ(i) for i in range(n_wires)]
+observables = [qp.PauliX(i) @ qp.PauliX(i + 1) for i in range(n_wires - 1)]
+observables += [qp.PauliZ(i) for i in range(n_wires)]
 
-H = qml.Hamiltonian(coeffs, observables)
+H = qp.Hamiltonian(coeffs, observables)
 
 
 ##############################################################################
@@ -81,12 +81,12 @@ w1 = np.ones((n_wires), requires_grad=True)
 w2 = np.ones((n_layers, n_wires - 1, 2), requires_grad=True)
 
 def qfunc(w1, w2):
-    qml.SimplifiedTwoDesign(w1, w2, wires=range(n_wires))
-    return qml.expval(H)
+    qp.SimplifiedTwoDesign(w1, w2, wires=range(n_wires))
+    return qp.expval(H)
 
-qnode_ideal = qml.QNode(qfunc, dev_ideal)
-qnode_noisy = qml.QNode(qfunc, dev_noisy)
-qnode_noisy = qml.transforms.decompose(qnode_noisy, gate_set = ["RY", "CZ"])
+qnode_ideal = qp.QNode(qfunc, dev_ideal)
+qnode_noisy = qp.QNode(qfunc, dev_noisy)
+qnode_noisy = qp.transforms.decompose(qnode_noisy, gate_set = ["RY", "CZ"])
 
 ##############################################################################
 # We can then simply transform the noisy QNode :math:`f^{⚡}` with :func:`~.pennylane.noise.mitigate_with_zne` to generate :math:`\tilde{f}.`
@@ -96,8 +96,8 @@ scale_factors = [1, 2, 3]
 
 qnode_mitigated = mitigate_with_zne(qnode_noisy, 
     scale_factors=scale_factors,
-    folding=qml.noise.fold_global,
-    extrapolate=qml.noise.richardson_extrapolate,
+    folding=qp.noise.fold_global,
+    extrapolate=qp.noise.richardson_extrapolate,
 )
 
 print("Ideal QNode: ", qnode_ideal(w1, w2))
@@ -110,7 +110,7 @@ print("Noisy QNode: ", qnode_noisy(w1, w2))
 #
 # The cool thing about this new mitigated QNode is that it is still differentiable! That is, we can compute its gradient as usual:
 
-grad = qml.grad(qnode_mitigated)(w1, w2)
+grad = qp.grad(qnode_mitigated)(w1, w2)
 print(grad[0])
 print(grad[1])
 
@@ -136,7 +136,7 @@ print(grad[1])
 
 scale_factors = [1, 2, 3]
 folded_res = [
-    qml.noise.fold_global(qnode_noisy, lambda_)(w1, w2) for lambda_ in scale_factors
+    qp.noise.fold_global(qnode_noisy, lambda_)(w1, w2) for lambda_ in scale_factors
 ]
 
 ideal_res = qnode_ideal(w1, w2)
@@ -184,7 +184,7 @@ plt.show()
 
 def VQE_run(cost_fn, max_iter, stepsize=0.1):
     """VQE Optimization loop"""
-    opt = qml.AdamOptimizer(stepsize=stepsize)
+    opt = qp.AdamOptimizer(stepsize=stepsize)
 
     # fixed initial guess
     w1 = np.ones((n_wires), requires_grad=True)
@@ -209,7 +209,7 @@ energy_ideal = VQE_run(qnode_ideal, max_iter)
 energy_noisy = VQE_run(qnode_noisy, max_iter)
 energy_mitigated = VQE_run(qnode_mitigated, max_iter)
 
-energy_exact = np.min(np.linalg.eigvalsh(qml.matrix(H)))
+energy_exact = np.min(np.linalg.eigvalsh(qp.matrix(H)))
 
 plt.figure(figsize=(8, 5))
 plt.plot(energy_noisy, ".--", label="VQE E_noisy")

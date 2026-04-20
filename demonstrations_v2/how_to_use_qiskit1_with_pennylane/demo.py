@@ -35,14 +35,14 @@ aforementioned jump like it’s nothing 😌.
 #
 # If you want to distill how a PennyLane plugin works down to one thing, it’s all in the provided devices! In
 # PennyLane, you just :doc:`create your circuit (a quantum function) </introduction/circuits>` and decorate it with
-# the QNode decorator :func:`@qml.qnode(dev) <pennylane.qnode>`, where ``dev`` is (one of) the plugin’s device(s).
+# the QNode decorator :func:`@qp.qnode(dev) <pennylane.qnode>`, where ``dev`` is (one of) the plugin’s device(s).
 #
 # In PennyLane and its plugins,
 # `devices <https://pennylane.ai/plugins/>`__ are called upon by their short name, and can be loaded via the :func:`~pennylane.device` function:
 #
 # .. code-block:: 
 #
-#   qml.device("shortname", *device_options)
+#   qp.device("shortname", *device_options)
 #
 # If you’ve
 # seen PennyLane code before, you’ve probably seen ``"default.qubit"`` or ``"lightning.qubit"`` as
@@ -61,7 +61,7 @@ aforementioned jump like it’s nothing 😌.
 #
 #
 # If you want to use any of these devices in PennyLane, simply put those short names into
-# ``qml.device`` and any quantum function decorated with ``@qml.qnode(dev)`` will execute on the
+# ``qp.device`` and any quantum function decorated with ``@qp.qnode(dev)`` will execute on the
 # corresponding device.
 #
 
@@ -96,16 +96,16 @@ print(counts)
 # In PennyLane, we can execute the exact same circuit on the exact same device and backend like so:
 #
 
-import pennylane as qml
+import pennylane as qp
 
-dev = qml.device("qiskit.basicsim", wires=2)
+dev = qp.device("qiskit.basicsim", wires=2)
 
-@qml.set_shots(1024)
-@qml.qnode(dev)
+@qp.set_shots(1024)
+@qp.qnode(dev)
 def circuit():
-    qml.Hadamard(0)
-    qml.CNOT([0, 1])
-    return qml.counts(wires=1)
+    qp.Hadamard(0)
+    qp.CNOT([0, 1])
+    return qp.counts(wires=1)
 
 print(circuit())
 
@@ -202,10 +202,10 @@ print(result_estimator)
 
 ######################################################################
 # To convert this work into PennyLane, let’s start with the Qiskit-side ``SparsePauliOp`` operators
-# and converting them to PennyLane objects with ``qml.from_qiskit_op``.
+# and converting them to PennyLane objects with ``qp.from_qiskit_op``.
 #
 
-pl_operators = [qml.from_qiskit_op(qiskit_op) for qiskit_op in operators]
+pl_operators = [qp.from_qiskit_op(qiskit_op) for qiskit_op in operators]
 print(pl_operators)
 
 ######################################################################
@@ -227,22 +227,22 @@ print(pl_operators)
 #
 
 ######################################################################
-# Next, we show how to convert the Qiskit ``QuantumCircuit``, ``qc``, to PennyLane with ``qml.from_qiskit``. We
+# Next, we show how to convert the Qiskit ``QuantumCircuit``, ``qc``, to PennyLane with ``qp.from_qiskit``. We
 # can append the measurements — expectation values (:func:`~pennylane.expval`) of ``pl_operators`` — with the
 # ``measurements`` keyword argument, which accepts a list of PennyLane measurements.
 #
 
-measurements = [qml.expval(op) for op in pl_operators]  # expectation values
+measurements = [qp.expval(op) for op in pl_operators]  # expectation values
 
 qc = qiskit_GHZ_circuit(n)
-pl_qfunc = qml.from_qiskit(qc, measurements=measurements)
+pl_qfunc = qp.from_qiskit(qc, measurements=measurements)
 
 ######################################################################
 # The last thing to do is make ``pl_func`` a QNode. We can’t decorate ``pl_qfunc`` with
-# ``@qml.qnode``, but we can equivalently wrap it with ``qml.QNode`` and supply the device.
+# ``@qp.qnode``, but we can equivalently wrap it with ``qp.QNode`` and supply the device.
 #
 
-pl_circuit = qml.QNode(pl_qfunc, device=qml.device("lightning.qubit", wires=n))
+pl_circuit = qp.QNode(pl_qfunc, device=qp.device("lightning.qubit", wires=n))
 print(pl_circuit())
 
 ######################################################################
@@ -260,11 +260,11 @@ print(pl_circuit())
 # you can measure this with :func:`~pennylane.classical_shadow`.
 #
 
-measurements = [qml.classical_shadow(wires=range(n))]
-pl_qfunc = qml.from_qiskit(qc, measurements=measurements)
+measurements = [qp.classical_shadow(wires=range(n))]
+pl_qfunc = qp.from_qiskit(qc, measurements=measurements)
 
-pl_circuit = qml.QNode(pl_qfunc, device=qml.device("default.qubit", wires=n))
-print(qml.set_shots(pl_circuit, shots=5)())
+pl_circuit = qp.QNode(pl_qfunc, device=qp.device("default.qubit", wires=n))
+print(qp.set_shots(pl_circuit, shots=5)())
 
 ######################################################################
 # .. rst-class:: sphx-glr-script-out
@@ -332,27 +332,27 @@ plt.show()
 # This circuit contains two sets of differentiable parameters: ``phis`` (length 2) and ``theta``
 # (scalar).
 #
-# If we give this Qiskit circuit to ``qml.from_qiskit``, we get a quantum function that can
+# If we give this Qiskit circuit to ``qp.from_qiskit``, we get a quantum function that can
 # subsequently be called within a circuit — it’s as if the gates and operations contained within it
 # get transferred over to our new QNode.
 #
 
 import pennylane.numpy as np
 
-pl_qfunc = qml.from_qiskit(qc)
+pl_qfunc = qp.from_qiskit(qc)
 
-dev = qml.device("lightning.qubit", wires=n)
+dev = qp.device("lightning.qubit", wires=n)
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def differentiable_circuit(phis, theta):
     pl_qfunc(phis, theta)
-    return [qml.expval(qml.Z(i)) for i in range(n)]
+    return [qp.expval(qp.Z(i)) for i in range(n)]
 
 phis = np.array([0.6, 0.7])
 theta = np.array([0.19])
 
 print(differentiable_circuit(phis, theta))
-qml.draw_mpl(differentiable_circuit, style="pennylane")(phis, theta)
+qp.draw_mpl(differentiable_circuit, style="pennylane")(phis, theta)
 plt.show()
 
 ######################################################################
@@ -388,7 +388,7 @@ def cost(phis, theta):
 # function value after each optimization step.
 #
 
-opt = qml.AdamOptimizer(0.1)
+opt = qp.AdamOptimizer(0.1)
 
 for i in range(100):
     (phis, theta), new_loss = opt.step_and_cost(cost, phis, theta)

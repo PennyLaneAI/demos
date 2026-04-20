@@ -182,21 +182,21 @@ choose the angles of rotation to be
 This can be implemented in PennyLane as follows:
 """
 
-import pennylane as qml
+import pennylane as qp
 from jax import numpy as jnp
 import jax
 
 jax.config.update("jax_enable_x64", True)
-dev = qml.device('lightning.qubit', wires=3)
+dev = qp.device('lightning.qubit', wires=3)
 
-@qml.qnode(dev, interface="jax")
+@qp.qnode(dev, interface="jax")
 def circuit(x, y):
     # prepares the reference state |100>
-    qml.BasisState(jnp.array([1, 0, 0]), wires=[0, 1, 2])
+    qp.BasisState(jnp.array([1, 0, 0]), wires=[0, 1, 2])
     # applies the single excitations
-    qml.SingleExcitation(x, wires=[0, 1])
-    qml.SingleExcitation(y, wires=[0, 2])
-    return qml.state()
+    qp.SingleExcitation(x, wires=[0, 1])
+    qp.SingleExcitation(y, wires=[0, 2])
+    return qp.state()
 
 x = -2 * jnp.arcsin(jnp.sqrt(1/3))
 y = -2 * jnp.arcsin(jnp.sqrt(1/2))
@@ -251,7 +251,7 @@ print("Amplitude of state |100> = ", tensor_state[1, 0, 0])
 nr_particles = 3
 nr_qubits = 6
 
-singles, doubles = qml.qchem.excitations(3, 6)
+singles, doubles = qp.qchem.excitations(3, 6)
 print(f"Single excitations = {singles}")
 print(f"Double excitations = {doubles}")
 
@@ -260,19 +260,19 @@ print(f"Double excitations = {doubles}")
 
 from jax import random
 
-dev2 = qml.device('lightning.qubit', wires=6)
+dev2 = qp.device('lightning.qubit', wires=6)
 
-@qml.qnode(dev2, interface="jax")
+@qp.qnode(dev2, interface="jax")
 def circuit2(x, y):
     # prepares reference state
-    qml.BasisState(jnp.array([1, 1, 1, 0, 0, 0]), wires=[0, 1, 2, 3, 4, 5])
+    qp.BasisState(jnp.array([1, 1, 1, 0, 0, 0]), wires=[0, 1, 2, 3, 4, 5])
     # apply all single excitations
     for i, s in enumerate(singles):
-        qml.SingleExcitation(x[i], wires=s)
+        qp.SingleExcitation(x[i], wires=s)
     # apply all double excitations
     for j, d in enumerate(doubles):
-        qml.DoubleExcitation(y[j], wires=d)
-    return qml.state()
+        qp.DoubleExcitation(y[j], wires=d)
+    return qp.state()
 
 # random angles of rotation
 key = random.PRNGKey(0)
@@ -360,15 +360,15 @@ print(states)
 # undesired contribution for the state :math:`|011000\rangle` through a coupling with
 # :math:`|001100\rangle.` Let's check that this is the case:
 
-dev = qml.device('default.qubit', wires=6)
+dev = qp.device('default.qubit', wires=6)
 
-@qml.qnode(dev, interface="jax")
+@qp.qnode(dev, interface="jax")
 def circuit3(x, y, z):
-    qml.BasisState(jnp.array([1, 1, 0, 0, 0, 0]), wires=[i for i in range(6)])
-    qml.DoubleExcitation(x, wires=[0, 1, 2, 3])
-    qml.DoubleExcitation(y, wires=[0, 1, 4, 5])
-    qml.SingleExcitation(z, wires=[1, 3])
-    return qml.state()
+    qp.BasisState(jnp.array([1, 1, 0, 0, 0, 0]), wires=[i for i in range(6)])
+    qp.DoubleExcitation(x, wires=[0, 1, 2, 3])
+    qp.DoubleExcitation(y, wires=[0, 1, 4, 5])
+    qp.SingleExcitation(z, wires=[1, 3])
+    return qp.state()
 
 x = -2 * jnp.arcsin(jnp.sqrt(1/4))
 y = -2 * jnp.arcsin(jnp.sqrt(1/3))
@@ -386,14 +386,14 @@ print(states)
 # above, this time controlling on the state of the first qubit and verify that we can prepare the
 # desired state. To perform the control, we use the :func:`~.pennylane.ctrl` transform:
 
-@qml.qnode(dev, interface="jax")
+@qp.qnode(dev, interface="jax")
 def circuit4(x, y, z):
-    qml.BasisState(jnp.array([1, 1, 0, 0, 0, 0]), wires=[i for i in range(6)])
-    qml.DoubleExcitation(x, wires=[0, 1, 2, 3])
-    qml.DoubleExcitation(y, wires=[0, 1, 4, 5])
+    qp.BasisState(jnp.array([1, 1, 0, 0, 0, 0]), wires=[i for i in range(6)])
+    qp.DoubleExcitation(x, wires=[0, 1, 2, 3])
+    qp.DoubleExcitation(y, wires=[0, 1, 4, 5])
     # single excitation controlled on qubit 0
-    qml.ctrl(qml.SingleExcitation, control=0)(z, wires=[1, 3])
-    return qml.state()
+    qp.ctrl(qp.SingleExcitation, control=0)(z, wires=[1, 3])
+    return qp.state()
 
 output = circuit4(x, y, z)
 states = [np.binary_repr(i, width=6) for i in range(len(output)) if output[i] != 0]
@@ -442,18 +442,18 @@ print(states)
 # of the :math:`k`-th Givens rotation as :math:`-2 \arcsin(1/\sqrt{n-k}),` where :math:`n` is the
 # number of basis states in the superposition.
 
-dev = qml.device('default.qubit', wires=4)
+dev = qp.device('default.qubit', wires=4)
 
-@qml.qnode(dev, interface="jax")
+@qp.qnode(dev, interface="jax")
 def state_preparation(params):
-    qml.BasisState(jnp.array([1, 1, 0, 0]), wires=[0, 1, 2, 3])
-    qml.SingleExcitation(params[0], wires=[1, 2])
-    qml.SingleExcitation(params[1], wires=[1, 3])
+    qp.BasisState(jnp.array([1, 1, 0, 0]), wires=[0, 1, 2, 3])
+    qp.SingleExcitation(params[0], wires=[1, 2])
+    qp.SingleExcitation(params[1], wires=[1, 3])
     # single excitations controlled on qubit 1
-    qml.ctrl(qml.SingleExcitation, control=1)(params[2], wires=[0, 2])
-    qml.ctrl(qml.SingleExcitation, control=1)(params[3], wires=[0, 3])
-    qml.DoubleExcitation(params[4], wires=[0, 1, 2, 3])
-    return qml.state()
+    qp.ctrl(qp.SingleExcitation, control=1)(params[2], wires=[0, 2])
+    qp.ctrl(qp.SingleExcitation, control=1)(params[3], wires=[0, 3])
+    qp.DoubleExcitation(params[4], wires=[0, 1, 2, 3])
+    return qp.state()
 
 n = 6
 params = jnp.array([-2 * jnp.arcsin(1/jnp.sqrt(n-i)) for i in range(n-1)])

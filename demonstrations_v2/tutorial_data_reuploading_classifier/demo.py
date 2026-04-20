@@ -174,7 +174,7 @@ we will only implement a single qubit classifier.
 ---------------------------------------------------
 """
 
-import pennylane as qml
+import pennylane as qp
 from pennylane import numpy as np
 from pennylane.optimize import AdamOptimizer, GradientDescentOptimizer
 
@@ -257,11 +257,11 @@ state_labels = np.array([label_0, label_1], requires_grad=False)
 # Simple classifier with data reloading and fidelity loss
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-dev = qml.device("lightning.qubit", wires=1)
+dev = qp.device("lightning.qubit", wires=1)
 # Install any pennylane-plugin to run on some particular backend
 
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def qcircuit(params, x, y):
     """A variational quantum circuit representing the Universal classifier.
 
@@ -274,9 +274,9 @@ def qcircuit(params, x, y):
         float: fidelity between output state and input
     """
     for p in params:
-        qml.Rot(*x, wires=0)
-        qml.Rot(*p, wires=0)
-    return qml.expval(qml.Hermitian(y, wires=[0]))
+        qp.Rot(*x, wires=0)
+        qp.Rot(*p, wires=0)
+    return qp.expval(qp.Hermitian(y, wires=[0]))
 
 
 def cost(params, x, y, state_labels=None):
