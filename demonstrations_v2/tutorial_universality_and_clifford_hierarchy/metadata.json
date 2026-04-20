@@ -149,6 +149,11 @@
     "relatedContent": [
         {
             "type": "demonstration",
+            "id": "tutorial_teleportation",
+            "weight": 1.0
+        },
+        {
+            "type": "demonstration",
             "id": "tutorial_magic_states",
             "weight": 1.0
         },
@@ -157,10 +162,6 @@
             "id": "tutorial_magic_state_distillation",
             "weight": 0.5
         },
-        {
-            "type": "demonstration",
-            "id": "tutorial_lattice_surgery",
-            "weight": 0.5
-        }
+
     ]
 }
