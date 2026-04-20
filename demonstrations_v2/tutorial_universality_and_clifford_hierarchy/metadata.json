@@ -161,7 +161,6 @@
             "type": "demonstration",
             "id": "tutorial_magic_state_distillation",
             "weight": 0.5
-        },
-
+        }
     ]
 }
