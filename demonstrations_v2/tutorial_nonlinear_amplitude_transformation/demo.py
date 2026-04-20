@@ -27,13 +27,9 @@ The macroscopic world is inherently nonlinear. From the complex dynamics of fina
 # 
 # In this demo, we will: 
 # 
-# - construct a block-encoding of amplitude data starting from a
-# state-preparation unitary, 
-# - use QSVT to apply a polynomial approximation of a nonlinear function
-# (e.g., a smooth activation) to those amplitudes, 
-# - validate the transformation numerically via an
-# application to a canonical quantum machine learning task of binary classification on downscaled
-# MNIST-style images.
+# - construct a block-encoding of amplitude data starting from a state-preparation unitary, 
+# - use QSVT to apply a polynomial approximation of a nonlinear function (e.g., a smooth activation) to those amplitudes, 
+# - validate the transformation numerically via an application to a canonical quantum machine learning task of binary classification on downscaled MNIST-style images.
 # 
 # .. figure:: ../_static/demonstration_assets/nonlinear-amplitude-transformation/pennylane-demo-nonlinear-transformation-qsvt-method.png
 #   :alt: Schematic of the nonlinear amplitude transformation with QSVT
