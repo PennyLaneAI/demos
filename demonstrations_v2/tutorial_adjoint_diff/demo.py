@@ -69,7 +69,7 @@ Adjoint Differentiation
 #
 # To start, we import PennyLane and Jax's numpy:
 
-import pennylane as qml
+import pennylane as qp
 import pennylane.numpy as pnp
 
 
@@ -77,17 +77,17 @@ import pennylane.numpy as pnp
 # We also need a circuit to simulate:
 #
 
-dev = qml.device("default.qubit", wires=2)
+dev = qp.device("default.qubit", wires=2)
 
 x = pnp.array([0.1, 0.2, 0.3], requires_grad=True)
 
-@qml.qnode(dev, diff_method="adjoint")
+@qp.qnode(dev, diff_method="adjoint")
 def circuit(a):
-    qml.RX(a[0], wires=0)
-    qml.CNOT(wires=(0, 1))
-    qml.RY(a[1], wires=1)
-    qml.RZ(a[2], wires=1)
-    return qml.expval(qml.PauliX(wires=1))
+    qp.RX(a[0], wires=0)
+    qp.CNOT(wires=(0, 1))
+    qp.RY(a[1], wires=1)
+    qp.RZ(a[2], wires=1)
+    return qp.expval(qp.PauliX(wires=1))
 
 ##############################################################################
 # The fast c++ simulator device ``"lightning.qubit"`` also supports adjoint differentiation,
@@ -102,19 +102,19 @@ n_gates = 4
 n_params = 3
 
 ops = [
-    qml.RX(x[0], wires=0),
-    qml.CNOT(wires=(0, 1)),
-    qml.RY(x[1], wires=1),
-    qml.RZ(x[2], wires=1),
+    qp.RX(x[0], wires=0),
+    qp.CNOT(wires=(0, 1)),
+    qp.RY(x[1], wires=1),
+    qp.RZ(x[2], wires=1),
 ]
-M = qml.PauliX(wires=1)
+M = qp.PauliX(wires=1)
 
 ##############################################################################
 # We will be using internal functions to manipulate the nuts and bolts of a statevector
 # simulation.
 #
 # Internally, the statevector simulation uses a 2x2x2x... array to represent the state, whereas
-# the result of a measurement ``qml.state()`` flattens this internal representation. Each dimension
+# the result of a measurement ``qp.state()`` flattens this internal representation. Each dimension
 # in the statevector corresponds to a different qubit.
 #
 # The internal functions ``create_initial_state`` and ``apply_operation``
@@ -181,7 +181,7 @@ bra_n = create_initial_state((0, 1))
 for op in ops:
     bra_n = apply_operation(op, bra_n)
 bra_n = apply_operation(M, bra_n)
-bra_n = apply_operation(qml.adjoint(ops[-1]), bra_n)
+bra_n = apply_operation(qp.adjoint(ops[-1]), bra_n)
 
 ket_n = create_initial_state((0, 1))
 
@@ -218,7 +218,7 @@ print(M_expval_n)
 bra_n_v2 = apply_operation(M, state)
 ket_n_v2 = state
 
-adj_op = qml.adjoint(ops[-1])
+adj_op = qp.adjoint(ops[-1])
 
 bra_n_v2 = apply_operation(adj_op, bra_n_v2)
 ket_n_v2 = apply_operation(adj_op, ket_n_v2)
@@ -249,7 +249,7 @@ bra_loop = apply_operation(M, state)
 ket_loop = state
 
 for op in reversed(ops):
-    adj_op = qml.adjoint(op)
+    adj_op = qp.adjoint(op)
     bra_loop = apply_operation(adj_op, bra_loop)
     ket_loop = apply_operation(adj_op, ket_loop)
     print(pnp.vdot(bra_loop, ket_loop))
@@ -341,7 +341,7 @@ for op in reversed(ops):
 #
 # Luckily, PennyLane already has a built-in function for calculating this.
 
-grad_op0 = qml.operation.operation_derivative(ops[0])
+grad_op0 = qp.operation.operation_derivative(ops[0])
 print(grad_op0)
 
 ##############################################################################
@@ -358,13 +358,13 @@ ket = state
 grads = []
 
 for op in reversed(ops):
-    adj_op = qml.adjoint(op)
+    adj_op = qp.adjoint(op)
     ket = apply_operation(adj_op, ket)
 
     # Calculating the derivative
     if op.num_params != 0:
-        dU = qml.operation.operation_derivative(op)
-        ket_temp = apply_operation(qml.QubitUnitary(dU, op.wires), ket)
+        dU = qp.operation.operation_derivative(op)
+        ket_temp = apply_operation(qp.QubitUnitary(dU, op.wires), ket)
 
         dM = 2 * pnp.real(pnp.vdot(bra, ket_temp))
         grads.append(dM)
@@ -378,7 +378,7 @@ grads = grads[::-1]
 
 print("our calculation: ", [float(grad) for grad in grads])
 
-grad_compare = qml.grad(circuit)(x)
+grad_compare = qp.grad(circuit)(x)
 print("comparison: ", grad_compare)
 
 ##############################################################################
@@ -389,17 +389,17 @@ print("comparison: ", grad_compare)
 # ``"default.qubit"`` or PennyLane's fast C++ simulator ``"lightning.qubit"``.
 
 
-dev_lightning = qml.device("lightning.qubit", wires=2)
+dev_lightning = qp.device("lightning.qubit", wires=2)
 
-@qml.qnode(dev_lightning, diff_method="adjoint")
+@qp.qnode(dev_lightning, diff_method="adjoint")
 def circuit_adjoint(a):
-    qml.RX(a[0], wires=0)
-    qml.CNOT(wires=(0, 1))
-    qml.RY(a[1], wires=1)
-    qml.RZ(a[2], wires=1)
-    return qml.expval(M)
+    qp.RX(a[0], wires=0)
+    qp.CNOT(wires=(0, 1))
+    qp.RY(a[1], wires=1)
+    qp.RZ(a[2], wires=1)
+    return qp.expval(M)
 
-print(qml.grad(circuit_adjoint)(x))
+print(qp.grad(circuit_adjoint)(x))
 
 ##############################################################################
 # Performance
