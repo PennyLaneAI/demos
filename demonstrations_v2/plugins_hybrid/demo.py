@@ -132,7 +132,7 @@ a QNode. This allows the underlying quantum computation to be performed using th
 As usual, we begin by importing PennyLane and the wrapped version of NumPy provided by PennyLane:
 """
 
-import pennylane as qml
+import pennylane as qp
 from pennylane import numpy as np
 
 ##############################################################################
@@ -140,7 +140,7 @@ from pennylane import numpy as np
 # the PennyLane-SF plugin is installed, the ``'strawberryfields.fock'`` device can be loaded
 # — no additional commands or library imports required.
 
-dev_fock = qml.device("strawberryfields.fock", wires=2, cutoff_dim=2)
+dev_fock = qp.device("strawberryfields.fock", wires=2, cutoff_dim=2)
 
 ##############################################################################
 # Compared to the default devices provided with PennyLane, the ``'strawberryfields.fock'``
@@ -164,11 +164,11 @@ dev_fock = qml.device("strawberryfields.fock", wires=2, cutoff_dim=2)
 # running on Strawberry Fields.
 
 
-@qml.qnode(dev_fock, diff_method="parameter-shift")
+@qp.qnode(dev_fock, diff_method="parameter-shift")
 def photon_redirection(params):
-    qml.FockState(1, wires=0)
-    qml.Beamsplitter(params[0], params[1], wires=[0, 1])
-    return qml.expval(qml.NumberOperator(1))
+    qp.FockState(1, wires=0)
+    qp.Beamsplitter(params[0], params[1], wires=[0, 1])
+    return qp.expval(qp.NumberOperator(1))
 
 
 ##############################################################################
@@ -219,7 +219,7 @@ print(cost(init_params))
 #
 # This can also be verified directly using PennyLane:
 
-dphoton_redirection = qml.grad(photon_redirection, argnums=0)
+dphoton_redirection = qp.grad(photon_redirection, argnums=0)
 print(dphoton_redirection([0.0, 0.0]))
 
 ##############################################################################
@@ -236,7 +236,7 @@ print(dphoton_redirection([0.0, 0.0]))
 # parameters over 100 optimization steps.
 
 # initialise the optimizer
-opt = qml.GradientDescentOptimizer(stepsize=0.4)
+opt = qp.GradientDescentOptimizer(stepsize=0.4)
 
 # set the number of steps
 steps = 100
@@ -304,24 +304,24 @@ print("Optimized rotation angles: {}".format(params))
 # returns the squared difference of its two inputs using NumPy:
 
 # create the devices
-dev_qubit = qml.device("default.qubit", wires=1)
-dev_fock = qml.device("strawberryfields.fock", wires=2, cutoff_dim=10)
+dev_qubit = qp.device("default.qubit", wires=1)
+dev_fock = qp.device("strawberryfields.fock", wires=2, cutoff_dim=10)
 
 
-@qml.qnode(dev_qubit, interface="autograd")
+@qp.qnode(dev_qubit, interface="autograd")
 def qubit_rotation(phi1, phi2):
     """Qubit rotation QNode"""
-    qml.RX(phi1, wires=0)
-    qml.RY(phi2, wires=0)
-    return qml.expval(qml.PauliZ(0))
+    qp.RX(phi1, wires=0)
+    qp.RY(phi2, wires=0)
+    return qp.expval(qp.PauliZ(0))
 
 
-@qml.qnode(dev_fock, diff_method="parameter-shift")
+@qp.qnode(dev_fock, diff_method="parameter-shift")
 def photon_redirection(params):
     """The photon redirection QNode"""
-    qml.FockState(1, wires=0)
-    qml.Beamsplitter(params[0], params[1], wires=[0, 1])
-    return qml.expval(qml.NumberOperator(1))
+    qp.FockState(1, wires=0)
+    qp.Beamsplitter(params[0], params[1], wires=[0, 1])
+    return qp.expval(qp.NumberOperator(1))
 
 
 def squared_difference(x, y):
@@ -374,7 +374,7 @@ def cost(params, phi1=0.5, phi2=0.1):
 # :math:`\theta=0.01,` :math:`\phi=0.01.`
 
 # initialise the optimizer
-opt = qml.GradientDescentOptimizer(stepsize=0.4)
+opt = qp.GradientDescentOptimizer(stepsize=0.4)
 
 # set the number of steps
 steps = 100

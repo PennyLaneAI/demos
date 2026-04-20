@@ -35,7 +35,7 @@ We import PennyLane, the wrapped version of NumPy provided by PennyLane,
 and an optimizer.
 """
 
-import pennylane as qml
+import pennylane as qp
 from pennylane import numpy as np
 from pennylane.optimize import AdamOptimizer
 
@@ -44,7 +44,7 @@ from pennylane.optimize import AdamOptimizer
 # only one quantum mode (or ``wire``). You will need to have the
 # Strawberry Fields plugin for PennyLane installed.
 
-dev = qml.device("strawberryfields.fock", wires=1, cutoff_dim=10)
+dev = qp.device("strawberryfields.fock", wires=1, cutoff_dim=10)
 
 ##############################################################################
 # Quantum node
@@ -56,15 +56,15 @@ dev = qml.device("strawberryfields.fock", wires=1, cutoff_dim=10)
 
 def layer(v):
     # Matrix multiplication of input layer
-    qml.Rotation(v[0], wires=0)
-    qml.Squeezing(v[1], 0.0, wires=0)
-    qml.Rotation(v[2], wires=0)
+    qp.Rotation(v[0], wires=0)
+    qp.Squeezing(v[1], 0.0, wires=0)
+    qp.Rotation(v[2], wires=0)
 
     # Bias
-    qml.Displacement(v[3], 0.0, wires=0)
+    qp.Displacement(v[3], 0.0, wires=0)
 
     # Element-wise nonlinear transformation
-    qml.Kerr(v[4], wires=0)
+    qp.Kerr(v[4], wires=0)
 
 
 ##############################################################################
@@ -73,16 +73,16 @@ def layer(v):
 # is the expectation of the x-quadrature.
 
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def quantum_neural_net(var, x):
     # Encode input x into quantum state
-    qml.Displacement(x, 0.0, wires=0)
+    qp.Displacement(x, 0.0, wires=0)
 
     # "layer" subcircuits
     for v in var:
         layer(v)
 
-    return qml.expval(qml.X(0))
+    return qp.expval(qp.X(0))
 
 
 ##############################################################################
