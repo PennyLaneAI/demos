@@ -31,7 +31,7 @@ We will look at a custom derivative rule [#wiersema]_ for this gate and compare 
 alternative differentiation strategies, namely finite differences and the `stochastic
 parameter-shift rule <https://pennylane.ai/qml/demos/tutorial_stochastic_parameter_shift>`_.
 Finally, we will compare the performance of
-``qml.SpecialUnitary`` for a toy minimization problem to that of two other general
+``qp.SpecialUnitary`` for a toy minimization problem to that of two other general
 local gates. That is, we compare the trainability of equally expressive ansätze.
 
 Ansätze, so many ansätze
@@ -130,14 +130,14 @@ the prefactor makes the basis elements skew-Hermitian and the identity would not
 vanishing trace. Indeed, one can check that the dimension of :math:`\mathfrak{su}(N)` is
 :math:`4^n-1` and that there are :math:`4^n` Pauli words, so that one Pauli word — the identity — had to go
 in any case... We can use the canonical coordinates of the algebra to express a *group element* in
-:math:`\mathrm{SU}(N)` as well, and the ``qml.SpecialUnitary`` gate we will use is defined as
+:math:`\mathrm{SU}(N)` as well, and the ``qp.SpecialUnitary`` gate we will use is defined as
 
 .. math::
 
     U(\boldsymbol{\theta}) = \exp\left\{\sum_{m=1}^d \theta_m G_m \right\}.
 
 The number of coordinates and Pauli words in :math:`\mathcal{P}^{(n)}` is :math:`d=4^n-1.`
-Therefore, this will be the number of parameters that a single ``qml.SpecialUnitary`` gate acting on
+Therefore, this will be the number of parameters that a single ``qp.SpecialUnitary`` gate acting on
 :math:`n` qubits will take. For example, it takes just three parameters for a single qubit, which
 is why :class:`~pennylane.Rot` and :class:`~pennylane.U3` take three parameters and may
 produce *any* single-qubit rotation. It takes a modest 15 parameters for two qubits,
@@ -166,7 +166,7 @@ We will not go through the entire derivation, but note the following key points:
 
 - The gradient with respect to all :math:`d` parameters of an :math:`\mathrm{SU}(N)` gate can be
   computed using :math:`2d` auxiliary circuits. Each of the circuits contains one additional
-  operation compared to the original circuit, namely a ``qml.PauliRot`` gate with rotation
+  operation compared to the original circuit, namely a ``qp.PauliRot`` gate with rotation
   angles of :math:`\pm\frac{\pi}{2}.` Note that these Pauli rotations act on up to :math:`n`
   qubits.
 - This differentiation method uses automatic differentiation during compilation and
@@ -182,7 +182,7 @@ them, and with adequate post-processing we get the gradient :math:`\nabla C.`
 Comparing gradient methods
 --------------------------
 
-Before we dive into using ``qml.SpecialUnitary`` in an optimization task, let's compare
+Before we dive into using ``qp.SpecialUnitary`` in an optimization task, let's compare
 a few methods to compute the gradient with respect to the parameters of such a gate.
 In particular, we will look at a finite difference (FD) approach, the stochastic parameter-shift
 rule, and the custom gradient method we described above.
@@ -210,11 +210,11 @@ For more details, also consider the
 So, let's dive into a toy example and explore the three gradient methods!
 We start by defining a simple one-qubit circuit that contains a single :math:`\mathrm{SU}(2)`
 gate and measures the expectation value of :math:`H=\frac{3}{5} Z - \frac{4}{5} Y.`
-As ``qml.SpecialUnitary`` requires automatic differentiation subroutines even for the
+As ``qp.SpecialUnitary`` requires automatic differentiation subroutines even for the
 hardware-ready derivative recipe, we will make use of JAX.
 """
 
-import pennylane as qml
+import pennylane as qp
 import numpy as np
 import jax
 
@@ -222,16 +222,16 @@ jax.config.update("jax_enable_x64", True)
 jax.config.update("jax_platform_name", "cpu")
 jnp = jax.numpy
 
-dev = qml.device("default.qubit", wires=1)
-H = 0.6 * qml.PauliZ(0) - 0.8 * qml.PauliY(0)
+dev = qp.device("default.qubit", wires=1)
+H = 0.6 * qp.PauliZ(0) - 0.8 * qp.PauliY(0)
 
 
 def qfunc(theta):
-    qml.SpecialUnitary(theta, wires=0)
-    return qml.expval(H)
+    qp.SpecialUnitary(theta, wires=0)
+    return qp.expval(H)
 
 
-circuit = qml.QNode(qfunc, dev, interface="jax", diff_method="parameter-shift")
+circuit = qp.QNode(qfunc, dev, interface="jax", diff_method="parameter-shift")
 
 theta = jnp.array([0.4, 0.2, -0.5])
 
@@ -270,13 +270,13 @@ print(f"Central difference: {central_diff_grad(theta, delta):.5f}")
 
 
 @jax.jit
-@qml.qnode(dev, interface="jax")
+@qp.qnode(dev, interface="jax")
 def aux_circuit(theta, tau, sign):
-    qml.SpecialUnitary(tau * theta, wires=0)
+    qp.SpecialUnitary(tau * theta, wires=0)
     # This corresponds to the parameter-shift evaluations of RY at 0
-    qml.RY(-sign * np.pi / 2, wires=0)
-    qml.SpecialUnitary((1 - tau) * theta, wires=0)
-    return qml.expval(H)
+    qp.RY(-sign * np.pi / 2, wires=0)
+    qp.SpecialUnitary((1 - tau) * theta, wires=0)
+    return qp.expval(H)
 
 
 def stochastic_parshift_grad(theta, num_samples):
@@ -307,7 +307,7 @@ print(f"Custom SU(N) gradient: {sun_grad(theta)[1]:.5f}")
 # the exact value and see which method agrees with it (we again need to extract the
 # corresponding entry from the full gradient).
 
-autodiff_circuit = qml.QNode(qfunc, dev, interface="jax", diff_method="parameter-shift")
+autodiff_circuit = qp.QNode(qfunc, dev, interface="jax", diff_method="parameter-shift")
 exact_grad = jax.grad(autodiff_circuit)(theta)[1]
 print(f"Exact gradient: {exact_grad:.5f}")
 
@@ -375,15 +375,15 @@ plt.show()
 #
 # We discussed above that there are many circuit architectures available and that choosing
 # a suitable ansatz is important but can be difficult. Here, we will compare a simple ansatz
-# based on the ``qml.SpecialUnitary`` gate discussed above to other approaches that fully
+# based on the ``qp.SpecialUnitary`` gate discussed above to other approaches that fully
 # parametrize the special unitary group for the respective number of qubits.
-# In particular, we will compare ``qml.SpecialUnitary`` to standard decompositions from the
+# In particular, we will compare ``qp.SpecialUnitary`` to standard decompositions from the
 # literature that parametrize :math:`\mathrm{SU}(N)` with elementary gates, as well as to a
 # sequence of Pauli rotation gates that also allows us to create any special unitary.
 # Let us start by defining the decomposition of a two-qubit unitary.
 # We choose the decomposition, which is optimal but not unique, from [#vatan]_.
 # The Pauli rotation sequence is available in PennyLane
-# via ``qml.ArbitraryUnitary`` and we will not need to implement it ourselves.
+# via ``qp.ArbitraryUnitary`` and we will not need to implement it ourselves.
 
 
 def two_qubit_decomp(params, wires):
@@ -392,24 +392,24 @@ def two_qubit_decomp(params, wires):
     https://arxiv.org/pdf/quant-ph/0308006.pdf"""
     i, j = wires
     # Single U(2) parameterization on both qubits separately
-    qml.Rot(*params[:3], wires=i)
-    qml.Rot(*params[3:6], wires=j)
-    qml.CNOT(wires=[j, i])  # First CNOT
-    qml.RZ(params[6], wires=i)
-    qml.RY(params[7], wires=j)
-    qml.CNOT(wires=[i, j])  # Second CNOT
-    qml.RY(params[8], wires=j)
-    qml.CNOT(wires=[j, i])  # Third CNOT
+    qp.Rot(*params[:3], wires=i)
+    qp.Rot(*params[3:6], wires=j)
+    qp.CNOT(wires=[j, i])  # First CNOT
+    qp.RZ(params[6], wires=i)
+    qp.RY(params[7], wires=j)
+    qp.CNOT(wires=[i, j])  # Second CNOT
+    qp.RY(params[8], wires=j)
+    qp.CNOT(wires=[j, i])  # Third CNOT
     # Single U(2) parameterization on both qubits separately
-    qml.Rot(*params[9:12], wires=i)
-    qml.Rot(*params[12:15], wires=j)
+    qp.Rot(*params[9:12], wires=i)
+    qp.Rot(*params[12:15], wires=j)
 
 
 # The three building blocks on two qubits we will compare are:
 operations = {
     ("Decomposition", "decomposition"): two_qubit_decomp,
-    ("PauliRot sequence",) * 2: qml.ArbitraryUnitary,
-    ("$\mathrm{SU}(N)$ gate", "SU(N) gate"): qml.SpecialUnitary,
+    ("PauliRot sequence",) * 2: qp.ArbitraryUnitary,
+    ("$\mathrm{SU}(N)$ gate", "SU(N) gate"): qp.SpecialUnitary,
 }
 
 ##############################################################################
@@ -430,12 +430,12 @@ np.random.seed(62213)
 
 coefficients = np.random.randn(4**num_wires - 1)
 # Create the matrices for the entire Pauli basis
-basis = qml.ops.qubit.special_unitary.pauli_basis_matrices(num_wires)
+basis = qp.ops.qubit.special_unitary.pauli_basis_matrices(num_wires)
 # Construct the Hamiltonian from the normal random coefficients and the basis
-H_matrix = qml.math.tensordot(coefficients, basis, axes=[[0], [0]])
-H = qml.Hermitian(H_matrix, wires=wires)
+H_matrix = qp.math.tensordot(coefficients, basis, axes=[[0], [0]])
+H = qp.Hermitian(H_matrix, wires=wires)
 # Compute the ground state energy
-E_min = min(qml.eigvals(H))
+E_min = min(qp.eigvals(H))
 print(f"Ground state energy: {E_min:.5f}")
 
 ##############################################################################
@@ -446,7 +446,7 @@ print(f"Ground state energy: {E_min:.5f}")
 
 loc = 2
 d = loc**4 - 1  # d = 15 for two-qubit operations
-dev = qml.device("default.qubit", wires=num_wires)
+dev = qp.device("default.qubit", wires=num_wires)
 # two blocks with two layers. Each layer contains three operations with d parameters
 param_shape = (2, 2, 3, d)
 init_params = np.zeros(param_shape)
@@ -463,11 +463,11 @@ def circuit(params, operation=None):
             for j, params_op in enumerate(params_layer):
                 wires_op = [w % num_wires for w in range(loc * j + i, loc * (j + 1) + i)]
                 operation(params_op, wires_op)
-    return qml.expval(H)
+    return qp.expval(H)
 
 
-qnode = qml.QNode(circuit, dev, interface="jax")
-print(qml.draw(qnode)(init_params, qml.SpecialUnitary))
+qnode = qp.QNode(circuit, dev, interface="jax")
+print(qp.draw(qnode)(init_params, qp.SpecialUnitary))
 
 ##############################################################################
 # We can now proceed to prepare the optimization task using this circuit
@@ -517,7 +517,7 @@ ax.legend()
 plt.show()
 
 ##############################################################################
-# We find that the optimization indeed performs significantly better for ``qml.SpecialUnitary``
+# We find that the optimization indeed performs significantly better for ``qp.SpecialUnitary``
 # than for the other two general unitaries, while using the same number of parameters and
 # preserving the expressibility of the circuit ansatz. This
 # means that we found a particularly well-trainable parameterization of the local unitaries which
@@ -528,21 +528,21 @@ plt.show()
 # Conclusion
 # ----------
 #
-# To summarize, in this tutorial we introduced ``qml.SpecialUnitary``, a multi-parameter
+# To summarize, in this tutorial we introduced ``qp.SpecialUnitary``, a multi-parameter
 # gate that can act like *any* gate on the qubits it is applied to and that is constructed
 # with Lie theory in mind. We discussed three methods of differentiating quantum circuits
 # that use this gate, showing that a new custom parameter-shift rule presented in
 # [#wiersema]_ is particularly suitable to produce unbiased gradient estimates with the
 # lowest variance. Afterwards, we used this differentiation technique when comparing
-# the performance of ``qml.SpecialUnitary`` to that of other gates that can act
+# the performance of ``qp.SpecialUnitary`` to that of other gates that can act
 # like *any* gate locally. For this, we ran a gradient-based optimization for a toy model
-# Hamiltonian and found that ``qml.SpecialUnitary`` is particularly well-trainable, achieving
+# Hamiltonian and found that ``qp.SpecialUnitary`` is particularly well-trainable, achieving
 # lower energies significantly quicker than the other tested gates.
 #
-# There are still exciting questions to answer about ``qml.SpecialUnitary``: How can the
+# There are still exciting questions to answer about ``qp.SpecialUnitary``: How can the
 # custom parameter-shift rule be used for other gates, and what does the so-called
 # *Dynamical Lie algebra* of these gates have to do with it? How can we implement
-# the ``qml.SpecialUnitary`` gate on hardware? Is the unitary time evolution implemented
+# the ``qp.SpecialUnitary`` gate on hardware? Is the unitary time evolution implemented
 # by this gate special in a physical sense?
 #
 # The answers to some, but not all, of these questions can be found in [#wiersema]_.

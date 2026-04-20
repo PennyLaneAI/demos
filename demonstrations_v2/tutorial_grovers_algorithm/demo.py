@@ -45,7 +45,7 @@ Let's import the usual PennyLane and Numpy libraries to load the necessary funct
 """
 
 import matplotlib.pyplot as plt
-import pennylane as qml
+import pennylane as qp
 import numpy as np
 
 ######################################################################
@@ -68,24 +68,24 @@ import numpy as np
 
 
 NUM_QUBITS = 2
-dev = qml.device("default.qubit", wires=NUM_QUBITS)
+dev = qp.device("default.qubit", wires=NUM_QUBITS)
 wires = list(range(NUM_QUBITS))
 
 
 def equal_superposition(wires):
     for wire in wires:
-        qml.Hadamard(wires=wire)
+        qp.Hadamard(wires=wire)
 
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def circuit():
-    qml.Snapshot("Initial state")
+    qp.Snapshot("Initial state")
     equal_superposition(wires)
-    qml.Snapshot("After applying the Hadamard gates")
-    return qml.probs(wires=wires)  # Probability of finding a computational basis state on the wires
+    qp.Snapshot("After applying the Hadamard gates")
+    return qp.probs(wires=wires)  # Probability of finding a computational basis state on the wires
 
 
-results = qml.snapshots(circuit)()
+results = qp.snapshots(circuit)()
 
 for k, result in results.items():
     print(f"{k}: {result}")
@@ -131,17 +131,17 @@ plt.show()
 # Let us take a look at an example. If we pass the array ``[0,0]``, the sign of the state
 # :math:`\vert 00 \rangle = \begin{bmatrix} 1 \\0 \\0 \\0 \end{bmatrix}` will flip:
 
-dev = qml.device("default.qubit", wires=NUM_QUBITS)
+dev = qp.device("default.qubit", wires=NUM_QUBITS)
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def circuit():
-    qml.Snapshot("Initial state |00>")
+    qp.Snapshot("Initial state |00>")
     # Flipping the marked state
-    qml.FlipSign([0, 0], wires=wires)
-    qml.Snapshot("After flipping it")
-    return qml.state()
+    qp.FlipSign([0, 0], wires=wires)
+    qp.Snapshot("After flipping it")
+    return qp.state()
 
-results = qml.snapshots(circuit)()
+results = qp.snapshots(circuit)()
 
 for k, result in results.items():
     print(f"{k}: {result}")
@@ -170,21 +170,21 @@ plt.show()
 omega = np.zeros(NUM_QUBITS)
 
 def oracle(wires, omega):
-    qml.FlipSign(omega, wires=wires)
+    qp.FlipSign(omega, wires=wires)
 
-dev = qml.device("default.qubit", wires=NUM_QUBITS)
+dev = qp.device("default.qubit", wires=NUM_QUBITS)
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def circuit():
     equal_superposition(wires)
-    qml.Snapshot("Before querying the Oracle")
+    qp.Snapshot("Before querying the Oracle")
 
     oracle(wires, omega)
-    qml.Snapshot("After querying the Oracle")
+    qp.Snapshot("After querying the Oracle")
 
-    return qml.probs(wires=wires)
+    return qp.probs(wires=wires)
 
-results = qml.snapshots(circuit)()
+results = qp.snapshots(circuit)()
 
 for k, result in results.items():
     print(f"{k}: {result}")
@@ -259,32 +259,32 @@ plt.show()
 # to solve the problem.
 
 
-dev = qml.device("default.qubit", wires=NUM_QUBITS)
+dev = qp.device("default.qubit", wires=NUM_QUBITS)
 
 
 def diffusion_operator(wires):
     for wire in wires:
-        qml.Hadamard(wires=wire)
-        qml.PauliZ(wires=wire)
-    qml.ctrl(qml.PauliZ, 0)(wires=1)
+        qp.Hadamard(wires=wire)
+        qp.PauliZ(wires=wire)
+    qp.ctrl(qp.PauliZ, 0)(wires=1)
     for wire in wires:
-        qml.Hadamard(wires=wire)
+        qp.Hadamard(wires=wire)
 
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def circuit():
     equal_superposition(wires)
-    qml.Snapshot("Uniform superposition |s>")
+    qp.Snapshot("Uniform superposition |s>")
 
     oracle(wires, omega)
-    qml.Snapshot("State marked by Oracle")
+    qp.Snapshot("State marked by Oracle")
     diffusion_operator(wires)
 
-    qml.Snapshot("Amplitude after diffusion")
-    return qml.probs(wires=wires)
+    qp.Snapshot("Amplitude after diffusion")
+    return qp.probs(wires=wires)
 
 
-results = qml.snapshots(circuit)()
+results = qp.snapshots(circuit)()
 
 for k, result in results.items():
     print(f"{k}: {result}")
@@ -318,9 +318,9 @@ M = len(omega)
 N = 2**NUM_QUBITS
 wires = list(range(NUM_QUBITS))
 
-dev = qml.device("default.qubit", wires=NUM_QUBITS)
+dev = qp.device("default.qubit", wires=NUM_QUBITS)
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def circuit():
     iterations = int(np.round(np.sqrt(N / M) * np.pi / 4))
 
@@ -331,12 +331,12 @@ def circuit():
     for _ in range(iterations):
         for omg in omega:
             oracle(wires, omg)
-        qml.templates.GroverOperator(wires)
+        qp.templates.GroverOperator(wires)
 
-    return qml.probs(wires=wires)
+    return qp.probs(wires=wires)
 
 
-results = qml.snapshots(circuit)()
+results = qp.snapshots(circuit)()
 
 for k, result in results.items():
     print(f"{k}: {result}")

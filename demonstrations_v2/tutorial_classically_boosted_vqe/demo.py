@@ -100,7 +100,7 @@ Let’s get started!
 # using PennyLane
 #
 
-import pennylane as qml
+import pennylane as qp
 from pennylane import qchem
 import numpy as np
 from jax import numpy as jnp
@@ -138,7 +138,7 @@ num_theta = len(singles) + len(doubles)
 
 
 def circuit_VQE(theta, wires):
-    qml.AllSinglesDoubles(
+    qp.AllSinglesDoubles(
         weights=theta, wires=wires, hf_state=hf, singles=singles, doubles=doubles
     )
 
@@ -153,14 +153,14 @@ import jax
 
 jax.config.update("jax_enable_x64", True) # use double-precision numbers
 
-dev = qml.device("lightning.qubit", wires=qubits)
+dev = qp.device("lightning.qubit", wires=qubits)
 
 
-@qml.qjit
-@qml.qnode(dev, interface="jax")
+@qp.qjit
+@qp.qnode(dev, interface="jax")
 def cost(theta):
     circuit_VQE(theta, range(qubits))
-    return qml.expval(H)
+    return qp.expval(H)
 
 
 ######################################################################
@@ -179,10 +179,10 @@ init_params = jnp.zeros(num_theta)
 #
 
 
-@qml.qjit
+@qp.qjit
 def update_step(i, params, opt_state):
     """Perform a single gradient update step"""
-    grads = qml.grad(cost)(params)
+    grads = qp.grad(cost)(params)
     updates, opt_state = opt.update(grads, opt_state)
     params = optax.apply_updates(params, updates)
     return (params, opt_state)
@@ -433,25 +433,25 @@ S22 = 1
 # :math:`U_i \vert 0^n \rangle = \vert \phi_i \rangle.` In this case, this
 # is just a mapping of a classical basis state into the circuit consisting
 # of :math:`X` gates and can be easily implemented using PennyLane’s
-# function ``qml.BasisState(i, n)``.
+# function ``qp.BasisState(i, n)``.
 #
 
 wires = range(qubits + 1)
-dev = qml.device("lightning.qubit", wires=wires)
+dev = qp.device("lightning.qubit", wires=wires)
 
 
-@qml.qnode(dev, interface="jax")
+@qp.qnode(dev, interface="jax")
 def hadamard_test(Uq, Ucl, component="real"):
     if component == "imag":
-        qml.RX(math.pi / 2, wires=wires[1:])
+        qp.RX(math.pi / 2, wires=wires[1:])
 
-    qml.Hadamard(wires=[0])
-    qml.ControlledQubitUnitary(
+    qp.Hadamard(wires=[0])
+    qp.ControlledQubitUnitary(
         Uq.conjugate().T @ Ucl, wires=wires
     )
-    qml.Hadamard(wires=[0])
+    qp.Hadamard(wires=[0])
 
-    return qml.probs(wires=[0])
+    return qp.probs(wires=[0])
 
 
 ######################################################################
@@ -461,18 +461,18 @@ def hadamard_test(Uq, Ucl, component="real"):
 
 
 def circuit_product_state(state):
-    qml.BasisState(state, range(qubits))
+    qp.BasisState(state, range(qubits))
 
 
 wire_order = list(range(qubits))
-Uq = qml.matrix(circuit_VQE, wire_order=wire_order)(theta_opt, wire_order)
+Uq = qp.matrix(circuit_VQE, wire_order=wire_order)(theta_opt, wire_order)
 
 H12 = 0
 relevant_basis_states = np.array(
     [[1, 1, 0, 0], [0, 1, 1, 0], [1, 0, 0, 1], [0, 0, 1, 1]]
 )
 for j, basis_state in enumerate(relevant_basis_states):
-    Ucl = qml.matrix(circuit_product_state, wire_order=wire_order)(basis_state)
+    Ucl = qp.matrix(circuit_product_state, wire_order=wire_order)(basis_state)
     probs = hadamard_test(Uq, Ucl)
     # The projection Re(<phi_q|i>) corresponds to 2p-1
     y = 2 * probs[0] - 1

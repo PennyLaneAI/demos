@@ -58,22 +58,22 @@ and artificially adding :class:`PhaseDamping <pennylane.PhaseDamping>` noise usi
 :class:`NoiseModel <pennylane.NoiseModel>`.
 """
 
-import pennylane as qml
+import pennylane as qp
 
 n_wires = 4
 
 # Describe noise model
-fcond = qml.noise.wires_in(range(n_wires))
-noise = qml.noise.partial_wires(qml.PhaseDamping, 0.1)
-noise_model = qml.NoiseModel({fcond: noise})
+fcond = qp.noise.wires_in(range(n_wires))
+noise = qp.noise.partial_wires(qp.PhaseDamping, 0.1)
+noise_model = qp.NoiseModel({fcond: noise})
 
 # Load devices
-dev_ideal = qml.device("default.mixed", wires=n_wires)
-dev_noisy = qml.add_noise(dev_ideal, noise_model=noise_model)
+dev_ideal = qp.device("default.mixed", wires=n_wires)
+dev_noisy = qp.add_noise(dev_ideal, noise_model=noise_model)
 
 ###############################################################################
 # In the above, we load a noise-free device ``dev_ideal`` and a noisy device ``dev_noisy``,
-# which is constructed from the :func:`qml.add_noise <pennylane.noise.add_noise>`
+# which is constructed from the :func:`qp.add_noise <pennylane.noise.add_noise>`
 # transform. This transform works by intercepting each circuit executed on the device and
 # adding the noise to it based on the ``noise_model``. For example, in this case, it will
 # add :class:`PhaseDamping <pennylane.PhaseDamping>` noise channel after every gate in the
@@ -106,25 +106,25 @@ np.random.seed(1967)
 
 # Select template to use within circuit and generate parameters
 n_layers = 1
-template = qml.SimplifiedTwoDesign
+template = qp.SimplifiedTwoDesign
 weights_shape = template.shape(n_layers, n_wires)
 w1, w2 = [2 * np.pi * np.random.random(s) for s in weights_shape]
 
 
 def circuit(w1, w2):
     template(w1, w2, wires=range(n_wires))
-    qml.adjoint(template)(w1, w2, wires=range(n_wires))
-    return qml.expval(qml.PauliZ(0))
+    qp.adjoint(template)(w1, w2, wires=range(n_wires))
+    return qp.expval(qp.PauliZ(0))
 
 
-ideal_qnode = qml.QNode(circuit, dev_ideal)
-noisy_qnode = qml.QNode(circuit, dev_noisy)
-noisy_qnode = qml.transforms.decompose(noisy_qnode, gate_set = ["RY", "CZ"])
+ideal_qnode = qp.QNode(circuit, dev_ideal)
+noisy_qnode = qp.QNode(circuit, dev_noisy)
+noisy_qnode = qp.transforms.decompose(noisy_qnode, gate_set = ["RY", "CZ"])
 
 ##############################################################################
 # First, we'll visualize the circuit:
 
-print(qml.draw(ideal_qnode, level="device")(w1, w2))
+print(qp.draw(ideal_qnode, level="device")(w1, w2))
 
 ##############################################################################
 # As expected, executing the circuit on an ideal noise-free device gives a result of ``1``.
@@ -205,10 +205,10 @@ mitigated_qnode(w1, w2)
 # :class:`QuantumTape <pennylane.tape.QuantumTape>`, which provides a low-level approach for circuit
 # construction in PennyLane.
 
-circuit = qml.tape.QuantumTape(
+circuit = qp.tape.QuantumTape(
     [
         template(w1, w2, wires=range(n_wires)),
-        qml.adjoint(template(w1, w2, wires=range(n_wires))),
+        qp.adjoint(template(w1, w2, wires=range(n_wires))),
     ]
 )
 
@@ -223,7 +223,7 @@ folded_circuits = [fold_global(circuit, scale_factor=s) for s in scale_factors]
 
 for s, c in zip(scale_factors, folded_circuits):
     print(f"Globally-folded circuit with a scale factor of {s}:")
-    print(qml.drawer.tape_text(c, decimals=2, max_length=80))
+    print(qp.drawer.tape_text(c, decimals=2, max_length=80))
 
 ##############################################################################
 # Although these circuits are a bit deep, if you look carefully, you might be able to convince
@@ -265,18 +265,18 @@ for s, c in zip(scale_factors, folded_circuits):
 
 def executor(circuits, dev=dev_noisy):
     # Support both a single circuit and multiple circuit execution
-    circuits = [circuits] if isinstance(circuits, qml.tape.QuantumTape) else circuits
+    circuits = [circuits] if isinstance(circuits, qp.tape.QuantumTape) else circuits
 
     circuits_with_meas = []
 
     # Loop through circuits and add on measurement
     for c in circuits:
-        circuit_with_meas = qml.tape.QuantumTape(
-            c.operations, [qml.expval(qml.PauliZ(0))]
+        circuit_with_meas = qp.tape.QuantumTape(
+            c.operations, [qp.expval(qp.PauliZ(0))]
         )
         circuits_with_meas.append(circuit_with_meas)
 
-    return qml.execute(circuits_with_meas, dev, diff_method=None)
+    return qp.execute(circuits_with_meas, dev, diff_method=None)
 
 
 ##############################################################################
@@ -383,7 +383,7 @@ mitigated_qnode(w1, w2)
 
 for _ in range(3):
     print(
-        qml.drawer.tape_text(
+        qp.drawer.tape_text(
             folding(circuit, scale_factor=1.1), decimals=2, max_length=80
         )
     )
@@ -449,8 +449,8 @@ noise_model = NoiseModel.from_backend(backend)
 
 n_wires = 4
 
-dev_ideal = qml.device("default.qubit", wires=n_wires)
-dev_noisy = qml.device(
+dev_ideal = qp.device("default.qubit", wires=n_wires)
+dev_noisy = qp.device(
     "qiskit.aer",
     wires=n_wires,
     noise_model=noise_model,
@@ -491,14 +491,14 @@ for r, phi in zip(distances, params):
 
     # Define ansatz circuit
     def qchem_circuit(phi):
-        qml.PauliX(wires=0)
-        qml.PauliX(wires=1)
-        qml.DoubleExcitation(phi, wires=range(n_wires))
-        return qml.expval(H)
+        qp.PauliX(wires=0)
+        qp.PauliX(wires=1)
+        qp.DoubleExcitation(phi, wires=range(n_wires))
+        return qp.expval(H)
 
-    ideal_energy = qml.QNode(qchem_circuit, dev_ideal)
-    noisy_energy = qml.QNode(qchem_circuit, dev_noisy)
-    noisy_energy = qml.transforms.decompose(noisy_energy, gate_set=["RX", "RY", "RZ", "CNOT"])
+    ideal_energy = qp.QNode(qchem_circuit, dev_ideal)
+    noisy_energy = qp.QNode(qchem_circuit, dev_noisy)
+    noisy_energy = qp.transforms.decompose(noisy_energy, gate_set=["RX", "RY", "RZ", "CNOT"])
 
     ideal_energies.append(ideal_energy(phi))
     noisy_energies.append(noisy_energy(phi))
@@ -521,12 +521,12 @@ for r, phi in zip(distances, params):
 
     # Define ansatz circuit
     ops = [
-        qml.PauliX(0),
-        qml.PauliX(1),
-        qml.DoubleExcitation(phi, wires=range(n_wires)),
+        qp.PauliX(0),
+        qp.PauliX(1),
+        qp.DoubleExcitation(phi, wires=range(n_wires)),
     ]
-    circuit = qml.tape.QuantumTape(ops)
-    [circuit], _ = qml.transforms.decompose(circuit, gate_set=["RX", "RY", "RZ", "CNOT"])
+    circuit = qp.tape.QuantumTape(ops)
+    [circuit], _ = qp.transforms.decompose(circuit, gate_set=["RX", "RY", "RZ", "CNOT"])
 
     # Define custom executor that expands Hamiltonian measurement
     # into a linear combination of tensor products of Pauli
@@ -534,16 +534,16 @@ for r, phi in zip(distances, params):
     def executor(circuit):
 
         # Add Hamiltonian measurement to circuit
-        circuit_with_meas = qml.tape.QuantumTape(circuit.operations, [qml.expval(H)], shots=10000)
+        circuit_with_meas = qp.tape.QuantumTape(circuit.operations, [qp.expval(H)], shots=10000)
 
         # Expand Hamiltonian measurement into tensor product of
         # of Pauli operators. We get a list of circuits to execute
         # and a postprocessing function to combine the results into
         # a single number.
-        circuits, postproc = qml.transforms.split_non_commuting(
+        circuits, postproc = qp.transforms.split_non_commuting(
             circuit_with_meas, grouping_strategy=None
         )
-        circuits_executed = qml.execute(circuits, dev_noisy, diff_method=None)
+        circuits_executed = qp.execute(circuits, dev_noisy, diff_method=None)
         return postproc(circuits_executed)
 
     mitig_energy = execute_with_zne(circuit, executor, scale_noise=fold_global)

@@ -108,7 +108,7 @@ which gives us an approximation for the ground state of :math:`H_c.`
 # To begin, we import the necessary dependencies:
 #
 
-import pennylane as qml
+import pennylane as qp
 from pennylane import numpy as np
 from matplotlib import pyplot as plt
 from pennylane import qaoa as qaoa
@@ -189,7 +189,7 @@ print(driver_h)
 
 
 def build_hamiltonian(graph):
-    H = qml.Hamiltonian([], [])
+    H = qp.Hamiltonian([], [])
 
     # Computes the complement of the graph
     graph_c = nx.complement(graph)
@@ -199,11 +199,11 @@ def build_hamiltonian(graph):
         for edge in graph_c.edges:
             i, j = edge
             if k == i:
-                H += 1.5 * (qml.PauliY(k) @ qml.PauliZ(j) - qml.PauliY(k))
+                H += 1.5 * (qp.PauliY(k) @ qp.PauliZ(j) - qp.PauliY(k))
             if k == j:
-                H += 1.5 * (qml.PauliZ(i) @ qml.PauliY(k) - qml.PauliY(k))
+                H += 1.5 * (qp.PauliZ(i) @ qp.PauliY(k) - qp.PauliY(k))
         # Adds the terms in the second sum
-        H += 2 * qml.PauliY(k)
+        H += 2 * qp.PauliY(k)
 
     return H
 
@@ -221,7 +221,7 @@ print(build_hamiltonian(graph))
 #     .. code-block:: python
 #
 #         cost_h, driver_h = qaoa.max_clique(graph, constrained=False)
-#         comm_h = qml.simplify(1j * qml.commutator(driver_h, cost_h))
+#         comm_h = qp.simplify(1j * qp.commutator(driver_h, cost_h))
 
 ######################################################################
 # We can now build the FALQON algorithm. Our goal is to evolve some initial state under the Hamiltonian :math:`H,`
@@ -230,8 +230,8 @@ print(build_hamiltonian(graph))
 
 
 def falqon_layer(beta_k, cost_h, driver_h, delta_t):
-    qml.ApproxTimeEvolution(cost_h, delta_t, 1)
-    qml.ApproxTimeEvolution(driver_h, delta_t * beta_k, 1)
+    qp.ApproxTimeEvolution(cost_h, delta_t, 1)
+    qp.ApproxTimeEvolution(driver_h, delta_t * beta_k, 1)
 
 
 ######################################################################
@@ -244,8 +244,8 @@ def build_maxclique_ansatz(cost_h, driver_h, delta_t):
     def ansatz(beta, **kwargs):
         layers = len(beta)
         for w in dev.wires:
-            qml.Hadamard(wires=w)
-        qml.layer(falqon_layer, layers, beta, cost_h=cost_h, driver_h=driver_h, delta_t=delta_t)
+            qp.Hadamard(wires=w)
+        qp.layer(falqon_layer, layers, beta, cost_h=cost_h, driver_h=driver_h, delta_t=delta_t)
 
     return ansatz
 
@@ -253,7 +253,7 @@ def build_maxclique_ansatz(cost_h, driver_h, delta_t):
 def expval_circuit(beta, measurement_h):
     ansatz = build_maxclique_ansatz(cost_h, driver_h, delta_t)
     ansatz(beta)
-    return qml.expval(measurement_h)
+    return qp.expval(measurement_h)
 
 
 ######################################################################
@@ -265,7 +265,7 @@ def expval_circuit(beta, measurement_h):
 def max_clique_falqon(graph, n, beta_1, delta_t, dev):
     comm_h = build_hamiltonian(graph)  # Builds the commutator
     cost_h, driver_h = qaoa.max_clique(graph, constrained=False)  # Builds H_c and H_d
-    cost_fn = qml.QNode(
+    cost_fn = qp.QNode(
         expval_circuit, dev
     )  # The ansatz + measurement circuit is executable
 
@@ -298,7 +298,7 @@ n = 40
 beta_1 = 0.0
 delta_t = 0.03
 
-dev = qml.device("default.qubit", wires=graph.nodes)  # Creates a device for the simulation
+dev = qp.device("default.qubit", wires=graph.nodes)  # Creates a device for the simulation
 res_beta, res_energies = max_clique_falqon(graph, n, beta_1, delta_t, dev)
 
 ######################################################################
@@ -319,11 +319,11 @@ plt.show()
 # We define the following circuit, feeding in the optimal values of :math:`\beta_k:`
 
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def prob_circuit():
     ansatz = build_maxclique_ansatz(cost_h, driver_h, delta_t)
     ansatz(res_beta)
-    return qml.probs(wires=dev.wires)
+    return qp.probs(wires=dev.wires)
 
 
 ######################################################################
@@ -429,7 +429,7 @@ plt.show()
 # demonstration, we set the depth to :math:`5:`
 
 depth = 5
-dev = qml.device("default.qubit", wires=new_graph.nodes)
+dev = qp.device("default.qubit", wires=new_graph.nodes)
 
 # Creates the cost and mixer Hamiltonians
 cost_h, mixer_h = qaoa.max_clique(new_graph, constrained=False)
@@ -444,14 +444,14 @@ def qaoa_layer(gamma, beta):
 # Creates the full QAOA circuit as an executable cost function
 def qaoa_circuit(params, **kwargs):
     for w in dev.wires:
-        qml.Hadamard(wires=w)
-    qml.layer(qaoa_layer, depth, params[0], params[1])
+        qp.Hadamard(wires=w)
+    qp.layer(qaoa_layer, depth, params[0], params[1])
 
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def qaoa_expval(params):
     qaoa_circuit(params)
-    return qml.expval(cost_h)
+    return qp.expval(cost_h)
 
 
 ######################################################################
@@ -470,7 +470,7 @@ params = np.array([[delta_t for k in res], [delta_t * k for k in res]], requires
 
 steps = 40
 
-optimizer = qml.GradientDescentOptimizer()
+optimizer = qp.GradientDescentOptimizer()
 
 for s in range(steps):
     params, cost = optimizer.step_and_cost(qaoa_expval, params)
@@ -482,10 +482,10 @@ for s in range(steps):
 # create a bar graph:
 
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def prob_circuit(params):
     qaoa_circuit(params)
-    return qml.probs(wires=dev.wires)
+    return qp.probs(wires=dev.wires)
 
 
 probs = prob_circuit(params)
