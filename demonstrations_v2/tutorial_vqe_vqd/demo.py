@@ -51,14 +51,14 @@ a familiarization with the `variational quantum eigensolver (VQE) algorithm <dem
 #     The warnings do not impact the correctness of the results, but make it harder to view outputs.
 #
 
-import pennylane as qml
+import pennylane as qp
 import numpy as np
 
 import warnings
 warnings.filterwarnings(action="ignore", category=np.exceptions.ComplexWarning)
 
 # Load the dataset
-h2 = qml.data.load("qchem", molname="H2", bondlength=0.742, basis="STO-3G")[0]
+h2 = qp.data.load("qchem", molname="H2", bondlength=0.742, basis="STO-3G")[0]
 
 # Extract the Hamiltonian
 H, n_qubits = h2.hamiltonian, len(h2.hamiltonian.wires)
@@ -66,23 +66,23 @@ H, n_qubits = h2.hamiltonian, len(h2.hamiltonian.wires)
 
 # Obtain the ground state from the operations given by the dataset
 def generate_ground_state(wires):
-    qml.BasisState(np.array(h2.hf_state), wires=wires)
+    qp.BasisState(np.array(h2.hf_state), wires=wires)
 
     for op in h2.vqe_gates:  # use the gates data from the dataset
-        op = qml.map_wires(op, {op.wires[i]: wires[i] for i in range(len(wires))})
-        qml.apply(op)
+        op = qp.map_wires(op, {op.wires[i]: wires[i] for i in range(len(wires))})
+        qp.apply(op)
 
 ######################################################################
 # The ``generate_ground_state`` function prepares the ground state of the molecule using the data obtained from the dataset.
 # Let's use it to check the energy of that state:
 #
 
-dev = qml.device("default.qubit")
+dev = qp.device("default.qubit")
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def circuit():
     generate_ground_state(range(n_qubits))
-    return qml.expval(H)
+    return qp.expval(H)
 
 print(f"Ground state energy: {circuit()}")
 
@@ -100,16 +100,16 @@ print(f"Ground state energy: {circuit()}")
 from functools import partial
 
 # This line is added to better visualise the circuit
-@partial(qml.transforms.decompose, max_expansion=1)
+@partial(qp.transforms.decompose, max_expansion=1)
 
 def ansatz(theta, wires):
-    singles, doubles = qml.qchem.excitations(2, n_qubits)
+    singles, doubles = qp.qchem.excitations(2, n_qubits)
     singles = [[wires[i] for i in single] for single in singles]
     doubles = [[wires[i] for i in double] for double in doubles]
-    qml.AllSinglesDoubles(theta, wires, np.array([1,1,0,0]), singles, doubles)
+    qp.AllSinglesDoubles(theta, wires, np.array([1,1,0,0]), singles, doubles)
 
 theta = np.random.rand(3) # 3 parameters for the ansatz
-print(qml.draw(ansatz, decimals = 2)(theta, range(4)))
+print(qp.draw(ansatz, decimals = 2)(theta, range(4)))
 
 ######################################################################
 # The ``ansatz`` function is the one that generates the state :math:`|\Psi(\theta)\rangle.`
@@ -117,19 +117,19 @@ print(qml.draw(ansatz, decimals = 2)(theta, range(4)))
 # known as `swap test <https://en.wikipedia.org/wiki/Swap_test>`__.
 
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def swap_test(params):
     generate_ground_state(range(1, n_qubits + 1))
     ansatz(params, range(n_qubits + 1, 2 * n_qubits + 1))
 
-    qml.Barrier()  # added to better visualise the circuit
-    qml.Hadamard(wires=0)
+    qp.Barrier()  # added to better visualise the circuit
+    qp.Hadamard(wires=0)
     for i in range(n_qubits):
-        qml.CSWAP(wires=[0, 1 + i + n_qubits, 1 + i])
-    qml.Hadamard(wires=0)
-    return qml.expval(qml.Z(0))
+        qp.CSWAP(wires=[0, 1 + i + n_qubits, 1 + i])
+    qp.Hadamard(wires=0)
+    return qp.expval(qp.Z(0))
 
-print(qml.draw(swap_test)(theta))
+print(qp.draw(swap_test)(theta))
 print(f"\nOverlap between the ground state and the ansatz: {swap_test(theta)}")
 
 ######################################################################
@@ -138,10 +138,10 @@ print(f"\nOverlap between the ground state and the ansatz: {swap_test(theta)}")
 # With this we have all the ingredients to define the loss function that we want to minimize:
 #
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def expected_value(theta):
     ansatz(theta, range(n_qubits))
-    return qml.expval(H)
+    return qp.expval(H)
 
 def loss_f(theta, beta):
     return expected_value(theta) + beta * swap_test(theta)

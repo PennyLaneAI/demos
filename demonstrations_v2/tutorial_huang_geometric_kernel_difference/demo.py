@@ -145,7 +145,7 @@ plt.show()
 #   :math:`\lvert \psi_{\text{E1}}(x) \rangle`.
 #
 # - **E2 – IQP embedding.**
-#   PennyLane’s ``qml.IQPEmbedding`` applies Hadamards, parameterized :math:`RZ(x_j)` rotations, and
+#   PennyLane’s ``qp.IQPEmbedding`` applies Hadamards, parameterized :math:`RZ(x_j)` rotations, and
 #   entangling ZZ gates.
 #   This creates an entangled quantum state :math:`\lvert \psi_{\text{E2}}(x) \rangle`, inspired by
 #   Instantaneous Quantum Polynomial (IQP) circuits.
@@ -186,7 +186,7 @@ plt.show()
 # Let's define the embedding circuits E1 and E2, and visualize them using an auxiliary drawing function. 
 
 import numpy as np
-import pennylane as qml
+import pennylane as qp
 import matplotlib.pyplot as plt
 
 n_features = X_train.shape[1]
@@ -196,12 +196,12 @@ n_qubits = n_features
 # -- E1: separable RX rotations ---------------------------------------------
 def embedding_E1(features):
     for j, xj in enumerate(features):
-        qml.RX(np.pi * xj, wires=j)
+        qp.RX(np.pi * xj, wires=j)
 
 
 # -- E2: IQP embedding via PennyLane template --------------------------------
 def embedding_E2(features):
-    qml.IQPEmbedding(features, wires=range(n_features))
+    qp.IQPEmbedding(features, wires=range(n_features))
 
 
 from utils import draw_circuits_side_by_side
@@ -247,23 +247,23 @@ print(f"K_RBF shape: {K_classical.shape}")
 # ---------------------------------------------------------------------------#
 # Quantum fidelity-based Gram matrices                                       #
 # ---------------------------------------------------------------------------#
-dev = qml.device("default.qubit", wires=n_qubits, shots=None)
+dev = qp.device("default.qubit", wires=n_qubits, shots=None)
 
 
 def overlap_prob(x, y, embed):
     """Probability of measuring |0…0⟩ after U(x) U†(y)."""
 
-    @qml.qnode(dev)
+    @qp.qnode(dev)
     def circuit():
         embed(x)
-        qml.adjoint(embed)(y)
-        return qml.probs(wires=range(n_qubits))
+        qp.adjoint(embed)(y)
+        return qp.probs(wires=range(n_qubits))
 
     return circuit()[0]
 
 
 def quantum_kernel_matrix(X, embed):
-    return qml.kernels.kernel_matrix(X, X, lambda v1, v2: overlap_prob(v1, v2, embed))
+    return qp.kernels.kernel_matrix(X, X, lambda v1, v2: overlap_prob(v1, v2, embed))
 
 
 print("Computing QK-E1 (fidelity)...")
@@ -287,12 +287,12 @@ def get_pauli_vectors(embedding_func, X):
     """Returns Pauli expectation vectors for each input using the given embedding."""
     observables = []
     for i in range(n_qubits):
-        observables.extend([qml.PauliX(i), qml.PauliY(i), qml.PauliZ(i)])
+        observables.extend([qp.PauliX(i), qp.PauliY(i), qp.PauliZ(i)])
 
-    @qml.qnode(dev)
+    @qp.qnode(dev)
     def pauli_qnode(x):
         embedding_func(x)
-        return [qml.expval(obs) for obs in observables]
+        return [qp.expval(obs) for obs in observables]
 
     vectors = [pauli_qnode(x) for x in X]
     return np.array(vectors)
@@ -437,13 +437,13 @@ results["Classical RBF"] = train_evaluate_svm(
 )
 
 # Quantum Kernel E1
-K_qk_e1_test = qml.kernels.kernel_matrix(
+K_qk_e1_test = qp.kernels.kernel_matrix(
     X_test, X_train, lambda x, y: overlap_prob(x, y, embedding_E1)
 )
 results["QK-E1"] = train_evaluate_svm(K_quantum_E1, K_qk_e1_test, y_train, y_test, "Quantum E1")
 
 # Quantum Kernel E2
-K_qk_e2_test = qml.kernels.kernel_matrix(
+K_qk_e2_test = qp.kernels.kernel_matrix(
     X_test, X_train, lambda x, y: overlap_prob(x, y, embedding_E2)
 )
 results["QK-E2"] = train_evaluate_svm(K_quantum_E2, K_qk_e2_test, y_train, y_test, "Quantum E2")

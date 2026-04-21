@@ -127,22 +127,22 @@ def random_observable(N, seed):
 
 import jax
 from jax import numpy as np
-import pennylane as qml
+import pennylane as qp
 
 jax.config.update("jax_enable_x64", True)
 
 def make_cost(N, seed):
     """Create a cost function on N qubits with N frequencies."""
-    dev = qml.device("default.qubit", wires=N)
+    dev = qp.device("default.qubit", wires=N)
 
     @jax.jit
-    @qml.qnode(dev, interface="jax")
+    @qp.qnode(dev, interface="jax")
     def cost(x):
         """Cost function on N qubits with N frequencies."""
-        qml.StatePrep(random_state(N, seed), wires=dev.wires)
+        qp.StatePrep(random_state(N, seed), wires=dev.wires)
         for w in dev.wires:
-            qml.RZ(x, wires=w, id="x")
-        return qml.expval(qml.Hermitian(random_observable(N, seed), wires=dev.wires))
+            qp.RZ(x, wires=w, id="x")
+        return qp.expval(qp.Hermitian(random_observable(N, seed), wires=dev.wires))
 
     return cost
 
@@ -264,7 +264,7 @@ from pennylane.fourier.visualize import bar
 fig, axs = plt.subplots(2, len(Ns), figsize=(12, 4.5))
 for i, (cost_function, spec) in enumerate(zip(cost_functions, spectra)):
     # Compute the Fourier coefficients
-    coeffs = qml.fourier.coefficients(cost_function, 1, len(spec)+2)
+    coeffs = qp.fourier.coefficients(cost_function, 1, len(spec)+2)
     # Show the Fourier coefficients
     bar(coeffs, 1, axs[:, i], show_freqs=True, colour_dict={"real": green, "imag": orange})
     axs[0, i].set_title(f"{Ns[i]} qubits")
@@ -880,6 +880,6 @@ print(f"Second-order finite difference:    {np.round(np.array(fd_der2), 6)}")
 # .. |shgo| replace:: ``shgo``
 # .. _shgo: https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.shgo.html
 #
-# .. |Rotosolve_code| replace:: ``qml.RotosolveOptimizer``
+# .. |Rotosolve_code| replace:: ``qp.RotosolveOptimizer``
 # .. _Rotosolve_code: https://pennylane.readthedocs.io/en/stable/code/api/pennylane.RotosolveOptimizer.html
 #

@@ -124,12 +124,12 @@ step at a time.
 # We can use the following `quantum function <https://docs.pennylane.ai/en/stable/introduction/circuits.html#quantum-functions>`__
 # to do the state preparation step:
 
-import pennylane as qml
+import pennylane as qp
 import numpy as np
 
 
 def state_preparation(state):
-    qml.StatePrep(state, wires=["S"])
+    qp.StatePrep(state, wires=["S"])
 
 
 ##############################################################################
@@ -171,8 +171,8 @@ def state_preparation(state):
 
 
 def entangle_qubits():
-    qml.Hadamard(wires="A")
-    qml.CNOT(wires=["A", "B"])
+    qp.Hadamard(wires="A")
+    qp.CNOT(wires=["A", "B"])
 
 
 ##############################################################################
@@ -230,8 +230,8 @@ def entangle_qubits():
 
 
 def basis_rotation():
-    qml.CNOT(wires=["S", "A"])
-    qml.Hadamard(wires="S")
+    qp.CNOT(wires=["S", "A"])
+    qp.Hadamard(wires="S")
 
 
 ##############################################################################
@@ -275,16 +275,16 @@ def basis_rotation():
 # correction. In this situation, measurements are happening partway through the protocol,
 # and the results would be used to control the application of future quantum gates. This
 # is known as mid-circuit measurement, and such mid-circuit measurements are expressed
-# in PennyLane using :func:`qml.measure <pennylane.measure>`. Mid-circuit measurement
+# in PennyLane using :func:`qp.measure <pennylane.measure>`. Mid-circuit measurement
 # results can be used to control operations, and this is expressed in PennyLane using
-# :func:`qml.cond <pennylane.cond>`.
+# :func:`qp.cond <pennylane.cond>`.
 
 
 def measure_and_update():
-    m0 = qml.measure("S")
-    m1 = qml.measure("A")
-    qml.cond(m1, qml.PauliX)("B")
-    qml.cond(m0, qml.PauliZ)("B")
+    m0 = qp.measure("S")
+    m1 = qp.measure("A")
+    qp.cond(m1, qp.PauliX)("B")
+    qp.cond(m0, qp.PauliZ)("B")
 
 
 ##############################################################################
@@ -301,7 +301,7 @@ def teleport(state):
 
 
 state = np.array([1 / np.sqrt(2) + 0.3j, 0.4 - 0.5j])
-_ = qml.draw_mpl(teleport, style="pennylane")(state)
+_ = qp.draw_mpl(teleport, style="pennylane")(state)
 
 ##############################################################################
 #
@@ -316,19 +316,19 @@ _ = qml.draw_mpl(teleport, style="pennylane")(state)
 # specify ``level="device"`` when calling ``draw_mpl`` so it
 # runs the device pre-processing before drawing the circuit.
 
-dev = qml.device("default.qubit", wires=["S", "A", "B"])
+dev = qp.device("default.qubit", wires=["S", "A", "B"])
 
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def teleport(state):
     state_preparation(state)
     entangle_qubits()
     basis_rotation()
     measure_and_update()
-    return qml.density_matrix(wires=["B"])
+    return qp.density_matrix(wires=["B"])
 
 
-_ = qml.draw_mpl(teleport, style="pennylane", level="device")(state)
+_ = qp.draw_mpl(teleport, style="pennylane", level="device")(state)
 
 ##############################################################################
 #
@@ -355,7 +355,7 @@ _ = qml.draw_mpl(teleport, style="pennylane", level="device")(state)
 # 1\rangle`. This means that our protocol has changed the state of Bob's qubit
 # into the one Alice wished to send him, which is truly incredible!
 #
-# We can use :func:`qml.density_matrix <pennylane.density_matrix>` to trace out
+# We can use :func:`qp.density_matrix <pennylane.density_matrix>` to trace out
 # and return Bob's subsystem as a density matrix, which is a more general
 # description of the state of his qubit. We will use this to verify that Alice's
 # state was successfully teleported to Bob's qubit.
@@ -372,7 +372,7 @@ _ = qml.draw_mpl(teleport, style="pennylane", level="device")(state)
 
 def teleport_state(state):
     teleported_density_matrix = teleport(state)
-    original_density_matrix = qml.math.dm_from_state_vector(state)
+    original_density_matrix = qp.math.dm_from_state_vector(state)
 
     if not np.allclose(teleported_density_matrix, original_density_matrix):
         raise ValueError(

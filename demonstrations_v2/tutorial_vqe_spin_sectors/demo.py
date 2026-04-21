@@ -62,9 +62,9 @@ coordinates = np.array([0.0, 0.0, -0.6614, 0.0, 0.0, 0.6614])
 # the qubit Hamiltonian of the molecule is built using the
 # :func:`~.pennylane.qchem.molecular_hamiltonian` function.
 
-import pennylane as qml
+import pennylane as qp
 
-H, qubits = qml.qchem.molecular_hamiltonian(symbols, coordinates)
+H, qubits = qp.qchem.molecular_hamiltonian(symbols, coordinates)
 
 print("Number of qubits = ", qubits)
 print("The Hamiltonian is ", H)
@@ -99,7 +99,7 @@ print("The Hamiltonian is ", H)
 # :math:`\hat{S}^2` observable.
 
 electrons = 2
-S2 = qml.qchem.spin2(electrons, qubits)
+S2 = qp.qchem.spin2(electrons, qubits)
 print(S2)
 
 ##############################################################################
@@ -118,7 +118,7 @@ print(S2)
 # function to generate the vector representing the Hartree-Fock state
 # :math:`\vert 1100 \rangle` of the :math:`\mathrm{H}_2` molecule.
 
-hf = qml.qchem.hf_state(electrons, qubits)
+hf = qp.qchem.hf_state(electrons, qubits)
 print(hf)
 
 ##############################################################################
@@ -139,7 +139,7 @@ print(hf)
 # Therefore, for the ground state of the :math:`\mathrm{H}_2` molecule we choose
 # ``delta_sz = 0``.
 
-singles, doubles = qml.qchem.excitations(electrons, qubits, delta_sz=0)
+singles, doubles = qp.qchem.excitations(electrons, qubits, delta_sz=0)
 print(singles)
 print(doubles)
 
@@ -154,7 +154,7 @@ print(doubles)
 
 
 def circuit(params, wires):
-    qml.AllSinglesDoubles(params, wires, hf, singles, doubles)
+    qp.AllSinglesDoubles(params, wires, hf, singles, doubles)
 
 
 ##############################################################################
@@ -180,7 +180,7 @@ def circuit(params, wires):
 # Now we proceed to optimize the variational parameters. First, we define the device,
 # in this case a qubit simulator:
 
-dev = qml.device("lightning.qubit", wires=qubits)
+dev = qp.device("lightning.qubit", wires=qubits)
 
 ##############################################################################
 # Next, we define the cost function as the following QNode, where we make use of
@@ -189,20 +189,20 @@ dev = qml.device("lightning.qubit", wires=qubits)
 # a cost function that can be evaluated with the circuit parameters:
 
 
-@qml.qnode(dev, interface="jax")
+@qp.qnode(dev, interface="jax")
 def cost_fn(params):
     circuit(params, wires=range(qubits))
-    return qml.expval(H)
+    return qp.expval(H)
 
 ##############################################################################
 # As a reminder, we also built the total spin operator :math:`\hat{S}^2` for which
 # we can now define a function to compute its expectation value:
 
 
-@qml.qnode(dev, interface="jax")
+@qp.qnode(dev, interface="jax")
 def S2_exp_value(params):
     circuit(params, wires=range(qubits))
-    return qml.expval(S2)
+    return qp.expval(S2)
 
 
 ##############################################################################
@@ -239,10 +239,10 @@ import catalyst
 max_iterations = 100
 
 prev_energy = 0.0
-@qml.qjit
+@qp.qjit
 def update_step(i, params, opt_state):
     """Perform a single gradient update step"""
-    grads = qml.grad(cost_fn)(params)
+    grads = qp.grad(cost_fn)(params)
     updates, opt_state = opt.update(grads, opt_state)
     params = optax.apply_updates(params, updates)
     return (params, opt_state)
@@ -271,7 +271,7 @@ print("\n" f"Optimal value of the circuit parameters = {params}")
 # excitations whose total-spin projection differs by the quantity ``delta_sz=1``
 # with respect to the Hartree-Fock state.
 
-singles, doubles = qml.qchem.excitations(electrons, qubits, delta_sz=1)
+singles, doubles = qp.qchem.excitations(electrons, qubits, delta_sz=1)
 print(singles)
 print(doubles)
 
@@ -284,7 +284,7 @@ print(doubles)
 
 
 def circuit(params, wires):
-    qml.AllSinglesDoubles(params, wires, np.flip(hf), singles, doubles)
+    qp.AllSinglesDoubles(params, wires, np.flip(hf), singles, doubles)
 
 
 ##############################################################################
@@ -306,16 +306,16 @@ def circuit(params, wires):
 # and the total spin operator for the new circuit.
 
 
-@qml.qnode(dev, interface="jax")
+@qp.qnode(dev, interface="jax")
 def cost_fn(params):
     circuit(params, wires=range(qubits))
-    return qml.expval(H)
+    return qp.expval(H)
 
 
-@qml.qnode(dev, interface="jax")
+@qp.qnode(dev, interface="jax")
 def S2_exp_value(params):
     circuit(params, wires=range(qubits))
-    return qml.expval(S2)
+    return qp.expval(S2)
 
 
 ##############################################################################
@@ -328,10 +328,10 @@ init_params = random.normal(key, shape=(len(singles) + len(doubles),)) * np.pi
 
 max_iterations = 100
 
-@qml.qjit
+@qp.qjit
 def update_step(i, params, opt_state):
     """Perform a single gradient update step"""
-    grads = qml.grad(cost_fn)(params)
+    grads = qp.grad(cost_fn)(params)
     updates, opt_state = opt.update(grads, opt_state)
     params = optax.apply_updates(params, updates)
     return (params, opt_state)

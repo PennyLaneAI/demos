@@ -66,10 +66,10 @@ To implement these operators in PennyLane, the first step is to define the `regi
 we will work with. We define wires for input registers, the output register, and also additional ``work_wires`` that will be important when we later discuss the :class:`~.pennylane.Multiplier` operator.
 """
 
-import pennylane as qml
+import pennylane as qp
 
 # we indicate the name of the registers and their number of qubits. 
-wires = qml.registers({"x": 4, "y":4, "output":6,"work_wires": 4})
+wires = qp.registers({"x": 4, "y":4, "output":6,"work_wires": 4})
 
 ######################################################################
 # Now, we write a circuit to prepare the state :math:`|x \rangle|y \rangle|0 \rangle`, which will be needed for the out-place
@@ -77,15 +77,15 @@ wires = qml.registers({"x": 4, "y":4, "output":6,"work_wires": 4})
 # you could introduce any quantum state as input.
 
 def product_basis_state(x=0,y=0):
-    qml.BasisState(x, wires=wires["x"])
-    qml.BasisState(y, wires=wires["y"])
+    qp.BasisState(x, wires=wires["x"])
+    qp.BasisState(y, wires=wires["y"])
 
-dev = qml.device("default.qubit")
-@qml.set_shots(1)
-@qml.qnode(dev)
+dev = qp.device("default.qubit")
+@qp.set_shots(1)
+@qp.qnode(dev)
 def circuit(x,y):
     product_basis_state(x, y)
-    return {name: qml.sample(wires=wires[name]) for name in ["x", "y", "output"]}
+    return {name: qp.sample(wires=wires[name]) for name in ["x", "y", "output"]}
 
 ######################################################################
 # Since the arithmetic operations are deterministic, a single shot is enough to sample 
@@ -109,14 +109,14 @@ print("output register: ", output["output"][0]," (binary) ---> ", state_to_decim
 # Now we can implement an example for the :class:`~.pennylane.Adder` operator. We will add the integer :math:`5` to the ``wires["x"]`` register
 # that stores the state :math:`|x \rangle=|1 \rangle`.
 
-@qml.set_shots(1)
-@qml.qnode(dev)
+@qp.set_shots(1)
+@qp.qnode(dev)
 def circuit(x):
 
     product_basis_state(x)          # |x> 
-    qml.Adder(5, wires["x"])        # |x+5> 
+    qp.Adder(5, wires["x"])        # |x+5> 
 
-    return qml.sample(wires=wires["x"])
+    return qp.sample(wires=wires["x"])
 
 print(circuit(x=1), " (binary) ---> ", state_to_decimal(circuit(x=1)[0])," (decimal)")
 
@@ -124,7 +124,7 @@ print(circuit(x=1), " (binary) ---> ", state_to_decimal(circuit(x=1)[0])," (deci
 # We obtained the result :math:`5+1=6`, as expected. At this point, it's worth taking a moment to look
 # at the decomposition of the circuit into quantum gates and operators. 
 
-fig, _ = qml.draw_mpl(circuit, decimals = 2, style = "pennylane", level='device')(x=1)
+fig, _ = qp.draw_mpl(circuit, decimals = 2, style = "pennylane", level='device')(x=1)
 fig.show()
 
 ######################################################################
@@ -136,14 +136,14 @@ fig.show()
 # Now, let's see an example for the :class:`~.pennylane.OutAdder` operator to add the states 
 # :math:`|x \rangle` and :math:`|y \rangle` to the output register.
 
-@qml.set_shots(1)
-@qml.qnode(dev)
+@qp.set_shots(1)
+@qp.qnode(dev)
 def circuit(x,y):
 
     product_basis_state(x, y)                                  #    |x> |y> |0>
-    qml.OutAdder(wires["x"], wires["y"], wires["output"])      #    |x> |y> |x+y>
+    qp.OutAdder(wires["x"], wires["y"], wires["output"])      #    |x> |y> |x+y>
 
-    return qml.sample(wires=wires["output"])
+    return qp.sample(wires=wires["output"])
 
 print(circuit(x=2,y=3), " (binary) ---> ", state_to_decimal(circuit(x=2,y=3)[0]), " (decimal)")
 
@@ -172,14 +172,14 @@ print(circuit(x=2,y=3), " (binary) ---> ", state_to_decimal(circuit(x=2,y=3)[0])
 # :class:`~.pennylane.Multiplier` operator. We will multiply the state  :math:`|x \rangle=|2 \rangle` by 
 # the integer :math:`k=3`:
 
-@qml.set_shots(1)
-@qml.qnode(dev)
+@qp.set_shots(1)
+@qp.qnode(dev)
 def circuit(x):
 
     product_basis_state(x)                                           #    |x>                                    
-    qml.Multiplier(3, wires["x"], work_wires=wires["work_wires"])    #    |3x> 
+    qp.Multiplier(3, wires["x"], work_wires=wires["work_wires"])    #    |3x> 
 
-    return qml.sample(wires=wires["x"])
+    return qp.sample(wires=wires["x"])
 
 print(circuit(x=2), " (binary) ---> ", state_to_decimal(circuit(x=2)[0])," (decimal)")
 
@@ -189,14 +189,14 @@ print(circuit(x=2), " (binary) ---> ", state_to_decimal(circuit(x=2)[0])," (deci
 # Now, let's look at an example using the :class:`~.pennylane.OutMultiplier` operator to multiply the states :math:`|x \rangle` and
 # :math:`|y \rangle`, storing the result in the output register.
 
-@qml.set_shots(1)
-@qml.qnode(dev)
+@qp.set_shots(1)
+@qp.qnode(dev)
 def circuit(x,y):
 
     product_basis_state(x, y)                                     #    |x> |y> |0>
-    qml.OutMultiplier(wires["x"], wires["y"], wires["output"])    #    |x> |y> |xy>
+    qp.OutMultiplier(wires["x"], wires["y"], wires["output"])    #    |x> |y> |xy>
 
-    return qml.sample(wires=wires["output"])
+    return qp.sample(wires=wires["output"])
 
 print(circuit(x=4,y=2), " (binary) ---> ", state_to_decimal(circuit(x=4,y=2)[0])," (decimal)")
 
@@ -205,14 +205,14 @@ print(circuit(x=4,y=2), " (binary) ---> ", state_to_decimal(circuit(x=4,y=2)[0])
 # multiplication, respectively. The inverse of a quantum circuit can be implemented with the 
 # :func:`~.pennylane.adjoint` operator. Let's see an example of modular subtraction.
 
-@qml.set_shots(1)
-@qml.qnode(dev)
+@qp.set_shots(1)
+@qp.qnode(dev)
 def circuit(x):
 
     product_basis_state(x)                     # |x> 
-    qml.adjoint(qml.Adder(3, wires["x"]))      # |x-3>  
+    qp.adjoint(qp.Adder(3, wires["x"]))      # |x-3>  
 
-    return qml.sample(wires=wires["x"])
+    return qp.sample(wires=wires["x"])
 
 print(circuit(x=6), " (binary) ---> ", state_to_decimal(circuit(x=6)[0]), " (decimal)")
 
@@ -244,14 +244,14 @@ print(circuit(x=6), " (binary) ---> ", state_to_decimal(circuit(x=6)[0]), " (dec
 
 def adding_3xy():
     # |x> --->  |3x>
-    qml.Multiplier(3, wires["x"], work_wires=wires["work_wires"])
+    qp.Multiplier(3, wires["x"], work_wires=wires["work_wires"])
 
     # |3x>|y>|0> ---> |3x>|y>|3xy>
-    qml.OutMultiplier(wires["x"], wires["y"], wires["output"])
+    qp.OutMultiplier(wires["x"], wires["y"], wires["output"])
 
     # We return the x-register to its original value using the adjoint operation
     # |3x>|y>|3xy>  ---> |x>|y>|3xy>
-    qml.adjoint(qml.Multiplier)(3, wires["x"], work_wires=wires["work_wires"])
+    qp.adjoint(qp.Multiplier)(3, wires["x"], work_wires=wires["work_wires"])
 
 ######################################################################
 # Then we need to add the term :math:`5x + 3y` to the output register, which can be done by using the
@@ -260,30 +260,30 @@ def adding_3xy():
 def adding_5x_3y():
 
     # |x>|y> --->  |5x>|3y>
-    qml.Multiplier(5, wires["x"], work_wires=wires["work_wires"])
-    qml.Multiplier(3, wires["y"], work_wires=wires["work_wires"])
+    qp.Multiplier(5, wires["x"], work_wires=wires["work_wires"])
+    qp.Multiplier(3, wires["y"], work_wires=wires["work_wires"])
 
     # |5x>|3y>|0> --->  |5x>|3y>|5x + 3y>
-    qml.OutAdder(wires["x"], wires["y"], wires["output"])
+    qp.OutAdder(wires["x"], wires["y"], wires["output"])
 
     # We return the x and y registers to their original value using the adjoint operation
     # |5x>|3y>|5x + 3y> --->  |x>|y>|5x + 3y>
-    qml.adjoint(qml.Multiplier)(5, wires["x"], work_wires=wires["work_wires"])
-    qml.adjoint(qml.Multiplier)(3, wires["y"], work_wires=wires["work_wires"])
+    qp.adjoint(qp.Multiplier)(5, wires["x"], work_wires=wires["work_wires"])
+    qp.adjoint(qp.Multiplier)(3, wires["y"], work_wires=wires["work_wires"])
 
 ######################################################################
 # Now we can combine all these circuits to implement the transformation by the polynomial  :math:`f(x,y)= 4 + 3xy + 5 x+ 3 y`.
 
-@qml.set_shots(1)
-@qml.qnode(dev)
+@qp.set_shots(1)
+@qp.qnode(dev)
 def circuit(x,y):
 
     product_basis_state(x, y)      #    |x> |y> |0>
-    qml.Adder(4, wires["output"])  #    |x> |y> |4>
+    qp.Adder(4, wires["output"])  #    |x> |y> |4>
     adding_3xy()                   #    |x> |y> |4 + 3xy>
     adding_5x_3y()                 #    |x> |y> |4 + 3xy + 5x + 3y>
 
-    return qml.sample(wires=wires["output"])
+    return qp.sample(wires=wires["output"])
 
 print(circuit(x=1,y=4), " (binary) ---> ", state_to_decimal(circuit(x=1,y=4)[0]), " (decimal)")
 
@@ -293,7 +293,7 @@ print(circuit(x=1,y=4), " (binary) ---> ", state_to_decimal(circuit(x=1,y=4)[0])
 # At this point, it's interesting to consider what would happen if we had chosen a smaller number of wires for the output.
 # For instance, if we had selected one wire fewer, we would have obtained the result :math:`33 \mod 2^5 = 1`.
 
-wires = qml.registers({"x": 4, "y": 4, "output": 5,"work_wires": 4})
+wires = qp.registers({"x": 4, "y": 4, "output": 5,"work_wires": 4})
 
 print(circuit(x=1,y=4), " (binary) ---> ", state_to_decimal(circuit(x=1,y=4)[0]), " (decimal)")
 
@@ -318,18 +318,18 @@ def f(x, y):
 
 ######################################################################
 
-wires = qml.registers({"x": 4, "y":4, "output":6})
-@qml.set_shots(1)
-@qml.qnode(dev)
+wires = qp.registers({"x": 4, "y":4, "output":6})
+@qp.set_shots(1)
+@qp.qnode(dev)
 def circuit_with_Poly(x,y):
 
    product_basis_state(x, y)                         #    |x> |y> |0>
-   qml.OutPoly(
+   qp.OutPoly(
        f, 
        input_registers= [wires["x"], wires["y"]],
        output_wires = wires["output"])               #    |x> |y> |4 + 3xy + 5x + 3y>
    
-   return qml.sample(wires = wires["output"])
+   return qp.sample(wires = wires["output"])
 
 print(circuit_with_Poly(x=1,y=4), " (binary) ---> ", state_to_decimal(circuit_with_Poly(x=1,y=4)[0]), " (decimal)")
 

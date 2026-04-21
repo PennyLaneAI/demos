@@ -36,12 +36,12 @@ evolving the quantum state of a honeycomb lattice of spins under the
 #
 # We demonstrate this with a :math:`25 \times 25` honeycomb lattice of spins.  
 # Here, we generate the Hamiltonian ourselves, using the
-# :func:`qml.spin.kitaev <pennylane.spin.kitaev>` function,
+# :func:`qp.spin.kitaev <pennylane.spin.kitaev>` function,
 # and group the Hamiltonian terms into qubit-wise
 # commuting groups:
 #
 
-import pennylane as qml
+import pennylane as qp
 import numpy as np
 import time
 
@@ -49,15 +49,15 @@ n_cells = [25, 25]
 kx, ky, kz = (0.5, 0.6, 0.7)
 
 t1 = time.time()
-flat_hamiltonian = qml.spin.kitaev(n_cells, coupling=np.array([kx, ky, kz]))
+flat_hamiltonian = qp.spin.kitaev(n_cells, coupling=np.array([kx, ky, kz]))
 flat_hamiltonian.compute_grouping()  # compute the qubit-wise commuting groups!
 
 groups = []
 for group_indices in flat_hamiltonian.grouping_indices:
-    grouped_term = qml.sum(*(flat_hamiltonian.operands[index] for index in group_indices))
+    grouped_term = qp.sum(*(flat_hamiltonian.operands[index] for index in group_indices))
     groups.append(grouped_term)
 
-grouped_hamiltonian = qml.sum(*groups)
+grouped_hamiltonian = qp.sum(*groups)
 t2 = time.time()
 t_generation = t2 - t1
 
@@ -68,12 +68,12 @@ t_generation = t2 - t1
 num_steps = 10
 order = 6
 
-@qml.qnode(qml.device("default.qubit"))
+@qp.qnode(qp.device("default.qubit"))
 def executable_circuit(hamiltonian, num_steps, order):
     for wire in hamiltonian.wires: # uniform superposition over all basis states
-        qml.Hadamard(wire)
-    qml.TrotterProduct(hamiltonian, time=1.0, n=num_steps, order=order)
-    return qml.state()
+        qp.Hadamard(wire)
+    qp.TrotterProduct(hamiltonian, time=1.0, n=num_steps, order=order)
+    return qp.state()
 
 ######################################################################
 # Now, let’s import our quantum resource :mod:`estimator <pennylane.estimator>`.

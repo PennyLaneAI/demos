@@ -431,7 +431,7 @@ single_qubit_cliffords = [
 # operation first with experiments using a large but finite amount of Haar-random
 # unitaries, and then again with only the Clifford group.
 
-import pennylane as qml
+import pennylane as qp
 
 # Scipy allows us to sample Haar-random unitaries directly
 from scipy.stats import unitary_group
@@ -440,7 +440,7 @@ from scipy.stats import unitary_group
 np.random.seed(42)
 
 # Use the mixed state simulator
-dev = qml.device("default.mixed", wires=1)
+dev = qp.device("default.mixed", wires=1)
 
 ######################################################################
 # Let's set up a noisy quantum channel. To keep things simple, assume it
@@ -449,8 +449,8 @@ dev = qml.device("default.mixed", wires=1)
 # quantum function for our ideal experiment:
 
 def ideal_experiment():
-    qml.SX(wires=0)
-    return qml.state()
+    qp.SX(wires=0)
+    return qp.state()
 
 ######################################################################
 # Next, we apply some noise. We do so by making use of a relatively new feature
@@ -459,9 +459,9 @@ def ideal_experiment():
 # operations. Suppose the noisy channel is composed of the following:
 
 def noisy_operations(damp_factor, depo_factor, flip_prob):
-    qml.AmplitudeDamping(damp_factor, wires=0)
-    qml.DepolarizingChannel(depo_factor, wires=0)
-    qml.BitFlip(flip_prob, wires=0)
+    qp.AmplitudeDamping(damp_factor, wires=0)
+    qp.DepolarizingChannel(depo_factor, wires=0)
+    qp.BitFlip(flip_prob, wires=0)
 
 
 ######################################################################
@@ -469,10 +469,10 @@ def noisy_operations(damp_factor, depo_factor, flip_prob):
 # *after* the original operations, but before the measurements.  We use the
 # convenient :func:`~.pennylane.transform` decorator:
 
-@qml.transform
+@qp.transform
 def apply_noise(tape, damp_factor, depo_factor, flip_prob):
     # Capture the operations from the noisy sequence
-    noisy_tape = qml.tape.make_qscript(noisy_operations)(damp_factor, depo_factor, flip_prob)
+    noisy_tape = qp.tape.make_qscript(noisy_operations)(damp_factor, depo_factor, flip_prob)
 
     # Apply the original operations, then the noisy ones
     noisy_ops = tape.operations + noisy_tape.operations
@@ -499,12 +499,12 @@ noisy_experiment = apply_noise(ideal_experiment, damp_factor, depo_factor, flip_
 # before all the operations, and its inverse right before the measurements.  We
 # can write another transform here to streamline this process:
 
-@qml.transform
+@qp.transform
 def conjugate_with_unitary(tape, matrix):
     new_ops = [
-        qml.QubitUnitary(matrix, wires=0),
+        qp.QubitUnitary(matrix, wires=0),
         *tape.operations,
-        qml.QubitUnitary(matrix.conj().T, wires=0),
+        qp.QubitUnitary(matrix.conj().T, wires=0),
     ]
 
     def null_postprocessing_fn(results):
@@ -541,8 +541,8 @@ for _ in range(n_samples):
     conjugated_noisy_experiment = conjugate_with_unitary(noisy_experiment, U)
 
     # Use the functions to create QNodes
-    ideal_qnode = qml.QNode(conjugated_ideal_experiment, dev)
-    noisy_qnode = qml.QNode(conjugated_noisy_experiment, dev)
+    ideal_qnode = qp.QNode(conjugated_ideal_experiment, dev)
+    noisy_qnode = qp.QNode(conjugated_noisy_experiment, dev)
 
     # Execute the QNodes
     ideal_state = ideal_qnode()
@@ -562,19 +562,19 @@ print(f"Mean fidelity = {fid_mean}")
 def apply_single_clifford(clifford_string, inverse=False):
     for gate in clifford_string:
         if gate == 'H':
-            qml.Hadamard(wires=0)
+            qp.Hadamard(wires=0)
         else:
             sign = -1 if inverse else 1
-            qml.PhaseShift(sign * np.pi/2, wires=0)
+            qp.PhaseShift(sign * np.pi/2, wires=0)
 
 ######################################################################
 # Next, we write a transform that applies a Clifford in the context of the full
 # experiment, i.e., apply the Clifford, then the operations, followed by the
 # inverse of the Clifford.
 
-@qml.transform
+@qp.transform
 def conjugate_with_clifford(tape, clifford_string):
-    make_single_clifford = qml.tape.make_qscript(apply_single_clifford)
+    make_single_clifford = qp.tape.make_qscript(apply_single_clifford)
     non_inv_tape = make_single_clifford(clifford_string, inverse=False)
     inv_tape = make_single_clifford(clifford_string, inverse=True)
 
@@ -598,8 +598,8 @@ for C in single_qubit_cliffords:
     conjugated_ideal_experiment = conjugate_with_clifford(ideal_experiment, C)
     conjugated_noisy_experiment = conjugate_with_clifford(noisy_experiment, C)
 
-    ideal_qnode = qml.QNode(conjugated_ideal_experiment, dev)
-    noisy_qnode = qml.QNode(conjugated_noisy_experiment, dev)
+    ideal_qnode = qp.QNode(conjugated_ideal_experiment, dev)
+    noisy_qnode = qp.QNode(conjugated_noisy_experiment, dev)
 
     ideal_state = ideal_qnode()
     noisy_state = noisy_qnode()

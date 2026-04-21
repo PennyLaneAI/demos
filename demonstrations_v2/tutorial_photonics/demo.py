@@ -128,7 +128,7 @@ can be performed using these tools. Let's get started!
 # states of light. Let's first call the usual imports,
 #
 
-import pennylane as qml
+import pennylane as qp
 from pennylane import numpy as np
 import matplotlib.pyplot as plt
 
@@ -136,7 +136,7 @@ import matplotlib.pyplot as plt
 #
 # and define the device.
 
-dev = qml.device("default.gaussian", wires=1)
+dev = qp.device("default.gaussian", wires=1)
 
 ##############################################################################
 #
@@ -154,16 +154,16 @@ dev = qml.device("default.gaussian", wires=1)
 # We plot 1000 measurement results for both :math:`x` and :math:`p.`
 
 
-@qml.set_shots(1000)
-@qml.qnode(dev)
+@qp.set_shots(1000)
+@qp.qnode(dev)
 def vacuum_measure_x():
-    return qml.sample(qml.QuadX(0))  # Samples X quadratures
+    return qp.sample(qp.QuadX(0))  # Samples X quadratures
 
 
-@qml.set_shots(1000)
-@qml.qnode(dev)
+@qp.set_shots(1000)
+@qp.qnode(dev)
 def vacuum_measure_p():
-    return qml.sample(qml.QuadP(0))  # Samples P quadrature
+    return qp.sample(qp.QuadP(0))  # Samples P quadrature
 
 
 # Sample measurements in phase space
@@ -197,27 +197,27 @@ plt.show()
 # origin with a spread of approximately 1. We can check these eyeballed values explicitly,
 # using a device without shots this time.
 
-dev_exact = qml.device("default.gaussian", wires=1)  # No explicit shots gives analytic calculations
+dev_exact = qp.device("default.gaussian", wires=1)  # No explicit shots gives analytic calculations
 
 
-@qml.qnode(dev_exact)
+@qp.qnode(dev_exact)
 def vacuum_mean_x():
-    return qml.expval(qml.QuadX(0))  # Returns exact expecation value of x
+    return qp.expval(qp.QuadX(0))  # Returns exact expecation value of x
 
 
-@qml.qnode(dev_exact)
+@qp.qnode(dev_exact)
 def vacuum_mean_p():
-    return qml.expval(qml.QuadP(0))  # Returns exact expectation value of p
+    return qp.expval(qp.QuadP(0))  # Returns exact expectation value of p
 
 
-@qml.qnode(dev_exact)
+@qp.qnode(dev_exact)
 def vacuum_var_x():
-    return qml.var(qml.QuadX(0))  # Returns exact variance of x
+    return qp.var(qp.QuadX(0))  # Returns exact variance of x
 
 
-@qml.qnode(dev_exact)
+@qp.qnode(dev_exact)
 def vacuum_var_p():
-    return qml.var(qml.QuadP(0))  # Returns exact variance of p
+    return qp.var(qp.QuadP(0))  # Returns exact variance of p
 
 
 # Print calculated statistical quantities
@@ -273,18 +273,18 @@ print("Variance of p-quadrature: {}".format(vacuum_var_p()))
 # Let us plot sample quadrature measurements for a coherent state.
 
 
-@qml.set_shots(1000)
-@qml.qnode(dev)
+@qp.set_shots(1000)
+@qp.qnode(dev)
 def measure_coherent_x(alpha, phi):
-    qml.CoherentState(alpha, phi, wires=0)  # Prepares coherent state
-    return qml.sample(qml.QuadX(0))  # Measures X quadrature
+    qp.CoherentState(alpha, phi, wires=0)  # Prepares coherent state
+    return qp.sample(qp.QuadX(0))  # Measures X quadrature
 
 
-@qml.set_shots(1000)
-@qml.qnode(dev)
+@qp.set_shots(1000)
+@qp.qnode(dev)
 def measure_coherent_p(alpha, phi):
-    qml.CoherentState(alpha, phi, wires=0)  # Prepares coherent state
-    return qml.sample(qml.QuadP(0))  # Measures P quadrature
+    qp.CoherentState(alpha, phi, wires=0)  # Prepares coherent state
+    return qp.sample(qp.QuadP(0))  # Measures P quadrature
 
 
 # Choose alpha and phi and sample 1000 measurements
@@ -357,20 +357,20 @@ plt.show()
 # Let's see the effect of this operation on an intial coherent state.
 
 
-@qml.set_shots(1000)
-@qml.qnode(dev)
+@qp.set_shots(1000)
+@qp.qnode(dev)
 def displace_coherent_x(alpha, phi, x):
-    qml.CoherentState(alpha, phi, wires = 0)  # Create coherent state
-    qml.Displacement(x, 0, wires = 0)  # Second argument is the displacement direction in phase space
-    return qml.sample(qml.QuadX(0))
+    qp.CoherentState(alpha, phi, wires = 0)  # Create coherent state
+    qp.Displacement(x, 0, wires = 0)  # Second argument is the displacement direction in phase space
+    return qp.sample(qp.QuadX(0))
 
 
-@qml.set_shots(1000)
-@qml.qnode(dev)
+@qp.set_shots(1000)
+@qp.qnode(dev)
 def displace_coherent_p(alpha, phi, x):
-    qml.CoherentState(alpha, phi, wires = 0)
-    qml.Displacement(x, 0, wires = 0)
-    return qml.sample(qml.QuadP(0))
+    qp.CoherentState(alpha, phi, wires = 0)
+    qp.Displacement(x, 0, wires = 0)
+    return qp.sample(qp.QuadP(0))
 
 
 # We plot both the initial and displaced state
@@ -424,25 +424,25 @@ plt.show()
 # Let us be mindful that this will only work when the amplitude of the input state is much smaller
 # than that of the auxiliary coherent state.
 
-dev2 = qml.device("default.gaussian", wires=2)
+dev2 = qp.device("default.gaussian", wires=2)
 
 
-@qml.set_shots(1000)
-@qml.qnode(dev2)
+@qp.set_shots(1000)
+@qp.qnode(dev2)
 def disp_optics(z, x):
-    qml.CoherentState(z, 0, wires = 0)  # High-amplitude auxiliary coherent state
-    qml.CoherentState(3, np.pi / 3, wires = 1)  # Input state (e.g. low amplitude coherent state)
-    qml.Beamsplitter(np.arccos(1 - x ** 2 / z ** 2), 0, wires=[0, 1])  # Beamsplitter
-    return qml.sample(qml.QuadX(1))  # Measure x quadrature
+    qp.CoherentState(z, 0, wires = 0)  # High-amplitude auxiliary coherent state
+    qp.CoherentState(3, np.pi / 3, wires = 1)  # Input state (e.g. low amplitude coherent state)
+    qp.Beamsplitter(np.arccos(1 - x ** 2 / z ** 2), 0, wires=[0, 1])  # Beamsplitter
+    return qp.sample(qp.QuadX(1))  # Measure x quadrature
 
 
-@qml.set_shots(1000)
-@qml.qnode(dev2)
+@qp.set_shots(1000)
+@qp.qnode(dev2)
 def mom_optics(z, x):
-    qml.CoherentState(z, 0, wires = 0)
-    qml.CoherentState(3, np.pi / 3, wires = 1)
-    qml.Beamsplitter(np.arccos(1 - x ** 2 / z ** 2), 0, wires = [0, 1])
-    return qml.sample(qml.QuadP(1))  # Measure p quadrature
+    qp.CoherentState(z, 0, wires = 0)
+    qp.CoherentState(3, np.pi / 3, wires = 1)
+    qp.Beamsplitter(np.arccos(1 - x ** 2 / z ** 2), 0, wires = [0, 1])
+    return qp.sample(qp.QuadP(1))  # Measure p quadrature
 
 
 # Plot quadrature measurement before and after implementation of displacement
@@ -506,18 +506,18 @@ plt.show()
 # of quadrature measurements.
 
 
-@qml.set_shots(1000)
-@qml.qnode(dev)
+@qp.set_shots(1000)
+@qp.qnode(dev)
 def measure_squeezed_x(r):
-    qml.Squeezing(r, 0, wires = 0)
-    return qml.sample(qml.QuadX(0))
+    qp.Squeezing(r, 0, wires = 0)
+    return qp.sample(qp.QuadX(0))
 
 
-@qml.set_shots(1000)
-@qml.qnode(dev)
+@qp.set_shots(1000)
+@qp.qnode(dev)
 def measure_squeezed_p(r):
-    qml.Squeezing(r, 0, wires = 0)
-    return qml.sample(qml.QuadP(0))
+    qp.Squeezing(r, 0, wires = 0)
+    return qp.sample(qp.QuadP(0))
 
 
 # Choose alpha and phi and sample 1000 measurements
@@ -583,13 +583,13 @@ plt.show()
 # are superpositions of Fock States, including Gaussian states!
 # For example, let's measure the expected photon number for some squeezed state:
 
-dev3 = qml.device("default.gaussian", wires=1)
+dev3 = qp.device("default.gaussian", wires=1)
 
 
-@qml.qnode(dev3)
+@qp.qnode(dev3)
 def measure_n_coherent(alpha, phi):
-    qml.Squeezing(alpha, phi, wires = 0)
-    return qml.expval(qml.NumberOperator(0))
+    qp.Squeezing(alpha, phi, wires = 0)
+    return qp.expval(qp.NumberOperator(0))
 
 
 coherent_expval = measure_n_coherent(1, np.pi / 3)
@@ -614,28 +614,28 @@ print("Expected number of photons: {}".format(coherent_expval))
 #
 # Let's code this setup using PennyLane and check that it amounts to the measurement of quadratures.
 
-dev_exact2 = qml.device("default.gaussian", wires = 2)
+dev_exact2 = qp.device("default.gaussian", wires = 2)
 
 
-@qml.qnode(dev_exact2)
+@qp.qnode(dev_exact2)
 def measurement(a, phi):
-    qml.Displacement(a, phi, wires = 0)  # Implement displacement using PennyLane
-    return qml.expval(qml.QuadX(0))
+    qp.Displacement(a, phi, wires = 0)  # Implement displacement using PennyLane
+    return qp.expval(qp.QuadX(0))
 
 
-@qml.qnode(dev_exact2)
+@qp.qnode(dev_exact2)
 def measurement2_0(a, theta, alpha, phi):
-    qml.Displacement(a, theta, wires = 0)  # We choose the initial to be a displaced vacuum
-    qml.CoherentState(alpha, phi, wires = 1)  # Prepare coherent as second qumode
-    qml.Beamsplitter(np.pi / 4, 0, wires=[0, 1])  # Interfere both states
-    return qml.expval(qml.NumberOperator(0))  # Read out N
+    qp.Displacement(a, theta, wires = 0)  # We choose the initial to be a displaced vacuum
+    qp.CoherentState(alpha, phi, wires = 1)  # Prepare coherent as second qumode
+    qp.Beamsplitter(np.pi / 4, 0, wires=[0, 1])  # Interfere both states
+    return qp.expval(qp.NumberOperator(0))  # Read out N
 
-@qml.qnode(dev_exact2)
+@qp.qnode(dev_exact2)
 def measurement2_1(a, theta, alpha, phi):
-    qml.Displacement(a, theta, wires = 0)  # We choose the initial to be a displaced vacuum
-    qml.CoherentState(alpha, phi, wires = 1)  # Prepare coherent as second qumode
-    qml.Beamsplitter(np.pi / 4, 0, wires=[0, 1])  # Interfere both states
-    return qml.expval(qml.NumberOperator(1))  # Read out N
+    qp.Displacement(a, theta, wires = 0)  # We choose the initial to be a displaced vacuum
+    qp.CoherentState(alpha, phi, wires = 1)  # Prepare coherent as second qumode
+    qp.Beamsplitter(np.pi / 4, 0, wires=[0, 1])  # Interfere both states
+    return qp.expval(qp.NumberOperator(1))  # Read out N
 
 
 print(

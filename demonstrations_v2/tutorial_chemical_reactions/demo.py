@@ -83,11 +83,11 @@ We design a quantum circuit consisting of :class:`~.pennylane.SingleExcitation` 
 will be optimized to prepare ground states for different configurations of the molecule.
 """
 
-import pennylane as qml
+import pennylane as qp
 from pennylane import qchem
 
 # Hartree-Fock state
-hf = qml.qchem.hf_state(electrons=2, orbitals=4)
+hf = qp.qchem.hf_state(electrons=2, orbitals=4)
 
 
 ##############################################################################
@@ -135,18 +135,18 @@ for r in r_range:
     H, qubits = qchem.molecular_hamiltonian(molecule, method='openfermion')
 
     # define the device, optimizer and circuit
-    dev = qml.device("lightning.qubit", wires=qubits)
+    dev = qp.device("lightning.qubit", wires=qubits)
     opt = optax.sgd(learning_rate=0.4) # sgd stands for StochasticGradientDescent
 
-    @qml.qnode(dev, interface='jax')
+    @qp.qnode(dev, interface='jax')
     def circuit(parameters):
         # Prepare the HF state: |1100>
-        qml.BasisState.compute_decomposition(hf, wires=range(qubits))
-        qml.DoubleExcitation(parameters[0], wires=[0, 1, 2, 3])
-        qml.SingleExcitation(parameters[1], wires=[0, 2])
-        qml.SingleExcitation(parameters[2], wires=[1, 3])
+        qp.BasisState.compute_decomposition(hf, wires=range(qubits))
+        qp.DoubleExcitation(parameters[0], wires=[0, 1, 2, 3])
+        qp.SingleExcitation(parameters[1], wires=[0, 2])
+        qp.SingleExcitation(parameters[2], wires=[1, 3])
 
-        return qml.expval(H)  # we are interested in minimizing this expectation value
+        return qp.expval(H)  # we are interested in minimizing this expectation value
 
     # initialize the gate parameters
     init_params = jnp.zeros(3)
@@ -156,10 +156,10 @@ for r in r_range:
         init_params = params_old
 
     prev_energy = 0.0
-    @qml.qjit
+    @qp.qjit
     def update_step(i, params, opt_state):
         """Perform a single gradient update step"""
-        grads = qml.grad(circuit)(params)
+        grads = qp.grad(circuit)(params)
         updates, opt_state = opt.update(grads, opt_state)
         params = optax.apply_updates(params, updates)
         return (params, opt_state)
@@ -290,7 +290,7 @@ pes_point = 0
 electrons = 3
 orbitals = 6
 singles, doubles = qchem.excitations(electrons, orbitals)
-hf = qml.qchem.hf_state(electrons, orbitals)
+hf = qp.qchem.hf_state(electrons, orbitals)
 
 
 # loop to change reaction coordinate
@@ -304,14 +304,14 @@ for r in r_range:
 
     H, qubits = qchem.molecular_hamiltonian(molecule, method='openfermion')
 
-    dev = qml.device("lightning.qubit", wires=qubits)
+    dev = qp.device("lightning.qubit", wires=qubits)
     opt = optax.sgd(learning_rate=1.5) # sgd stands for StochasticGradientDescent
 
-    @qml.qjit
-    @qml.qnode(dev, interface='jax')
+    @qp.qjit
+    @qp.qnode(dev, interface='jax')
     def circuit(parameters):
         AllSinglesDoubles(parameters, range(qubits), hf, singles, doubles)
-        return qml.expval(H)  # we are interested in minimizing this expectation value
+        return qp.expval(H)  # we are interested in minimizing this expectation value
 
     init_params = jnp.zeros(len(singles) + len(doubles))
 
@@ -320,10 +320,10 @@ for r in r_range:
         init_params = params_old
 
     prev_energy = 0.0
-    @qml.qjit
+    @qp.qjit
     def update_step(i, params, opt_state):
         """Perform a single gradient update step"""
-        grads = qml.grad(circuit)(params)
+        grads = qp.grad(circuit)(params)
         updates, opt_state = opt.update(grads, opt_state)
         params = optax.apply_updates(params, updates)
         return (params, opt_state)

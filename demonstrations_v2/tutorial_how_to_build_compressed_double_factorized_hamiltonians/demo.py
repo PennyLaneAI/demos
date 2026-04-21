@@ -30,13 +30,13 @@ and :math:`p, q, r, s` are the orbital indices. In PennyLane, we can obtain :mat
 :math:`h_{pq}` and :math:`g_{pqrs}` using the :func:`~pennylane.qchem.electron_integrals` function:
 """
 
-import pennylane as qml
+import pennylane as qp
 
 symbols = ["H", "H", "H", "H"]
-geometry = qml.math.array([[0., 0., -0.2], [0., 0., -0.1], [0., 0., 0.1], [0., 0., 0.2]])
+geometry = qp.math.array([[0., 0., -0.2], [0., 0., -0.1], [0., 0., 0.1], [0., 0., 0.2]])
 
-mol = qml.qchem.Molecule(symbols, geometry)
-nuc_core, one_body, two_body = qml.qchem.electron_integrals(mol)()
+mol = qp.qchem.Molecule(symbols, geometry)
+nuc_core, one_body, two_body = qp.qchem.electron_integrals(mol)()
 
 print(f"One-body and two-body tensor shapes: {one_body.shape}, {two_body.shape}")
 
@@ -53,8 +53,8 @@ print(f"One-body and two-body tensor shapes: {one_body.shape}, {two_body.shape}"
 # We can obtain the :math:`V_{pqrs}` and :math:`T_{pq}` tensors as:
 #
 
-two_chem = 0.5 * qml.math.swapaxes(two_body, 1, 3)  # V_pqrs
-one_chem = one_body - 0.5 * qml.math.einsum("pqss", two_body)  # T_pq
+two_chem = 0.5 * qp.math.swapaxes(two_body, 1, 3)  # V_pqrs
+one_chem = one_body - 0.5 * qp.math.einsum("pqss", two_body)  # T_pq
 
 ######################################################################
 # A key feature of this representation is that the modified two-body terms can be factorized
@@ -87,11 +87,11 @@ one_chem = one_body - 0.5 * qml.math.einsum("pqss", two_body)  # T_pq
 # optionally control the ranks of their second factorization (``tol_eigval``) as shown below:
 #
 
-factors, _, _ = qml.qchem.factorize(two_chem, cholesky=True, tol_factor=1e-5)
+factors, _, _ = qp.qchem.factorize(two_chem, cholesky=True, tol_factor=1e-5)
 print("Shape of the factors: ", factors.shape)
 
-approx_two_chem = qml.math.tensordot(factors, factors, axes=([0], [0]))
-assert qml.math.allclose(approx_two_chem, two_chem, atol=1e-5)
+approx_two_chem = qp.math.tensordot(factors, factors, axes=([0], [0]))
+assert qp.math.allclose(approx_two_chem, two_chem, atol=1e-5)
 
 ######################################################################
 # Performing block-invariant symmetry shift
@@ -105,7 +105,7 @@ assert qml.math.allclose(approx_two_chem, two_chem, atol=1e-5)
 # the symmetry-shifted integral tensors and core constant:
 #
 
-core_shift, one_shift, two_shift = qml.qchem.symmetry_shift(
+core_shift, one_shift, two_shift = qp.qchem.symmetry_shift(
     nuc_core, one_chem, two_chem, n_elec = mol.n_electrons
 ) # symmetry-shifted terms of the Hamiltonian
 
@@ -146,16 +146,16 @@ print(f"Decrease in one-norm: {DF_chem_norm - DF_shift_norm}")
 # if the ``regularization`` keyword argument is set to either ``"L1"`` or ``"L2"``:
 #
 
-_, two_body_cores, two_body_leaves = qml.qchem.factorize(
+_, two_body_cores, two_body_leaves = qp.qchem.factorize(
     two_shift, tol_factor=1e-2, cholesky=True, compressed=True, regularization="L2"
 ) # compressed double-factorized shifted two-body terms with "L2" regularization
 print(f"Two-body tensors' shape: {two_body_cores.shape, two_body_leaves.shape}")
 
-approx_two_shift = qml.math.einsum(
+approx_two_shift = qp.math.einsum(
     "tpk,tqk,tkl,trl,tsl->pqrs",
     two_body_leaves, two_body_leaves, two_body_cores, two_body_leaves, two_body_leaves
 ) # computing V^\prime and comparing it with V below
-assert qml.math.allclose(approx_two_shift, two_shift, atol=1e-2)
+assert qp.math.allclose(approx_two_shift, two_shift, atol=1e-2)
 
 ######################################################################
 # While the previous shape output for the factors ``(10, 4, 4)`` meant we had :math:`10` two-body
@@ -190,15 +190,15 @@ assert qml.math.allclose(approx_two_shift, two_shift, atol=1e-2)
 # the orthonormal :math:`U^{\prime(0)}` and symmetric :math:`Z^{\prime(0)}` tensors instead:
 #
 
-two_core_prime = (qml.math.eye(mol.n_orbitals) * two_body_cores.sum(axis=-1)[:, None, :])
-one_body_extra = qml.math.einsum(
+two_core_prime = (qp.math.eye(mol.n_orbitals) * two_body_cores.sum(axis=-1)[:, None, :])
+one_body_extra = qp.math.einsum(
     'tpk,tkk,tqk->pq', two_body_leaves, two_core_prime, two_body_leaves
 ) # one-body correction
 
 # factorize the corrected one-body tensor to obtain the core and leaf tensors
-one_body_eigvals, one_body_eigvecs = qml.math.linalg.eigh(one_shift + one_body_extra)
-one_body_cores = qml.math.expand_dims(qml.math.diag(one_body_eigvals), axis=0)
-one_body_leaves = qml.math.expand_dims(one_body_eigvecs, axis=0)
+one_body_eigvals, one_body_eigvecs = qp.math.linalg.eigh(one_shift + one_body_extra)
+one_body_cores = qp.math.expand_dims(qp.math.diag(one_body_eigvals), axis=0)
+one_body_leaves = qp.math.expand_dims(one_body_eigvecs, axis=0)
 
 print(f"One-body tensors' shape: {one_body_cores.shape, one_body_leaves.shape}")
 
@@ -212,8 +212,8 @@ print(f"One-body tensors' shape: {one_body_cores.shape, one_body_leaves.shape}")
 
 cdf_hamiltonian = {
     "nuc_constant": core_shift[0],
-    "core_tensors": qml.math.concatenate((one_body_cores, two_body_cores), axis=0),
-    "leaf_tensors": qml.math.concatenate((one_body_leaves, two_body_leaves), axis=0),
+    "core_tensors": qp.math.concatenate((one_body_cores, two_body_cores), axis=0),
+    "leaf_tensors": qp.math.concatenate((one_body_leaves, two_body_leaves), axis=0),
 } # CDF Hamiltonian
 
 ######################################################################
@@ -233,8 +233,8 @@ cdf_hamiltonian = {
 
 def leaf_unitary_rotation(leaf, wires):
     """Applies the basis rotation transformation corresponding to the leaf tensor."""
-    basis_mat = qml.math.kron(leaf, qml.math.eye(2)) # account for spin
-    return qml.BasisRotation(unitary_matrix=basis_mat, wires=wires)
+    basis_mat = qp.math.kron(leaf, qp.math.eye(2)) # account for spin
+    return qp.BasisRotation(unitary_matrix=basis_mat, wires=wires)
 
 ######################################################################
 # Similarly, the unitary transformation for the core tensors can be applied efficiently
@@ -250,19 +250,19 @@ def core_unitary_rotation(core, body_type, wires):
     """Applies the unitary transformation corresponding to the core tensor."""
     ops = []
     if body_type == "one_body":  # implements one-body term
-        for wire, cval in enumerate(qml.math.diag(core)):
+        for wire, cval in enumerate(qp.math.diag(core)):
             for sigma in [0, 1]:
-                ops.append(qml.RZ(-cval, wires=2 * wire + sigma))
-        ops.append(qml.GlobalPhase(qml.math.sum(core), wires=wires))
+                ops.append(qp.RZ(-cval, wires=2 * wire + sigma))
+        ops.append(qp.GlobalPhase(qp.math.sum(core), wires=wires))
 
     if body_type == "two_body":  # implements two-body term
         for odx1, odx2 in it.product(range(len(wires) // 2), repeat=2):
             cval = core[odx1, odx2] / 4.0
             for sigma, tau in it.product(range(2), repeat=2):
                 if odx1 != odx2 or sigma != tau:
-                    ops.append(qml.IsingZZ(cval, wires=[2*odx1+sigma, 2*odx2+tau]))
-        gphase = 0.5 * qml.math.sum(core) - 0.25 * qml.math.trace(core)
-        ops.append(qml.GlobalPhase(-gphase, wires=wires))
+                    ops.append(qp.IsingZZ(cval, wires=[2*odx1+sigma, 2*odx2+tau]))
+        gphase = 0.5 * qp.math.sum(core) - 0.25 * qp.math.trace(core)
+        ops.append(qp.GlobalPhase(-gphase, wires=wires))
     return ops
 
 ######################################################################
@@ -296,7 +296,7 @@ def CDFTrotterStep(time, cdf_ham, wires):
     for bidx, (core, leaf) in enumerate(zip(cores, leaves)):
         # Note: only the first term is one-body, others are two-body
         body_type = "two_body" if bidx else "one_body"
-        qml.prod(
+        qp.prod(
             # revert the change-of-basis for leaf tensor
             leaf_unitary_rotation(leaf.conjugate().T, wires),
             # apply the rotation for core tensor scaled by the time-step
@@ -313,14 +313,14 @@ def CDFTrotterStep(time, cdf_ham, wires):
 #
 
 time, circ_wires = 1.0, range(2 * mol.n_orbitals)
-hf_state = qml.qchem.hf_state(electrons=mol.n_electrons, orbitals=len(circ_wires))
+hf_state = qp.qchem.hf_state(electrons=mol.n_electrons, orbitals=len(circ_wires))
 
-@qml.qnode(qml.device("lightning.qubit", wires=circ_wires))
+@qp.qnode(qp.device("lightning.qubit", wires=circ_wires))
 def cdf_circuit(n_steps, order):
-    qml.BasisState(hf_state, wires=circ_wires)
-    qml.trotterize(CDFTrotterStep, n_steps, order)(time, cdf_hamiltonian, circ_wires)
-    qml.GlobalPhase(cdf_hamiltonian["nuc_constant"], wires=circ_wires)
-    return qml.state()
+    qp.BasisState(hf_state, wires=circ_wires)
+    qp.trotterize(CDFTrotterStep, n_steps, order)(time, cdf_hamiltonian, circ_wires)
+    qp.GlobalPhase(cdf_hamiltonian["nuc_constant"], wires=circ_wires)
+    return qp.state()
 
 circuit_state = cdf_circuit(n_steps=10, order=2)
 
@@ -334,11 +334,11 @@ from pennylane.math import fidelity_statevector
 from scipy.linalg import expm
 
 # Evolve the state vector |0...0> to the |HF> state of the system
-init_state = qml.math.array([1] + [0] * (2**len(circ_wires) - 1))
-hf_state_vec = qml.matrix(qml.BasisState(hf_state, wires=circ_wires)) @ init_state
+init_state = qp.math.array([1] + [0] * (2**len(circ_wires) - 1))
+hf_state_vec = qp.matrix(qp.BasisState(hf_state, wires=circ_wires)) @ init_state
 
-H = qml.qchem.molecular_hamiltonian(mol)[0] # original Hamiltonian
-evolved_state = expm(-1j * qml.matrix(H) * time) @ hf_state_vec # e^{-iHt} @ |HF>
+H = qp.qchem.molecular_hamiltonian(mol)[0] # original Hamiltonian
+evolved_state = expm(-1j * qp.matrix(H) * time) @ hf_state_vec # e^{-iHt} @ |HF>
 
 print(f"Fidelity of two states: {fidelity_statevector(circuit_state, evolved_state)}")
 

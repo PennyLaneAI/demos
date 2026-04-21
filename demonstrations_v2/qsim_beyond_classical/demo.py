@@ -68,7 +68,7 @@ simulations.
 # Cirq.
 #
 
-import pennylane as qml
+import pennylane as qp
 from pennylane_cirq import ops
 
 import cirq
@@ -124,7 +124,7 @@ qb2wire = {i: j for i, j in zip(qubits, range(wires))}
 #
 
 shots = 500000
-dev = qml.device('cirq.qsim', wires=wires, qubits=qubits)
+dev = qp.device('cirq.qsim', wires=wires, qubits=qubits)
 
 
 ######################################################################
@@ -149,14 +149,14 @@ dev = qml.device('cirq.qsim', wires=wires, qubits=qubits)
 # The :math:`\sqrt{X}` gate is already implemented in PennyLane, while the
 # two other gates can be implemented as follows:
 
-sqrtYgate = lambda wires: qml.RY(np.pi / 2, wires=wires)
+sqrtYgate = lambda wires: qp.RY(np.pi / 2, wires=wires)
 
-sqrtWgate = lambda wires: qml.QubitUnitary(
+sqrtWgate = lambda wires: qp.QubitUnitary(
     np.array([[1,  -np.sqrt(1j)],
               [np.sqrt(-1j), 1]]) / np.sqrt(2), wires=wires
 )
 
-single_qubit_gates = [qml.SX, sqrtYgate, sqrtWgate]
+single_qubit_gates = [qp.SX, sqrtYgate, sqrtWgate]
 
 
 ######################################################################
@@ -301,8 +301,8 @@ def generate_single_qubit_gate_list():
 # :math:`\left|0\right>` and :math:`\left|1\right>.`
 #
 
-@qml.set_shots(shots)
-@qml.qnode(dev)
+@qp.set_shots(shots)
+@qp.qnode(dev)
 def circuit(seed=42, return_probs=False):
     np.random.seed(seed)
     gate_idx = generate_single_qubit_gate_list()
@@ -313,17 +313,17 @@ def circuit(seed=42, return_probs=False):
             single_qubit_gates[gate_idx[i][w]](wires=w)
 
         for qb_1, qb_2 in gate_order[gs]:
-            qml.ISWAP(wires=(qb_1, qb_2))
-            qml.CPhase(-np.pi/6, wires=(qb_1, qb_2))
+            qp.ISWAP(wires=(qb_1, qb_2))
+            qp.CPhase(-np.pi/6, wires=(qb_1, qb_2))
 
     # one half-cycle - single-qubit gates only
     for w in range(wires):
         single_qubit_gates[gate_idx[-1][w]](wires=w)
 
     if return_probs:
-        return qml.probs(wires=range(wires))
+        return qp.probs(wires=range(wires))
     else:
-        return qml.sample()
+        return qp.sample()
 
 ######################################################################
 # The cross-entropy benchmarking fidelity

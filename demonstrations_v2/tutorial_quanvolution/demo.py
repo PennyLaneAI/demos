@@ -83,7 +83,7 @@ General setup
 This Python code requires *PennyLane* with the *TensorFlow* interface and the plotting library *matplotlib*.
 """
 
-import pennylane as qml
+import pennylane as qp
 from pennylane import numpy as np
 from pennylane.templates import RandomLayers
 import tensorflow as tf
@@ -146,21 +146,21 @@ test_images = np.array(test_images[..., tf.newaxis], requires_grad=False)
 # 3. a final measurement in the computational basis, estimating :math:`4` expectation values.
 
 
-dev = qml.device("default.qubit", wires=4)
+dev = qp.device("default.qubit", wires=4)
 # Random circuit parameters
 rand_params = np.random.uniform(high=2 * np.pi, size=(n_layers, 4))
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def circuit(phi):
     # Encoding of 4 classical input values
     for j in range(4):
-        qml.RY(np.pi * phi[j], wires=j)
+        qp.RY(np.pi * phi[j], wires=j)
 
     # Random quantum circuit
     RandomLayers(rand_params, wires=list(range(4)))
 
     # Measurement producing 4 classical output values
-    return [qml.expval(qml.PauliZ(j)) for j in range(4)]
+    return [qp.expval(qp.PauliZ(j)) for j in range(4)]
 
 
 ##############################################################################

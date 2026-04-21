@@ -117,7 +117,7 @@ of shots is 1!
 # Let's use the ``lightning.qubit`` simulator for both the analytic gradient,
 # as well as the estimated gradient using number of shots :math:`N\in\{1, 100\}.`
 
-import pennylane as qml
+import pennylane as qp
 import numpy as np
 from pennylane import numpy as pnp
 
@@ -131,11 +131,11 @@ num_wires = 2
 eta = 0.01
 steps = 200
 
-dev_analytic = qml.device("lightning.qubit", wires=num_wires)
-dev_stochastic = qml.device("lightning.qubit", wires=num_wires)
+dev_analytic = qp.device("lightning.qubit", wires=num_wires)
+dev_stochastic = qp.device("lightning.qubit", wires=num_wires)
 
 ##############################################################################
-# We can use ``qml.Hermitian`` to directly specify that we want to measure
+# We can use ``qp.Hermitian`` to directly specify that we want to measure
 # the expectation value of the matrix :math:`H:`
 
 H = np.array([[8, 4, 0, -6], [4, 0, 4, 0], [0, 4, 8, 0], [-6, 0, 0, 0]])
@@ -143,16 +143,16 @@ H = np.array([[8, 4, 0, -6], [4, 0, 4, 0], [0, 4, 8, 0], [-6, 0, 0, 0]])
 
 def circuit(params):
     StronglyEntanglingLayers(weights=params, wires=[0, 1])
-    return expval(qml.Hermitian(H, wires=[0, 1]))
+    return expval(qp.Hermitian(H, wires=[0, 1]))
 
 
 ##############################################################################
 # Now, we create three QNodes, each corresponding to a device above,
 # and optimize them using gradient descent via the parameter-shift rule.
 
-qnode_analytic = qml.QNode(circuit, dev_analytic, interface="autograd", diff_method="parameter-shift")
-qnode_stochastic = qml.QNode(circuit, dev_stochastic, interface="autograd", diff_method="parameter-shift")
-qnode_stochastic = qml.set_shots(1000)(qnode_stochastic)
+qnode_analytic = qp.QNode(circuit, dev_analytic, interface="autograd", diff_method="parameter-shift")
+qnode_stochastic = qp.QNode(circuit, dev_stochastic, interface="autograd", diff_method="parameter-shift")
+qnode_stochastic = qp.set_shots(1000)(qnode_stochastic)
 
 param_shape = StronglyEntanglingLayers.shape(n_layers=num_layers, n_wires=num_wires)
 init_params = pnp.random.uniform(low=0, high=2 * np.pi, size=param_shape, requires_grad=True)
@@ -161,7 +161,7 @@ init_params = pnp.random.uniform(low=0, high=2 * np.pi, size=param_shape, requir
 
 cost_GD = []
 params_GD = init_params
-opt = qml.GradientDescentOptimizer(eta)
+opt = qp.GradientDescentOptimizer(eta)
 
 for _ in range(steps):
     cost_GD.append(qnode_analytic(params_GD))
@@ -171,21 +171,21 @@ for _ in range(steps):
 
 cost_SGD1 = []
 params_SGD1 = init_params
-opt = qml.GradientDescentOptimizer(eta)
+opt = qp.GradientDescentOptimizer(eta)
 
 for _ in range(steps):
-    cost_SGD1.append(qml.set_shots(qnode_stochastic, shots=1)(params_SGD1))
-    params_SGD1 = opt.step(qml.set_shots(qnode_stochastic, shots=1), params_SGD1)
+    cost_SGD1.append(qp.set_shots(qnode_stochastic, shots=1)(params_SGD1))
+    params_SGD1 = opt.step(qp.set_shots(qnode_stochastic, shots=1), params_SGD1)
 
 # Optimizing using stochastic gradient descent with shots=100
 
 cost_SGD100 = []
 params_SGD100 = init_params
-opt = qml.GradientDescentOptimizer(eta)
+opt = qp.GradientDescentOptimizer(eta)
 
 for _ in range(steps):
-    cost_SGD100.append(qml.set_shots(qnode_stochastic, shots=100)(params_SGD100))
-    params_SGD100 = opt.step(qml.set_shots(qnode_stochastic, shots=100), params_SGD100)
+    cost_SGD100.append(qp.set_shots(qnode_stochastic, shots=100)(params_SGD100))
+    params_SGD100 = opt.step(qp.set_shots(qnode_stochastic, shots=100), params_SGD100)
 
 ##############################################################################
 # Note that in the latter two cases we are sampling from an unbiased
@@ -290,16 +290,16 @@ terms = np.array(
 )
 
 
-@qml.qnode(dev_stochastic, interface="autograd")
+@qp.qnode(dev_stochastic, interface="autograd")
 def circuit(params, n=None):
     StronglyEntanglingLayers(weights=params, wires=[0, 1])
     idx = np.random.choice(np.arange(5), size=n, replace=False)
     A = np.sum(terms[idx], axis=0)
-    return expval(qml.Hermitian(A, wires=[0, 1]))
+    return expval(qp.Hermitian(A, wires=[0, 1]))
 
 
 def loss(params, shots=None):
-    return 4 + (5 / 1) * qml.set_shots(circuit, shots=shots)(params, n=1)
+    return 4 + (5 / 1) * qp.set_shots(circuit, shots=shots)(params, n=1)
 
 
 ##############################################################################
@@ -307,7 +307,7 @@ def loss(params, shots=None):
 
 cost = []
 params = init_params
-opt = qml.GradientDescentOptimizer(0.005)
+opt = qp.GradientDescentOptimizer(0.005)
 
 for _ in range(250):
     cost.append(loss(params, shots=100))
@@ -365,13 +365,13 @@ print("Doubly stochastic gradient descent min energy = ", qnode_analytic(params)
 
 cost = []
 params = init_params
-opt = qml.GradientDescentOptimizer(0.005)
+opt = qp.GradientDescentOptimizer(0.005)
 
 for i in range(250):
     n = min(i // 25 + 1, 5)
 
     def loss(params, shots=None):
-        return 4 + (5 / n) * qml.set_shots(circuit, shots=shots)(params, n=n)
+        return 4 + (5 / n) * qp.set_shots(circuit, shots=shots)(params, n=n)
 
     cost.append(loss(params, shots=int(1 + (n - 1) ** 2)))
     params = opt.step(loss, params, shots=int(1 + (n - 1) ** 2))

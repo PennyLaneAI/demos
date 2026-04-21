@@ -46,7 +46,7 @@ corresponding eigenvalue of the Hamiltonian. A conceptual QPE circuit diagram is
 
 For most cases of interest, this algorithm requires more qubits and longer circuit depths than what
 can be implemented on existing hardware. The PennyLane functionality in the
-:mod:`qml.estimator <pennylane.estimator>` module allows us to estimate the number of logical qubits
+:mod:`qp.estimator <pennylane.estimator>` module allows us to estimate the number of logical qubits
 and the number of non-Clifford gates that are needed to implement the algorithm. We can estimate
 these resources by simply defining system specifications and a target error for estimation. Let's
 see how!
@@ -62,7 +62,7 @@ them. We first need to define the atomic symbols and coordinates for the given m
 the water molecule at its equilibrium geometry with the
 `6-31g basis set <https://en.wikipedia.org/wiki/Basis_set_(chemistry)>`_ as an example.
 """
-import pennylane as qml
+import pennylane as qp
 import numpy as np
 import jax
 
@@ -77,13 +77,13 @@ geometry = np.array([[0.00000000,  0.00000000,  0.28377432],
 # Then we construct a molecule object and compute the one- and two-electron
 # integrals in the molecular orbital basis.
 
-mol = qml.qchem.Molecule(symbols, geometry, basis_name='6-31g')
-core, one, two = qml.qchem.electron_integrals(mol)()
+mol = qp.qchem.Molecule(symbols, geometry, basis_name='6-31g')
+core, one, two = qp.qchem.electron_integrals(mol)()
 
 ##############################################################################
 # We now create an instance of the :class:`~.pennylane.estimator.qpe_resources.DoubleFactorization` class
 
-algo = qml.estimator.DoubleFactorization(one, two)
+algo = qp.estimator.DoubleFactorization(one, two)
 
 ##############################################################################
 # and obtain the estimated number of non-Clifford gates and logical qubits.
@@ -97,7 +97,7 @@ print(f'Estimated gates : {algo.gates:.2e} \nEstimated qubits: {algo.qubits}')
 
 chemical_accuracy = 0.0016
 error = chemical_accuracy * 10
-algo = qml.estimator.DoubleFactorization(one, two, error=error)
+algo = qp.estimator.DoubleFactorization(one, two, error=error)
 print(f'Estimated gates : {algo.gates:.2e} \nEstimated qubits: {algo.qubits}')
 
 ##############################################################################
@@ -110,7 +110,7 @@ n_gates = []
 n_qubits = []
 
 for tol in threshold:
-    algo_ = qml.estimator.DoubleFactorization(one, two, tol_factor=tol, tol_eigval=tol)
+    algo_ = qp.estimator.DoubleFactorization(one, two, tol_factor=tol, tol_eigval=tol)
     n_gates.append(algo_.gates)
     n_qubits.append(algo_.qubits)
 
@@ -143,7 +143,7 @@ vectors = np.array([[9.49,  0.00,  0.00],
 
 ##############################################################################
 # We now create an instance of the :class:`~.pennylane.estimator.qpe_resources.FirstQuantization` class
-algo = qml.estimator.FirstQuantization(planewaves, electrons, vectors=vectors)
+algo = qp.estimator.FirstQuantization(planewaves, electrons, vectors=vectors)
 
 ##############################################################################
 # and obtain the estimated number of non-Clifford gates and logical qubits.
@@ -163,7 +163,7 @@ for er in error:
     n_qubits_ = []
 
     for pw in planewaves:
-        algo_ = qml.estimator.FirstQuantization(pw, electrons, vectors=vectors, error=er)
+        algo_ = qp.estimator.FirstQuantization(pw, electrons, vectors=vectors, error=er)
         n_gates_.append(algo_.gates)
         n_qubits_.append(algo_.qubits)
     n_gates.append(n_gates_)
@@ -219,8 +219,8 @@ print(f'1-norm of the Hamiltonian: {algo.lamb}')
 #
 # First, we construct the molecular Hamiltonian.
 
-molecule = qml.qchem.Molecule(symbols, geometry)
-H = qml.qchem.molecular_hamiltonian(molecule)[0]
+molecule = qp.qchem.Molecule(symbols, geometry)
+H = qp.qchem.molecular_hamiltonian(molecule)[0]
 H_coeffs, H_ops = H.terms()
 
 ##############################################################################
@@ -230,7 +230,7 @@ H_coeffs, H_ops = H.terms()
 # :math:`\left \langle H \right \rangle` with a target error set to the chemical accuracy, 0.0016
 # :math:`\text{Ha},` is obtained as follows.
 
-m = qml.estimator.estimate_shots(H_coeffs)
+m = qp.estimator.estimate_shots(H_coeffs)
 print(f'Shots : {m:.2e}')
 
 ##############################################################################
@@ -239,17 +239,17 @@ print(f'Shots : {m:.2e}')
 # :func:`~.pennylane.pauli.group_observables()`, which partitions the Pauli words into
 # groups of commuting terms that can be measured simultaneously.
 
-ops, coeffs = qml.pauli.group_observables(H_ops, H_coeffs)
+ops, coeffs = qp.pauli.group_observables(H_ops, H_coeffs)
 coeffs = [np.array(c) for c in coeffs] # cast as numpy array
 
-m = qml.estimator.estimate_shots(coeffs)
+m = qp.estimator.estimate_shots(coeffs)
 print(f'Shots : {m:.2e}')
 
 ##############################################################################
 # It is also interesting to illustrate how the number of shots depends on the target error.
 
 error = np.array([0.02, 0.015, 0.01, 0.005, 0.001])
-m = [qml.estimator.estimate_shots(H_coeffs, error=er) for er in error]
+m = [qp.estimator.estimate_shots(H_coeffs, error=er) for er in error]
 
 e_ = np.linspace(error[0], error[-1], num=50)
 m_ = 1.4e4 / np.linspace(error[0], error[-1], num=50)**2

@@ -53,7 +53,7 @@ proposed variational circuits as supervised machine learning models:
 # We start by importing PennyLane, the PennyLane-provided version of NumPy,
 # and an optimizer.
 
-import pennylane as qml
+import pennylane as qp
 from pennylane import numpy as np
 from pennylane.optimize import NesterovMomentumOptimizer
 
@@ -63,7 +63,7 @@ from pennylane.optimize import NesterovMomentumOptimizer
 #
 # We then create a quantum device that will run our circuits.
 
-dev = qml.device("default.qubit")
+dev = qp.device("default.qubit")
 
 ##############################################################################
 # Variational classifiers usually define a “layer” or “block”, which is an
@@ -78,10 +78,10 @@ dev = qml.device("default.qubit")
 
 def layer(layer_weights):
     for wire in range(4):
-        qml.Rot(*layer_weights[wire], wires=wire)
+        qp.Rot(*layer_weights[wire], wires=wire)
 
     for wires in ([0, 1], [1, 2], [2, 3], [3, 0]):
-        qml.CNOT(wires)
+        qp.CNOT(wires)
 
 
 ##############################################################################
@@ -99,7 +99,7 @@ def layer(layer_weights):
 
 
 def state_preparation(x):
-    qml.BasisState(x, wires=[0, 1, 2, 3])
+    qp.BasisState(x, wires=[0, 1, 2, 3])
 
 
 ##############################################################################
@@ -107,14 +107,14 @@ def state_preparation(x):
 # by a repetition of the layer structure.
 
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def circuit(weights, x):
     state_preparation(x)
 
     for layer_weights in weights:
         layer(layer_weights)
 
-    return qml.expval(qml.PauliZ(0))
+    return qp.expval(qp.PauliZ(0))
 
 
 ##############################################################################
@@ -136,8 +136,8 @@ def variational_classifier(weights, bias, x):
 
 
 def square_loss(labels, predictions):
-    # We use a call to qml.math.stack to allow subtracting the arrays directly
-    return np.mean((labels - qml.math.stack(predictions)) ** 2)
+    # We use a call to qp.math.stack to allow subtracting the arrays directly
+    return np.mean((labels - qp.math.stack(predictions)) ** 2)
 
 
 ##############################################################################
@@ -301,19 +301,19 @@ def get_angles(x):
 
 
 def state_preparation(a):
-    qml.RY(a[0], wires=0)
+    qp.RY(a[0], wires=0)
 
-    qml.CNOT(wires=[0, 1])
-    qml.RY(a[1], wires=1)
-    qml.CNOT(wires=[0, 1])
-    qml.RY(a[2], wires=1)
+    qp.CNOT(wires=[0, 1])
+    qp.RY(a[1], wires=1)
+    qp.CNOT(wires=[0, 1])
+    qp.RY(a[2], wires=1)
 
-    qml.PauliX(wires=0)
-    qml.CNOT(wires=[0, 1])
-    qml.RY(a[3], wires=1)
-    qml.CNOT(wires=[0, 1])
-    qml.RY(a[4], wires=1)
-    qml.PauliX(wires=0)
+    qp.PauliX(wires=0)
+    qp.CNOT(wires=[0, 1])
+    qp.RY(a[3], wires=1)
+    qp.CNOT(wires=[0, 1])
+    qp.RY(a[4], wires=1)
+    qp.PauliX(wires=0)
 
 
 ##############################################################################
@@ -323,11 +323,11 @@ x = np.array([0.53896774, 0.79503606, 0.27826503, 0.0], requires_grad=False)
 ang = get_angles(x)
 
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def test(angles):
     state_preparation(angles)
 
-    return qml.state()
+    return qp.state()
 
 
 state = test(ang)
@@ -344,7 +344,7 @@ print("amplitude vector: ", np.round(np.real(state), 6))
 #
 #	The ``default.qubit`` simulator provides a shortcut to
 # 	``state_preparation`` with the command
-# 	``qml.StatePrep(x, wires=[0, 1])``. On state simulators, this just 
+# 	``qp.StatePrep(x, wires=[0, 1])``. On state simulators, this just 
 # 	replaces the quantum state with our (normalized) input. On hardware, the operation implements 
 # 	more sophisticated versions of the routine used above.
 
@@ -358,8 +358,8 @@ print("amplitude vector: ", np.round(np.real(state), 6))
 
 def layer(layer_weights):
     for wire in range(2):
-        qml.Rot(*layer_weights[wire], wires=wire)
-    qml.CNOT(wires=[0, 1])
+        qp.Rot(*layer_weights[wire], wires=wire)
+    qp.CNOT(wires=[0, 1])
 
 
 def cost(weights, bias, X, Y):

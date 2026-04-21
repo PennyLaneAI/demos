@@ -89,25 +89,25 @@ nx.draw(G, pos={node: node for node in G}, node_size=500, node_color="black")
 # and define a circuit to prepare the cluster state.
 #
 
-import pennylane as qml
+import pennylane as qp
 
 qubits = [str(node) for node in G.nodes]
-dev = qml.device("lightning.qubit", wires=qubits)
+dev = qp.device("lightning.qubit", wires=qubits)
 
 
-@qml.qnode(dev, interface="autograd")
+@qp.qnode(dev, interface="autograd")
 def cluster_state():
     for node in qubits:
-        qml.Hadamard(wires=[node])
+        qp.Hadamard(wires=[node])
 
     for edge in G.edges:
         i, j = edge
-        qml.CZ(wires=[str(i), str(j)])
+        qp.CZ(wires=[str(i), str(j)])
 
-    return qml.state()
+    return qp.state()
 
 
-print(qml.draw(cluster_state)())
+print(qp.draw(cluster_state)())
 
 ##############################################################################
 #
@@ -151,30 +151,30 @@ print(qml.draw(cluster_state)())
 #
 # Let's implement one-qubit teleportation in PennyLane.
 
-import pennylane as qml
+import pennylane as qp
 import pennylane.numpy as np
 
-dev = qml.device("lightning.qubit", wires=2)
+dev = qp.device("lightning.qubit", wires=2)
 
 
-@qml.qnode(dev, interface="autograd")
+@qp.qnode(dev, interface="autograd")
 def one_bit_teleportation(input_state):
     # Prepare the input state
-    qml.StatePrep(input_state, wires=0)
+    qp.StatePrep(input_state, wires=0)
 
     # Prepare the cluster state
-    qml.Hadamard(wires=1)
-    qml.CZ(wires=[0, 1])
+    qp.Hadamard(wires=1)
+    qp.CZ(wires=[0, 1])
 
     # Measure the first qubit in the Pauli-X basis
     # and apply an X-gate conditioned on the outcome
-    qml.Hadamard(wires=0)
-    m = qml.measure(wires=[0])
-    qml.cond(m == 1, qml.PauliX)(wires=1)
-    qml.Hadamard(wires=1)
+    qp.Hadamard(wires=0)
+    m = qp.measure(wires=[0])
+    qp.cond(m == 1, qp.PauliX)(wires=1)
+    qp.Hadamard(wires=1)
 
     # Return the density matrix of the output state
-    return qml.density_matrix(wires=[1])
+    return qp.density_matrix(wires=[1])
 
 
 ##############################################################################
@@ -297,19 +297,19 @@ np.allclose(density_matrix, density_matrix_mbqc)
 # To start off, we define the :math:`R_z(\theta)` gate using two qubits with the gate-based approach
 # so we can later compare our MBQC approach to it.
 
-dev = qml.device("lightning.qubit", wires=1)
+dev = qp.device("lightning.qubit", wires=1)
 
 
-@qml.qnode(dev, interface="autograd")
+@qp.qnode(dev, interface="autograd")
 def RZ(theta, input_state):
     # Prepare the input state
-    qml.StatePrep(input_state, wires=0)
+    qp.StatePrep(input_state, wires=0)
 
     # Perform the Rz rotation
-    qml.RZ(theta, wires=0)
+    qp.RZ(theta, wires=0)
 
     # Return the density matrix of the output state
-    return qml.density_matrix(wires=[0])
+    return qp.density_matrix(wires=[0])
 
 
 ##############################################################################
@@ -318,28 +318,28 @@ def RZ(theta, input_state):
 # in the MBQC formalism.
 #
 
-mbqc_dev = qml.device("lightning.qubit", wires=2)
+mbqc_dev = qp.device("lightning.qubit", wires=2)
 
 
-@qml.qnode(mbqc_dev, interface="autograd")
+@qp.qnode(mbqc_dev, interface="autograd")
 def RZ_MBQC(theta, input_state):
     # Prepare the input state
-    qml.StatePrep(input_state, wires=0)
+    qp.StatePrep(input_state, wires=0)
 
     # Prepare the cluster state
-    qml.Hadamard(wires=1)
-    qml.CZ(wires=[0, 1])
+    qp.Hadamard(wires=1)
+    qp.CZ(wires=[0, 1])
 
     # Measure the first qubit and correct the state
-    qml.RZ(theta, wires=0)
-    qml.Hadamard(wires=0)
-    m = qml.measure(wires=[0])
+    qp.RZ(theta, wires=0)
+    qp.Hadamard(wires=0)
+    m = qp.measure(wires=[0])
 
-    qml.cond(m == 1, qml.PauliX)(wires=1)
-    qml.Hadamard(wires=1)
+    qp.cond(m == 1, qp.PauliX)(wires=1)
+    qp.Hadamard(wires=1)
 
     # Return the density matrix of the output state
-    return qml.density_matrix(wires=[1])
+    return qp.density_matrix(wires=[1])
 
 
 ##############################################################################
@@ -359,49 +359,49 @@ np.allclose(RZ(theta, input_state), RZ_MBQC(theta, input_state))
 # For the :math:`R_x(\theta)` gate we take a similar approach.
 #
 
-dev = qml.device("lightning.qubit", wires=1)
+dev = qp.device("lightning.qubit", wires=1)
 
 
-@qml.qnode(dev, interface="autograd")
+@qp.qnode(dev, interface="autograd")
 def RX(theta, input_state):
     # Prepare the input state
-    qml.StatePrep(input_state, wires=0)
+    qp.StatePrep(input_state, wires=0)
 
     # Perform the Rz rotation
-    qml.RX(theta, wires=0)
+    qp.RX(theta, wires=0)
 
     # Return the density matrix of the output state
-    return qml.density_matrix(wires=[0])
+    return qp.density_matrix(wires=[0])
 
 
-mbqc_dev = qml.device("lightning.qubit", wires=3)
+mbqc_dev = qp.device("lightning.qubit", wires=3)
 
 
-@qml.qnode(mbqc_dev, interface="autograd")
+@qp.qnode(mbqc_dev, interface="autograd")
 def RX_MBQC(theta, input_state):
     # Prepare the input state
-    qml.StatePrep(input_state, wires=0)
+    qp.StatePrep(input_state, wires=0)
 
     # Prepare the cluster state
-    qml.Hadamard(wires=1)
-    qml.Hadamard(wires=2)
-    qml.CZ(wires=[0, 1])
-    qml.CZ(wires=[1, 2])
+    qp.Hadamard(wires=1)
+    qp.Hadamard(wires=2)
+    qp.CZ(wires=[0, 1])
+    qp.CZ(wires=[1, 2])
 
     # Measure the qubits and perform corrections
-    qml.Hadamard(wires=0)
-    m1 = qml.measure(wires=[0])
+    qp.Hadamard(wires=0)
+    m1 = qp.measure(wires=[0])
 
-    qml.RZ(theta, wires=1)
-    qml.cond(m1 == 1, qml.RX)(-2 * theta, wires=2)
-    qml.Hadamard(wires=1)
-    m2 = qml.measure(wires=[1])
+    qp.RZ(theta, wires=1)
+    qp.cond(m1 == 1, qp.RX)(-2 * theta, wires=2)
+    qp.Hadamard(wires=1)
+    m2 = qp.measure(wires=[1])
 
-    qml.cond(m2 == 1, qml.PauliX)(wires=2)
-    qml.cond(m1 == 1, qml.PauliZ)(wires=2)
+    qp.cond(m2 == 1, qp.PauliX)(wires=2)
+    qp.cond(m1 == 1, qp.PauliZ)(wires=2)
 
     # Return the density matrix of the output state
-    return qml.density_matrix(wires=[2])
+    return qp.density_matrix(wires=[2])
 
 
 ##############################################################################
@@ -439,46 +439,46 @@ np.allclose(RX(theta, input_state), RX_MBQC(theta, input_state))
 #
 # Let's see how one can do this in PennyLane.
 
-dev = qml.device("lightning.qubit", wires=2)
+dev = qp.device("lightning.qubit", wires=2)
 
 
-@qml.qnode(dev, interface="autograd")
+@qp.qnode(dev, interface="autograd")
 def CNOT(input_state):
     # Prepare the input state
-    qml.StatePrep(input_state, wires=[0, 1])
-    qml.CNOT(wires=[0, 1])
+    qp.StatePrep(input_state, wires=[0, 1])
+    qp.CNOT(wires=[0, 1])
 
-    return qml.density_matrix(wires=[0, 1])
-
-
-mbqc_dev = qml.device("lightning.qubit", wires=4)
+    return qp.density_matrix(wires=[0, 1])
 
 
-@qml.qnode(mbqc_dev, interface="autograd")
+mbqc_dev = qp.device("lightning.qubit", wires=4)
+
+
+@qp.qnode(mbqc_dev, interface="autograd")
 def CNOT_MBQC(input_state):
     # Prepare the input state
-    qml.StatePrep(input_state, wires=[0, 1])
+    qp.StatePrep(input_state, wires=[0, 1])
 
     # Prepare the cluster state
-    qml.Hadamard(wires=2)
-    qml.Hadamard(wires=3)
-    qml.CZ(wires=[2, 0])
-    qml.CZ(wires=[2, 1])
-    qml.CZ(wires=[2, 3])
+    qp.Hadamard(wires=2)
+    qp.Hadamard(wires=3)
+    qp.CZ(wires=[2, 0])
+    qp.CZ(wires=[2, 1])
+    qp.CZ(wires=[2, 3])
 
     # Measure the qubits in the appropriate bases
-    qml.Hadamard(wires=1)
-    m1 = qml.measure(wires=[1])
-    qml.Hadamard(wires=2)
-    m2 = qml.measure(wires=[2])
+    qp.Hadamard(wires=1)
+    m1 = qp.measure(wires=[1])
+    qp.Hadamard(wires=2)
+    m2 = qp.measure(wires=[2])
 
     # Correct the state
-    qml.cond(m1 == 1, qml.PauliZ)(wires=0)
-    qml.cond(m2 == 1, qml.PauliX)(wires=3)
-    qml.cond(m1 == 1, qml.PauliZ)(wires=3)
+    qp.cond(m1 == 1, qp.PauliZ)(wires=0)
+    qp.cond(m2 == 1, qp.PauliX)(wires=3)
+    qp.cond(m1 == 1, qp.PauliZ)(wires=3)
 
     # Return the density matrix of the output state
-    return qml.density_matrix(wires=[0, 3])
+    return qp.density_matrix(wires=[0, 3])
 
 
 ##############################################################################

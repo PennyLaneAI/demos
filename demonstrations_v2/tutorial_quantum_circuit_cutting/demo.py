@@ -116,41 +116,41 @@ to fewer shots needed to estimate observables.
 PennyLane implementation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-PennyLane's built-in  circuit cutting algorithm, ``qml.cut_circuit``,
+PennyLane's built-in  circuit cutting algorithm, ``qp.cut_circuit``,
 takes a large quantum circuit and decomposes it into smaller subcircuits that
 are executed on a small quantum device. The results from executing the
 smaller subcircuits are then recombined through some classical post-processing
 to obtain the original result of the large quantum circuit.
 
-Let’s simulate a "real-world" scenario with ``qml.cut_circuit`` using the
+Let’s simulate a "real-world" scenario with ``qp.cut_circuit`` using the
 circuit below.
 """
 
 # Import the relevant libraries
 from functools import partial
 
-import pennylane as qml
+import pennylane as qp
 from pennylane import numpy as np
 
-dev = qml.device("default.qubit", wires=3)
+dev = qp.device("default.qubit", wires=3)
 
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def circuit(x):
-    qml.RX(x, wires=0)
-    qml.RY(0.9, wires=1)
-    qml.RX(0.3, wires=2)
+    qp.RX(x, wires=0)
+    qp.RY(0.9, wires=1)
+    qp.RX(0.3, wires=2)
 
-    qml.CZ(wires=[0, 1])
-    qml.RY(-0.4, wires=0)
+    qp.CZ(wires=[0, 1])
+    qp.RY(-0.4, wires=0)
 
-    qml.CZ(wires=[1, 2])
+    qp.CZ(wires=[1, 2])
 
-    return qml.expval(qml.pauli.string_to_pauli_word("ZZZ"))
+    return qp.expval(qp.pauli.string_to_pauli_word("ZZZ"))
 
 
 x = np.array(0.531, requires_grad=True)
-fig, ax = qml.draw_mpl(circuit)(x)
+fig, ax = qp.draw_mpl(circuit)(x)
 
 
 ######################################################################
@@ -167,29 +167,29 @@ fig, ax = qml.draw_mpl(circuit)(x)
 # ``WireCut`` operation at that location as shown below:
 #
 
-dev = qml.device("default.qubit", wires=3)
+dev = qp.device("default.qubit", wires=3)
 
 # Quantum Circuit with QNode
 
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def circuit(x):
-    qml.RX(x, wires=0)
-    qml.RY(0.9, wires=1)
-    qml.RX(0.3, wires=2)
+    qp.RX(x, wires=0)
+    qp.RY(0.9, wires=1)
+    qp.RX(0.3, wires=2)
 
-    qml.CZ(wires=[0, 1])
-    qml.RY(-0.4, wires=0)
+    qp.CZ(wires=[0, 1])
+    qp.RY(-0.4, wires=0)
 
-    qml.WireCut(wires=1)  # Cut location
+    qp.WireCut(wires=1)  # Cut location
 
-    qml.CZ(wires=[1, 2])
+    qp.CZ(wires=[1, 2])
 
-    return qml.expval(qml.pauli.string_to_pauli_word("ZZZ"))
+    return qp.expval(qp.pauli.string_to_pauli_word("ZZZ"))
 
 
 x = np.array(0.531, requires_grad=True)  # Defining the parameter x
-fig, ax = qml.draw_mpl(circuit)(x)  # Drawing circuit
+fig, ax = qp.draw_mpl(circuit)(x)  # Drawing circuit
 
 
 ######################################################################
@@ -198,29 +198,29 @@ fig, ax = qml.draw_mpl(circuit)(x)  # Drawing circuit
 # operation is inserted. ``WireCut`` is used to manually mark locations for
 # wire cuts.
 #
-# Next, we apply ``qml.cut_circuit`` operation as a decorator to the
+# Next, we apply ``qp.cut_circuit`` operation as a decorator to the
 # ``circuit`` function to perform circuit cutting on the quantum circuit.
 
-dev = qml.device("default.qubit", wires=3)
+dev = qp.device("default.qubit", wires=3)
 
 # Quantum Circuit with QNode
 
 
-@qml.cut_circuit  # Applying qml.cut_circuit for circuit cut operation
-@qml.qnode(dev)
+@qp.cut_circuit  # Applying qp.cut_circuit for circuit cut operation
+@qp.qnode(dev)
 def circuit(x):
-    qml.RX(x, wires=0)
-    qml.RY(0.9, wires=1)
-    qml.RX(0.3, wires=2)
+    qp.RX(x, wires=0)
+    qp.RY(0.9, wires=1)
+    qp.RX(0.3, wires=2)
 
-    qml.CZ(wires=[0, 1])
-    qml.RY(-0.4, wires=0)
+    qp.CZ(wires=[0, 1])
+    qp.RY(-0.4, wires=0)
 
-    qml.WireCut(wires=1)  # Cut location
+    qp.WireCut(wires=1)  # Cut location
 
-    qml.CZ(wires=[1, 2])
+    qp.CZ(wires=[1, 2])
 
-    return qml.expval(qml.pauli.string_to_pauli_word("ZZZ"))
+    return qp.expval(qp.pauli.string_to_pauli_word("ZZZ"))
 
 
 x = np.array(0.531, requires_grad=True)
@@ -228,7 +228,7 @@ circuit(x)  # Executing the quantum circuit
 
 
 ######################################################################
-# Let's explore what happens behind the scenes in  ``qml.cut_circuit``. When the
+# Let's explore what happens behind the scenes in  ``qp.cut_circuit``. When the
 # ``circuit`` qnode function is executed, the quantum circuit is converted to
 # a `quantum tape <https://pennylane.ai/blog/2021/08/how-to-write-quantum-function-transforms-in-pennylane/>`__
 # and then to a graph. Any ``WireCut`` in the quantum
@@ -253,7 +253,7 @@ circuit(x)  # Executing the quantum circuit
 # separate these fragments into different subcircuit graphs, the
 # ``fragment_graph()`` function is called to pull apart the quantum circuit
 # graph as shown in figure 3. The subcircuit graphs are reconverted back to
-# quantum tapes and ``qml.cut_circuit`` runs multiple configurations of the
+# quantum tapes and ``qp.cut_circuit`` runs multiple configurations of the
 # 2-qubit subcircuit tapes which are then post-processed to replicate the result
 # of the uncut circuit.
 #
@@ -286,29 +286,29 @@ circuit(x)  # Executing the quantum circuit
 # the classical post-processing overhead is minimized. The main algorithm
 # behind automatic cut placement is `graph partitioning <https://kahypar.org/>`__
 #
-# If ``auto_cutter`` is enabled in ``qml.cut_circuit``, PennyLane makes attempts
+# If ``auto_cutter`` is enabled in ``qp.cut_circuit``, PennyLane makes attempts
 # to find an optimal cut using graph partitioning. Whenever it is difficult to
 # manually determine the optimal cut location, this is the recommended
 # approach to circuit cutting. The following example shows this capability
 # on the same circuit as above but with the ``WireCut`` removed.
 #
 
-dev = qml.device("default.qubit", wires=3)
+dev = qp.device("default.qubit", wires=3)
 
 
-@partial(qml.cut_circuit, auto_cutter=True)  # auto_cutter enabled
-@qml.qnode(dev)
+@partial(qp.cut_circuit, auto_cutter=True)  # auto_cutter enabled
+@qp.qnode(dev)
 def circuit(x):
-    qml.RX(x, wires=0)
-    qml.RY(0.9, wires=1)
-    qml.RX(0.3, wires=2)
+    qp.RX(x, wires=0)
+    qp.RY(0.9, wires=1)
+    qp.RX(0.3, wires=2)
 
-    qml.CZ(wires=[0, 1])
-    qml.RY(-0.4, wires=0)
+    qp.CZ(wires=[0, 1])
+    qp.RY(-0.4, wires=0)
 
-    qml.CZ(wires=[1, 2])
+    qp.CZ(wires=[1, 2])
 
-    return qml.expval(qml.pauli.string_to_pauli_word("ZZZ"))
+    return qp.expval(qp.pauli.string_to_pauli_word("ZZZ"))
 
 
 x = np.array(0.531, requires_grad=True)
@@ -499,7 +499,7 @@ def qaoa_template(params):
     gamma, beta = params
 
     for i in range(len(graph)):  # Apply the Hadamard gates
-        qml.Hadamard(wires=i)
+        qp.Hadamard(wires=i)
 
     for i, j in top_edges:
 
@@ -507,9 +507,9 @@ def qaoa_template(params):
         # corresponding to the
         # green edges in the figure
 
-        qml.MultiRZ(2 * gamma, wires=[i, j])
+        qp.MultiRZ(2 * gamma, wires=[i, j])
 
-    qml.WireCut(wires=middle_nodes)  # Place the wire cut
+    qp.WireCut(wires=middle_nodes)  # Place the wire cut
 
     for i, j in bottom_edges:
 
@@ -517,10 +517,10 @@ def qaoa_template(params):
         # corresponding to the
         # purple edges in the figure
 
-        qml.MultiRZ(2 * gamma, wires=[i, j])
+        qp.MultiRZ(2 * gamma, wires=[i, j])
 
     for i in graph.nodes():  # Finally, apply the RX gates
-        qml.RX(2 * beta, wires=i)
+        qp.RX(2 * beta, wires=i)
 
 
 ######################################################################
@@ -532,13 +532,13 @@ from pennylane.tape import QuantumTape
 
 all_wires = list(range(len(graph)))
 
-with qml.queuing.AnnotatedQueue() as q:
+with qp.queuing.AnnotatedQueue() as q:
     qaoa_template(optimal_params)
-    qml.sample(wires=all_wires)
+    qp.sample(wires=all_wires)
 
 tape = QuantumTape.from_queue(q)
 
-fig, _ = qml.drawer.tape_mpl(tape)
+fig, _ = qp.drawer.tape_mpl(tape)
 fig.set_size_inches(12, 6)
 
 
@@ -548,24 +548,24 @@ fig.set_size_inches(12, 6)
 #
 # To run fragment subcircuits and combine them into a finite-shot estimate
 # of the optimal cost function using the Pauli cut method, we can use
-# built-in PennyLane functions. We simply use the ``qml.cut_circuit_mc``
+# built-in PennyLane functions. We simply use the ``qp.cut_circuit_mc``
 # transform and everything is taken care of for us.
 #
-# Note that we have already introduced the ``qml.cut_circuit`` transform
+# Note that we have already introduced the ``qp.cut_circuit`` transform
 # in the previous section. The ``_mc`` appendix stands for Monte Carlo and
 # is used to calculate finite-shot estimates of observables. The
-# observable itself is passed to the ``qml.cut_circuit_mc`` transform as a
+# observable itself is passed to the ``qp.cut_circuit_mc`` transform as a
 # function mapping a bitstring (circuit sample) to a single number.
 #
 
-dev = qml.device("default.qubit", wires=all_wires)
+dev = qp.device("default.qubit", wires=all_wires)
 
 
-@partial(qml.cut_circuit_mc, classical_processing_fn=qaoa_cost)
-@qml.qnode(dev)
+@partial(qp.cut_circuit_mc, classical_processing_fn=qaoa_cost)
+@qp.qnode(dev)
 def qaoa(params):
     qaoa_template(params)
-    return qml.sample(wires=all_wires)
+    return qp.sample(wires=all_wires)
 
 
 ######################################################################
@@ -580,7 +580,7 @@ shot_counts = np.logspace(1, 4, num=20, dtype=int, requires_grad=False)
 pauli_cost_values = np.zeros_like(shot_counts, dtype=float)
 
 for i, shots in enumerate(shot_counts):
-    pauli_cost_values[i] = qml.set_shots(qaoa, int(shots))(optimal_params)
+    pauli_cost_values[i] = qp.set_shots(qaoa, int(shots))(optimal_params)
 
 
 ######################################################################
@@ -593,7 +593,7 @@ for i, shots in enumerate(shot_counts):
 # As noted earlier, the easiest way to mathematically represent the
 # randomized channel-based method is to write down Kraus operators for the
 # relevant channels, :math:`\Psi _0` and :math:`\Psi _1.` Once we have
-# represented them in explicit matrix form, we can simply use ``qml.QubitChannel``.
+# represented them in explicit matrix form, we can simply use ``qp.QubitChannel``.
 #
 #
 # To get our matrices, we represent the computational basis set along the
@@ -640,17 +640,17 @@ def make_kraus_ops(num_wires: int):
     kraus1 = np.identity(d**2).reshape(d**2, d, d)
     kraus1 /= np.sqrt(d)
 
-    # Finally, return a list of NumPy arrays, as per `qml.QubitChannel` docs.
+    # Finally, return a list of NumPy arrays, as per `qp.QubitChannel` docs.
     return list(kraus0.astype(complex)), list(kraus1.astype(complex))
 
 
 ######################################################################
 # Our next task is to generate two new ``QuantumTape`` objects from our
 # existing ``tape``, one for :math:`\Psi _0` and one for :math:`\Psi _1.`
-# Currently, a ``qml.WireCut`` dummy gate is used to represent the cut
+# Currently, a ``qp.WireCut`` dummy gate is used to represent the cut
 # position and size. So, iterating through gates in ``tape``:
 #
-# -  If the gate is a ``qml.WireCut``, we apply the ``qml.QubitChannel``
+# -  If the gate is a ``qp.WireCut``, we apply the ``qp.QubitChannel``
 #    corresponding to :math:`\Psi _0` or :math:`\Psi _1` to different new
 #    tapes.
 # -  Otherwise, just apply the same existing gate to both new tapes.
@@ -662,7 +662,7 @@ cut_index = 0
 wire_cut = None
 
 for i, op in enumerate(tape.operations):
-    if isinstance(op, qml.WireCut):
+    if isinstance(op, qp.WireCut):
         cut_index = i
         wire_cut = op
         break
@@ -673,8 +673,8 @@ d = 2**k
 K0, K1 = make_kraus_ops(k)  # Generate Kraus operators on the fly
 probs = (d + 1) / (2 * d + 1), d / (2 * d + 1)  # Probabilities of the two channels
 
-psi_0 = qml.QubitChannel(K0, wires=wire_cut.wires)
-psi_1 = qml.QubitChannel(K1, wires=wire_cut.wires)
+psi_0 = qp.QubitChannel(K0, wires=wire_cut.wires)
+psi_1 = qp.QubitChannel(K1, wires=wire_cut.wires)
 
 ops_0 = tape.operations
 ops_0[cut_index] = psi_0
@@ -692,7 +692,7 @@ tape1 = QuantumTape(ops=ops_1, measurements=tape.measurements)
 print(f"Cut size: k={k}")
 print(f"Channel probabilities: p0={probs[0]:.2f}; p1={probs[1]:.2f}", "\n")
 
-fig, _ = qml.drawer.tape_mpl(tape0)
+fig, _ = qp.drawer.tape_mpl(tape0)
 fig.set_size_inches(12, 6)
 
 ######################################################################
@@ -709,7 +709,7 @@ fig.set_size_inches(12, 6)
 # simulator. Luckily, PennyLane has just what we need:
 #
 
-device = qml.device("default.mixed", wires=tape.wires)
+device = qp.device("default.mixed", wires=tape.wires)
 
 ######################################################################
 # We only need a single run for each of the two generated tapes, ``tape0`` and
@@ -737,10 +737,10 @@ print(f"Channel 1: {channel_shots[1]} times.")
 tape0 = QuantumTape(ops=ops_0, measurements=tape.measurements, shots=channel_shots[0].item())
 tape1 = QuantumTape(ops=ops_1, measurements=tape.measurements, shots=channel_shots[1].item())
 
-(shots0,) = qml.execute([tape0], device=device, cache=False, diff_method=None)
+(shots0,) = qp.execute([tape0], device=device, cache=False, diff_method=None)
 samples[choices == 0] = shots0
 
-(shots1,) = qml.execute([tape1], device=device, cache=False, diff_method=None)
+(shots1,) = qp.execute([tape1], device=device, cache=False, diff_method=None)
 samples[choices == 1] = shots1
 
 ######################################################################

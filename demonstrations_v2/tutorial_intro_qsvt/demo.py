@@ -100,7 +100,7 @@ input values, then our QSP transformation successfully implements the desired ma
     \end{pmatrix}.
 """
 
-import pennylane as qml
+import pennylane as qp
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -110,7 +110,7 @@ target_poly = [0, -3 * 0.5, 0, 5 * 0.5]
 
 def qsvt_output(a):
     # output matrix
-    out = qml.matrix(qml.qsvt(a,  target_poly, encoding_wires=[0], block_encoding="embedding"))
+    out = qp.matrix(qp.qsvt(a,  target_poly, encoding_wires=[0], block_encoding="embedding"))
     return out[0, 0]  # top-left entry
 
 
@@ -155,16 +155,16 @@ plt.show()
 
 # square matrix
 A = [[0.1, 0.2], [0.3, 0.4]]
-U1 = qml.BlockEncode(A, wires=range(2))
+U1 = qp.BlockEncode(A, wires=range(2))
 print("U(A):")
-print(np.round(qml.matrix(U1), 2))
+print(np.round(qp.matrix(U1), 2))
 
 ##############################################################################
 # And also a rectangular matrix
 B = [[0.5, -0.5, 0.5]]
-U2 = qml.BlockEncode(B, wires=range(2))
+U2 = qp.BlockEncode(B, wires=range(2))
 print("U(B):")
-print(np.round(qml.matrix(U2), 2))
+print(np.round(qp.matrix(U2), 2))
 
 
 ##############################################################################
@@ -206,9 +206,9 @@ print(np.round(qml.matrix(U2), 2))
 
 dim = 2
 phi = np.pi / 2
-pcp = qml.PCPhase(phi, dim, wires=range(2))
+pcp = qp.PCPhase(phi, dim, wires=range(2))
 print("Pi:")
-print(np.round(qml.matrix(pcp), 2))
+print(np.round(qp.matrix(pcp), 2))
 
 
 ##############################################################################
@@ -258,14 +258,14 @@ eigvals = np.linspace(-1, 1, 16)
 A = np.diag(eigvals)  # 16-dim matrix
 wire_order = list(range(5))
 
-qml.draw_mpl(qml.transforms.decompose(qml.qsvt))(A,  target_poly, encoding_wires=wire_order, block_encoding="embedding")
+qp.draw_mpl(qp.transforms.decompose(qp.qsvt))(A,  target_poly, encoding_wires=wire_order, block_encoding="embedding")
 plt.show()
 
 ###############################################################################
 # Now, let's see how each eigenvalue of :math:`A` is transformed by QSVT. We will plot the original eigenvalues
 # and the corresponding eigenvalues of the top-left block of the QSVT matrix. 
 
-U_A = qml.matrix(qml.qsvt, wire_order=wire_order)(
+U_A = qp.matrix(qp.qsvt, wire_order=wire_order)(
     A, target_poly, encoding_wires=wire_order, block_encoding="embedding"
 )  # block-encoded in 5-qubit system
 
