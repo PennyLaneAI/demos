@@ -236,21 +236,21 @@ ax = plot_double_cake_data(X, Y, plt.gca(), num_sectors=num_sectors)
 # need for this is an *ansatz*, which we will construct by repeating a
 # layer as building block. Let's start by defining this layer:
 
-import pennylane as qml
+import pennylane as qp
 
 
 def layer(x, params, wires, i0=0, inc=1):
     """Building block of the embedding ansatz"""
     i = i0
     for j, wire in enumerate(wires):
-        qml.Hadamard(wires=[wire])
-        qml.RZ(x[i % len(x)], wires=[wire])
+        qp.Hadamard(wires=[wire])
+        qp.RZ(x[i % len(x)], wires=[wire])
         i += inc
-        qml.RY(params[0, j], wires=[wire])
+        qp.RY(params[0, j], wires=[wire])
 
     n_wires = len(wires)
     for p, w in zip(params[1], wires):
-        qml.CRZ(p, wires=[w % n_wires, (w + 1) % n_wires])
+        qp.CRZ(p, wires=[w % n_wires, (w + 1) % n_wires])
 
 
 ##############################################################################
@@ -260,7 +260,7 @@ def layer(x, params, wires, i0=0, inc=1):
 # Together, the datapoint and the variational parameters fully determine
 # the embedding ansatz :math:`U(\boldsymbol{x}).`
 # In order to construct the full kernel circuit, we also require its adjoint
-# :math:`U(\boldsymbol{x})^\dagger,` which we can obtain via ``qml.adjoint`.`
+# :math:`U(\boldsymbol{x})^\dagger,` which we can obtain via ``qp.adjoint`.`
 
 
 def ansatz(x, params, wires):
@@ -269,7 +269,7 @@ def ansatz(x, params, wires):
         layer(x, layer_params, wires, i0=j * len(wires))
 
 
-adjoint_ansatz = qml.adjoint(ansatz)
+adjoint_ansatz = qp.adjoint(ansatz)
 
 
 def random_params(num_wires, num_layers):
@@ -282,7 +282,7 @@ def random_params(num_wires, num_layers):
 # For the purpose of this tutorial we will use PennyLane's ``default.qubit``
 # device with 5 wires in analytic mode.
 
-dev = qml.device("default.qubit", wires=5)
+dev = qp.device("default.qubit", wires=5)
 wires = dev.wires.tolist()
 
 ##############################################################################
@@ -292,17 +292,17 @@ wires = dev.wires.tolist()
 # finally extract the probabilities of observing each basis state.
 
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def kernel_circuit(x1, x2, params):
     ansatz(x1, params, wires=wires)
     adjoint_ansatz(x2, params, wires=wires)
-    return qml.probs(wires=wires)
+    return qp.probs(wires=wires)
 
 
 ##############################################################################
 # The kernel function itself is now obtained by looking at the probability
 # of observing the all-zero state at the end of the kernel circuit – because
-# of the ordering in ``qml.probs``, this is the first entry:
+# of the ordering in ``qp.probs``, this is the first entry:
 
 
 def kernel(x1, x2, params):
@@ -334,7 +334,7 @@ print(f"The kernel value between the first and second datapoint is {kernel_value
 
 ##############################################################################
 # The mutual kernel values between all elements of the dataset form the
-# *kernel matrix*. We can inspect it via the ``qml.kernels.square_kernel_matrix``
+# *kernel matrix*. We can inspect it via the ``qp.kernels.square_kernel_matrix``
 # method, which makes use of symmetry of the kernel,
 # :math:`k(\boldsymbol{x}_i,\boldsymbol{x}_j) = k(\boldsymbol{x}_j, \boldsymbol{x}_i).`
 # In addition, the option ``assume_normalized_kernel=True`` ensures that we do not
@@ -345,7 +345,7 @@ print(f"The kernel value between the first and second datapoint is {kernel_value
 # fixes them to the values we sampled above.
 
 init_kernel = lambda x1, x2: kernel(x1, x2, init_params)
-K_init = qml.kernels.square_kernel_matrix(X, init_kernel, assume_normalized_kernel=True)
+K_init = qp.kernels.square_kernel_matrix(X, init_kernel, assume_normalized_kernel=True)
 
 with np.printoptions(precision=3, suppress=True):
     print(K_init)
@@ -363,7 +363,7 @@ from sklearn.svm import SVC
 ##############################################################################
 # To construct the SVM, we need to supply ``sklearn.svm.SVC`` with a function
 # that takes two sets of datapoints and returns the associated kernel matrix.
-# We can make use of the function ``qml.kernels.kernel_matrix`` that provides
+# We can make use of the function ``qp.kernels.kernel_matrix`` that provides
 # this functionality. It expects the kernel to not have additional parameters
 # besides the datapoints, which is why we again supply the variational
 # parameters via the ``lambda`` function from above.
@@ -375,7 +375,7 @@ from sklearn.svm import SVC
 #     ansatz. What it does is solving a different optimization task for the
 #     :math:`\alpha` and :math:`b` vectors we introduced in the beginning.
 
-svm = SVC(kernel=lambda X1, X2: qml.kernels.kernel_matrix(X1, X2, init_kernel)).fit(X, Y)
+svm = SVC(kernel=lambda X1, X2: qp.kernels.kernel_matrix(X1, X2, init_kernel)).fit(X, Y)
 
 ##############################################################################
 # To see how well our classifier performs we will measure which percentage
@@ -494,7 +494,7 @@ init_plot_data = plot_decision_boundaries(svm, plt.gca())
 # ``kernels`` module allows you to easily evaluate the kernel
 # target alignment:
 
-kta_init = qml.kernels.target_alignment(X, Y, init_kernel, assume_normalized_kernel=True)
+kta_init = qp.kernels.target_alignment(X, Y, init_kernel, assume_normalized_kernel=True)
 
 print(f"The kernel-target alignment for our dataset and random parameters is {kta_init:.3f}")
 
@@ -511,7 +511,7 @@ print(f"The kernel-target alignment for our dataset and random parameters is {kt
 # *maximize* it in the process.
 #
 # .. note::
-#     Currently, the function ``qml.kernels.target_alignment`` is not
+#     Currently, the function ``qp.kernels.target_alignment`` is not
 #     differentiable yet, making it unfit for gradient descent optimization.
 #     We therefore first define a differentiable version of this function.
 
@@ -525,7 +525,7 @@ def target_alignment(
 ):
     """Kernel-target alignment between kernel and labels."""
 
-    K = qml.kernels.square_kernel_matrix(
+    K = qp.kernels.square_kernel_matrix(
         X,
         kernel,
         assume_normalized_kernel=assume_normalized_kernel,
@@ -547,7 +547,7 @@ def target_alignment(
 
 
 params = init_params
-opt = qml.GradientDescentOptimizer(0.2)
+opt = qp.GradientDescentOptimizer(0.2)
 
 for i in range(500):
     # Choose subset of datapoints to compute the KTA on.
@@ -581,7 +581,7 @@ for i in range(500):
 trained_kernel = lambda x1, x2: kernel(x1, x2, params)
 
 # Second create a kernel matrix function using the trained kernel.
-trained_kernel_matrix = lambda X1, X2: qml.kernels.kernel_matrix(X1, X2, trained_kernel)
+trained_kernel_matrix = lambda X1, X2: qp.kernels.kernel_matrix(X1, X2, trained_kernel)
 
 # Note that SVC expects the kernel argument to be a kernel matrix function.
 svm_trained = SVC(kernel=trained_kernel_matrix).fit(X, Y)

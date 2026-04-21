@@ -92,11 +92,11 @@ We now describe how to implement qubitization-based `quantum phase estimation <h
 First, let's define a simple Hamiltonian to use as an example:
 """
 
-import pennylane as qml
+import pennylane as qp
 
-H = -0.4 * qml.Z(0) + 0.3 * qml.Z(1) + 0.4 * qml.Z(0) @ qml.Z(1)
+H = -0.4 * qp.Z(0) + 0.3 * qp.Z(1) + 0.4 * qp.Z(0) @ qp.Z(1)
 
-print(qml.matrix(H).real)
+print(qp.matrix(H).real)
 
 ##############################################################################
 # We have chosen an operator that is diagonal in the computational basis because it is easy to identify
@@ -110,21 +110,21 @@ print(qml.matrix(H).real)
 control_wires = [2, 3]
 estimation_wires = [4, 5, 6, 7, 8, 9]
 
-dev = qml.device("default.qubit")
+dev = qp.device("default.qubit")
 
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def circuit():
     # Initialize the eigenstate |11⟩
     for wire in [0, 1]:
-        qml.X(wire)
+        qp.X(wire)
 
     # Apply QPE with the qubitization operator
-    qml.QuantumPhaseEstimation(
-        qml.Qubitization(H, control_wires), estimation_wires=estimation_wires
+    qp.QuantumPhaseEstimation(
+        qp.Qubitization(H, control_wires), estimation_wires=estimation_wires
     )
 
-    return qml.probs(wires=estimation_wires)
+    return qp.probs(wires=estimation_wires)
 
 
 ##############################################################################

@@ -187,7 +187,7 @@ solution or lookup table.
 
 from catalyst import qjit, cond, measure, debug
 from jax import random, numpy as jnp
-import pennylane as qml
+import pennylane as qp
 
 distance = 3
 
@@ -201,7 +201,7 @@ n_qubits = len(data_qubits) + len(aux_qubits)
 # the Pennylane backend.
 # 
 
-dev = qml.device("qrack.simulator", wires=n_qubits)
+dev = qp.device("qrack.simulator", wires=n_qubits)
 
 ######################################################################
 # Then, we proceed to generate the circuit. Note that we start by introducing an error by hand, and
@@ -209,7 +209,7 @@ dev = qml.device("qrack.simulator", wires=n_qubits)
 # 
 
 @qjit()
-@qml.qnode(dev)
+@qp.qnode(dev)
 def circuit(seed : int):
 
     # Based on the seed, apply an X gate to a random data qubit
@@ -220,14 +220,14 @@ def circuit(seed : int):
     @cond(random_qubit != -1)
     def apply_noise():
         debug.print("Applying noise to qubit: {}", random_qubit)
-        qml.X(random_qubit)
+        qp.X(random_qubit)
     
     apply_noise()
 
     # Syndrome extraction routine: entangle data and auxiliary, and measure auxiliary
     for i in range(distance-1):
-        qml.CNOT(wires=[data_qubits[i], aux_qubits[i]])
-        qml.CNOT(wires=[data_qubits[i+1], aux_qubits[i]])
+        qp.CNOT(wires=[data_qubits[i], aux_qubits[i]])
+        qp.CNOT(wires=[data_qubits[i+1], aux_qubits[i]])
     syndrome = [measure(aux_qubit) for aux_qubit in aux_qubits]
 
 
@@ -235,15 +235,15 @@ def circuit(seed : int):
     @cond(jnp.logical_and(syndrome[0] == 0, syndrome[1] == 1))
     def fix_data_qubits():
         debug.print("Applying correction on data qubit 2")
-        qml.X(data_qubits[2])
+        qp.X(data_qubits[2])
     @fix_data_qubits.else_if( jnp.logical_and(syndrome[0] == 1, syndrome[1] == 0))
     def fix_data_qubits():
         debug.print("Applying correction on data qubit 0")
-        qml.X(data_qubits[0])
+        qp.X(data_qubits[0])
     @fix_data_qubits.else_if(jnp.logical_and(syndrome[0] == 1, syndrome[1] == 1))
     def fix_data_qubits():
         debug.print("Applying correction on data qubit 1")
-        qml.X(data_qubits[1])
+        qp.X(data_qubits[1])
     
     # Apply the the fix
     fix_data_qubits()
@@ -348,7 +348,7 @@ circuit_rc, reg_rc = convert_circuit_to_pennylane(
 # 
 
 # Define device
-dev = qml.device(
+dev = qp.device(
     "qrack.simulator",
     wires=len(reg_rc),
     shots=1,
@@ -376,7 +376,7 @@ union_find_decoder_rc_accelerated = accelerate(union_find_decoder_rc)
 # 
 
 @qjit()
-@qml.qnode(dev)
+@qp.qnode(dev)
 def repetition_code_circuit():
 
     ## Run the circuit
@@ -462,11 +462,11 @@ print(
 # Indeed, the probability of getting a logical error without decoding is much higher. Interestingly
 # enough, though, even with the QEC scheme, the probability of error did not go to zero! Wonder why?
 # 
-# When we defined the ``qml.device``, we set the noise level at at 0.05:
+# When we defined the ``qp.device``, we set the noise level at at 0.05:
 # 
 
 # Define device
-dev = qml.device(
+dev = qp.device(
     "qrack.simulator",
     wires=len(reg_rc),
     shots=1,

@@ -119,7 +119,7 @@ Tapering the molecular Hamiltonian
 In PennyLane, a :doc:`molecular Hamiltonian <demos/tutorial_quantum_chemistry>` can be created by specifying the atomic symbols and
 coordinates.
 """
-import pennylane as qml
+import pennylane as qp
 from jax import numpy as jnp
 import jax
 
@@ -128,8 +128,8 @@ symbols = ["He", "H"]
 geometry = jnp.array([[0.00000000, 0.00000000, -0.87818361],
                      [0.00000000, 0.00000000,  0.87818362]])
 
-molecule = qml.qchem.Molecule(symbols, geometry, charge=1)
-H, qubits = qml.qchem.molecular_hamiltonian(molecule)
+molecule = qp.qchem.Molecule(symbols, geometry, charge=1)
+H, qubits = qp.qchem.molecular_hamiltonian(molecule)
 H
 
 ##############################################################################
@@ -140,8 +140,8 @@ H
 # Hamiltonian. In PennyLane, these are constructed by using the
 # :func:`~.pennylane.symmetry_generators` and :func:`~.pennylane.paulix_ops` functions.
 
-generators = qml.symmetry_generators(H)
-paulixops = qml.paulix_ops(generators, qubits)
+generators = qp.symmetry_generators(H)
+paulixops = qp.paulix_ops(generators, qubits)
 
 for idx, generator in enumerate(generators):
     print(f"generator {idx+1}: {generator}, paulix_op: {paulixops[idx]}")
@@ -157,7 +157,7 @@ for idx, generator in enumerate(generators):
 
 
 n_electrons = 2
-paulix_sector = qml.qchem.optimal_sector(H, generators, n_electrons)
+paulix_sector = qp.qchem.optimal_sector(H, generators, n_electrons)
 print(paulix_sector)
 
 ##############################################################################
@@ -167,9 +167,9 @@ print(paulix_sector)
 # qubits :math:`q_2, q_3` by replacing the Pauli-X operators acting on those qubits with the optimal
 # eigenvalues.
 
-H_tapered = qml.taper(H, generators, paulixops, paulix_sector)
+H_tapered = qp.taper(H, generators, paulixops, paulix_sector)
 H_tapered_coeffs, H_tapered_ops = H_tapered.terms()
-H_tapered = qml.Hamiltonian(jnp.real(jnp.array(H_tapered_coeffs)), H_tapered_ops)
+H_tapered = qp.Hamiltonian(jnp.real(jnp.array(H_tapered_coeffs)), H_tapered_ops)
 print(H_tapered)
 
 ##############################################################################
@@ -180,11 +180,11 @@ print(H_tapered)
 # representation of Hamiltonians. This allows us to directly diagonalize them to obtain exact values
 # of the ground-state energies.
 
-H_sparse = qml.SparseHamiltonian(H.sparse_matrix(), wires=H.wires)
-H_tapered_sparse = qml.SparseHamiltonian(H_tapered.sparse_matrix(), wires=H_tapered.wires)
+H_sparse = qp.SparseHamiltonian(H.sparse_matrix(), wires=H.wires)
+H_tapered_sparse = qp.SparseHamiltonian(H_tapered.sparse_matrix(), wires=H_tapered.wires)
 
-print("Eigenvalues of H:\n", qml.eigvals(H_sparse, k=16))
-print("\nEigenvalues of H_tapered:\n", qml.eigvals(H_tapered_sparse, k=4))
+print("Eigenvalues of H:\n", qp.eigvals(H_sparse, k=16))
+print("\nEigenvalues of H_tapered:\n", qp.eigvals(H_tapered_sparse, k=4))
 
 ##############################################################################
 # Note that a second-quantized Hamiltonian is independent of the number of electrons and its
@@ -205,7 +205,7 @@ print("\nEigenvalues of H_tapered:\n", qml.eigvals(H_tapered_sparse, k=4))
 # Hamiltonian. This reduces the number of qubits in the Hartree-Fock state to match that of the
 # tapered Hamiltonian. It can be done with the :func:`~.pennylane.qchem.taper_hf` function.
 
-state_tapered = qml.qchem.taper_hf(generators, paulixops, paulix_sector,
+state_tapered = qp.qchem.taper_hf(generators, paulixops, paulix_sector,
                                    num_electrons=n_electrons, num_wires=len(H.wires))
 print(state_tapered)
 
@@ -214,21 +214,21 @@ print(state_tapered)
 # :math:`[1 1 0 0].` We can now generate the qubit representation of these states and compute the
 # Hartree-Fock energies for each Hamiltonian.
 
-dev = qml.device("default.qubit", wires=H.wires)
-@qml.qnode(dev, interface="jax")
+dev = qp.device("default.qubit", wires=H.wires)
+@qp.qnode(dev, interface="jax")
 def circuit():
-    qml.BasisState(jnp.array([1, 1, 0, 0]), wires=H.wires)
-    return qml.state()
+    qp.BasisState(jnp.array([1, 1, 0, 0]), wires=H.wires)
+    return qp.state()
 
 qubit_state = circuit()
 HF_energy = qubit_state.T @ H.sparse_matrix().toarray() @ qubit_state
 print(f"HF energy: {jnp.real(HF_energy):.8f} Ha")
 
-dev = qml.device("lightning.qubit", wires=H_tapered.wires)
-@qml.qnode(dev, interface="jax")
+dev = qp.device("lightning.qubit", wires=H_tapered.wires)
+@qp.qnode(dev, interface="jax")
 def circuit():
-    qml.BasisState(jnp.array([1, 1]), wires=H_tapered.wires)
-    return qml.state()
+    qp.BasisState(jnp.array([1, 1]), wires=H_tapered.wires)
+    return qp.state()
 
 qubit_state = circuit()
 HF_energy = qubit_state.T @ H_tapered.sparse_matrix().toarray() @ qubit_state
@@ -247,24 +247,24 @@ print(f"HF energy (tapered): {jnp.real(HF_energy):.8f} Ha")
 # :func:`~.pennylane.DoubleExcitation` operations tapered using 
 # :func:`~.pennylane.qchem.taper_operation`.
 
-singles, doubles = qml.qchem.excitations(n_electrons, len(H.wires))
+singles, doubles = qp.qchem.excitations(n_electrons, len(H.wires))
 tapered_doubles = [
-    qml.taper_operation(qml.DoubleExcitation, generators, paulixops, paulix_sector,
+    qp.taper_operation(qp.DoubleExcitation, generators, paulixops, paulix_sector,
                         wire_order=H.wires, op_wires=double) for double in doubles
 ]
 tapered_singles = [
-    qml.taper_operation(qml.SingleExcitation, generators, paulixops, paulix_sector,
+    qp.taper_operation(qp.SingleExcitation, generators, paulixops, paulix_sector,
                         wire_order=H.wires, op_wires=single) for single in singles
 ]
 
-dev = qml.device("lightning.qubit", wires=H_tapered.wires)
+dev = qp.device("lightning.qubit", wires=H_tapered.wires)
 
-@qml.qnode(dev, interface="jax")
+@qp.qnode(dev, interface="jax")
 def tapered_circuit(params):
-    qml.BasisState(state_tapered, wires=H_tapered.wires)
+    qp.BasisState(state_tapered, wires=H_tapered.wires)
     for idx, tapered_op in enumerate(tapered_doubles + tapered_singles):
         tapered_op(params[idx])
-    return qml.expval(H_tapered)
+    return qp.expval(H_tapered)
 
 ##############################################################################
 # We define an optimizer and the initial values of the circuit parameters and optimize the circuit

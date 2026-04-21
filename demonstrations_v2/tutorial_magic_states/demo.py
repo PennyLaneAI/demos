@@ -47,36 +47,36 @@ can be found in this PennyLane `glossary page <https://pennylane.ai/qml/glossary
 
 """
 
-import pennylane as qml
+import pennylane as qp
 from pennylane import numpy as np
 
 
 def prepare_magic_state():
     """Prepares the |H> magic state on wire 1."""
-    qml.Hadamard(wires=1)
-    qml.T(wires=1)
+    qp.Hadamard(wires=1)
+    qp.T(wires=1)
 
 
-dev = qml.device("default.qubit")
+dev = qp.device("default.qubit")
 
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def magic_state_injection_circuit(target_state_params):
 
     # Prepare the initial target state (e.g., Ry rotation)
-    qml.RY(target_state_params, wires=0)
+    qp.RY(target_state_params, wires=0)
 
     # Prepare the Magic State on Qubit 1
     prepare_magic_state()
 
     # Apply the Clifford operations for injection
-    qml.CNOT(wires=[0, 1])
+    qp.CNOT(wires=[0, 1])
 
     # The outcome of m_1 dictates the final correction
-    m_1 = qml.measure(1)
-    qml.cond(m_1 == 1, qml.S)(wires=0)
+    m_1 = qp.measure(1)
+    qp.cond(m_1 == 1, qp.S)(wires=0)
 
-    return qml.density_matrix(wires=[0])
+    return qp.density_matrix(wires=[0])
 
 
 print(magic_state_injection_circuit(np.pi / 3))

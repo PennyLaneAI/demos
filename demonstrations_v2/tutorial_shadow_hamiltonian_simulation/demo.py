@@ -134,19 +134,19 @@ following way.
 
 """
 
-import pennylane as qml
+import pennylane as qp
 import numpy as np
 from pennylane import X, Y, Z, I
 
-dev = qml.device("default.qubit")
+dev = qp.device("default.qubit")
 
 S = [X(0), Y(0), Z(0), I(0)]
 H = X(0) + Y(0)
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def evolve(H, t):
-    qml.evolve(H, t)
-    return [qml.expval(Om) for Om in S]
+    qp.evolve(H, t)
+    return [qp.expval(Om) for Om in S]
 
 t = 1.
 O_t_standard = np.array(evolve(H, t))
@@ -236,7 +236,7 @@ O_t
 # be implemented on a quantum computer.
 #
 
-H_S_qubit = qml.pauli_decompose(H_S)
+H_S_qubit = qp.pauli_decompose(H_S)
 H_S_qubit
 
 ##############################################################################
@@ -247,11 +247,11 @@ H_S_qubit
 
 A = np.linalg.norm(O_0)
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def shadow_evolve(H_S_qubit, O_0, t):
-    qml.StatePrep(O_0 / A, wires=range(2))
-    qml.evolve(H_S_qubit, t)
-    return qml.state()
+    qp.StatePrep(O_0 / A, wires=range(2))
+    qp.evolve(H_S_qubit, t)
+    return qp.state()
 
 O_t_shadow = shadow_evolve(H_S_qubit, O_0, t) * A
 
@@ -263,7 +263,7 @@ print(O_t_shadow)
 #
 # The first result is coming from three independent measurements on a quantum computer after evolution with system Hamiltonian :math:`H.`
 # This is conceptually very different from the second result where
-# :math:`\boldsymbol{O}` is encoded in the state of the shadow system (note the ``qml.state()`` return), which we evolved according to :math:`H_S.`
+# :math:`\boldsymbol{O}` is encoded in the state of the shadow system (note the ``qp.state()`` return), which we evolved according to :math:`H_S.`
 #
 # In the first case, the measurement is directly obtained, however, 
 # in the shadow Hamiltonian simulation, we need to access the amplitudes of the underlying state.

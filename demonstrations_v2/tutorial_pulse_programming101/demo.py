@@ -59,7 +59,7 @@ First, we need to define the time-dependent Hamiltonian :math:`H(p, t)= \sum_i f
 The Hamiltonian depends on the set of parameters :math:`p = \{p_i\}.` One way to do this in PennyLane is in the following way:
 """
 
-import pennylane as qml
+import pennylane as qp
 import numpy as np
 import jax.numpy as jnp
 import jax
@@ -80,7 +80,7 @@ def f2(p, t):
     return p[0] * jnp.sin(p[1] * t)
 
 
-Ht = f1 * qml.PauliX(0) + f2 * qml.PauliY(1)
+Ht = f1 * qp.PauliX(0) + f2 * qp.PauliY(1)
 
 ##############################################################################
 # This constructs a :class:`~pennylane.pulse.ParametrizedHamiltonian`. Note that the ``callable`` functions ``f1`` and ``f2``
@@ -95,16 +95,16 @@ print(Ht((p1, p2), t))  # order of parameters p1, p2 matters
 
 ##############################################################################
 # We can construct general Hamiltonians of the form :math:`\sum_i H_i^d + \sum_i f_i(p_i, t) H_i`
-# using :func:`qml.dot <pennylane.dot>`. Such a time-dependent Hamiltonian consists of time-independent drift terms :math:`H_i^d`
+# using :func:`qp.dot <pennylane.dot>`. Such a time-dependent Hamiltonian consists of time-independent drift terms :math:`H_i^d`
 # and time-dependent control terms :math:`f_i(p_i, t) H_i` with scalar complex-valued functions :math:`f_i(p, t).`
 # In the following we are going to construct :math:`\sum_i X_i X_{i+1} + \sum_i f_i(p_i, t) Z_i` with :math:`f_i(p_i, t) = \sin(p_i^0 t) + \sin(p_i^1 t) \forall i` as an example:
 
 coeffs = [1.0] * 2
 coeffs += [lambda p, t: jnp.sin(p[0] * t) + jnp.sin(p[1] * t) for _ in range(3)]
-ops = [qml.PauliX(i) @ qml.PauliX(i + 1) for i in range(2)]
-ops += [qml.PauliZ(i) for i in range(3)]
+ops = [qp.PauliX(i) @ qp.PauliX(i + 1) for i in range(2)]
+ops += [qp.PauliZ(i) for i in range(3)]
 
-Ht = qml.dot(coeffs, ops)
+Ht = qp.dot(coeffs, ops)
 
 # random coefficients
 key = jax.random.PRNGKey(777)
@@ -136,17 +136,17 @@ plt.show()
 # gate :math:`U(t_0, t_1),` which implicitly depends on the parameters ``p`.` The objective of the program
 # is then to compute the expectation value of some objective Hamiltonian ``H_obj`` (here :math:`\sum_i Z_i` as a simple example).
 
-dev = qml.device("default.qubit", range(4))
+dev = qp.device("default.qubit", range(4))
 
 ts = jnp.array([0.0, 3.0])
-H_obj = sum([qml.PauliZ(i) for i in range(4)])
+H_obj = sum([qp.PauliZ(i) for i in range(4)])
 
 
 @jax.jit
-@qml.qnode(dev, interface="jax")
+@qp.qnode(dev, interface="jax")
 def qnode(params):
-    qml.evolve(Ht)(params, ts)
-    return qml.expval(H_obj)
+    qp.evolve(Ht)(params, ts)
+    return qp.expval(H_obj)
 
 
 print(qnode(params))
@@ -181,7 +181,7 @@ print(jax.grad(qnode)(params))
 # by providing a ``timespan`` argument which is expected to be either a total time (``float``) or a start and end time (``tuple``).
 
 timespan = 10.0
-coeffs = [qml.pulse.pwc(timespan) for _ in range(2)]
+coeffs = [qp.pulse.pwc(timespan) for _ in range(2)]
 
 ##############################################################################
 # This creates a callable with signature ``(p, t)`` that returns ``p[int(len(p)*t/duration)]``, such that the passed parameters are the function values
@@ -208,12 +208,12 @@ plt.show()
 ##############################################################################
 # We can use these callables as before to construct a :func:`~.pennylane.pulse.ParametrizedHamiltonian`.
 
-ops = [qml.PauliX(i) for i in range(2)]
-H = qml.pulse.ParametrizedHamiltonian(coeffs, ops)
+ops = [qp.PauliX(i) for i in range(2)]
+H = qp.pulse.ParametrizedHamiltonian(coeffs, ops)
 print(H(theta, 0.5))
 
 ##############################################################################
-# Note that this construction is equivalent to using :func:`qml.dot <pennylane.dot>`.
+# Note that this construction is equivalent to using :func:`qp.dot <pennylane.dot>`.
 #
 # Variational quantum eigensolver with pulse programming
 # ------------------------------------------------------
@@ -223,12 +223,12 @@ print(H(theta, 0.5))
 # We are using :math:`\text{HeH}^+` as a simple example and load it from the `PennyLane quantum datasets <https://pennylane.ai/datasets>`_ website.
 # We are going to use the tapered Hamiltonian, which makes use of symmetries to reduce the number of qubits, see :doc:`demos/tutorial_qubit_tapering` for details.
 
-data = qml.data.load("qchem", molname="HeH+", basis="STO-3G", bondlength=1.5)[0]
+data = qp.data.load("qchem", molname="HeH+", basis="STO-3G", bondlength=1.5)[0]
 H_obj = data.tapered_hamiltonian
 H_obj_coeffs, H_obj_ops = H_obj.terms()
 
 # casting the Hamiltonian coefficients to a jax Array
-H_obj = qml.Hamiltonian(jnp.array(H_obj_coeffs), H_obj_ops)
+H_obj = qp.Hamiltonian(jnp.array(H_obj_coeffs), H_obj_ops)
 E_exact = data.fci_energy
 n_wires = len(H_obj.wires)
 
@@ -244,18 +244,18 @@ n_wires = len(H_obj.wires)
 
 
 def a(wires):
-    return 0.5 * qml.PauliX(wires) + 0.5j * qml.PauliY(wires)
+    return 0.5 * qp.PauliX(wires) + 0.5j * qp.PauliY(wires)
 
 
 def ad(wires):
-    return 0.5 * qml.PauliX(wires) - 0.5j * qml.PauliY(wires)
+    return 0.5 * qp.PauliX(wires) - 0.5j * qp.PauliY(wires)
 
 
 omega = 2 * jnp.pi * jnp.array([4.8080, 4.8333])
 g = 2 * jnp.pi * jnp.array([0.01831, 0.02131])
 
-H_D = qml.dot(omega, [ad(i) @ a(i) for i in range(n_wires)])
-H_D += qml.dot(
+H_D = qp.dot(omega, [ad(i) @ a(i) for i in range(n_wires)])
+H_D += qp.dot(
     g,
     [ad(i) @ a((i + 1) % n_wires) + ad((i + 1) % n_wires) @ a(i) for i in range(n_wires)],
 )
@@ -288,7 +288,7 @@ def normalize(x):
 def drive_field(T, omega, sign=1.0):
     def wrapped(p, t):
         # The first len(p)-1 values of the trainable params p characterize the pwc function
-        amp = qml.pulse.pwc(T)(p[:-1], t)
+        amp = qp.pulse.pwc(T)(p[:-1], t)
         # The amplitude is normalized to maximally reach +/-20MHz (0.02GHz)
         amp = 0.02 * normalize(amp)
 
@@ -308,7 +308,7 @@ fs += [drive_field(duration, omega[i], -1.0) for i in range(n_wires)]
 ops = [a(i) for i in range(n_wires)]
 ops += [ad(i) for i in range(n_wires)]
 
-H_C = qml.dot(fs, ops)
+H_C = qp.dot(fs, ops)
 
 ##############################################################################
 # Overall, we end up with the time-dependent parametrized Hamiltonian :math:`H(p, t) = H_D + H_C(p, t)`
@@ -323,15 +323,15 @@ H_pulse = H_D + H_C
 # We need to wrap the ``qnode`` in a function so that we can convert the expectation value to a real number.
 # This will enable use to make use of gradient descent methods that require real-valued loss functions.
 
-dev = qml.device("default.qubit", wires=range(n_wires))
+dev = qp.device("default.qubit", wires=range(n_wires))
 
 def qnode(theta, t=duration):
 
-    @qml.qnode(dev)
+    @qp.qnode(dev)
     def _qnode_inner(theta, t=duration):
-        qml.BasisState(jnp.array(data.tapered_hf_state), wires=H_obj.wires)
-        qml.evolve(H_pulse)(params=(*theta, *theta), t=t)
-        return qml.expval(H_obj)
+        qp.BasisState(jnp.array(data.tapered_hf_state), wires=H_obj.wires)
+        qp.evolve(H_pulse)(params=(*theta, *theta), t=t)
+        return qp.expval(H_obj)
 
     expectation_value = _qnode_inner(theta, t)  # Execute the qnode
     return jnp.real(expectation_value)  # Typecast to real number

@@ -72,4 +72,4 @@ jobs:
           METADATA_FILE_LIST: ${{ needs.generate-metadata-file-list.outputs.metadata_files }}
         run: |
           cd metadata_schemas
-          ${{ steps.poetry.outputs.poetry_bin }} run check-jsonschema -v --traceback-mode full --schemafile demo.metadata.schema.0.1.8.json $METADATA_FILE_LIST
+          ${{ steps.poetry.outputs.poetry_bin }} run check-jsonschema -v --traceback-mode full --schemafile demo.metadata.schema.0.1.9.json $METADATA_FILE_LIST
