@@ -11,11 +11,10 @@
     "executable_stable": true,
     "executable_latest": true,
     "dateOfPublication": "2024-10-01T00:00:00+00:00",
-    "dateOfLastModification": "2026-04-17T15:48:14+00:00",
+    "dateOfLastModification": "2026-04-21T15:48:14+00:00",
     "categories": [
         "Quantum Computing",
-        "Quantum Machine Learning",
-        "Getting Started"
+        "Quantum Machine Learning"
     ],
     "tags": [],
     "previewImages": [

@@ -8,9 +8,10 @@
     "executable_stable": true,
     "executable_latest": true,
     "dateOfPublication": "2021-04-12T00:00:00+00:00",
-    "dateOfLastModification": "2026-04-17T00:00:00+00:00",
+    "dateOfLastModification": "2026-04-21T00:00:00+00:00",
     "categories": [
-        "Devices and Performance"
+        "Devices and Performance",
+        "Getting Started"
     ],
     "tags": [],
     "previewImages": [
