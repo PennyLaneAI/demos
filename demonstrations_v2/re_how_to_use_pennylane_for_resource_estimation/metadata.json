@@ -11,11 +11,12 @@
     "executable_stable": true,
     "executable_latest": true,
     "dateOfPublication": "2026-01-13T10:00:00+00:00",
-    "dateOfLastModification": "2026-04-14T10:00:00+00:01",
+    "dateOfLastModification": "2026-04-21T10:00:00+00:01",
     "categories": [
         "Algorithms",
         "How-to",
-        "Getting Started"
+        "Getting Started",
+        "Resource Estimation"
     ],
     "tags": [],
     "previewImages": [

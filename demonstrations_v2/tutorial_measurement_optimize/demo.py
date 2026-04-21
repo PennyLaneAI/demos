@@ -110,11 +110,11 @@ import functools
 import warnings
 import jax
 from jax import numpy as jnp
-import pennylane as qml
+import pennylane as qp
 
 jax.config.update("jax_enable_x64", True)
 
-dataset = qml.data.load("qchem", molname="H2", bondlength=0.7)[0]
+dataset = qp.data.load("qchem", molname="H2", bondlength=0.7)[0]
 H, num_qubits = dataset.hamiltonian, len(dataset.hamiltonian.wires)
 
 print("Required number of qubits:", num_qubits)
@@ -125,27 +125,27 @@ print(H)
 # on hardware. Let's generate the cost function to check this.
 
 # Create a 4 qubit simulator
-dev = qml.device("default.qubit", seed=904932)
+dev = qp.device("default.qubit", seed=904932)
 
 # number of electrons
 electrons = 2
 
 # Define the Hartree-Fock initial state for our variational circuit
-initial_state = qml.qchem.hf_state(electrons, num_qubits)
+initial_state = qp.qchem.hf_state(electrons, num_qubits)
 
 # Construct the UCCSD ansatz
-singles, doubles = qml.qchem.excitations(electrons, num_qubits)
-s_wires, d_wires = qml.qchem.excitations_to_wires(singles, doubles)
+singles, doubles = qp.qchem.excitations(electrons, num_qubits)
+s_wires, d_wires = qp.qchem.excitations_to_wires(singles, doubles)
 ansatz = functools.partial(
-    qml.UCCSD, init_state=initial_state, s_wires=s_wires, d_wires=d_wires
+    qp.UCCSD, init_state=initial_state, s_wires=s_wires, d_wires=d_wires
 )
 
 # generate the cost function
-@qml.set_shots(1000)
-@qml.qnode(dev, interface="jax")
+@qp.set_shots(1000)
+@qp.qnode(dev, interface="jax")
 def cost_circuit(params):
     ansatz(params, wires=range(num_qubits))
-    return qml.expval(H)
+    return qp.expval(H)
 
 ##############################################################################
 # If we evaluate this cost function, we can see that it corresponds to 15 different
@@ -154,7 +154,7 @@ def cost_circuit(params):
 from jax import random as random
 key, scale = random.PRNGKey(0), jnp.pi
 params = random.normal(key, shape=(len(singles) + len(doubles),)) * scale
-with qml.Tracker(dev) as tracker:  # track the number of executions
+with qp.Tracker(dev) as tracker:  # track the number of executions
     print("Cost function value:", cost_circuit(params))
 
 print("Number of quantum evaluations:", tracker.totals['executions'])
@@ -163,7 +163,7 @@ print("Number of quantum evaluations:", tracker.totals['executions'])
 # How about a larger molecule? Let's try the
 # `water molecule <https://pennylane.ai/datasets/qchem/h2o-molecule>`__:
 
-dataset = qml.data.load('qchem', molname="H2O")[0]
+dataset = qp.data.load('qchem', molname="H2O")[0]
 H, num_qubits = dataset.hamiltonian, len(dataset.hamiltonian.wires)
 
 print("Required number of qubits:", num_qubits)
@@ -359,8 +359,8 @@ print("\n", H)
 
 
 obs = [
-    qml.PauliX(0) @ qml.PauliY(1),
-    qml.PauliX(0) @ qml.PauliZ(2)
+    qp.PauliX(0) @ qp.PauliY(1),
+    qp.PauliX(0) @ qp.PauliZ(2)
 ]
 
 
@@ -369,20 +369,20 @@ obs = [
 # the two QWC terms.
 
 
-dev = qml.device("default.qubit", wires=3)
+dev = qp.device("default.qubit", wires=3)
 
-@qml.qnode(dev, interface="jax")
+@qp.qnode(dev, interface="jax")
 def circuit1(weights):
-    qml.StronglyEntanglingLayers(weights, wires=range(3))
-    return qml.expval(obs[0])
+    qp.StronglyEntanglingLayers(weights, wires=range(3))
+    return qp.expval(obs[0])
 
 
-@qml.qnode(dev, interface="jax")
+@qp.qnode(dev, interface="jax")
 def circuit2(weights):
-    qml.StronglyEntanglingLayers(weights, wires=range(3))
-    return qml.expval(obs[1])
+    qp.StronglyEntanglingLayers(weights, wires=range(3))
+    return qp.expval(obs[1])
 
-param_shape = qml.templates.StronglyEntanglingLayers.shape(n_layers=3, n_wires=3)
+param_shape = qp.templates.StronglyEntanglingLayers.shape(n_layers=3, n_wires=3)
 key, scale = random.PRNGKey(192933), 0.1
 weights = scale * random.normal(key, shape=param_shape)
 
@@ -393,20 +393,20 @@ print("Expectation value of XIZ = ", circuit2(weights))
 # Now, let's use our QWC approach to reduce this down to a *single* measurement
 # of the probabilities in the shared eigenbasis of both QWC observables:
 
-@qml.qnode(dev, interface="jax")
+@qp.qnode(dev, interface="jax")
 def circuit_qwc(weights):
-    qml.StronglyEntanglingLayers(weights, wires=range(3))
+    qp.StronglyEntanglingLayers(weights, wires=range(3))
 
     # rotate wire 0 into the shared eigenbasis
-    qml.RY(-jnp.pi / 2, wires=0)
+    qp.RY(-jnp.pi / 2, wires=0)
 
     # rotate wire 1 into the shared eigenbasis
-    qml.RX(jnp.pi / 2, wires=1)
+    qp.RX(jnp.pi / 2, wires=1)
 
     # wire 2 does not require a rotation
 
     # measure probabilities in the computational basis
-    return qml.probs(wires=range(3))
+    return qp.probs(wires=range(3))
 
 
 rotated_probs = circuit_qwc(weights)
@@ -438,12 +438,12 @@ print("Expectation value of XIZ = ", jnp.dot(eigenvalues_XIZ, rotated_probs))
 # Luckily, PennyLane automatically performs this QWC grouping under the hood. We simply
 # return the two QWC Pauli terms from the QNode:
 
-@qml.qnode(dev, interface="jax")
+@qp.qnode(dev, interface="jax")
 def circuit(weights):
-    qml.StronglyEntanglingLayers(weights, wires=range(3))
+    qp.StronglyEntanglingLayers(weights, wires=range(3))
     return [
-        qml.expval(qml.PauliX(0) @ qml.PauliY(1)),
-        qml.expval(qml.PauliX(0) @ qml.PauliZ(2))
+        qp.expval(qp.PauliX(0) @ qp.PauliY(1)),
+        qp.expval(qp.PauliX(0) @ qp.PauliZ(2))
     ]
 
 
@@ -452,10 +452,10 @@ print(circuit(weights))
 
 ##############################################################################
 # Behind the scenes, PennyLane is making use of our built-in
-# :mod:`qml.pauli <pennylane.pauli>` module, which contains functions for diagonalizing QWC
+# :mod:`qp.pauli <pennylane.pauli>` module, which contains functions for diagonalizing QWC
 # terms:
 
-rotations, new_obs = qml.pauli.diagonalize_qwc_pauli_words(obs)
+rotations, new_obs = qp.pauli.diagonalize_qwc_pauli_words(obs)
 
 print(rotations)
 print(new_obs)
@@ -463,7 +463,7 @@ print(new_obs)
 
 ##############################################################################
 # Here, the first line corresponds to the basis rotations that were discussed above, written in
-# terms of ``RX`` and ``RY`` rotations. Check out the :mod:`qml.pauli <pennylane.pauli>`
+# terms of ``RX`` and ``RY`` rotations. Check out the :mod:`qp.pauli <pennylane.pauli>`
 # documentation for more details on its provided functionality and how it works.
 #
 # Given a Hamiltonian containing a large number of Pauli terms,
@@ -543,19 +543,19 @@ import networkx as nx
 from matplotlib import pyplot as plt
 
 terms = [
-    qml.PauliZ(0),
-    qml.PauliZ(0) @ qml.PauliZ(1),
-    qml.PauliZ(0) @ qml.PauliZ(1) @ qml.PauliZ(2),
-    qml.PauliZ(0) @ qml.PauliZ(1) @ qml.PauliZ(2) @ qml.PauliZ(3),
-    qml.PauliX(2) @ qml.PauliX(3),
-    qml.PauliY(0) @ qml.PauliX(2) @ qml.PauliX(3),
-    qml.PauliY(0) @ qml.PauliY(1) @ qml.PauliX(2) @ qml.PauliX(3)
+    qp.PauliZ(0),
+    qp.PauliZ(0) @ qp.PauliZ(1),
+    qp.PauliZ(0) @ qp.PauliZ(1) @ qp.PauliZ(2),
+    qp.PauliZ(0) @ qp.PauliZ(1) @ qp.PauliZ(2) @ qp.PauliZ(3),
+    qp.PauliX(2) @ qp.PauliX(3),
+    qp.PauliY(0) @ qp.PauliX(2) @ qp.PauliX(3),
+    qp.PauliY(0) @ qp.PauliY(1) @ qp.PauliX(2) @ qp.PauliX(3)
 ]
 
 def format_pauli_word(term):
     """Convenience function that nicely formats a PennyLane
     tensor observable as a Pauli word"""
-    if isinstance(term, qml.ops.Prod):
+    if isinstance(term, qp.ops.Prod):
         return " ".join([format_pauli_word(t) for t in term])
 
     return f"{term.name[-1]}{term.wires.tolist()[0]}"
@@ -675,9 +675,9 @@ for i in range(num_groups):
 # the entire process using the provided grouping functions.
 #
 # Steps 1-3 (finding and grouping QWC terms in the Hamiltonian) can be done via the
-# :func:`qml.pauli.group_observables <pennylane.pauli.group_observables>` function:
+# :func:`qp.pauli.group_observables <pennylane.pauli.group_observables>` function:
 
-obs_groupings = qml.pauli.group_observables(terms, grouping_type='qwc', method='rlf')
+obs_groupings = qp.pauli.group_observables(terms, grouping_type='qwc', method='rlf')
 
 
 ##############################################################################
@@ -686,23 +686,23 @@ obs_groupings = qml.pauli.group_observables(terms, grouping_type='qwc', method='
 # heuristic (in this case, ``"rlf"`` refers to Recursive Largest First, a variant of largest first colouring heuristic).
 #
 # If we want to see what the required rotations and measurements are, we can use the
-# :func:`qml.pauli.diagonalize_qwc_groupings <pennylane.pauli.diagonalize_qwc_groupings>`
+# :func:`qp.pauli.diagonalize_qwc_groupings <pennylane.pauli.diagonalize_qwc_groupings>`
 # function:
 
-rotations, measurements = qml.pauli.diagonalize_qwc_groupings(obs_groupings)
+rotations, measurements = qp.pauli.diagonalize_qwc_groupings(obs_groupings)
 
 ##############################################################################
 # However, this isn't strictly necessary—recall previously that the QNode
 # has the capability to *automatically* measure qubit-wise commuting observables!
 
-dev = qml.device("lightning.qubit", wires=4)
+dev = qp.device("lightning.qubit", wires=4)
 
-@qml.qnode(dev, interface="jax")
+@qp.qnode(dev, interface="jax")
 def circuit(weights, group=None, **kwargs):
-    qml.StronglyEntanglingLayers(weights, wires=range(4))
-    return [qml.expval(o) for o in group]
+    qp.StronglyEntanglingLayers(weights, wires=range(4))
+    return [qp.expval(o) for o in group]
 
-param_shape = qml.templates.StronglyEntanglingLayers.shape(n_layers=3, n_wires=4)
+param_shape = qp.templates.StronglyEntanglingLayers.shape(n_layers=3, n_wires=4)
 key = random.PRNGKey(1)
 weights = random.normal(key, shape=param_shape) * 0.1
 result = [jnp.array(circuit(weights, group=g)) for g in obs_groupings]
@@ -722,12 +722,12 @@ print("<H> = ", jnp.sum(jnp.hstack(result)))
 # problems), we can use the option ``grouping_type="qwc"`` in :class:`~.pennylane.Hamiltonian` to
 # automatically optimize the measurements.
 
-H = qml.Hamiltonian(coeffs=jnp.ones(len(terms)), observables=terms, grouping_type="qwc")
+H = qp.Hamiltonian(coeffs=jnp.ones(len(terms)), observables=terms, grouping_type="qwc")
 _, H_ops = H.terms()
-@qml.qnode(dev, interface="jax")
+@qp.qnode(dev, interface="jax")
 def cost_fn(weights):
-    qml.StronglyEntanglingLayers(weights, wires=range(4))
-    return qml.expval(H)
+    qp.StronglyEntanglingLayers(weights, wires=range(4))
+    return qp.expval(H)
 print(cost_fn(weights))
 
 ##############################################################################
@@ -738,12 +738,12 @@ print(cost_fn(weights))
 # how this affects the number of measurements required to perform the VQE on :math:`\text{H}_2 \text{O}!`
 # Let's use our new-found knowledge to see what happens.
 
-dataset = qml.data.load('qchem', molname="H2O")[0]
+dataset = qp.data.load('qchem', molname="H2O")[0]
 H, num_qubits = dataset.hamiltonian, len(dataset.hamiltonian.wires)
 print("Number of Hamiltonian terms/required measurements:", len(H_ops))
 
 # grouping
-groups = qml.pauli.group_observables(H_ops, grouping_type='qwc', method='rlf')
+groups = qp.pauli.group_observables(H_ops, grouping_type='qwc', method='rlf')
 print("Number of required measurements after optimization:", len(groups))
 
 ##############################################################################

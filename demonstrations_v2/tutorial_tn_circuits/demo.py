@@ -115,14 +115,14 @@ of tensors in the network.
 """
 
 import numpy as onp
-import pennylane as qml
+import pennylane as qp
 from pennylane import numpy as np
 
 
 def block(weights, wires):
-    qml.RX(weights[0], wires=wires[0])
-    qml.RY(weights[1], wires=wires[1])
-    qml.CNOT(wires=wires)
+    qp.RX(weights[0], wires=wires[0])
+    qp.RY(weights[1], wires=wires[1])
+    qp.CNOT(wires=wires)
 
 
 ##############################################################################
@@ -131,25 +131,25 @@ def block(weights, wires):
 # shape of an MPS tensor network and computes the expectation value of a Pauli Z
 # operator on the bottom qubit.
 
-dev = qml.device("default.qubit", wires=4)
+dev = qp.device("default.qubit", wires=4)
 
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def circuit(template_weights):
-    qml.MPS(
+    qp.MPS(
         wires=range(4),
         n_block_wires=2,
         block=block,
         n_params_block=2,
         template_weights=template_weights,
     )
-    return qml.expval(qml.PauliZ(wires=3))
+    return qp.expval(qp.PauliZ(wires=3))
 
 
 np.random.seed(1)
 weights = np.random.random(size=[3, 2])
-qml.drawer.use_style("black_white")
-fig, ax = qml.draw_mpl(circuit, level="device")(weights)
+qp.drawer.use_style("black_white")
+fig, ax = qp.draw_mpl(circuit, level="device")(weights)
 fig.set_size_inches((6, 3))
 
 ##############################################################################
@@ -159,26 +159,26 @@ fig.set_size_inches((6, 3))
 
 
 def deep_block(weights, wires):
-    qml.StronglyEntanglingLayers(weights, wires)
+    qp.StronglyEntanglingLayers(weights, wires)
 
 
 ##############################################################################
 # We can use the :class:`~pennylane.MPS` template again and simply set
 # ``n_params_block = 3`` to suit the new block.
 
-dev = qml.device("default.qubit", wires=4)
+dev = qp.device("default.qubit", wires=4)
 
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def circuit(template_weights):
-    qml.MPS(
+    qp.MPS(
         wires=range(4),
         n_block_wires=2,
         block=deep_block,
         n_params_block=3,
         template_weights=template_weights,
     )
-    return qml.expval(qml.PauliZ(wires=3))
+    return qp.expval(qp.PauliZ(wires=3))
 
 
 ##############################################################################
@@ -193,9 +193,9 @@ def circuit(template_weights):
 # Both this circuit and the previous circuit
 # can be represented by an MPS with a bond dimension of two.
 
-shape = qml.StronglyEntanglingLayers.shape(n_layers=2, n_wires=2)
+shape = qp.StronglyEntanglingLayers.shape(n_layers=2, n_wires=2)
 template_weights = [np.random.random(size=shape)] * 3
-fig, ax = qml.draw_mpl(circuit, level="device")(template_weights)
+fig, ax = qp.draw_mpl(circuit, level="device")(template_weights)
 
 ##############################################################################
 # In addition to deep blocks, we can easily expand to wider blocks with more
@@ -204,7 +204,7 @@ fig, ax = qml.draw_mpl(circuit, level="device")(template_weights)
 
 
 def wide_block(weights, wires):
-    qml.SimplifiedTwoDesign(initial_layer_weights=weights[0], weights=weights[1], wires=wires)
+    qp.SimplifiedTwoDesign(initial_layer_weights=weights[0], weights=weights[1], wires=wires)
 
 
 ###############################################################################
@@ -215,25 +215,25 @@ def wide_block(weights, wires):
 # appear near the beginning of the circuit. Furthermore, this circuit has a higher bond
 # dimension than the previous ones and would correspond to an MPS with a bond dimension of four.
 
-dev = qml.device("default.qubit", wires=8)
+dev = qp.device("default.qubit", wires=8)
 
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def circuit(template_weights):
-    qml.MPS(
+    qp.MPS(
         wires=range(8),
         n_block_wires=4,
         block=wide_block,
         n_params_block=2,
         template_weights=template_weights,
     )
-    return qml.expval(qml.PauliZ(wires=7))
+    return qp.expval(qp.PauliZ(wires=7))
 
 
-shapes = qml.SimplifiedTwoDesign.shape(n_layers=1, n_wires=4)
+shapes = qp.SimplifiedTwoDesign.shape(n_layers=1, n_wires=4)
 weights = [onp.random.random(size=shape) for shape in shapes]
 template_weights = onp.array([weights] * 3, dtype="object")
-fig, ax = qml.draw_mpl(circuit, level="device")(template_weights)
+fig, ax = qp.draw_mpl(circuit, level="device")(template_weights)
 
 ##############################################################################
 # We can also broadcast a block to the tree tensor network architecture by using the
@@ -241,28 +241,28 @@ fig, ax = qml.draw_mpl(circuit, level="device")(template_weights)
 
 
 def block(weights, wires):
-    qml.RX(weights[0], wires=wires[0])
-    qml.RX(weights[1], wires=wires[1])
-    qml.CNOT(wires=wires)
+    qp.RX(weights[0], wires=wires[0])
+    qp.RX(weights[1], wires=wires[1])
+    qp.CNOT(wires=wires)
 
 
-dev = qml.device("default.qubit", wires=8)
+dev = qp.device("default.qubit", wires=8)
 
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def circuit(template_weights):
-    qml.TTN(
+    qp.TTN(
         wires=range(8),
         n_block_wires=2,
         block=block,
         n_params_block=2,
         template_weights=template_weights,
     )
-    return qml.expval(qml.PauliZ(wires=7))
+    return qp.expval(qp.PauliZ(wires=7))
 
 
 weights = np.random.random(size=[7, 2])
-fig, ax = qml.draw_mpl(circuit, level="device")(weights)
+fig, ax = qp.draw_mpl(circuit, level="device")(weights)
 fig.set_size_inches((4, 4))
 ##############################################################################
 # Classifying the bars and stripes data set
@@ -309,9 +309,9 @@ for i in BAS:
 
 
 def block(weights, wires):
-    qml.RY(weights[0], wires=wires[0])
-    qml.RY(weights[1], wires=wires[1])
-    qml.CNOT(wires=wires)
+    qp.RY(weights[0], wires=wires[0])
+    qp.RY(weights[1], wires=wires[1])
+    qp.CNOT(wires=wires)
 
 
 ##############################################################################
@@ -323,24 +323,24 @@ def block(weights, wires):
 # The circuit diagram below shows the full circuit. The :class:`~pennylane.BasisState`
 # encoding appears in the initial :class:`~pennylane.PauliX` gates.
 
-dev = qml.device("default.qubit", wires=4)
+dev = qp.device("default.qubit", wires=4)
 
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def circuit(image, template_weights):
-    qml.BasisState(image, wires=range(4))
-    qml.TTN(
+    qp.BasisState(image, wires=range(4))
+    qp.TTN(
         wires=range(4),
         n_block_wires=2,
         block=block,
         n_params_block=2,
         template_weights=template_weights,
     )
-    return qml.expval(qml.PauliZ(wires=3))
+    return qp.expval(qp.PauliZ(wires=3))
 
 
 weights = np.random.random(size=[3, 2])
-fig, ax = qml.draw_mpl(circuit, level="device")(BAS[0], weights)
+fig, ax = qp.draw_mpl(circuit, level="device")(BAS[0], weights)
 fig.set_size_inches((6, 3.5))
 
 ##############################################################################
@@ -368,7 +368,7 @@ def costfunc(params):
 # the cost function.
 
 params = np.random.random(size=[3, 2], requires_grad=True)
-optimizer = qml.GradientDescentOptimizer(stepsize=0.1)
+optimizer = qp.GradientDescentOptimizer(stepsize=0.1)
 
 for k in range(100):
     if k % 20 == 0:
@@ -380,7 +380,7 @@ for k in range(100):
 # we can now show the full circuits and the resulting output for each image.
 
 for image in BAS:
-    fig, ax = qml.draw_mpl(circuit, level="device")(image, params)
+    fig, ax = qp.draw_mpl(circuit, level="device")(image, params)
     plt.figure(figsize=[1.8, 1.8])
     plt.imshow(np.reshape(image, [2, 2]), cmap="gray")
     plt.title(

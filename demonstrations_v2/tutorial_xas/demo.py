@@ -167,12 +167,12 @@ hf.run(verbose=0)
 # Since we will be using PennyLane for other aspects of this calculation, we want to make sure the molecular orbital coefficients are consistent between our PennyLane and PySCF calculations. 
 # To do this, we can obtain the molecular orbital coefficients from PennyLane using :func:`~.pennylane.qchem.scf`, and change the coefficients in the ``hf`` instance to match.
 
-import pennylane as qml
+import pennylane as qp
 
-mole = qml.qchem.Molecule(symbols, geometry, basis_name="sto-3g", unit="angstrom")
+mole = qp.qchem.Molecule(symbols, geometry, basis_name="sto-3g", unit="angstrom")
 
 # Run self-consistent fields method to get molecular orbital coefficients.
-_, coeffs, _, _, _ = qml.qchem.scf(mole)()
+_, coeffs, _, _, _ = qp.qchem.scf(mole)()
 
 # Change MO coefficients in hf object to PennyLane calculated values.
 hf.mo_coeff = coeffs  
@@ -258,13 +258,13 @@ wf_casci = _wfdict_to_statevector(wf_casci_dict, n_cas)
 # This is fine for our simple example, but for more complex instances you may want to modify the dipole operator to restrict the final states (see the Appendix for more details).
 
 # Get core and active orbital indices.
-core, active = qml.qchem.active_space(
+core, active = qp.qchem.active_space(
     mole.n_electrons, mole.n_orbitals, 
     active_electrons=n_electron_cas, 
     active_orbitals=n_cas
 )
 
-m_rho = qml.qchem.dipole_moment(mole, cutoff=1e-8, core=core, active=active)()
+m_rho = qp.qchem.dipole_moment(mole, cutoff=1e-8, core=core, active=active)()
 rhos = range(len(m_rho))  # [0, 1, 2] are [x, y, z].
 
 wf_dipole = []
@@ -272,7 +272,7 @@ dipole_norm = []
 
 # Loop over cartesian coordinates and calculate m_rho|I>.
 for rho in rhos:
-    dipole_matrix_rho = qml.matrix(m_rho[rho], wire_order=range(2 * n_cas))
+    dipole_matrix_rho = qp.matrix(m_rho[rho], wire_order=range(2 * n_cas))
     wf = dipole_matrix_rho.dot(wf_casci)  # Multiply state into dipole matrix.
 
     if np.allclose(wf, np.zeros_like(wf)):  # If wf is zero, then set norm as zero.
@@ -294,15 +294,15 @@ for rho in rhos:
 # We will also add one auxiliary wire for the measurement circuit, which we will prepare as the 0 wire with an applied Hadamard gate.
 
 device_type = "lightning.qubit"
-dev_prop = qml.device(device_type, wires=int(2*n_cas) + 1)
+dev_prop = qp.device(device_type, wires=int(2*n_cas) + 1)
 
 
-@qml.qnode(dev_prop)
+@qp.qnode(dev_prop)
 def initial_circuit(wf):
     """Circuit to load initial state and prepare auxiliary qubit."""
-    qml.StatePrep(wf, wires=dev_prop.wires.tolist()[1:])
-    qml.Hadamard(wires=0)
-    return qml.state()
+    qp.StatePrep(wf, wires=dev_prop.wires.tolist()[1:])
+    qp.Hadamard(wires=0)
+    return qp.state()
 
 
 ######################################################################
@@ -331,14 +331,14 @@ def initial_circuit(wf):
 #
 # The core constant and the one- and two-electron integrals can be computed in PennyLane using :func:`~pennylane.qchem.electron_integrals`.
 
-core_constant, one, two = qml.qchem.electron_integrals(mole, core=core, active=active)()
+core_constant, one, two = qp.qchem.electron_integrals(mole, core=core, active=active)()
 core_constant = core_constant[0]
 
 ######################################################################
 # We will have to convert these to chemists' notation [#Sherrill2005]_.
 
-two_chemist = qml.math.einsum("prsq->pqrs", two)
-one_chemist = one - qml.math.einsum("pqrr->pq", two) / 2.0
+two_chemist = qp.math.einsum("prsq->pqrs", two)
+one_chemist = one - qp.math.einsum("pqrr->pq", two) / 2.0
 
 ######################################################################
 # Next, we will perform compressed double factorization of the Hamiltonian's two-electron integrals to approximate them as a sum of :math:`L` fragments
@@ -355,7 +355,7 @@ from jax import config
 config.update("jax_enable_x64", True)  # Required for factorize consistency.
 
 # Factorize Hamiltonian, producing matrices Z and U for each fragment.
-_, Z, U = qml.qchem.factorize(two_chemist, compressed=True)
+_, Z, U = qp.qchem.factorize(two_chemist, compressed=True)
 
 print("Shape of the factors: ")
 print("two_chemist", two_chemist.shape)
@@ -363,8 +363,8 @@ print("U", U.shape)
 print("Z", Z.shape)
 
 # Compare factorized two-electron fragment sum to the original.
-approx_two_chemist = qml.math.einsum("tpk,tqk,tkl,trl,tsl->pqrs", U, U, Z, U, U)
-assert qml.math.allclose(approx_two_chemist, two_chemist, atol=0.1)
+approx_two_chemist = qp.math.einsum("tpk,tqk,tkl,trl,tsl->pqrs", U, U, Z, U, U)
+assert qp.math.allclose(approx_two_chemist, two_chemist, atol=0.1)
 
 ######################################################################
 # Note there are some terms in this decomposition of the two-electron integrals that are exactly diagonalizable, and can be combined with the one-electron integrals to simplify how the Hamiltonian time evolution is implemented. 
@@ -373,7 +373,7 @@ assert qml.math.allclose(approx_two_chemist, two_chemist, atol=0.1)
 
 # Calculate the one-electron extra terms.
 Z_prime = np.stack([np.diag(np.sum(Z[i], axis=-1)) for i in range(Z.shape[0])], axis=0)
-one_electron_extra = qml.math.einsum("tpk,tkk,tqk->pq", U, Z_prime, U)
+one_electron_extra = qp.math.einsum("tpk,tkk,tqk->pq", U, Z_prime, U)
 
 # Diagonalize the one-electron integral matrix while adding the one-electron extra.
 eigenvals, U0 = np.linalg.eigh(one_chemist + one_electron_extra)
@@ -411,8 +411,8 @@ Z0 = np.diag(eigenvals)
 
 def U_rotations(U, control_wires):
     """Circuit implementing the basis rotations of the Hamiltonian fragments."""
-    U_spin = qml.math.kron(U, qml.math.eye(2))  # Apply to both spins.
-    qml.BasisRotation(
+    U_spin = qp.math.kron(U, qp.math.eye(2))  # Apply to both spins.
+    qp.BasisRotation(
         unitary_matrix=U_spin, wires=[int(i + control_wires) for i in range(2 * n_cas)]
     )
 
@@ -439,14 +439,14 @@ def Z_rotations(Z, step, is_one_electron_term, control_wires):
     if is_one_electron_term:
         for sigma in range(2):
             for i in range(n_cas):
-                qml.ctrl(
-                    qml.X(wires=int(2*i + sigma + control_wires)),
+                qp.ctrl(
+                    qp.X(wires=int(2*i + sigma + control_wires)),
                     control=range(control_wires),
                     control_values=0,
                 )
-                qml.RZ(-Z[i, i] * step / 2, wires=int(2*i + sigma + control_wires))
-                qml.ctrl(
-                    qml.X(wires=int(2*i + sigma + control_wires)),
+                qp.RZ(-Z[i, i] * step / 2, wires=int(2*i + sigma + control_wires))
+                qp.ctrl(
+                    qp.X(wires=int(2*i + sigma + control_wires)),
                     control=range(control_wires),
                     control_values=0,
                 )
@@ -456,16 +456,16 @@ def Z_rotations(Z, step, is_one_electron_term, control_wires):
         for sigma, tau in product(range(2), repeat=2):
             for i, k in product(range(n_cas), repeat=2):
                 if i != k or sigma != tau:  # Skip the one-electron correction terms.
-                    qml.ctrl(qml.X(wires=int(2*i + sigma + control_wires)),
+                    qp.ctrl(qp.X(wires=int(2*i + sigma + control_wires)),
                             control=range(control_wires), control_values=0)
-                    qml.MultiRZ(Z[i, k] / 8.0 * step,
+                    qp.MultiRZ(Z[i, k] / 8.0 * step,
                         wires=[int(2*i + sigma + control_wires),
                                int(2*k + tau + control_wires)])
-                    qml.ctrl(qml.X(wires=int(2 * i + sigma + control_wires)),
+                    qp.ctrl(qp.X(wires=int(2 * i + sigma + control_wires)),
                         control=range(control_wires), control_values=0)
         globalphase = np.trace(Z)/4.0*step - np.sum(Z)*step/2.0
 
-    qml.PhaseShift(-globalphase, wires=0)
+    qp.PhaseShift(-globalphase, wires=0)
 
 
 ######################################################################
@@ -503,7 +503,7 @@ def first_order_trotter(step, prior_U, final_rotation, reverse=False):
         U_rotations(prior_U, 1)
 
     # Global phase adjustment from core constant.
-    qml.PhaseShift(-core_constant * step, wires=0)
+    qp.PhaseShift(-core_constant * step, wires=0)
 
     return prior_U
 
@@ -519,7 +519,7 @@ def second_order_trotter(dev, state, step):
 
     def circuit():
         # State preparation -- set as the final state from the previous iteration.
-        qml.StatePrep(state, wires=qubits)
+        qp.StatePrep(state, wires=qubits)
 
         prior_U = np.eye(n_cas)  # No initial prior U, so set as identity matrix.
         prior_U = first_order_trotter(step / 2, prior_U=prior_U, 
@@ -527,9 +527,9 @@ def second_order_trotter(dev, state, step):
         prior_U = first_order_trotter(step / 2, prior_U=prior_U, 
                                       final_rotation=True, reverse=True)
 
-        return qml.state()
+        return qp.state()
 
-    return qml.QNode(circuit, dev)
+    return qp.QNode(circuit, dev)
 
 
 ######################################################################
@@ -541,9 +541,9 @@ def second_order_trotter(dev, state, step):
 
 
 def meas_circuit(state):
-    qml.StatePrep(state, wires=range(int(2*n_cas) + 1))
+    qp.StatePrep(state, wires=range(int(2*n_cas) + 1))
     # Measure in PauliX/PauliY to get the real/imaginary parts.
-    return [qml.expval(op) for op in [qml.PauliX(wires=0), qml.PauliY(wires=0)]]
+    return [qp.expval(op) for op in [qp.PauliX(wires=0), qp.PauliY(wires=0)]]
 
 
 ######################################################################
@@ -630,11 +630,11 @@ for rho in rhos:
 
         # Define measurement circuit device with shots.
         shots = shots_list[i]  # Kernel-aware number of shots.
-        dev_est = qml.device(device_type, wires=int(2*n_cas) + 1)
+        dev_est = qp.device(device_type, wires=int(2*n_cas) + 1)
 
         # Update state and then measure expectation values.
         state = circuit()
-        measurement = qml.QNode(meas_circuit, dev_est, shots=shots)(state)
+        measurement = qp.QNode(meas_circuit, dev_est, shots=shots)(state)
 
         expvals[:, i] += dipole_norm[rho]**2 * np.array(measurement).real
 
@@ -706,7 +706,7 @@ dip_ints_ao = hf.mol.intor("int1e_r_cart", comp=3)
 mo_coeffs = coeffs[:, n_core : n_core + n_cas]
 
 # Convert to molecular orbital basis.
-dip_ints_mo = qml.math.einsum("ik,xkl,lj->xij", mo_coeffs.T, dip_ints_ao, mo_coeffs)
+dip_ints_mo = qp.math.einsum("ik,xkl,lj->xij", mo_coeffs.T, dip_ints_ao, mo_coeffs)
 
 
 def final_state_overlap(ci_id):
@@ -715,7 +715,7 @@ def final_state_overlap(ci_id):
         mycasci.ci[0], mycasci.ci[ci_id], n_cas, n_electron_cas
     )
     # Transition dipole moments.
-    return qml.math.einsum("xij,ji->x", dip_ints_mo, t_dm1)
+    return qp.math.einsum("xij,ji->x", dip_ints_mo, t_dm1)
 
 
 # Compute overlaps.

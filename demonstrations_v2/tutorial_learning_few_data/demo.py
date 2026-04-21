@@ -140,7 +140,7 @@ import jax.numpy as jnp
 
 import optax  # optimization using jax
 
-import pennylane as qml
+import pennylane as qp
 import pennylane.numpy as pnp
 
 sns.set()
@@ -189,13 +189,13 @@ def convolutional_layer(weights, wires, skip_first_layer=True):
         for indx, w in enumerate(wires):
             if indx % 2 == p and indx < n_wires - 1:
                 if indx % 2 == 0 and not skip_first_layer:
-                    qml.U3(*weights[:3], wires=[w])
-                    qml.U3(*weights[3:6], wires=[wires[indx + 1]])
-                qml.IsingXX(weights[6], wires=[w, wires[indx + 1]])
-                qml.IsingYY(weights[7], wires=[w, wires[indx + 1]])
-                qml.IsingZZ(weights[8], wires=[w, wires[indx + 1]])
-                qml.U3(*weights[9:12], wires=[w])
-                qml.U3(*weights[12:], wires=[wires[indx + 1]])
+                    qp.U3(*weights[:3], wires=[w])
+                    qp.U3(*weights[3:6], wires=[wires[indx + 1]])
+                qp.IsingXX(weights[6], wires=[w, wires[indx + 1]])
+                qp.IsingYY(weights[7], wires=[w, wires[indx + 1]])
+                qp.IsingZZ(weights[8], wires=[w, wires[indx + 1]])
+                qp.U3(*weights[9:12], wires=[w])
+                qp.U3(*weights[12:], wires=[wires[indx + 1]])
 
 
 ##############################################################################
@@ -215,8 +215,8 @@ def pooling_layer(weights, wires):
 
     for indx, w in enumerate(wires):
         if indx % 2 == 1 and indx < n_wires:
-            m_outcome = qml.measure(w)
-            qml.cond(m_outcome, qml.U3)(*weights, wires=wires[indx - 1])
+            m_outcome = qp.measure(w)
+            qp.cond(m_outcome, qp.U3)(*weights, wires=wires[indx - 1])
 
 
 ##############################################################################
@@ -234,14 +234,14 @@ def conv_and_pooling(kernel_weights, n_wires, skip_first_layer=True):
 
 def dense_layer(weights, wires):
     """Apply an arbitrary unitary gate to a specified set of wires."""
-    qml.ArbitraryUnitary(weights, wires)
+    qp.ArbitraryUnitary(weights, wires)
 
 
 num_wires = 6
-device = qml.device("default.qubit", wires=num_wires)
+device = qp.device("default.qubit", wires=num_wires)
 
 
-@qml.qnode(device)
+@qp.qnode(device)
 def conv_net(weights, last_layer_weights, features):
     """Define the QCNN circuit
     Args:
@@ -253,24 +253,24 @@ def conv_net(weights, last_layer_weights, features):
     wires = list(range(num_wires))
 
     # inputs the state input_state
-    qml.AmplitudeEmbedding(features=features, wires=wires, pad_with=0.5)
-    qml.Barrier(wires=wires, only_visual=True)
+    qp.AmplitudeEmbedding(features=features, wires=wires, pad_with=0.5)
+    qp.Barrier(wires=wires, only_visual=True)
 
     # adds convolutional and pooling layers
     for j in range(layers):
         conv_and_pooling(weights[:, j], wires, skip_first_layer=(not j == 0))
         wires = wires[::2]
-        qml.Barrier(wires=wires, only_visual=True)
+        qp.Barrier(wires=wires, only_visual=True)
 
     assert last_layer_weights.size == 4 ** (len(wires)) - 1, (
         "The size of the last layer weights vector is incorrect!"
         f" \n Expected {4 ** (len(wires)) - 1}, Given {last_layer_weights.size}"
     )
     dense_layer(last_layer_weights, wires)
-    return qml.probs(wires=(0))
+    return qp.probs(wires=(0))
 
 
-fig, ax = qml.draw_mpl(conv_net)(
+fig, ax = qp.draw_mpl(conv_net)(
     np.random.rand(18, 2), np.random.rand(4 ** 2 - 1), np.random.rand(2 ** num_wires)
 )
 plt.show()

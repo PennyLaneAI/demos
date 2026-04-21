@@ -55,7 +55,7 @@ r"""Dropout for Quantum Neural Networks
 #
 
 import numpy as np
-import pennylane as qml
+import pennylane as qp
 
 seed = 12345
 np.random.seed(seed=seed)
@@ -91,9 +91,9 @@ def embedding(x, wires):
     # employing also nonlinear functions
     assert len(x) == 1  # check feature is 1-D
     for i in wires:
-        qml.RY(jnp.arcsin(x), wires=i)
+        qp.RY(jnp.arcsin(x), wires=i)
     for i in wires:
-        qml.RZ(jnp.arccos(x ** 2), wires=i)
+        qp.RZ(jnp.arccos(x ** 2), wires=i)
 
 
 def true_cond(angle):
@@ -111,7 +111,7 @@ def false_cond(angle):
 
 
 def var_ansatz(
-    theta, wires, rotations=[qml.RX, qml.RZ, qml.RX], entangler=qml.CNOT, keep_rotation=None
+    theta, wires, rotations=[qp.RX, qp.RZ, qp.RX], entangler=qp.CNOT, keep_rotation=None
 ):
 
     """Single layer of the variational ansatz for our QNN. 
@@ -170,9 +170,9 @@ params_per_layer = n_qubits * inner_layers
 
 
 def create_circuit(n_qubits, layers):
-    device = qml.device("default.qubit", wires=n_qubits)
+    device = qp.device("default.qubit", wires=n_qubits)
 
-    @qml.qnode(device)
+    @qp.qnode(device)
     def circuit(x, theta, keep_rot):
         # print(x)
         # print(theta)
@@ -185,11 +185,11 @@ def create_circuit(n_qubits, layers):
             var_ansatz(
                 theta[i * params_per_layer : (i + 1) * params_per_layer],
                 wires=range(n_qubits),
-                entangler=qml.CNOT,
+                entangler=qp.CNOT,
                 keep_rotation=keep_rotation,
             )
 
-        return qml.expval(qml.PauliZ(wires=0))  # we measure only the first qubit
+        return qp.expval(qp.PauliZ(wires=0))  # we measure only the first qubit
 
     return circuit
 
@@ -215,7 +215,7 @@ numbered_params = np.array(range(params_per_layer * layers), dtype=float)
 # we encode a single coordinate
 single_sample = np.array([0])
 
-qml.draw_mpl(circ, decimals=2,)(single_sample, numbered_params, keep_all_rot)
+qp.draw_mpl(circ, decimals=2,)(single_sample, numbered_params, keep_all_rot)
 
 plt.show()
 

@@ -107,37 +107,37 @@ acts as a permutation:
 
 for basis states :math:`\vert x_0 x_1 x_2 x_3\rangle` and extends by linearity.
 The simplest way to do this is by using
-:class:`qml.Permute <pennylane.Permute>`.
+:class:`qp.Permute <pennylane.Permute>`.
 We can convert this into a matrix by using
-:class:`qml.matrix() <pennylane.matrix>`.
+:class:`qp.matrix() <pennylane.matrix>`.
 We can obtain any other element :math:`g\in G` by simply iterating
 :math:`c` the appropriate number of times.
 
 """
 
-import pennylane as qml
+import pennylane as qp
 from pennylane import numpy as np
 
 # Create wires for the system
 system = range(4)
 
 # The generator of the group
-c = qml.Permute([3, 0, 1, 2], wires=system)
-c_mat = qml.matrix(c)
+c = qp.Permute([3, 0, 1, 2], wires=system)
+c_mat = qp.matrix(c)
 
 
 ######################################################################
 # To create the Hamiltonians, we use
-# :class:`qml.Hamiltonian <pennylane.Hamiltonian>`:
+# :class:`qp.Hamiltonian <pennylane.Hamiltonian>`:
 #
 
 # Create Hamiltonians
-obs = [qml.PauliX(system[0]), qml.PauliX(system[1]), qml.PauliX(system[2]), qml.PauliX(system[3])]
+obs = [qp.PauliX(system[0]), qp.PauliX(system[1]), qp.PauliX(system[2]), qp.PauliX(system[3])]
 coeffs1, coeffs2, coeffs3 = [1, 1, 1, 1], [1, 1.1, 0.9, 1], [1, 2, 3, 0]
 Hsymm, Hnsym, Hasym = (
-    qml.Hamiltonian(coeffs1, obs),
-    qml.Hamiltonian(coeffs2, obs),
-    qml.Hamiltonian(coeffs3, obs),
+    qp.Hamiltonian(coeffs1, obs),
+    qp.Hamiltonian(coeffs2, obs),
+    qp.Hamiltonian(coeffs3, obs),
 )
 
 
@@ -203,8 +203,8 @@ copy = range(4, 8)
 # Prepare entangled state on system and copy
 def prep_entangle():
     for wire in system:
-        qml.Hadamard(wire)
-        qml.CNOT(wires=[wire, wire + 4])
+        qp.Hadamard(wire)
+        qp.CNOT(wires=[wire, wire + 4])
 
 
 ######################################################################
@@ -212,17 +212,17 @@ def prep_entangle():
 # the system’s evolution could be a “black box” we can query, or something
 # given to us analytically. In general, we can approximate time evolution
 # with
-# :class:`qml.ApproxTimeEvolution <pennylane.ApproxTimeEvolution>`.
+# :class:`qp.ApproxTimeEvolution <pennylane.ApproxTimeEvolution>`.
 # However, since our Hamiltonians consist of terms that *commute*, we will
 # be able to evolve exactly using
-# :class:`qml.CommutingEvolution <pennylane.CommutingEvolution>`.
+# :class:`qp.CommutingEvolution <pennylane.CommutingEvolution>`.
 # We will reiterate this below.
 # That's it for part (a)!
 
 # Use Choi-Jamiołkowski isomorphism
 def choi_state(hamiltonian, time):
     prep_entangle()
-    qml.CommutingEvolution(hamiltonian, time)
+    qp.CommutingEvolution(hamiltonian, time)
 
 ######################################################################
 # Controlled symmetries
@@ -286,7 +286,7 @@ def choi_state(hamiltonian, time):
 # :math:`\vert+\rangle_G` state at the end, we undo these Hadamards and
 # try to measure “:math:`00`”. Finally, it’s straightforward to implement
 # the controlled gate :math:`CU` using controlled
-# operations (namely :class:`qml.ControlledQubitUnitary<pennylane.ControlledQubitUnitary>`)
+# operations (namely :class:`qp.ControlledQubitUnitary<pennylane.ControlledQubitUnitary>`)
 # on each qubit:
 #
 # .. figure:: ../_static/demonstration_assets/testing_symmetry/cu.png
@@ -297,30 +297,30 @@ def choi_state(hamiltonian, time):
 
 # Create group register and device
 aux = range(8, 10)
-dev = qml.device("lightning.qubit", wires=10)
+dev = qp.device("lightning.qubit", wires=10)
 
 # Create plus state
 def prep_plus():
-    qml.Hadamard(wires=aux[0])
-    qml.Hadamard(wires=aux[1])
+    qp.Hadamard(wires=aux[0])
+    qp.Hadamard(wires=aux[1])
 
 # Implement controlled symmetry operations on system
 def CU_sys():
-    qml.ControlledQubitUnitary(c_mat @ c_mat, wires=[aux[0]] + list(system))
-    qml.ControlledQubitUnitary(c_mat, wires=[aux[1]] + list(system))
+    qp.ControlledQubitUnitary(c_mat @ c_mat, wires=[aux[0]] + list(system))
+    qp.ControlledQubitUnitary(c_mat, wires=[aux[1]] + list(system))
 
 
 # Implement controlled symmetry operations on copy
 def CU_cpy():
-    qml.ControlledQubitUnitary(c_mat @ c_mat, wires=[aux[0]] + list(copy))
-    qml.ControlledQubitUnitary(c_mat, wires=[aux[1]] + list(copy))
+    qp.ControlledQubitUnitary(c_mat @ c_mat, wires=[aux[0]] + list(copy))
+    qp.ControlledQubitUnitary(c_mat, wires=[aux[1]] + list(copy))
 
 ######################################################################
 # Let’s combine everything and actually run our circuit!
 #
 
 # Circuit for average symmetry
-@qml.qnode(dev, interface="autograd")
+@qp.qnode(dev, interface="autograd")
 def avg_symm(hamiltonian, time):
 
     # Use Choi-Jamiołkowski isomorphism
@@ -334,7 +334,7 @@ def avg_symm(hamiltonian, time):
     # Ready register for measurement
     prep_plus()
 
-    return qml.probs(wires=aux)
+    return qp.probs(wires=aux)
 
 
 print("For Hamiltonian Hsymm, the |+> state is observed with probability", avg_symm(Hsymm, 1)[0], ".")

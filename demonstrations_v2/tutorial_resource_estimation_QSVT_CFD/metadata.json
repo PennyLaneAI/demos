@@ -8,10 +8,11 @@
     "executable_stable": true,
     "executable_latest": true,
     "dateOfPublication": "2026-03-13T10:00:00+00:00",
-    "dateOfLastModification": "2026-03-13T10:00:00+00:00",
+    "dateOfLastModification": "2026-04-21T10:00:00+00:00",
     "categories": [
         "Algorithms",
-        "Optimization"
+        "Optimization",
+        "Resource Estimation"
     ],
     "tags": [],
     "previewImages": [
