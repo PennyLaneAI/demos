@@ -43,10 +43,10 @@ We will break the implementation into three steps:
 # service <https://pennylane.ai/datasets/qchem/h3-plus-molecule>`__:
 #
 
-import pennylane as qml
+import pennylane as qp
 from pennylane import numpy as np
 
-dataset = qml.data.load('qchem', molname="H3+")[0]
+dataset = qp.data.load('qchem', molname="H3+")[0]
 H, qubits = dataset.hamiltonian, len(dataset.hamiltonian.wires)
 
 print(f"qubits: {qubits}")
@@ -64,14 +64,14 @@ print(f"qubits: {qubits}")
 hf = dataset.hf_state
 
 # Define the device, using lightning.qubit device
-dev = qml.device("lightning.qubit", wires=qubits)
+dev = qp.device("lightning.qubit", wires=qubits)
 
-@qml.qnode(dev, diff_method="adjoint")
+@qp.qnode(dev, diff_method="adjoint")
 def cost(params):
-    qml.BasisState(hf, wires=range(qubits))
-    qml.DoubleExcitation(params[0], wires=[0, 1, 2, 3])
-    qml.DoubleExcitation(params[1], wires=[0, 1, 4, 5])
-    return qml.expval(H)
+    qp.BasisState(hf, wires=range(qubits))
+    qp.DoubleExcitation(params[0], wires=[0, 1, 2, 3])
+    qp.DoubleExcitation(params[1], wires=[0, 1, 4, 5])
+    return qp.expval(H)
 
 ######################################################################
 # Step 3: Optimize the circuit
@@ -82,7 +82,7 @@ def cost(params):
 #
 
 init_params = np.array([0.0, 0.0])
-opt = qml.GradientDescentOptimizer(stepsize=0.4)
+opt = qp.GradientDescentOptimizer(stepsize=0.4)
 steps = 10
 
 params = init_params
@@ -120,13 +120,13 @@ from jax import numpy as jnp
 
 hf = np.array(dataset.hf_state)
 
-@qml.qjit
-@qml.qnode(dev)
+@qp.qjit
+@qp.qnode(dev)
 def cost(params):
-    qml.BasisState(hf, wires=range(qubits))
-    qml.DoubleExcitation(params[0], wires=[0, 1, 2, 3])
-    qml.DoubleExcitation(params[1], wires=[0, 1, 4, 5])
-    return qml.expval(H)
+    qp.BasisState(hf, wires=range(qubits))
+    qp.DoubleExcitation(params[0], wires=[0, 1, 2, 3])
+    qp.DoubleExcitation(params[1], wires=[0, 1, 4, 5])
+    return qp.expval(H)
 
 init_params = jnp.array([0.0, 0.0])
 
@@ -153,7 +153,7 @@ import optax
 
 opt = optax.sgd(learning_rate=0.4)
 
-@qml.qjit
+@qp.qjit
 def update_step(i, params, opt_state):
     """Perform a single gradient update step"""
     energy, grads = catalyst.value_and_grad(cost)(params)
@@ -177,10 +177,10 @@ for i in range(10):
 # leading to further performance improvements:
 #
 
-@qml.qjit
+@qp.qjit
 def optimization(params):
     opt_state = opt.init(params)
-    (params, opt_state) = qml.for_loop(0, 10, 1)(update_step)(params, opt_state)
+    (params, opt_state) = qp.for_loop(0, 10, 1)(update_step)(params, opt_state)
     return params
 
 final_params = optimization(init_params)

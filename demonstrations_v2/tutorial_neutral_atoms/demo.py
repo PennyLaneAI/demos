@@ -304,7 +304,7 @@ the work that still needs to be done to scale this technology even further.
 # this can be easily changed in programmable devices.
 # Let's plot this function to get an idea of what the pulse looks like. First, let's import all the relevant libraries.
 
-import pennylane as qml
+import pennylane as qp
 from pennylane import numpy as np
 import matplotlib.pyplot as plt
 import jax
@@ -359,16 +359,16 @@ phase = np.pi / 2
 detuning = 0
 
 # For now, let's act on only one neutral atom
-single_qubit_dev = qml.device("default.qubit", wires=1)
+single_qubit_dev = qp.device("default.qubit", wires=1)
 
 
-@qml.qnode(single_qubit_dev)
+@qp.qnode(single_qubit_dev)
 def state_evolution():
 
-    # Use qml.evolve to find the final state of the atom after interacting with the pulse
-    qml.evolve(H_d(blackman_window, phase, detuning, wires=[0]))([peak], t=[0, duration])
+    # Use qp.evolve to find the final state of the atom after interacting with the pulse
+    qp.evolve(H_d(blackman_window, phase, detuning, wires=[0]))([peak], t=[0, duration])
 
-    return qml.state()
+    return qp.state()
 
 
 print("The final state is {}".format(state_evolution().round(2)))
@@ -384,13 +384,13 @@ phase = np.pi / 2
 detuning = 100  # Some large detuning to prove the point
 
 
-@qml.qnode(single_qubit_dev)
+@qp.qnode(single_qubit_dev)
 def state_evolution_detuned():
 
-    # Use qml.evolve to find the final state of the atom after interacting with the pulse
-    qml.evolve(H_d(blackman_window, phase, detuning, wires=[0]))([peak], t=[0, duration])
+    # Use qp.evolve to find the final state of the atom after interacting with the pulse
+    qp.evolve(H_d(blackman_window, phase, detuning, wires=[0]))([peak], t=[0, duration])
 
-    return qml.state()
+    return qp.state()
 
 
 print(
@@ -438,17 +438,17 @@ def neutral_atom_RX(theta):
     peak = theta / duration / 0.42 / (2 * jnp.pi)  # Recall that duration is 0.2
 
     # Set phase and detuning equal to zero for RX gate
-    qml.evolve(H_d(blackman_window, 0, 0, wires=[0]))([peak], t=[0, duration])
+    qp.evolve(H_d(blackman_window, 0, 0, wires=[0]))([peak], t=[0, duration])
 
 
 print(
     "For theta = pi/2, the matrix for the pulse-based RX gate is \n {} \n".format(
-        qml.matrix(neutral_atom_RX, wire_order=[0])(jnp.pi / 2).round(2)
+        qp.matrix(neutral_atom_RX, wire_order=[0])(jnp.pi / 2).round(2)
     )
 )
 print(
     "The matrix for the exact RX(pi/2) gate is \n {}".format(
-        qml.matrix(qml.RX(jnp.pi / 2, wires=0)).round(2)
+        qp.matrix(qp.RX(jnp.pi / 2, wires=0)).round(2)
     )
 )
 ##############################################################################
@@ -461,17 +461,17 @@ def neutral_atom_RY(theta):
     peak = theta / duration / 0.42 / (2 * jnp.pi)  # Recall that duration is 0.2
 
     # Set phase equal to pi/2 and detuning equal to zero for RY gate
-    qml.evolve(H_d(blackman_window, -jnp.pi / 2, 0, wires=[0]))([peak], t=[0, duration])
+    qp.evolve(H_d(blackman_window, -jnp.pi / 2, 0, wires=[0]))([peak], t=[0, duration])
 
 
 print(
     "For theta = pi/2, the matrix for the pulse-based RY gate is \n {} \n".format(
-        qml.matrix(neutral_atom_RY, wire_order=[0])(jnp.pi / 2).round(2)
+        qp.matrix(neutral_atom_RY, wire_order=[0])(jnp.pi / 2).round(2)
     )
 )
 print(
     "The matrix for the exact RY(pi/2) gate is \n {}".format(
-        qml.matrix(qml.RY(jnp.pi / 2, wires=0)).round(2)
+        qp.matrix(qp.RY(jnp.pi / 2, wires=0)).round(2)
     )
 )
 ##############################################################################
@@ -521,7 +521,7 @@ def H_i(distance, coupling):
     atomic_coordinates = [[0, 0], [0, distance]]
 
     # Return the interaction term for two atoms in terms of the distance
-    return qml.pulse.rydberg_interaction(
+    return qp.pulse.rydberg_interaction(
         atomic_coordinates, interaction_coeff=coupling, wires=[0, 1]
     )
 
@@ -551,7 +551,7 @@ def energy_gap(distance):
     H = (interaction_term + drive_term)([peak], time)
 
     # Calculate the eigenvalues for the full Hamiltonian
-    eigenvalues = jnp.linalg.eigvals(qml.matrix(H))
+    eigenvalues = jnp.linalg.eigvals(qp.matrix(H))
     return jnp.sort(eigenvalues - eigenvalues[0])
 
 
@@ -608,7 +608,7 @@ def two_pi_pulse(distance, coupling, wires=[0]):
     full_hamiltonian = H_d(blackman_window, 0, 0, wires) + H_i(distance, coupling)
 
     # Return the 2 pi pulse
-    qml.evolve(full_hamiltonian)([2 * jnp.pi / 0.42 / 0.2 / (2 * jnp.pi)], t=[0, 0.2])
+    qp.evolve(full_hamiltonian)([2 * jnp.pi / 0.42 / 0.2 / (2 * jnp.pi)], t=[0, 0.2])
 
 
 def pi_pulse(distance, coupling, wires=[0]):
@@ -616,7 +616,7 @@ def pi_pulse(distance, coupling, wires=[0]):
     full_hamiltonian = H_d(blackman_window, 0, 0, wires) + H_i(distance, coupling)
 
     # Return the pi pulse
-    qml.evolve(full_hamiltonian)([jnp.pi / 0.42 / 0.2 / (2 * jnp.pi)], t=[0, 0.2])
+    qp.evolve(full_hamiltonian)([jnp.pi / 0.42 / 0.2 / (2 * jnp.pi)], t=[0, 0.2])
 
 
 ##############################################################################
@@ -626,10 +626,10 @@ def pi_pulse(distance, coupling, wires=[0]):
 # Then, let's see the effect the sequence of pulses has on the :math:`\vert 00 \rangle` state when the atoms are close enough.
 #
 
-dev_two_qubits = qml.device("default.qubit", wires=2)
+dev_two_qubits = qp.device("default.qubit", wires=2)
 
 
-@qml.qnode(dev_two_qubits)
+@qp.qnode(dev_two_qubits)
 def neutral_atom_CZ(distance, coupling):
 
     pi_pulse(distance, coupling, wires=[0])
@@ -638,7 +638,7 @@ def neutral_atom_CZ(distance, coupling):
 
     pi_pulse(distance, coupling, wires=[0])
 
-    return qml.state()
+    return qp.state()
 
 
 print(

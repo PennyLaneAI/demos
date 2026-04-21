@@ -159,7 +159,7 @@ First, a Hadamard gate is applied to the auxiliary qubit, and then a CNOT ladder
 To start, we will define a function for the CNOT ladder.
 """
 
-import pennylane as qml
+import pennylane as qp
 
 # Number of qubits (non-auxiliary qubit).
 N = 4
@@ -167,11 +167,11 @@ N = 4
 
 def CNOT_ladder():
     for wire in range(1, N + 1):
-        qml.CNOT([0, wire])
+        qp.CNOT([0, wire])
 
 
 #############################################
-# After the initial CNOT ladder comes an :math:`N+1` QFT circuit, which can be implemented using ``qml.QFT``.
+# After the initial CNOT ladder comes an :math:`N+1` QFT circuit, which can be implemented using ``qp.QFT``.
 #
 # Next are phase rotations and shifts.
 # For the auxiliary qubit, there is a :math:`Z` rotation by and angle of :math:`-\pi(2^N - 1)/2^{N+1}` followed by a phase shift of :math:`-\pi/2^{(N+1)}` .
@@ -185,10 +185,10 @@ pi = np.pi
 def rotate_phases():
     """Rotates and shifts the phase of the auxiliary qubit and rotates the jth qubit by
     pi/2^(j+1) in Z."""
-    qml.RZ(-pi * (2**N - 1) / 2 ** (N + 1), wires=0)
-    qml.PhaseShift(-pi / 2 ** (N + 1), wires=0)
+    qp.RZ(-pi * (2**N - 1) / 2 ** (N + 1), wires=0)
+    qp.PhaseShift(-pi / 2 ** (N + 1), wires=0)
     for wire in range(1, N + 1):
-        qml.RZ(pi / 2 ** (wire + 1), wires=wire)
+        qp.RZ(pi / 2 ** (wire + 1), wires=wire)
 
 
 #############################################
@@ -202,7 +202,7 @@ def permute_elements():
     """Reorders amplitudes of the conditioned states."""
     for wire in reversed(range(1, N + 1)):
         control_wires = [0] + list(range(wire + 1, N + 1))
-        qml.MultiControlledX(wires=(*control_wires, wire))
+        qp.MultiControlledX(wires=(*control_wires, wire))
 
 
 #############################################
@@ -211,66 +211,66 @@ def permute_elements():
 #
 # The last part is a phase adjustment of the auxiliary qubit: a rotation in :math:`Y` by :math:`\pi/2`, a phase shift of :math:`-\pi/2` and a multicontrolled :math:`X` rotation by :math:`\pi/2`.
 # All of the other qubits control the :math:`X` rotation, but the control is sandwiched by Pauli :math:`X` operators.
-# We can implement the multicontrolled :math:`X` rotation by using the function ``qml.ctrl`` on ``qml.RX``, specifying the target wire in ``qml.RX`` and the control wires as the second argument of ``qml.ctrl``.
+# We can implement the multicontrolled :math:`X` rotation by using the function ``qp.ctrl`` on ``qp.RX``, specifying the target wire in ``qp.RX`` and the control wires as the second argument of ``qp.ctrl``.
 
 
 def adjust_phases():
     """Adjusts the phase of the auxiliary qubit."""
-    qml.RY(-pi / 2, wires=0)
-    qml.PhaseShift(-pi / 2, wires=0)
+    qp.RY(-pi / 2, wires=0)
+    qp.PhaseShift(-pi / 2, wires=0)
 
     # First Pauli X gates.
     for wire in range(1, N + 1):
-        qml.PauliX(wires=wire)
+        qp.PauliX(wires=wire)
 
     # Controlled RX gate.
-    qml.ctrl(qml.RX(pi / 2, wires=0), range(1, N + 1))
+    qp.ctrl(qp.RX(pi / 2, wires=0), range(1, N + 1))
 
     # Second Pauli X gates.
     for wire in range(1, N + 1):
-        qml.PauliX(wires=wire)
+        qp.PauliX(wires=wire)
 
 
 #############################################
 # All together, we can construct the circuit.
-# We have added :class:`qml.BasisState` to initialize the input in any computational basis state with the optional argument ``state``.
+# We have added :class:`qp.BasisState` to initialize the input in any computational basis state with the optional argument ``state``.
 
 
 def QChT():
     """Performs the quantum Chebyshev transform."""
-    qml.Hadamard(wires=0)
+    qp.Hadamard(wires=0)
     CNOT_ladder()
-    qml.QFT(wires=range(N + 1))
+    qp.QFT(wires=range(N + 1))
     rotate_phases()
     permute_elements()
     CNOT_ladder()
     adjust_phases()
 
 
-dev = qml.device("default.qubit")
+dev = qp.device("default.qubit")
 
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def circuit(state=0):
-    qml.BasisState(state=state, wires=range(1, N + 1))
+    qp.BasisState(state=state, wires=range(1, N + 1))
     QChT()
-    return qml.state()
+    return qp.state()
 
 
 #############################################
-# Finally, we can reproduce the circuit diagram shown at the beginning of this section using ``qml.draw_mpl``.
+# Finally, we can reproduce the circuit diagram shown at the beginning of this section using ``qp.draw_mpl``.
 
 
 def circuit_to_draw():
-    qml.BasisState(state=0, wires=range(1, N + 1))
+    qp.BasisState(state=0, wires=range(1, N + 1))
     QChT()
 
 
-fig, ax = qml.draw_mpl(circuit_to_draw, decimals=2, style="pennylane")()
+fig, ax = qp.draw_mpl(circuit_to_draw, decimals=2, style="pennylane")()
 fig.show()
 
 #############################################
-# Note we defined a new function for the circuit to simplify the drawing, removing the returned ``qml.state``.
+# Note we defined a new function for the circuit to simplify the drawing, removing the returned ``qp.state``.
 #
 # Testing the quantum Chebyshev transform
 # ----------------

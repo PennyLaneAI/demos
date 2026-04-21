@@ -31,7 +31,7 @@ running --- mid-circuit measurement statistics!
 # Along the way, we perform some standard imports and set a randomness seed.
 #
 
-import pennylane as qml
+import pennylane as qp
 import numpy as np
 
 np.random.seed(511)
@@ -45,18 +45,18 @@ def ansatz(x):
 
     # Rotate all qubits
     for w, x_ in enumerate(x):
-        qml.RX(x_, w)
+        qp.RX(x_, w)
 
     # Measure first qubit
-    mcms.append(qml.measure(first_wire))
+    mcms.append(qp.measure(first_wire))
 
     # Entangle all qubits with first qubit
     for w in other_wires:
-        qml.CNOT([first_wire, w])
+        qp.CNOT([first_wire, w])
 
     # Measure and reset all qubits but the first
     for w in other_wires:
-        mcms.append(qml.measure(w, reset=True))
+        mcms.append(qp.measure(w, reset=True))
 
     return mcms
 
@@ -76,16 +76,16 @@ def ansatz(x):
 # To implement the ``QNode``, we also define a shot-based qubit device.
 #
 
-dev = qml.device("default.qubit")
+dev = qp.device("default.qubit")
 
 
-@qml.set_shots(100)
-@qml.qnode(dev)
+@qp.set_shots(100)
+@qp.qnode(dev)
 def simple_node(x):
     # apply the ansatz, and collect mid-circuit measurements. mcm1 is the measurement
     # of wire 0, and mcms2 is a list of measurements of the other wires.
     mcm1, *mcms2 = ansatz(x)
-    return qml.probs(op=mcm1), qml.counts(mcms2)
+    return qp.probs(op=mcm1), qp.counts(mcms2)
 
 
 ######################################################################
@@ -94,13 +94,13 @@ def simple_node(x):
 #
 
 x = np.random.random(4)
-fig, ax = qml.draw_mpl(simple_node)(x)
+fig, ax = qp.draw_mpl(simple_node)(x)
 
 ######################################################################
 # Neat, let's move on to executing the circuit. We apply the ``defer_measurements`` transform to
 # the ``QNode`` because it allows for fast evaluation even with many shots.
 
-probs, counts = qml.defer_measurements(simple_node)(x)
+probs, counts = qp.defer_measurements(simple_node)(x)
 print(f"Probability vector of first qubit MCM: {np.round(probs, 5)}")
 print(f"Bit string counts on other qubits: {counts}")
 
@@ -119,13 +119,13 @@ print(f"Bit string counts on other qubits: {counts}")
 #
 
 
-@qml.set_shots(100)
-@qml.qnode(dev)
+@qp.set_shots(100)
+@qp.qnode(dev)
 def interesting_qnode(x):
     first_mcms = ansatz(x)
     second_mcms = ansatz(-x)
     output = comparing_function(first_mcms, second_mcms)
-    return qml.counts(output)
+    return qp.counts(output)
 
 
 ######################################################################
@@ -158,7 +158,7 @@ def comparing_function(first_mcms, second_mcms):
 # We can again inspect this ``QNode`` by drawing it:
 #
 
-fig, ax = qml.draw_mpl(interesting_qnode)(x)
+fig, ax = qp.draw_mpl(interesting_qnode)(x)
 
 ######################################################################
 # Note how all mid-circuit measurements feed into the classical output variable.
@@ -166,7 +166,7 @@ fig, ax = qml.draw_mpl(interesting_qnode)(x)
 # Finally we may run the ``QNode`` and obtain the statistics for our comparison function:
 #
 
-print(qml.defer_measurements(interesting_qnode)(x))
+print(qp.defer_measurements(interesting_qnode)(x))
 
 ######################################################################
 # We find that our question is answered with "yes" in about :math:`2/3` of all samples.
@@ -174,7 +174,7 @@ print(qml.defer_measurements(interesting_qnode)(x))
 #
 
 num_shots = 10000
-counts = qml.set_shots(qml.defer_measurements(interesting_qnode), shots=num_shots)(x)
+counts = qp.set_shots(qp.defer_measurements(interesting_qnode), shots=num_shots)(x)
 p_yes = counts[True] / num_shots
 p_no = counts[False] / num_shots
 print(f'The probability to answer with "yes" / "no" is {p_yes:.5f} / {p_no:.5f}')
@@ -195,7 +195,7 @@ print(f'The probability to answer with "yes" / "no" is {p_yes:.5f} / {p_no:.5f}'
 # never see bit strings with differing second and third bits.
 # Sampling more shots eventually reveals this, even though they remain rare:
 
-probs, counts = qml.set_shots(qml.defer_measurements(simple_node), shots=10000)(x)
+probs, counts = qp.set_shots(qp.defer_measurements(simple_node), shots=10000)(x)
 print(f"Bit string counts on last three qubits: {counts}")
 
 ######################################################################
@@ -204,11 +204,11 @@ print(f"Bit string counts on last three qubits: {counts}")
 #
 # Before finishing, we discuss the return types that are supported for (postprocessed) MCMs.
 # Depending on the processing applied to the MCM results, not all return types are supported.
-# ``qml.probs(mcm0 * mcm1)``, for example, is not a valid return value, because it is not clear
+# ``qp.probs(mcm0 * mcm1)``, for example, is not a valid return value, because it is not clear
 # which probabilities are being requested.
 #
 # Furthermore, available return types depend on whether or not the device is
-# shot-based (``qml.sample`` can not be returned if the device is not sampling).
+# shot-based (``qp.sample`` can not be returned if the device is not sampling).
 # Overall, **all combinations of post-processing and all of**
 # :func:`~.pennylane.expval`,
 # :func:`~.pennylane.var`,
@@ -217,10 +217,10 @@ print(f"Bit string counts on last three qubits: {counts}")
 # :func:`~.pennylane.counts`,
 # **are supported** for mid-circuit measurements with the following exceptions:
 #
-# - ``qml.sample`` and ``qml.counts`` are not supported for ``shots=None``.
-# - ``qml.probs`` is not supported for MCMs collected in arithmetic expressions.
-# - ``qml.expval`` and ``qml.var`` are not supported for sequences of MCMs.
-#   ``qml.probs``, ``qml.sample``, and ``qml.counts`` are supported for sequences but
+# - ``qp.sample`` and ``qp.counts`` are not supported for ``shots=None``.
+# - ``qp.probs`` is not supported for MCMs collected in arithmetic expressions.
+# - ``qp.expval`` and ``qp.var`` are not supported for sequences of MCMs.
+#   ``qp.probs``, ``qp.sample``, and ``qp.counts`` are supported for sequences but
 #   only if they do not contain arithmetic expressions of these MCMs.
 #
 # For more details also consider the

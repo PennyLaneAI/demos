@@ -94,7 +94,7 @@ simulate basically any QFT width. Below, we pick a random eigenstate
 initialization and perform the QFT across a width of 60 qubits, with Catalyst's `qjit <https://docs.pennylane.ai/projects/catalyst/en/latest/code/api/catalyst.qjit.html>`__.
 """
 
-import pennylane as qml
+import pennylane as qp
 from pennylane import numpy as np
 from catalyst import qjit
 
@@ -103,17 +103,17 @@ import matplotlib.pyplot as plt
 import random
 
 qubits = 60
-dev = qml.device("qrack.simulator", qubits)
+dev = qp.device("qrack.simulator", qubits)
 
 @qjit
-@qml.set_shots(8)
-@qml.qnode(dev)
+@qp.set_shots(8)
+@qp.qnode(dev)
 def circuit():
     for i in range(qubits):
         if random.uniform(0, 1) < 0.5:
-            qml.X(wires=[i])
-    qml.QFT(wires=range(qubits))
-    return qml.sample(wires=range(qubits))
+            qp.X(wires=[i])
+    qp.QFT(wires=range(qubits))
+    return qp.sample(wires=range(qubits))
 
 def counts_from_samples(samples):
     counts = {}
@@ -160,19 +160,19 @@ plt.show()
 # `GHZ state <https://en.wikipedia.org/wiki/Greenberger%E2%80%93Horne%E2%80%93Zeilinger_state>`__ initialization).
 
 qubits = 12
-dev = qml.device("qrack.simulator", qubits)
+dev = qp.device("qrack.simulator", qubits)
 
 @qjit
-@qml.set_shots(8)
-@qml.qnode(dev)
+@qp.set_shots(8)
+@qp.qnode(dev)
 def circuit():
     for i in range(qubits):
         th = random.uniform(0, np.pi)
         ph = random.uniform(0, np.pi)
         dl = random.uniform(0, np.pi)
-        qml.U3(th, ph, dl, wires=[i])
-    qml.QFT(wires=range(qubits))
-    return qml.sample(wires=range(qubits))
+        qp.U3(th, ph, dl, wires=[i])
+    qp.QFT(wires=range(qubits))
+    return qp.sample(wires=range(qubits))
 
 counts = counts_from_samples(circuit())
 
@@ -198,7 +198,7 @@ plt.show()
 # To demonstrate this, we prepare a 60-qubit GHZ state, which would commonly be intractable in the case of state vector simulation.
 
 qubits = 60
-dev = qml.device(
+dev = qp.device(
     "qrack.simulator",
     qubits,
     isBinaryDecisionTree=False,
@@ -207,13 +207,13 @@ dev = qml.device(
 )
 
 @qjit
-@qml.set_shots(8)
-@qml.qnode(dev)
+@qp.set_shots(8)
+@qp.qnode(dev)
 def circuit():
-    qml.Hadamard(0)
+    qp.Hadamard(0)
     for i in range(1, qubits):
-        qml.CNOT(wires=[i - 1, i])
-    return qml.sample(wires=range(qubits))
+        qp.CNOT(wires=[i - 1, i])
+    return qp.sample(wires=range(qubits))
 
 counts = counts_from_samples(circuit())
 
@@ -242,18 +242,18 @@ plt.show()
 #
 
 qubits = 24
-dev = qml.device(
+dev = qp.device(
     "qrack.simulator", qubits, isBinaryDecisionTree=True, isStabilizerHybrid=False
 )
 
 @qjit
-@qml.set_shots(8)
-@qml.qnode(dev)
+@qp.set_shots(8)
+@qp.qnode(dev)
 def circuit():
-    qml.Hadamard(0)
+    qp.Hadamard(0)
     for i in range(1, qubits):
-        qml.CNOT(wires=[i - 1, i])
-    return qml.sample(wires=range(qubits))
+        qp.CNOT(wires=[i - 1, i])
+    return qp.sample(wires=range(qubits))
 
 counts = counts_from_samples(circuit())
 
@@ -296,19 +296,19 @@ import time
 
 def bench(n, results):
     for device in ["qrack.simulator", "lightning.qubit"]:
-        dev = qml.device(device, n)
+        dev = qp.device(device, n)
 
         @qjit
-        @qml.set_shots(1)
-        @qml.qnode(dev)
+        @qp.set_shots(1)
+        @qp.qnode(dev)
         def circuit():
             for i in range(n):
                 th = random.uniform(0, np.pi)
                 ph = random.uniform(0, np.pi)
                 dl = random.uniform(0, np.pi)
-                qml.U3(th, ph, dl, wires=[i])
-            qml.QFT(wires=range(n))
-            return qml.sample(wires=range(n))
+                qp.U3(th, ph, dl, wires=[i])
+            qp.QFT(wires=range(n))
+            return qp.sample(wires=range(n))
 
         start_ns = time.perf_counter_ns()
         circuit()
@@ -348,34 +348,34 @@ plt.show()
 # `Lightning <https://docs.pennylane.ai/projects/lightning>`__. How does Qrack with QJIT compare to Qrack without it?
 
 def bench(n, results):
-    dev = qml.device("qrack.simulator", n)
+    dev = qp.device("qrack.simulator", n)
 
     @qjit
-    @qml.set_shots(1)
-    @qml.qnode(dev)
+    @qp.set_shots(1)
+    @qp.qnode(dev)
     def circuit():
         for i in range(n):
             th = random.uniform(0, np.pi)
             ph = random.uniform(0, np.pi)
             dl = random.uniform(0, np.pi)
-            qml.U3(th, ph, dl, wires=[i])
-        qml.QFT(wires=range(n))
-        return qml.sample(wires=range(n))
+            qp.U3(th, ph, dl, wires=[i])
+        qp.QFT(wires=range(n))
+        return qp.sample(wires=range(n))
 
     start_ns = time.perf_counter_ns()
     circuit()
     results[f"QJIT Qrack ({n} qb)"] = time.perf_counter_ns() - start_ns
 
-    @qml.set_shots(1)
-    @qml.qnode(dev)
+    @qp.set_shots(1)
+    @qp.qnode(dev)
     def circuit():
         for i in range(n):
             th = random.uniform(0, np.pi)
             ph = random.uniform(0, np.pi)
             dl = random.uniform(0, np.pi)
-            qml.U3(th, ph, dl, wires=[i])
-        qml.QFT(wires=range(n))
-        return qml.sample(wires=range(n))
+            qp.U3(th, ph, dl, wires=[i])
+        qp.QFT(wires=range(n))
+        return qp.sample(wires=range(n))
 
     start_ns = time.perf_counter_ns()
     circuit()
@@ -414,16 +414,16 @@ plt.show()
 def validate(n):
     results = []
     for device in ["qrack.simulator", "lightning.qubit"]:
-        dev = qml.device(device, n)
+        dev = qp.device(device, n)
 
         @qjit
-        @qml.qnode(dev)
+        @qp.qnode(dev)
         def circuit():
-            qml.Hadamard(0)
+            qp.Hadamard(0)
             for i in range(1, n):
-                qml.CNOT(wires=[i - 1, i])
-            qml.QFT(wires=range(n))
-            return qml.state()
+                qp.CNOT(wires=[i - 1, i])
+            qp.QFT(wires=range(n))
+            return qp.state()
 
         start_ns = time.perf_counter_ns()
         results.append(circuit())

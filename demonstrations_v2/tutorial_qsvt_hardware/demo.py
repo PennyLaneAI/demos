@@ -24,7 +24,7 @@ Our goal is to apply a polynomial transformation to a given Hamiltonian, i.e., :
 fundamental components of the QSVT algorithm:
 
 - **Projection angles**: A list of angles that will determine the coefficients of the polynomial to be applied.
-- **Block encoding**: The strategy used to encode the Hamiltonian. We will use the :doc:`linear combinations of unitaries <demos/tutorial_lcu_blockencoding>` approach via the PennyLane :class:`~.qml.PrepSelPrep` operation.
+- **Block encoding**: The strategy used to encode the Hamiltonian. We will use the :doc:`linear combinations of unitaries <demos/tutorial_lcu_blockencoding>` approach via the PennyLane :class:`~.qp.PrepSelPrep` operation.
 
 Calculating angles is not a trivial task, but we can use the PennyLane function :func:`~.pennylane.poly_to_angles`
 to obtain them. There are also tools such as `pyqsp <https://github.com/ichuang/pyqsp/tree/master/pyqsp>`_ that can do the job for us.
@@ -35,9 +35,9 @@ The :func:`~.pennylane.poly_to_angles` function in PennyLane accepts the coeffic
 polynomial, ordered from lowest to highest power, as input. We also need to define the routine for
 which the angles are computed, which is ``'QSVT'`` here.
 """
-import pennylane as qml
+import pennylane as qp
 poly = [0, -1.0, 0, 1/2, 0, 1/2]
-angles_pl = qml.poly_to_angles(poly, "QSVT")
+angles_pl = qp.poly_to_angles(poly, "QSVT")
 print(angles_pl)
 
 ######################################################################
@@ -66,7 +66,7 @@ ang_seq = [
 # context of QSP and are not the same as the ones we have to use in QSVT.
 # We can use the :func:`~.pennylane.transform_angles` function to transform the angles:
 
-angles_pyqsp = qml.transform_angles(ang_seq, "QSP", "QSVT")
+angles_pyqsp = qp.transform_angles(ang_seq, "QSP", "QSVT")
 print(angles_pyqsp)
 
 ######################################################################
@@ -78,23 +78,23 @@ print(angles_pyqsp)
 # QSVT on hardware
 # -----------------
 #
-# The :class:`~.qml.QSVT` template expects two inputs. The first one is the block encoding operator, :class:`~.qml.PrepSelPrep`,
-# and the second one is a set of projection operators, :class:`~.qml.PCPhase`, that encode the angles properly.
+# The :class:`~.qp.QSVT` template expects two inputs. The first one is the block encoding operator, :class:`~.qp.PrepSelPrep`,
+# and the second one is a set of projection operators, :class:`~.qp.PCPhase`, that encode the angles properly.
 # We will see how to apply them later, but first let's define
 # a Hamiltonian and manually apply the polynomial of interest:
 
-import pennylane as qml
+import pennylane as qp
 import numpy as np
 from numpy.linalg import matrix_power as mpow
 
 coeffs = np.array([0.2, -0.7, -0.6])
 coeffs /= np.linalg.norm(coeffs, ord=1)  # Normalize the coefficients
 
-obs = [qml.X(3), qml.X(3) @ qml.Z(4), qml.Z(3) @ qml.Y(4)]
+obs = [qp.X(3), qp.X(3) @ qp.Z(4), qp.Z(3) @ qp.Y(4)]
 
-H = qml.dot(coeffs, obs)
+H = qp.dot(coeffs, obs)
 
-H_mat = qml.matrix(H, wire_order=[3, 4])
+H_mat = qp.matrix(H, wire_order=[3, 4])
 
 # We calculate p(H) = -H + 0.5 * H^3 + 0.5 * H^5
 H_poly = -H_mat + 0.5 * mpow(H_mat, 3) + 0.5 * mpow(H_mat, 5)
@@ -103,32 +103,32 @@ print(np.round(H_poly, 4))
 
 ######################################################################
 # Now that we know what the target result is, let's see how to apply the polynomial with a quantum circuit instead.
-# We start by defining the proper input operators for the :class:`~.qml.QSVT` template.
+# We start by defining the proper input operators for the :class:`~.qp.QSVT` template.
 
 # We need |log2(len(coeffs))| = 2 control wires to encode the Hamiltonian
 control_wires = [1, 2]
-block_encode = qml.PrepSelPrep(H, control=control_wires)
+block_encode = qp.PrepSelPrep(H, control=control_wires)
 
 projectors = [
-    qml.PCPhase(angles_pl[i], dim=2 ** len(H.wires), wires=control_wires + H.wires)
+    qp.PCPhase(angles_pl[i], dim=2 ** len(H.wires), wires=control_wires + H.wires)
     for i in range(len(angles_pl))
 ]
 
 
-dev = qml.device("default.qubit")
+dev = qp.device("default.qubit")
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def circuit():
 
-    qml.Hadamard(0)
-    qml.ctrl(qml.QSVT, control=0, control_values=[1])(block_encode, projectors)
-    qml.ctrl(qml.adjoint(qml.QSVT), control=0, control_values=[0])(block_encode, projectors)
-    qml.Hadamard(0)
+    qp.Hadamard(0)
+    qp.ctrl(qp.QSVT, control=0, control_values=[1])(block_encode, projectors)
+    qp.ctrl(qp.adjoint(qp.QSVT), control=0, control_values=[0])(block_encode, projectors)
+    qp.Hadamard(0)
 
-    return qml.state()
+    return qp.state()
 
 
-matrix = qml.matrix(circuit, wire_order=[0] + control_wires + H.wires)()
+matrix = qp.matrix(circuit, wire_order=[0] + control_wires + H.wires)()
 print(np.round(matrix[: 2 ** len(H.wires), : 2 ** len(H.wires)], 4))
 
 ######################################################################

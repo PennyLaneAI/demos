@@ -37,7 +37,7 @@ from collections import Counter
 import dask
 import matplotlib.pyplot as plt
 import numpy as np
-import pennylane as qml
+import pennylane as qp
 import sklearn.datasets
 import sklearn.decomposition
 import torch
@@ -190,8 +190,8 @@ plt.show()
 
 n_wires = 4
 
-dev0 = qml.device("rigetti.qvm", device="4q-qvm")
-dev1 = qml.device("qiskit.aer", wires=4)
+dev0 = qp.device("rigetti.qvm", device="4q-qvm")
+dev1 = qp.device("qiskit.aer", wires=4)
 devs = [dev0, dev1]
 
 ##############################################################################
@@ -211,30 +211,30 @@ devs = [dev0, dev1]
 
 def circuit0(params, x=None):
     for i in range(n_wires):
-        qml.RX(x[i % n_features], wires=i)
-        qml.Rot(*params[1, 0, i], wires=i)
+        qp.RX(x[i % n_features], wires=i)
+        qp.Rot(*params[1, 0, i], wires=i)
 
-    qml.CZ(wires=[1, 0])
-    qml.CZ(wires=[1, 2])
-    qml.CZ(wires=[3, 0])
+    qp.CZ(wires=[1, 0])
+    qp.CZ(wires=[1, 2])
+    qp.CZ(wires=[3, 0])
 
     for i in range(n_wires):
-        qml.Rot(*params[1, 1, i], wires=i)
-    return qml.expval(qml.PauliZ(0)), qml.expval(qml.PauliZ(1)), qml.expval(qml.PauliZ(2))
+        qp.Rot(*params[1, 1, i], wires=i)
+    return qp.expval(qp.PauliZ(0)), qp.expval(qp.PauliZ(1)), qp.expval(qp.PauliZ(2))
 
 
 def circuit1(params, x=None):
     for i in range(n_wires):
-        qml.RX(x[i % n_features], wires=i)
-        qml.Rot(*params[0, 0, i], wires=i)
+        qp.RX(x[i % n_features], wires=i)
+        qp.Rot(*params[0, 0, i], wires=i)
 
-    qml.CZ(wires=[0, 1])
-    qml.CZ(wires=[1, 2])
-    qml.CZ(wires=[1, 3])
+    qp.CZ(wires=[0, 1])
+    qp.CZ(wires=[1, 2])
+    qp.CZ(wires=[1, 3])
 
     for i in range(n_wires):
-        qml.Rot(*params[0, 1, i], wires=i)
-    return qml.expval(qml.PauliZ(0)), qml.expval(qml.PauliZ(1)), qml.expval(qml.PauliZ(2))
+        qp.Rot(*params[0, 1, i], wires=i)
+    return qp.expval(qp.PauliZ(0)), qp.expval(qp.PauliZ(1)), qp.expval(qp.PauliZ(2))
 
 
 ##############################################################################
@@ -242,8 +242,8 @@ def circuit1(params, x=None):
 
 
 qnodes = [
-    qml.QNode(circuit0, dev0),
-    qml.QNode(circuit1, dev1),
+    qp.QNode(circuit0, dev0),
+    qp.QNode(circuit1, dev1),
 ]
 
 ##############################################################################

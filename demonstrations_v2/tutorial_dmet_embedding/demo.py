@@ -431,7 +431,6 @@ efficient level of theory.
 #
 # .. code-block:: python
 #
-#    import pennylane as qml
 #    from pennylane.qchem import one_particle, two_particle, observable
 #
 #    one_elec = one_particle(h1[0])

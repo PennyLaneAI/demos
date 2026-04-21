@@ -76,7 +76,7 @@ of how to use third-party optimization libraries with PennyLane; in this case, `
 # gradient-based optimizers.
 #
 
-import pennylane as qml
+import pennylane as qp
 from pennylane import numpy as np
 
 import nlopt
@@ -90,7 +90,7 @@ import nlopt
 # lower cutoff value will cause loss of information, while a higher value
 # might use unnecessary resources without any improvement).
 
-dev = qml.device("strawberryfields.fock", wires=4, cutoff_dim=4)
+dev = qp.device("strawberryfields.fock", wires=4, cutoff_dim=4)
 
 ######################################################################
 #
@@ -119,12 +119,12 @@ def layer(theta, phi, wires):
     M = len(wires)
     phi_nonlinear = np.pi / 2
 
-    qml.Interferometer(
+    qp.Interferometer(
         theta, phi, np.zeros(M), wires=wires, mesh="triangular",
     )
 
     for i in wires:
-        qml.Kerr(phi_nonlinear, wires=i)
+        qp.Kerr(phi_nonlinear, wires=i)
 
 
 ######################################################################
@@ -134,19 +134,19 @@ def layer(theta, phi, wires):
 # a list of parameters ``theta`` and ``phi`` for a specific layer.
 #
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def quantum_neural_net(var, x):
     wires = list(range(len(x)))
 
     # Encode input x into a sequence of quantum fock states
     for i in wires:
-        qml.FockState(x[i], wires=i)
+        qp.FockState(x[i], wires=i)
 
     # "layer" subcircuits
     for i, v in enumerate(var):
         layer(v[: len(v) // 2], v[len(v) // 2 :], wires)
 
-    return [qml.expval(qml.NumberOperator(w)) for w in wires]
+    return [qp.expval(qp.NumberOperator(w)) for w in wires]
 
 
 ######################################################################
@@ -309,7 +309,7 @@ print(var_init)
 # requirements of both NLopt and the above-defined cost function.
 #
 
-cost_grad = qml.grad(cost)
+cost_grad = qp.grad(cost)
 
 print_every = 1
 
@@ -446,7 +446,7 @@ for i, x in enumerate(X):
 ##############################################################################
 # We can also print the circuit to see how the final network looks.
 
-print(qml.draw(quantum_neural_net)(var_init, X[0]))
+print(qp.draw(quantum_neural_net)(var_init, X[0]))
 
 ##############################################################################
 # .. rst-class:: sphx-glr-script-out

@@ -168,7 +168,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 
-import pennylane as qml
+import pennylane as qp
 from pennylane.templates import AngleEmbedding, StronglyEntanglingLayers
 
 import matplotlib.pyplot as plt
@@ -240,23 +240,23 @@ n_qubits
 #      \end{align*}
 #
 # Note that a projector :math:`|0..0 \rangle \langle 0..0|` can be constructed
-# using the ``qml.Hermitian`` observable in PennyLane.
+# using the ``qp.Hermitian`` observable in PennyLane.
 #
 # Altogether, we use the following quantum node as a *quantum kernel
 # evaluator*:
 #
 
-dev_kernel = qml.device("lightning.qubit", wires=n_qubits)
+dev_kernel = qp.device("lightning.qubit", wires=n_qubits)
 
 projector = np.zeros((2 ** n_qubits, 2 ** n_qubits))
 projector[0, 0] = 1
 
-@qml.qnode(dev_kernel)
+@qp.qnode(dev_kernel)
 def kernel(x1, x2):
     """The quantum kernel."""
     AngleEmbedding(x1, wires=range(n_qubits))
-    qml.adjoint(AngleEmbedding)(x2, wires=range(n_qubits))
-    return qml.expval(qml.Hermitian(projector, wires=range(n_qubits)))
+    qp.adjoint(AngleEmbedding)(x2, wires=range(n_qubits))
+    return qp.expval(qp.Hermitian(projector, wires=range(n_qubits)))
 
 
 ######################################################################
@@ -376,9 +376,9 @@ circuit_evals_kernel(n_data=len(X), split=len(X_train) / (len(X_train) + len(X_t
 # and can therefore not scale to more than a few dozen qubits.
 #
 
-dev_var = qml.device("lightning.qubit", wires=n_qubits)
+dev_var = qp.device("lightning.qubit", wires=n_qubits)
 
-@qml.qnode(dev_var, diff_method="parameter-shift")
+@qp.qnode(dev_var, diff_method="parameter-shift")
 def quantum_model(x, params):
     """A variational quantum model."""
 
@@ -387,7 +387,7 @@ def quantum_model(x, params):
 
     # trainable measurement
     StronglyEntanglingLayers(params, wires=range(n_qubits))
-    return qml.expval(qml.PauliZ(0))
+    return qp.expval(qp.PauliZ(0))
 
 def quantum_model_plus_bias(x, params, bias):
     """Adding a bias."""
