@@ -122,14 +122,14 @@ statistics of mid-circuit measurements <demos/tutorial_how_to_collect_mcm_stats>
 # them in detail.
 #
 
-import pennylane as qml
+import pennylane as qp
 
-dev = qml.device("default.qubit")
+dev = qp.device("default.qubit")
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def before():
-    qml.Hadamard(0)  # Create |+> state
-    return qml.expval(qml.X(0)), qml.expval(qml.Z(0))
+    qp.Hadamard(0)  # Create |+> state
+    return qp.expval(qp.X(0)), qp.expval(qp.Z(0))
 
 b = before()
 print(f"Expectation values before any measurement: {b[0]:.1f}, {b[1]:.1f}")
@@ -164,11 +164,11 @@ print(f"Expectation values before any measurement: {b[0]:.1f}, {b[1]:.1f}")
 # variable to its outcome.
 #
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def after():
-    qml.Hadamard(0)  # Create |+> state
-    qml.measure(0)  # Measure without recording the outcome
-    return qml.expval(qml.X(0)), qml.expval(qml.Z(0))
+    qp.Hadamard(0)  # Create |+> state
+    qp.measure(0)  # Measure without recording the outcome
+    return qp.expval(qp.X(0)), qp.expval(qp.Z(0))
 
 a = after()
 print(f"Expectation value after the measurement:  {a[0]:.1f}, {a[1]:.1f}")
@@ -188,14 +188,14 @@ print(f"Expectation value after the measurement:  {a[0]:.1f}, {a[1]:.1f}")
 #
 # that is, the qubit is in a new, pure state. In PennyLane, we can postselect on the case
 # where we measured a :math:`0` using the ``postselect`` keyword argument of
-# ``qml.measure``:
+# ``qp.measure``:
 #
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def after():
-    qml.Hadamard(0)  # Create |+> state
-    qml.measure(0, postselect=0)  # Measure and only accept 0 as outcome
-    return qml.expval(qml.X(0)), qml.expval(qml.Z(0))
+    qp.Hadamard(0)  # Create |+> state
+    qp.measure(0, postselect=0)  # Measure and only accept 0 as outcome
+    return qp.expval(qp.X(0)), qp.expval(qp.Z(0))
 
 a = after()
 print(f"Expectation value after the postselected measurement:  {a[0]:.1f}, {a[1]:.1f}")
@@ -224,14 +224,14 @@ print(f"Expectation value after the postselected measurement:  {a[0]:.1f}, {a[1]
 # We code this circuit up similar to the one above, using an additional ``CNOT`` gate
 # to create the Bell state. We also include optional hyperparameters such as
 # ``postselect`` as keyword arguments to our quantum function and pass them on to
-# ``qml.measure``. Note that we can't complete the quantum function yet, because we still
+# ``qp.measure``. Note that we can't complete the quantum function yet, because we still
 # need to discuss what to return from it!
 #
 
 def bell_pair_preparation(**kwargs):
-    qml.Hadamard(0)
-    qml.CNOT([0, 1])  # Create a Bell pair
-    qml.measure(0, **kwargs)  # Measure first qubit, using keyword arguments
+    qp.Hadamard(0)
+    qp.CNOT([0, 1])  # Create a Bell pair
+    qp.measure(0, **kwargs)  # Measure first qubit, using keyword arguments
 
 ######################################################################
 # Without recording the outcome, i.e., ``postselect=None``, we obtain the state
@@ -251,10 +251,10 @@ def bell_pair_preparation(**kwargs):
 # And those will be the return types to complete our quantum function:
 #
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def bell_pair(postselect):
     bell_pair_preparation(postselect=postselect)
-    return qml.purity([0, 1]), qml.vn_entropy(0)
+    return qp.purity([0, 1]), qp.vn_entropy(0)
 
 ######################################################################
 # So let's compare the purities and von Neumann entropies of the Bell state
@@ -297,10 +297,10 @@ print(f"Entanglement entropy |     {without_ps[1]:.2f}   |  {with_ps[1]:.1f}")
 # can simply pass the keyword argument ``reset`` to activate the qubit reset:
 #
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def bell_pair_with_reset(reset):
     bell_pair_preparation(reset=reset)
-    return qml.expval(qml.Z(0)), qml.expval(qml.Z(1)), qml.expval(qml.Z(0) @ qml.Z(1))
+    return qp.expval(qp.Z(0)), qp.expval(qp.Z(1)), qp.expval(qp.Z(0) @ qp.Z(1))
 
 no_reset = bell_pair_with_reset(reset=False)
 reset = bell_pair_with_reset(reset=True)
@@ -360,10 +360,10 @@ import numpy as np
 magic_state = np.array([1, np.exp(1j * np.pi / 4)]) / np.sqrt(2)
 
 def t_gadget(wire, aux_wire):
-    qml.StatePrep(magic_state, aux_wire)
-    qml.CNOT([wire, aux_wire])
-    mcm = qml.measure(aux_wire, reset=True)  # Resetting disentangles aux qubit
-    qml.cond(mcm, qml.S)(wire)  # Apply qml.S(wire) if mcm was 1
+    qp.StatePrep(magic_state, aux_wire)
+    qp.CNOT([wire, aux_wire])
+    mcm = qp.measure(aux_wire, reset=True)  # Resetting disentangles aux qubit
+    qp.cond(mcm, qp.S)(wire)  # Apply qp.S(wire) if mcm was 1
 
 ######################################################################
 # We will not derive why this works (see, e.g., [#zhou]_ instead), but
@@ -380,16 +380,16 @@ def t_gadget(wire, aux_wire):
 # - return the expectation value :math:`\langle X_0\rangle.`
 #
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def test_t_gadget(init_state):
-    qml.Hadamard(0)  # Create |+> state
+    qp.Hadamard(0)  # Create |+> state
     if init_state == "-":
-        qml.Z(0)  # Flip to |-> state
+        qp.Z(0)  # Flip to |-> state
 
     t_gadget(0, 1)  # Apply T-gadget
-    qml.adjoint(qml.T)(0)  # Apply T^† to undo the gadget
+    qp.adjoint(qp.T)(0)  # Apply T^† to undo the gadget
 
-    return qml.expval(qml.X(0))
+    return qp.expval(qp.X(0))
 
 print(f"<X₀> with initial state |+>: {test_t_gadget('+'):4.1f}")
 print(f"<X₀> with initial state |->: {test_t_gadget('-'):4.1f}")

@@ -123,12 +123,12 @@ x = jnp.array([[0.028, 0.054, 0.0], [0.986, 1.610, 0.0], [1.855, 0.002, 0.0]])
 # of the trihydrogen cation using the
 # :func:`~.pennylane.qchem.molecular_hamiltonian` function.
 
-import pennylane as qml
+import pennylane as qp
 
 
 def H(x):
-    molecule = qml.qchem.Molecule(symbols, x, charge=1)
-    return qml.qchem.molecular_hamiltonian(molecule)[0]
+    molecule = qp.qchem.Molecule(symbols, x, charge=1)
+    return qp.qchem.molecular_hamiltonian(molecule)[0]
 
 
 ##############################################################################
@@ -185,7 +185,7 @@ def H(x):
 # :func:`~.pennylane.qchem.hf_state` function to generate the
 # occupation-number vector representing the Hartree-Fock state
 
-hf = qml.qchem.hf_state(electrons=2, orbitals=6)
+hf = qp.qchem.hf_state(electrons=2, orbitals=6)
 print(hf)
 
 ##############################################################################
@@ -194,16 +194,16 @@ print(hf)
 # First, we define the quantum device used to compute the expectation value.
 # In this example, we use the ``default.qubit`` simulator:
 num_wires = 6
-dev = qml.device("default.qubit", wires=num_wires)
+dev = qp.device("default.qubit", wires=num_wires)
 
 
-@qml.qnode(dev, interface="jax")
+@qp.qnode(dev, interface="jax")
 def circuit(params, obs, wires):
-    qml.BasisState(hf, wires=wires)
-    qml.DoubleExcitation(params[0], wires=[0, 1, 2, 3])
-    qml.DoubleExcitation(params[1], wires=[0, 1, 4, 5])
+    qp.BasisState(hf, wires=wires)
+    qp.DoubleExcitation(params[0], wires=[0, 1, 2, 3])
+    qp.DoubleExcitation(params[1], wires=[0, 1, 4, 5])
 
-    return qml.expval(obs)
+    return qp.expval(obs)
 
 
 ##############################################################################

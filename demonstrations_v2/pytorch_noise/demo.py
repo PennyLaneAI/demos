@@ -67,7 +67,7 @@ To start with, we import PennyLane, and, as we are using the PyTorch interface,
 PyTorch as well:
 """
 
-import pennylane as qml
+import pennylane as qp
 import torch
 from torch.autograd import Variable
 
@@ -78,7 +78,7 @@ from torch.autograd import Variable
 #
 # Next, we will create our device:
 
-dev = qml.device("rigetti.qvm", device="2q", noisy=True)
+dev = qp.device("rigetti.qvm", device="2q", noisy=True)
 
 ##############################################################################
 # Here, we create a noisy two-qubit system, simulated via the QVM. If we wish, we could
@@ -96,11 +96,11 @@ dev = qml.device("rigetti.qvm", device="2q", noisy=True)
 # running on the QVM.
 
 
-@qml.qnode(dev, interface="torch")
+@qp.qnode(dev, interface="torch")
 def circuit(phi, theta):
-    qml.RX(theta, wires=0)
-    qml.RZ(phi, wires=0)
-    return qml.expval(qml.PauliZ(0))
+    qp.RX(theta, wires=0)
+    qp.RZ(phi, wires=0)
+    return qp.expval(qp.PauliZ(0))
 
 
 ##############################################################################
@@ -199,7 +199,7 @@ print(cost(phi, theta, 400))
 # on using Amazon Braket, see our tutorial on
 # :doc:`Computing gradients in parallel with Amazon Braket <demos/braket-parallel-gradients>`.
 
-import pennylane as qml
+import pennylane as qp
 import torch
 from torch.autograd import Variable
 
@@ -209,7 +209,7 @@ s3_folder = (my_bucket, my_prefix)
 
 device_arn = "arn:aws:braket:us-west-1::device/qpu/rigetti/Aspen-M-3"
 
-qpu = qml.device(
+qpu = qp.device(
     "braket.aws.qubit",
     device_arn=device_arn,
     wires=32,
@@ -220,11 +220,11 @@ qpu = qml.device(
 # Warning: check the pricing of Aspen-M-3 on Braket to make
 # sure you are aware of the costs associated with running the
 # optimization below.
-@qml.qnode(dev, interface="torch")
+@qp.qnode(dev, interface="torch")
 def circuit(phi, theta):
-    qml.RX(theta, wires=0)
-    qml.RZ(phi, wires=0)
-    return qml.expval(qml.PauliZ(0))
+    qp.RX(theta, wires=0)
+    qp.RZ(phi, wires=0)
+    return qp.expval(qp.PauliZ(0))
 
 
 def cost(phi, theta, step):

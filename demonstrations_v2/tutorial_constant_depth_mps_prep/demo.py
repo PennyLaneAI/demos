@@ -153,7 +153,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.patches import FancyBboxPatch
 
-import pennylane as qml
+import pennylane as qp
 
 
 def A(g):
@@ -310,7 +310,7 @@ def label_fn(self, *_, **__):
     return f"$U^{{({self.wires[1]})}}$"
 
 
-qml.QubitUnitary.label = label_fn
+qp.QubitUnitary.label = label_fn
 
 
 def sequential_preparation(g, wires):
@@ -322,34 +322,34 @@ def sequential_preparation(g, wires):
     phys_wires = wires[1:-1]
 
     # Prepare bond qubits in the Bell state (|00>+|11>)/sqrt(2)
-    qml.Hadamard(bond0)
-    qml.CNOT([bond0, bond1])
+    qp.Hadamard(bond0)
+    qp.CNOT([bond0, bond1])
 
     # Apply unitary U to second bond qubit and each physical qubit
     for phys_wire in phys_wires:
-        u = qml.QubitUnitary(U, wires=[bond1, phys_wire])
+        u = qp.QubitUnitary(U, wires=[bond1, phys_wire])
 
 
 def project_measure(wire_0, wire_1):
     """Measure two qubits in the Bell basis and postselect on (|00>+|11>)/sqrt(2)."""
     # Move bond qubits from Bell basis to computational basis
-    qml.CNOT([wire_0, wire_1])
-    qml.Hadamard(wire_0)
+    qp.CNOT([wire_0, wire_1])
+    qp.Hadamard(wire_0)
     # Measure in computational basis and postselect |00>
-    qml.measure(wire_0, postselect=0)
-    qml.measure(wire_1, postselect=0)
+    qp.measure(wire_0, postselect=0)
+    qp.measure(wire_1, postselect=0)
 
 
-dev = qml.device("default.qubit")
+dev = qp.device("default.qubit")
 
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def sequential_circuit(N, g):
     """Run the preparation circuit and projectively measure the bond qubits."""
     wires = list(range(N + 2))
     sequential_preparation(g, wires)
     project_measure(0, N + 1)
-    return qml.probs(wires=wires[1 : N + 1])
+    return qp.probs(wires=wires[1 : N + 1])
 
 
 ######################################################################
@@ -357,7 +357,7 @@ def sequential_circuit(N, g):
 # against it. For now, let's draw it.
 
 N = 7
-_ = qml.draw_mpl(sequential_circuit)(N, g)
+_ = qp.draw_mpl(sequential_circuit)(N, g)
 
 ######################################################################
 # The sequential preparation circuit already uses mid-circuit measurements, as is visible
@@ -466,9 +466,9 @@ _ = qml.draw_mpl(sequential_circuit)(N, g)
 def fuse(wire_0, wire_1):
     """Measure two qubits in the Bell basis and return the outcome
     encoded in two bits."""
-    qml.CNOT([wire_0, wire_1])
-    qml.Hadamard(wire_0)
-    return np.array([qml.measure(w) for w in [wire_0, wire_1]])
+    qp.CNOT([wire_0, wire_1])
+    qp.Hadamard(wire_0)
+    return np.array([qp.measure(w) for w in [wire_0, wire_1]])
 
 
 ######################################################################
@@ -491,13 +491,13 @@ def two_qubit_mps_by_fusion(g):
 # MPS already, the test measurement would just be :math:`\langle 00 | Z_0| 00\rangle=1.`
 
 
-@qml.qnode(qml.device("default.qubit", wires=6))
+@qp.qnode(qp.device("default.qubit", wires=6))
 def prepare_and_unprepare(g):
     two_qubit_mps_by_fusion(g)
     # The bond qubits for a sequential preparation are just 0 and 5
     # The bond qubits 2 and 3 have been measured out in the fusion protocol
-    qml.adjoint(sequential_preparation)(g, [0, 1, 4, 5])
-    return qml.expval(qml.PauliZ(1))
+    qp.adjoint(sequential_preparation)(g, [0, 1, 4, 5])
+    return qp.expval(qp.PauliZ(1))
 
 
 test = prepare_and_unprepare(g)
@@ -582,12 +582,12 @@ def push_and_correct(op_id, phys_wires):
     w = phys_wires[0]
 
     # Apply Z if input is Z or Y
-    qml.cond(op_id[0], qml.Z)(w)
+    qp.cond(op_id[0], qp.Z)(w)
     # Apply Y if input is X or Y
-    qml.cond(op_id[1], qml.Y)(w)
+    qp.cond(op_id[1], qp.Y)(w)
     # Apply X on other physical sites if input is X or Y
     for i in phys_wires[1:]:
-        qml.cond(op_id[1], qml.X)(i)
+        qp.cond(op_id[1], qp.X)(i)
     # Push through Y if input is X or Y
     return np.array([op_id[1], op_id[1]])
 
@@ -662,9 +662,9 @@ def xor(op_id_0, op_id_1):
 def correct_end_bond(bond_idx, op_id):
     """Perform a correction on the end bond site."""
     # Apply Z if correction op is Z or Y
-    qml.cond(op_id[0], qml.Z)(bond_idx)
+    qp.cond(op_id[0], qp.Z)(bond_idx)
     # Apply X if correction op is X or Y
-    qml.cond(op_id[1], qml.X)(bond_idx)
+    qp.cond(op_id[1], qp.X)(bond_idx)
 
 
 def constant_depth(N, g, q):
@@ -710,10 +710,10 @@ def constant_depth_ansatz(N, g, q):
     return sum(map(list, phys_wires), start=[])
 
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def constant_depth_circuit(N, g, q):
     phys_wires = constant_depth_ansatz(N, g, q)
-    return qml.probs(wires=phys_wires)
+    return qp.probs(wires=phys_wires)
 
 
 ######################################################################
@@ -728,7 +728,7 @@ def constant_depth_circuit(N, g, q):
 N = 9
 q = 3
 g = -0.8
-fig, ax = qml.draw_mpl(constant_depth_circuit)(N, g, q)
+fig, ax = qp.draw_mpl(constant_depth_circuit)(N, g, q)
 
 # Cosmetics
 options = {

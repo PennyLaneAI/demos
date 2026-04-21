@@ -47,7 +47,7 @@ correspond to a single feature. With 2 qubits (wires), there are
 of size 4.
 """
 
-import pennylane as qml
+import pennylane as qp
 import torch
 import numpy as np
 from torch.autograd import Variable
@@ -67,7 +67,7 @@ num_qubits = int(np.ceil(np.log2(feature_size)))
 num_layers = 6
 total_iterations = 100
 
-dev = qml.device("default.qubit", wires=num_qubits)
+dev = qp.device("default.qubit", wires=num_qubits)
 
 
 #################################################################################
@@ -81,12 +81,12 @@ dev = qml.device("default.qubit", wires=num_qubits)
 
 def layer(W):
     for i in range(num_qubits):
-        qml.Rot(W[i, 0], W[i, 1], W[i, 2], wires=i)
+        qp.Rot(W[i, 0], W[i, 1], W[i, 2], wires=i)
     for j in range(num_qubits - 1):
-        qml.CNOT(wires=[j, j + 1])
+        qp.CNOT(wires=[j, j + 1])
     if num_qubits >= 2:
         # Apply additional CNOT to entangle the last with the first qubit
-        qml.CNOT(wires=[num_qubits - 1, 0])
+        qp.CNOT(wires=[num_qubits - 1, 0])
 
 
 #################################################################################
@@ -104,17 +104,17 @@ def layer(W):
 
 
 def circuit(weights, feat=None):
-    qml.AmplitudeEmbedding(feat, range(num_qubits), pad_with=0.0, normalize=True)
+    qp.AmplitudeEmbedding(feat, range(num_qubits), pad_with=0.0, normalize=True)
 
     for W in weights:
         layer(W)
 
-    return qml.expval(qml.PauliZ(0))
+    return qp.expval(qp.PauliZ(0))
 
 
 qnodes = []
 for iq in range(num_classes):
-    qnode = qml.QNode(circuit, dev, interface="torch")
+    qnode = qp.QNode(circuit, dev, interface="torch")
     qnodes.append(qnode)
 
 

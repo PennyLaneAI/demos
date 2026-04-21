@@ -182,20 +182,20 @@ def generate_many_sro(a_vals):
 #
 
 
-import pennylane as qml
+import pennylane as qp
 
 
 def QSP_circ(phi, W):
     """This circuit applies the SPO. The components in the matrix
     representation of the final unitary are polynomials!
     """
-    qml.Hadamard(wires=0)  # set initial state |+>
+    qp.Hadamard(wires=0)  # set initial state |+>
     for angle in phi[:-1]:
-        qml.RZ(angle, wires=0)
-        qml.QubitUnitary(W, wires=0)
+        qp.RZ(angle, wires=0)
+        qp.QubitUnitary(W, wires=0)
 
-    qml.RZ(phi[-1], wires=0)  # final rotation
-    qml.Hadamard(wires=0)  # change of basis |+> , |->
+    qp.RZ(phi[-1], wires=0)  # final rotation
+    qp.Hadamard(wires=0)  # change of basis |+> , |->
     return
 
 
@@ -224,7 +224,7 @@ gen.manual_seed(444422)  # set random seed for reproducibility
 
 for i in range(5):
     phi = torch.rand(d + 1, generator=gen) * 2 * torch.tensor([math.pi], requires_grad=False)
-    matrix_func = qml.matrix(QSP_circ, wire_order=[0])
+    matrix_func = qp.matrix(QSP_circ, wire_order=[0])
     y_vals = [matrix_func(phi, w)[0, 0].real for w in w_mats]
 
     plt.plot(a_vals, y_vals, label=f"poly #{i}")
@@ -274,7 +274,7 @@ plt.show()
 # :math:`\hat{W}(a)` for varying :math:`a,` and produces the
 # predicted :math:`y` values.
 #
-# Next we leverage the PennyLane function `qml.matrix()
+# Next we leverage the PennyLane function `qp.matrix()
 # <https://pennylane.readthedocs.io/en/stable/code/api/pennylane.matrix.html?highlight=qml%20matrix#pennylane.matrix>`__,
 # which accepts our quantum function (it can also accept quantum tapes and
 # QNodes) and returns its unitary matrix representation. We are interested
@@ -306,7 +306,7 @@ class QSP_Func_Fit(torch.nn.Module):
     def forward(self, omega_mats):
         """PennyLane forward implementation"""
         y_pred = []
-        generate_qsp_mat = qml.matrix(QSP_circ, wire_order=[0])
+        generate_qsp_mat = qp.matrix(QSP_circ, wire_order=[0])
 
         for w in omega_mats:
             u_qsp = generate_qsp_mat(self.phi, w)
