@@ -45,11 +45,11 @@ world and learn how to create an unbreakable lock? Let’s go!
 # circuits. Here we will work with 5 qubits, we will use qubit [0] as the control ancilla qubit, and qubits [1,2,3,4] will be our target qubits where we will encode :math:`|\psi\rangle.`
 #
 
-import pennylane as qml
+import pennylane as qp
 import numpy as np
 
 num_wires = 5
-dev = qml.device("default.qubit", wires=num_wires)
+dev = qp.device("default.qubit", wires=num_wires)
 
 ######################################################################
 # Building the quantum lock
@@ -83,7 +83,7 @@ dev = qml.device("default.qubit", wires=num_wires)
 
 
 def quantum_lock(secret_key):
-    return qml.FlipSign(secret_key, wires=list(range(1, num_wires)))
+    return qp.FlipSign(secret_key, wires=list(range(1, num_wires)))
 
 
 ######################################################################
@@ -93,7 +93,7 @@ def quantum_lock(secret_key):
 
 
 def build_key(key):
-    return qml.BasisState(key, wires=list(range(1, num_wires)))
+    return qp.BasisState(key, wires=list(range(1, num_wires)))
 
 
 ######################################################################
@@ -101,14 +101,14 @@ def build_key(key):
 #
 
 
-@qml.set_shots(1)
-@qml.qnode(dev)
+@qp.set_shots(1)
+@qp.qnode(dev)
 def quantum_locking_mechanism(lock, key):
     build_key(key)
-    qml.Hadamard(wires=0)  # Hadamard on ancilla qubit
-    qml.ctrl(lock, control=0)  # Controlled unitary operation
-    qml.Hadamard(wires=0)  # Hadamard again on ancilla qubit
-    return qml.sample(wires=0)
+    qp.Hadamard(wires=0)  # Hadamard on ancilla qubit
+    qp.ctrl(lock, control=0)  # Controlled unitary operation
+    qp.Hadamard(wires=0)  # Hadamard again on ancilla qubit
+    return qp.sample(wires=0)
 
 
 def check_key(lock, key):

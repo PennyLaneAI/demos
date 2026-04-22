@@ -57,7 +57,7 @@ We're putting the N in NISQ.
 # Bell state :math:`|\psi\rangle=\frac{1}{\sqrt{2}}(|00\rangle+|11\rangle).` We ask the QNode to
 # return the expectation value of :math:`Z_0\otimes Z_1:`
 #
-import pennylane as qml
+import pennylane as qp
 from jax import numpy as np
 import jax
 import jaxopt
@@ -65,13 +65,13 @@ import jaxopt
 jax.config.update("jax_platform_name", "cpu")
 jax.config.update('jax_enable_x64', True)
 
-dev = qml.device('default.mixed', wires=2)
+dev = qp.device('default.mixed', wires=2)
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def circuit():
-    qml.Hadamard(wires=0)
-    qml.CNOT(wires=[0, 1])
-    return qml.expval(qml.PauliZ(0) @ qml.PauliZ(1))
+    qp.Hadamard(wires=0)
+    qp.CNOT(wires=[0, 1])
+    return qp.expval(qp.PauliZ(0) @ qp.PauliZ(1))
 
 
 print(f"QNode output = {circuit():.4f}")
@@ -81,11 +81,11 @@ print(f"QNode output = {circuit():.4f}")
 # equal to :math:`|\psi\rangle\langle\psi|,`
 # where :math:`|\psi\rangle=\frac{1}{\sqrt{2}}(|00\rangle + |11\rangle).`
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def density_matrix_circuit():
-    qml.Hadamard(wires=0)
-    qml.CNOT(wires=[0, 1])
-    return qml.state()
+    qp.Hadamard(wires=0)
+    qp.CNOT(wires=[0, 1])
+    return qp.state()
 
 matrix = density_matrix_circuit()
 print(f"Output density matrix is = \n{np.real(matrix)}")
@@ -128,7 +128,7 @@ print(f"Output density matrix is = \n{np.real(matrix)}")
 #     K_0 &= \sqrt{1-p}\begin{pmatrix}1 & 0\\ 0 & 1\end{pmatrix}, \\
 #     K_1 &= \sqrt{p}\begin{pmatrix}0 & 1\\ 1 & 0\end{pmatrix}.
 #
-# This channel can be implemented in PennyLane using the :class:`qml.BitFlip <pennylane.BitFlip>`
+# This channel can be implemented in PennyLane using the :class:`qp.BitFlip <pennylane.BitFlip>`
 # operation.
 #
 # Let's see what happens when we simulate this type of noise acting on
@@ -136,13 +136,13 @@ print(f"Output density matrix is = \n{np.real(matrix)}")
 #
 
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def bitflip_circuit(p):
-    qml.Hadamard(wires=0)
-    qml.CNOT(wires=[0, 1])
-    qml.BitFlip(p, wires=0)
-    qml.BitFlip(p, wires=1)
-    return qml.expval(qml.PauliZ(0) @ qml.PauliZ(1)), qml.state()
+    qp.Hadamard(wires=0)
+    qp.CNOT(wires=[0, 1])
+    qp.BitFlip(p, wires=0)
+    qp.BitFlip(p, wires=1)
+    return qp.expval(qp.PauliZ(0) @ qp.PauliZ(1)), qp.state()
 
 
 ps = [0.001, 0.01, 0.1, 0.2]
@@ -185,13 +185,13 @@ print(f"Output state for bit flip probability {p} is \n{result[1]}")
 # below.
 
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def depolarizing_circuit(p):
-    qml.Hadamard(wires=0)
-    qml.CNOT(wires=[0, 1])
-    qml.DepolarizingChannel(p, wires=0)
-    qml.DepolarizingChannel(p, wires=1)
-    return qml.expval(qml.PauliZ(0) @ qml.PauliZ(1))
+    qp.Hadamard(wires=0)
+    qp.CNOT(wires=[0, 1])
+    qp.DepolarizingChannel(p, wires=0)
+    qp.DepolarizingChannel(p, wires=1)
+    return qp.expval(qp.PauliZ(0) @ qp.PauliZ(1))
 
 
 ps = [0.001, 0.01, 0.1, 0.2]
@@ -245,13 +245,13 @@ ev = 0.7781  # observed expectation value
 def sigmoid(x):
     return 1/(1+np.exp(-x))
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def damping_circuit(x):
-    qml.Hadamard(wires=0)
-    qml.CNOT(wires=[0, 1])
-    qml.AmplitudeDamping(sigmoid(x), wires=0)  # p = sigmoid(x)
-    qml.AmplitudeDamping(sigmoid(x), wires=1)
-    return qml.expval(qml.PauliZ(0) @ qml.PauliZ(1))
+    qp.Hadamard(wires=0)
+    qp.CNOT(wires=[0, 1])
+    qp.AmplitudeDamping(sigmoid(x), wires=0)  # p = sigmoid(x)
+    qp.AmplitudeDamping(sigmoid(x), wires=1)
+    return qp.expval(qp.PauliZ(0) @ qp.PauliZ(1))
 
 ######################################################################
 # We optimize the circuit with respect to a simple cost function that attains its minimum when

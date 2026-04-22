@@ -65,7 +65,7 @@ What is this circuit doing?
 # As before, we import PennyLane, as well as the wrapped version of NumPy provided
 # by JAX:
 
-import pennylane as qml
+import pennylane as qp
 from jax import numpy as np
 
 ###############################################################################
@@ -73,7 +73,7 @@ from jax import numpy as np
 # Because our circuit contains only Gaussian operations, we can make use of the
 # built-in ``default.gaussian`` device.
 
-dev_gaussian = qml.device("default.gaussian", wires=1)
+dev_gaussian = qp.device("default.gaussian", wires=1)
 
 ###############################################################################
 # After initializing the device, we can construct our quantum node. As before, we use the
@@ -82,11 +82,11 @@ dev_gaussian = qml.device("default.gaussian", wires=1)
 # device.
 
 
-@qml.qnode(dev_gaussian)
+@qp.qnode(dev_gaussian)
 def mean_photon_gaussian(mag_alpha, phase_alpha, phi):
-    qml.Displacement(mag_alpha, phase_alpha, wires=0)
-    qml.Rotation(phi, wires=0)
-    return qml.expval(qml.NumberOperator(0))
+    qp.Displacement(mag_alpha, phase_alpha, wires=0)
+    qp.Rotation(phi, wires=0)
+    return qp.expval(qp.NumberOperator(0))
 
 
 ###############################################################################

@@ -152,11 +152,11 @@ qubits = [ThreeDQubit(xy_scale * x, xy_scale * y, z_scale * z)
 # We will need to provide this device with the ``ThreeDQubit`` object that we created
 # above. We also need to instantiate the device with a fixed control radius.
 
-import pennylane as qml
+import pennylane as qp
 
 num_wires = len(qubits)
 control_radius = 32.4
-dev = qml.device("cirq.pasqal", control_radius=control_radius,
+dev = qp.device("cirq.pasqal", control_radius=control_radius,
                  qubits=qubits, wires=num_wires)
 
 ##############################################################################
@@ -263,28 +263,28 @@ plt.show()
 peak_qubit = 8
 
 def controlled_rotation(phi, wires):
-    qml.RY(phi, wires=wires[1])
-    qml.CNOT(wires=wires)
-    qml.RY(-phi, wires=wires[1])
-    qml.CNOT(wires=wires)
+    qp.RY(phi, wires=wires[1])
+    qp.CNOT(wires=wires)
+    qp.RY(-phi, wires=wires[1])
+    qp.CNOT(wires=wires)
 
-@qml.qnode(dev, interface="tf")
+@qp.qnode(dev, interface="tf")
 def circuit(weights, data):
 
     # Input classical data loaded into qubits at second level
     for idx in range(4):
         if data[idx]:
-            qml.PauliX(wires=idx)
+            qp.PauliX(wires=idx)
 
     # Interact qubits from second and third levels
     for idx in range(4):
-        qml.CNOT(wires=[idx, idx + 4])
+        qp.CNOT(wires=[idx, idx + 4])
 
     # Interact qubits from third level with peak using parameterized gates
     for idx, wire in enumerate(range(4, 8)):
         controlled_rotation(weights[idx], wires=[wire, peak_qubit])
 
-    return qml.expval(qml.PauliZ(wires=peak_qubit))
+    return qp.expval(qp.PauliZ(wires=peak_qubit))
 
 
 ##############################################################################

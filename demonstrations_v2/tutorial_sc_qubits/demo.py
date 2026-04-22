@@ -381,8 +381,8 @@ papers on the topic and keep up-to-date with the newest developments.
 #
 # Let us see how this works in practice using PennyLane. The ``default.gaussian`` device allows us to simulate
 # coherent states of light. These states start implicitly in the vacuum (no photons) state.
-# The PennyLane function ``qml.Displacement(x,0)`` applies a *displacement operator*, which creates
-# a coherent state :math:`\left\lvert \bar{x}, 0\right\rangle.` The rotation operator ``qml.Rotation(phi)`` rotates the state
+# The PennyLane function ``qp.Displacement(x,0)`` applies a *displacement operator*, which creates
+# a coherent state :math:`\left\lvert \bar{x}, 0\right\rangle.` The rotation operator ``qp.Rotation(phi)`` rotates the state
 # :math:`\left\lvert \bar{x}, 0\right\rangle` in :math:`(x, p)` space. When applied after a large displacement,
 # it changes the value of :math:`\bar{x}` only slightly, but noticeably changes the value of :math:`\bar{p}` by shifting it
 # off from zero, as shown in the figure [#Blais2021]_:
@@ -400,12 +400,12 @@ papers on the topic and keep up-to-date with the newest developments.
 # taking :math:`\omega_r=0,` which simply corresponds to taking :math:`\omega_r` as a reference frequency, so a rotation by
 # angle :math:`\phi` actually means a rotation by :math:`\omega_r+\phi.` In PennyLane, the operations read:
 
-import pennylane as qml
+import pennylane as qp
 import numpy as np
 import matplotlib.pyplot as plt
 
 # Call the default.gaussian device with 50 shots
-dev = qml.device("default.gaussian", wires=1)
+dev = qp.device("default.gaussian", wires=1)
 
 # Fix parameters
 epsilon, chi = 1.0, 0.1
@@ -413,20 +413,20 @@ epsilon, chi = 1.0, 0.1
 # Implement displacement and rotation and measure both X and P observables
 
 
-@qml.set_shots(50)
-@qml.qnode(dev)
+@qp.set_shots(50)
+@qp.qnode(dev)
 def measure_P_shots(time, state):
-    qml.Displacement(epsilon * time, 0, wires=0)
-    qml.Rotation((-1) ** state * chi * time, wires=0)
-    return qml.sample(qml.QuadP(0))
+    qp.Displacement(epsilon * time, 0, wires=0)
+    qp.Rotation((-1) ** state * chi * time, wires=0)
+    return qp.sample(qp.QuadP(0))
 
 
-@qml.set_shots(50)
-@qml.qnode(dev)
+@qp.set_shots(50)
+@qp.qnode(dev)
 def measure_X_shots(time, state):
-    qml.Displacement(epsilon * time, 0, wires=0)
-    qml.Rotation((-1) ** state * chi * time, wires=0)
-    return qml.sample(qml.QuadX(0))
+    qp.Displacement(epsilon * time, 0, wires=0)
+    qp.Rotation((-1) ** state * chi * time, wires=0)
+    return qp.sample(qp.QuadX(0))
 
 
 ##############################################################################
@@ -491,46 +491,46 @@ plt.show()
 # applies a :math:`Y`-rotation.
 #
 # Let us check this using PennyLane. For qubits, we can define
-# Hamiltonians using ``qml.Hamiltonian`` and evolve an initial state using ``ApproxTimeEvolution``:
+# Hamiltonians using ``qp.Hamiltonian`` and evolve an initial state using ``ApproxTimeEvolution``:
 
 from pennylane.templates import ApproxTimeEvolution
 
-dev2 = qml.device("lightning.qubit", wires=1)
+dev2 = qp.device("lightning.qubit", wires=1)
 
 # Implement Hamiltonian evolution given phase phi and time t, from a given initial state
-@qml.qnode(dev2)
+@qp.qnode(dev2)
 def H_evolve(state, phi, time):
 
     if state == 1:
-        qml.PauliX(wires=0)
+        qp.PauliX(wires=0)
 
     coeffs = [np.cos(phi), np.sin(phi)]
-    ops = [qml.PauliX(0), qml.PauliY(0)]
-    Ham = qml.Hamiltonian(coeffs, ops)
+    ops = [qp.PauliX(0), qp.PauliY(0)]
+    Ham = qp.Hamiltonian(coeffs, ops)
     ApproxTimeEvolution(Ham, time, 1)
-    return qml.state()
+    return qp.state()
 
 
 # Implement X rotation exactly
-@qml.qnode(dev2)
+@qp.qnode(dev2)
 def Sc_X_rot(state, phi):
 
     if state == 1:
-        qml.PauliX(wires=0)
+        qp.PauliX(wires=0)
 
-    qml.RX(phi, wires=0)
-    return qml.state()
+    qp.RX(phi, wires=0)
+    return qp.state()
 
 
 # Implement Y rotation exactly
-@qml.qnode(dev2)
+@qp.qnode(dev2)
 def Sc_Y_rot(state, phi):
 
     if state == 1:
-        qml.PauliX(wires=0)
+        qp.PauliX(wires=0)
 
-    qml.RY(phi, wires=0)
-    return qml.state()
+    qp.RY(phi, wires=0)
+    return qp.state()
 
 
 # Print to compare results
@@ -607,28 +607,28 @@ print(
 #
 # when applied for a time :math:`t=3\pi/2J,` as shown with the following PennyLane code:
 #
-dev3 = qml.device("lightning.qubit", wires=2)
+dev3 = qp.device("lightning.qubit", wires=2)
 
 # Define Hamiltonian
 coeffs = [0.5, 0.5]
-ops = [qml.PauliX(0) @ qml.PauliX(1), qml.PauliY(0) @ qml.PauliY(1)]
+ops = [qp.PauliX(0) @ qp.PauliX(1), qp.PauliY(0) @ qp.PauliY(1)]
 
-Two_qubit_H = qml.Hamiltonian(coeffs, ops)
+Two_qubit_H = qp.Hamiltonian(coeffs, ops)
 
 # Implement Hamiltonian evolution for time t and some initial computational basis state
-@qml.qnode(dev3)
+@qp.qnode(dev3)
 def Sc_ISWAP(basis_state, time):
-    qml.BasisState(basis_state, wires=range(2))
+    qp.BasisState(basis_state, wires=range(2))
     ApproxTimeEvolution(Two_qubit_H, time, 1)
-    return qml.state()
+    return qp.state()
 
 
 # Implement ISWAP exactly
-@qml.qnode(dev3)
+@qp.qnode(dev3)
 def iswap(basis_state):
-    qml.BasisState(basis_state, wires=range(2))
-    qml.ISWAP(wires=[0, 1])
-    return qml.state()
+    qp.BasisState(basis_state, wires=range(2))
+    qp.ISWAP(wires=[0, 1])
+    return qp.state()
 
 
 # Print to compare results
@@ -679,17 +679,17 @@ print(
 # We can verify that the circuit above gives us the ``CNOT`` gate up to a global phase using PennyLane:
 #
 def cnot_with_iswap():
-    qml.RZ(-np.pi / 2, wires=0)
-    qml.RX(np.pi / 2, wires=1)
-    qml.RZ(np.pi / 2, wires=1)
-    qml.ISWAP(wires=[0, 1])
-    qml.RX(np.pi / 2, wires=0)
-    qml.ISWAP(wires=[0, 1])
-    qml.RZ(np.pi / 2, wires=1)
+    qp.RZ(-np.pi / 2, wires=0)
+    qp.RX(np.pi / 2, wires=1)
+    qp.RZ(np.pi / 2, wires=1)
+    qp.ISWAP(wires=[0, 1])
+    qp.RX(np.pi / 2, wires=0)
+    qp.ISWAP(wires=[0, 1])
+    qp.RZ(np.pi / 2, wires=1)
 
 
 # Get matrix of circuit above
-matrix = qml.matrix(cnot_with_iswap, wire_order=[0, 1])()
+matrix = qp.matrix(cnot_with_iswap, wire_order=[0, 1])()
 
 # Multiply by a global phase to obtain CNOT
 (np.exp(1j * np.pi / 4) * matrix).round(2)
@@ -729,22 +729,22 @@ matrix = qml.matrix(cnot_with_iswap, wire_order=[0, 1])()
 #
 # where :math:`\phi` is the phase of the wave. As promised, we can obtain an entangled state by concatenating
 # the evolution under this Hamiltonian for a time :math:`t=\tfrac{\pi}{4\Omega}` with :math:`R_x` and :math:`R_y` rotations
-# and a ``qml.Hadamard`` gate:
+# and a ``qp.Hadamard`` gate:
 #
-@qml.qnode(dev3)
+@qp.qnode(dev3)
 def H_evolve(state, phi, time):
     # Prepare initial state
-    qml.BasisState(state, wires=range(2))
+    qp.BasisState(state, wires=range(2))
     # Define Hamiltonian
     coeffs = [np.cos(phi), np.sin(phi)]
-    ops = [qml.PauliZ(0) @ qml.PauliX(1), qml.PauliZ(0) @ qml.PauliY(1)]
-    Ham = qml.Hamiltonian(coeffs, ops)
+    ops = [qp.PauliZ(0) @ qp.PauliX(1), qp.PauliZ(0) @ qp.PauliY(1)]
+    Ham = qp.Hamiltonian(coeffs, ops)
     # Combine Hamiltonian evolution with single-qubit gates
-    qml.Hadamard(wires=0)
-    qml.RX(-np.pi / 2, wires=1)
+    qp.Hadamard(wires=0)
+    qp.RX(-np.pi / 2, wires=1)
     ApproxTimeEvolution(Ham, time, 1)
-    qml.RZ(-np.pi / 2, wires=0)
-    return qml.state()
+    qp.RZ(-np.pi / 2, wires=0)
+    return qp.state()
 
 
 # Verify that we return maximally entangled state up to a global phase

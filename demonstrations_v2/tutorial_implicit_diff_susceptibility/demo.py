@@ -263,7 +263,7 @@ import jax
 from jax import jit
 import jax.numpy as jnp
 
-import pennylane as qml
+import pennylane as qp
 import numpy as np
 
 import jaxopt
@@ -301,30 +301,30 @@ def build_H0(N, J, gamma):
         gamma (float): Interaction strength.
 
     Returns:
-        qml.Hamiltonian: The Hamiltonian of the system.
+        qp.Hamiltonian: The Hamiltonian of the system.
     """
-    H = qml.Hamiltonian([], [])
+    H = qp.Hamiltonian([], [])
 
     for i in range(N - 1):
-        H += -J * qml.PauliZ(i) @ qml.PauliZ(i + 1)
+        H += -J * qp.PauliZ(i) @ qp.PauliZ(i + 1)
 
-    H += -J * qml.PauliZ(N - 1) @ qml.PauliZ(0)
+    H += -J * qp.PauliZ(N - 1) @ qp.PauliZ(0)
 
     # Transverse
     for i in range(N):
-        H += -gamma * qml.PauliX(i)
+        H += -gamma * qp.PauliX(i)
 
     # Small magnetization for numerical stability
     for i in range(N):
-        H += -1e-1 * qml.PauliZ(i)
+        H += -1e-1 * qp.PauliZ(i)
 
     return H
 
 
 H0 = build_H0(N, J, gamma)
-H0_matrix = qml.matrix(H0)
-A = reduce(add, ((1 / N) * qml.PauliZ(i) for i in range(N)))
-A_matrix = qml.matrix(A)
+H0_matrix = qp.matrix(H0)
+A = reduce(add, ((1 / N) * qp.PauliZ(i) for i in range(N)))
+A_matrix = qp.matrix(A)
 
 ###############################################################################
 # Computing the exact ground state through eigendecomposition
@@ -432,15 +432,15 @@ plt.show()
 #   In a real device we would use a finite number of shots and the gradients would be computed
 #   using the parameter-shift rule. However, this may be slower.
 
-variational_ansatz = qml.SimplifiedTwoDesign
+variational_ansatz = qp.SimplifiedTwoDesign
 n_layers = 5
 weights_shape = variational_ansatz.shape(n_layers, N)
 
-dev = qml.device("default.qubit", wires=N)
+dev = qp.device("default.qubit", wires=N)
 
 
 @jax.jit
-@qml.qnode(dev, interface="jax")
+@qp.qnode(dev, interface="jax")
 def energy(z, a):
     """Computes the energy for a Hamiltonian H(a) using a measurement on the
     variational state U(z)|0> with U(z) being any circuit ansatz.
@@ -454,7 +454,7 @@ def energy(z, a):
     """
     variational_ansatz(*z, wires=range(N))
 
-    return qml.expval(H0 + a * A)
+    return qp.expval(H0 + a * A)
 
 
 z_init = [jnp.array(2 * np.pi * np.random.random(s)) for s in weights_shape]
@@ -542,7 +542,7 @@ z_star_variational = ground_state_solution_map_variational(a, z_init)
 
 
 @jax.jit
-@qml.qnode(dev, interface="jax")
+@qp.qnode(dev, interface="jax")
 def expval_A_variational(z: float) -> float:
     """Expectation value of $A$ as a function of $a$ where we use the
     a variational ground state solution map.
@@ -554,7 +554,7 @@ def expval_A_variational(z: float) -> float:
         float: The expectation value of M on the ground state of H(a)
     """
     variational_ansatz(*z, wires=range(N))
-    return qml.expval(A)
+    return qp.expval(A)
 
 
 @jax.jit
@@ -564,7 +564,7 @@ def groundstate_expval_variational(a, z_init) -> float:
     Args:
         a (float): The parameter in the Hamiltonian, H(a).
         z_init [jnp.array(jnp.float)]: The initial guess for the variational parameters.
-        H0 (qml.Hamiltonian): The static part of the Hamiltonian
+        H0 (qp.Hamiltonian): The static part of the Hamiltonian
     """
     z_star = ground_state_solution_map_variational(a, z_init)
     return expval_A_variational(z_star)
@@ -589,7 +589,7 @@ plt.show()
 ##############################################################################
 # PennyLane version and details
 
-print(qml.about())
+print(qp.about())
 
 ##############################################################################
 # Conclusion

@@ -67,27 +67,27 @@ Let's code this below and verify the output
 
 """
 
-import pennylane as qml
+import pennylane as qp
 from pennylane import numpy as np
 
 
 def encode(alpha, beta):
-    qml.StatePrep([alpha, beta], wires=0)
-    qml.CNOT(wires=[0, 1])
-    qml.CNOT(wires=[0, 2])
+    qp.StatePrep([alpha, beta], wires=0)
+    qp.CNOT(wires=[0, 1])
+    qp.CNOT(wires=[0, 2])
 
 
 def encoded_state(alpha, beta):
     encode(alpha, beta)
-    return qml.state()
+    return qp.state()
 
 
-encode_qnode = qml.QNode(encoded_state, qml.device("default.qubit"))
+encode_qnode = qp.QNode(encoded_state, qp.device("default.qubit"))
 
 alpha = 1 / np.sqrt(2)
 beta = 1 / np.sqrt(2)
 
-encode_qnode = qml.QNode(encoded_state, qml.device("default.qubit"))
+encode_qnode = qp.QNode(encoded_state, qp.device("default.qubit"))
 
 print("|000> component: ", encode_qnode(alpha, beta)[0])
 print("|111> component: ", encode_qnode(alpha, beta)[7])
@@ -138,22 +138,22 @@ print("|111> component: ", encode_qnode(alpha, beta)[7])
 
 
 def error_detection():
-    qml.CNOT(wires=[0, 3])
-    qml.CNOT(wires=[1, 3])
-    qml.CNOT(wires=[1, 4])
-    qml.CNOT(wires=[2, 4])
+    qp.CNOT(wires=[0, 3])
+    qp.CNOT(wires=[1, 3])
+    qp.CNOT(wires=[1, 4])
+    qp.CNOT(wires=[2, 4])
 
 
-@qml.set_shots(1)
-@qml.qnode(qml.device("default.qubit", wires=5))  # A single sample flags error
+@qp.set_shots(1)
+@qp.qnode(qp.device("default.qubit", wires=5))  # A single sample flags error
 def syndrome_measurement(error_wire):
     encode(alpha, beta)
 
-    qml.PauliX(wires=error_wire)  # Unwanted Pauli Operator
+    qp.PauliX(wires=error_wire)  # Unwanted Pauli Operator
 
     error_detection()
 
-    return qml.sample(wires=[3, 4])
+    return qp.sample(wires=[3, 4])
 
 
 print("Syndrome if error on wire 0: ", syndrome_measurement(0))
@@ -190,28 +190,28 @@ print("Syndrome if error on wire 2: ", syndrome_measurement(2))
 # We can use PennyLane's mid-circuit measurement features to implement the full three-qubit repetition code.
 
 
-@qml.qnode(qml.device("default.qubit", wires=5))
+@qp.qnode(qp.device("default.qubit", wires=5))
 def error_correction(error_wire):
     encode(alpha, beta)
 
-    qml.PauliX(wires=error_wire)
+    qp.PauliX(wires=error_wire)
 
     error_detection()
 
     # Mid circuit measurements
 
-    m3 = qml.measure(3)
-    m4 = qml.measure(4)
+    m3 = qp.measure(3)
+    m4 = qp.measure(4)
 
     # Operations conditional on measurements
 
-    qml.cond(m3 & ~m4, qml.PauliX)(wires=0)
-    qml.cond(m3 & m4, qml.PauliX)(wires=1)
-    qml.cond(~m3 & m4, qml.PauliX)(wires=2)
+    qp.cond(m3 & ~m4, qp.PauliX)(wires=0)
+    qp.cond(m3 & m4, qp.PauliX)(wires=1)
+    qp.cond(~m3 & m4, qp.PauliX)(wires=2)
 
-    return qml.density_matrix(
+    return qp.density_matrix(
         wires=[0, 1, 2]
-    )  # qml.state not supported, but density matrices are.
+    )  # qp.state not supported, but density matrices are.
 
 
 ##############################################################################
@@ -220,23 +220,23 @@ def error_correction(error_wire):
 # With this result, we can verify that the fidelity of the encoded state is the same as the final state after correction
 # as follows.
 
-dev = qml.device("default.qubit", wires=5)
-error_correction_qnode = qml.QNode(error_correction, dev)
-encoded_state = qml.math.dm_from_state_vector(encode_qnode(alpha, beta))
+dev = qp.device("default.qubit", wires=5)
+error_correction_qnode = qp.QNode(error_correction, dev)
+encoded_state = qp.math.dm_from_state_vector(encode_qnode(alpha, beta))
 
 # Compute fidelity of final corrected state with initial encoded state
 
 print(
     "Fidelity when error on wire 0: ",
-    qml.math.fidelity(encoded_state, error_correction_qnode(0)).round(2),
+    qp.math.fidelity(encoded_state, error_correction_qnode(0)).round(2),
 )
 print(
     "Fidelity when error on wire 1: ",
-    qml.math.fidelity(encoded_state, error_correction_qnode(1)).round(2),
+    qp.math.fidelity(encoded_state, error_correction_qnode(1)).round(2),
 )
 print(
     "Fidelity when error on wire 2: ",
-    qml.math.fidelity(encoded_state, error_correction_qnode(2)).round(2),
+    qp.math.fidelity(encoded_state, error_correction_qnode(2)).round(2),
 )
 
 ##############################################################################
@@ -385,7 +385,7 @@ def generate_stabilizer_group(gens, num_wires):
         op = init_op
         for i, bit in enumerate(bits):
             if bit:
-                op = qml.prod(op, gens[i]).simplify()
+                op = qp.prod(op, gens[i]).simplify()
         group.append(op)
     return set(group)
 
@@ -479,7 +479,7 @@ def classify_pauli(operator, logical_ops, generators, n_wires):
     if operator.simplify() in stabilizer_group:
         return f"{operator} is a Stabilizer."
 
-    if all(qml.is_commuting(operator, g) for g in generators):
+    if all(qp.is_commuting(operator, g) for g in generators):
         if operator in logical_ops:
             return f"{operator} is a Logical Operator."
         else:
@@ -564,25 +564,25 @@ print(classify_pauli(X(0) @ Y(1) @ Z(2), logical_ops, generators, 3))
 
 
 def five_qubit_encode(alpha, beta):
-    qml.StatePrep([alpha, beta], wires=4)
-    qml.Hadamard(wires=0)
-    qml.S(wires=0)
-    qml.CZ(wires=[0, 1])
-    qml.CZ(wires=[0, 3])
-    qml.CY(wires=[0, 4])
-    qml.Hadamard(wires=1)
-    qml.CZ(wires=[1, 2])
-    qml.CZ(wires=[1, 3])
-    qml.CNOT(wires=[1, 4])
-    qml.Hadamard(wires=2)
-    qml.CZ(wires=[2, 0])
-    qml.CZ(wires=[2, 1])
-    qml.CNOT(wires=[2, 4])
-    qml.Hadamard(wires=3)
-    qml.S(wires=3)
-    qml.CZ(wires=[3, 0])
-    qml.CZ(wires=[3, 2])
-    qml.CY(wires=[3, 4])
+    qp.StatePrep([alpha, beta], wires=4)
+    qp.Hadamard(wires=0)
+    qp.S(wires=0)
+    qp.CZ(wires=[0, 1])
+    qp.CZ(wires=[0, 3])
+    qp.CY(wires=[0, 4])
+    qp.Hadamard(wires=1)
+    qp.CZ(wires=[1, 2])
+    qp.CZ(wires=[1, 3])
+    qp.CNOT(wires=[1, 4])
+    qp.Hadamard(wires=2)
+    qp.CZ(wires=[2, 0])
+    qp.CZ(wires=[2, 1])
+    qp.CNOT(wires=[2, 4])
+    qp.Hadamard(wires=3)
+    qp.S(wires=3)
+    qp.CZ(wires=[3, 0])
+    qp.CZ(wires=[3, 2])
+    qp.CY(wires=[3, 4])
 
 
 ##############################################################################
@@ -612,13 +612,13 @@ stabilizers = [
 
 def five_qubit_error_detection():
     for wire in range(5, 9):
-        qml.Hadamard(wires=wire)
+        qp.Hadamard(wires=wire)
 
     for i in range(len(stabilizers)):
-        qml.ctrl(stabilizers[i], control=[i + 5])
+        qp.ctrl(stabilizers[i], control=[i + 5])
 
     for wire in range(5, 9):
-        qml.Hadamard(wires=wire)
+        qp.Hadamard(wires=wire)
 
 
 #############################################################################
@@ -627,11 +627,11 @@ def five_qubit_error_detection():
 # measures the syndrome, as we did in the three-qubit code.
 #
 
-dev = qml.device("default.qubit", wires=9)
+dev = qp.device("default.qubit", wires=9)
 
 
-@qml.set_shots(1)
-@qml.qnode(dev)
+@qp.set_shots(1)
+@qp.qnode(dev)
 def five_qubit_syndromes(alpha, beta, error_op, error_wire):
     five_qubit_encode(alpha, beta)
 
@@ -639,7 +639,7 @@ def five_qubit_syndromes(alpha, beta, error_op, error_wire):
 
     five_qubit_error_detection()
 
-    return qml.sample(wires=range(5, 9))
+    return qp.sample(wires=range(5, 9))
 
 
 #############################################################################
@@ -650,7 +650,7 @@ def five_qubit_syndromes(alpha, beta, error_op, error_wire):
 ops_and_syndromes = []
 
 for wire in (0, 1, 2, 3, 4):
-    for error_op in (qml.PauliX, qml.PauliY, qml.PauliZ):
+    for error_op in (qp.PauliX, qp.PauliY, qp.PauliZ):
         ops_and_syndromes.append(
             (
                 error_op,
@@ -678,7 +678,7 @@ for wire in (0, 1, 2, 3, 4):
 # PennyLane's mid-circuit measurement capabilities, which only allows for Boolean operators.
 #
 def syndrome_booleans(syndrome, measurements):
-    syndrome = qml.math.squeeze(syndrome)
+    syndrome = qp.math.squeeze(syndrome)
     if syndrome[0] == 0:
         m = ~measurements[0]
     else:
@@ -697,10 +697,10 @@ def syndrome_booleans(syndrome, measurements):
 #
 # Combining all these pieces, we can write the full error correcting code.
 #
-dev = qml.device("default.qubit", wires=9)
+dev = qp.device("default.qubit", wires=9)
 
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def five_qubit_code(alpha, beta, error_op, error_wire):
     five_qubit_encode(alpha, beta)
 
@@ -708,17 +708,17 @@ def five_qubit_code(alpha, beta, error_op, error_wire):
 
     five_qubit_error_detection()
 
-    m5 = qml.measure(5)
-    m6 = qml.measure(6)
-    m7 = qml.measure(7)
-    m8 = qml.measure(8)
+    m5 = qp.measure(5)
+    m6 = qp.measure(6)
+    m7 = qp.measure(7)
+    m8 = qp.measure(8)
 
     measurements = [m5, m6, m7, m8]
 
     for op, wire, synd in ops_and_syndromes:
-        qml.cond(syndrome_booleans(synd, measurements), op)(wires=wire)
+        qp.cond(syndrome_booleans(synd, measurements), op)(wires=wire)
 
-    return qml.density_matrix(wires=[0, 1, 2, 3, 4])
+    return qp.density_matrix(wires=[0, 1, 2, 3, 4])
 
 
 #############################################################################
@@ -728,18 +728,18 @@ def five_qubit_code(alpha, beta, error_op, error_wire):
 #
 
 
-@qml.qnode(qml.device("default.qubit", wires=5))
+@qp.qnode(qp.device("default.qubit", wires=5))
 def five_qubit_encoded_state(alpha, beta):
     five_qubit_encode(alpha, beta)
-    return qml.state()
+    return qp.state()
 
 
-encoded_state = qml.math.dm_from_state_vector(five_qubit_encoded_state(alpha, beta))
+encoded_state = qp.math.dm_from_state_vector(five_qubit_encoded_state(alpha, beta))
 for wire in range(5):
-    for error_op in (qml.PauliX, qml.PauliY, qml.PauliZ):
+    for error_op in (qp.PauliX, qp.PauliY, qp.PauliZ):
         print(
             f"Fidelity when error {error_op(wire).name[-1]}{wire}:",
-            qml.math.fidelity(
+            qp.math.fidelity(
                 encoded_state, five_qubit_code(alpha, beta, error_op, wire)
             ).round(2),
         )

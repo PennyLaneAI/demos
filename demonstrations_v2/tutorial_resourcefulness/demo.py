@@ -359,31 +359,31 @@ print("GFD Purity and power spectrum coincide:", np.isclose(power_spectrum[3], p
 #
 
 
-import pennylane as qml
+import pennylane as qp
 from scipy.stats import unitary_group
 
 
-dev = qml.device("default.qubit")
+dev = qp.device("default.qubit")
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def product_state(n_qubits):
     for i in range(n_qubits):
         U_haar = unitary_group.rvs(2)
-        qml.QubitUnitary(U_haar, wires=i)
-    return qml.state()
+        qp.QubitUnitary(U_haar, wires=i)
+    return qp.state()
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def haar_state(n_qubits):
     U_haar = unitary_group.rvs(2**n_qubits)
-    qml.QubitUnitary(U_haar, wires=range(n_qubits))
-    return qml.state()
+    qp.QubitUnitary(U_haar, wires=range(n_qubits))
+    return qp.state()
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def ghz_state(n_qubits):
-    qml.Hadamard(wires=0)
+    qp.Hadamard(wires=0)
     for i in range(1, n_qubits):
-        qml.CNOT(wires=[0, i])
-    return qml.state()
+        qp.CNOT(wires=[0, i])
+    return qp.state()
 
 n = 2
 states = [product_state(n),  haar_state(n), ghz_state(n)]

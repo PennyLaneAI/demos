@@ -174,7 +174,7 @@ Contextuality and inductive bias in QML
 
 import jax
 import jax.numpy as jnp
-import pennylane as qml
+import pennylane as qp
 import numpy as np
 jax.config.update("jax_platform_name", "cpu")
 np.random.seed(666) # seed used for random functions
@@ -415,11 +415,11 @@ expvals[:10].sum(axis=1)  # check first 10 entries
 
 def input_prep(alpha):
     # This ensures the prepared state has <Z_0+Z_1+Z_2>=0
-    qml.Hadamard(wires=0)
-    qml.Hadamard(wires=1)
-    qml.Hadamard(wires=2)
-    qml.RY(alpha[0], wires=0)
-    qml.RY(alpha[0] + np.pi, wires=1)
+    qp.Hadamard(wires=0)
+    qp.Hadamard(wires=1)
+    qp.Hadamard(wires=2)
+    qp.RY(alpha[0], wires=0)
+    qp.RY(alpha[0] + np.pi, wires=1)
 
 
 ######################################################################
@@ -450,9 +450,9 @@ def swap_rot(weights, wires):
     """
     bias-invariant unitary with swap matrix as generator
     """
-    qml.PauliRot(weights, "XX", wires=wires)
-    qml.PauliRot(weights, "YY", wires=wires)
-    qml.PauliRot(weights, "ZZ", wires=wires)
+    qp.PauliRot(weights, "XX", wires=wires)
+    qp.PauliRot(weights, "YY", wires=wires)
+    qp.PauliRot(weights, "ZZ", wires=wires)
 
 
 def param_unitary(weights):
@@ -461,10 +461,10 @@ def param_unitary(weights):
     """
     for b in range(blocks):
         for q in range(3):
-            qml.RZ(weights[b, q], wires=q)
-        qml.PauliRot(weights[b, 3], "ZZ", wires=[0, 1])
-        qml.PauliRot(weights[b, 4], "ZZ", wires=[0, 2])
-        qml.PauliRot(weights[b, 5], "ZZ", wires=[1, 2])
+            qp.RZ(weights[b, q], wires=q)
+        qp.PauliRot(weights[b, 3], "ZZ", wires=[0, 1])
+        qp.PauliRot(weights[b, 4], "ZZ", wires=[0, 2])
+        qp.PauliRot(weights[b, 5], "ZZ", wires=[1, 2])
         swap_rot(weights[b, 6], wires=[0, 1])
         swap_rot(weights[b, 7], wires=[1, 2])
         swap_rot(weights[b, 8], wires=[0, 2])
@@ -475,16 +475,16 @@ def data_encoding(x):
     S_x^1 in paper
     """
     for q in range(3):
-        qml.RZ(x[q], wires=q)
+        qp.RZ(x[q], wires=q)
 
 
 def data_encoding_pairs(x):
     """
     S_x^2 in paper
     """
-    qml.PauliRot(x[0] * x[1], "ZZ", wires=[0, 1])
-    qml.PauliRot(x[1] * x[2], "ZZ", wires=[1, 2])
-    qml.PauliRot(x[0] * x[2], "ZZ", wires=[0, 2])
+    qp.PauliRot(x[0] * x[1], "ZZ", wires=[0, 1])
+    qp.PauliRot(x[1] * x[2], "ZZ", wires=[1, 2])
+    qp.PauliRot(x[0] * x[2], "ZZ", wires=[0, 2])
 
 
 def bias_inv_layer(weights, x):
@@ -507,14 +507,14 @@ def bias_inv_layer(weights, x):
 # define our quantum model.
 #
 
-dev = qml.device("default.qubit", wires=3)
+dev = qp.device("default.qubit", wires=3)
 
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def model(weights, x):
     input_prep(weights[2 * layers + 1, 0])  # alpha is stored in the weights array
     bias_inv_layer(weights, x)
-    return [qml.expval(qml.PauliZ(0)), qml.expval(qml.PauliZ(1)), qml.expval(qml.PauliZ(2))]
+    return [qp.expval(qp.PauliZ(0)), qp.expval(qp.PauliZ(1)), qp.expval(qp.PauliZ(2))]
 
 
 # jax vectorisation, we vectorise over the data input (the second argument)
@@ -534,20 +534,20 @@ def generic_layer(weights, x):
     x1 = jnp.array([x[0, 0], x[1, 1], x[2, 2]])
     x2 = jnp.array(([x[0, 1] - x[0, 2], x[1, 2] - x[1, 0], x[2, 0] - x[2, 1]]))
     for l in range(0, 2 * layers, 2):
-        qml.StronglyEntanglingLayers(weights[l], wires=range(3))
+        qp.StronglyEntanglingLayers(weights[l], wires=range(3))
         data_encoding(x1)
-        qml.StronglyEntanglingLayers(weights[l + 1], wires=range(3))
+        qp.StronglyEntanglingLayers(weights[l + 1], wires=range(3))
         data_encoding_pairs(x2)
-    qml.StronglyEntanglingLayers(weights[2 * layers], wires=range(3))
+    qp.StronglyEntanglingLayers(weights[2 * layers], wires=range(3))
 
 
-dev = qml.device("default.qubit", wires=3)
+dev = qp.device("default.qubit", wires=3)
 
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def generic_model(weights, x):
     generic_layer(weights, x)
-    return [qml.expval(qml.PauliZ(0)), qml.expval(qml.PauliZ(1)), qml.expval(qml.PauliZ(2))]
+    return [qp.expval(qp.PauliZ(0)), qp.expval(qp.PauliZ(1)), qp.expval(qp.PauliZ(2))]
 
 
 vmodel_generic = jax.vmap(generic_model, (None, 0))

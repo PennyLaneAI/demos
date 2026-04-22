@@ -58,7 +58,7 @@ We use :class:`~.pennylane.BasisState` as a useful template for implementing the
 
 """
 
-import pennylane as qml
+import pennylane as qp
 import numpy as np
 from functools import partial
 import matplotlib.pyplot as plt
@@ -69,22 +69,22 @@ bitstrings = ["01", "11", "11", "00", "01", "11", "11", "00"]
 control_wires = [0, 1, 2]
 target_wires = [3, 4]
 
-Ui = [qml.BasisState(int(bitstring, 2), target_wires) for bitstring in bitstrings]
+Ui = [qp.BasisState(int(bitstring, 2), target_wires) for bitstring in bitstrings]
 
-dev = qml.device("default.qubit")
+dev = qp.device("default.qubit")
 
 
 # This line is included for drawing purposes only.
-@partial(qml.transforms.decompose, max_expansion=1)
-@qml.set_shots(1)
-@qml.qnode(dev)
+@partial(qp.transforms.decompose, max_expansion=1)
+@qp.set_shots(1)
+@qp.qnode(dev)
 def circuit(index):
-    qml.BasisState(index, wires=control_wires)
-    qml.Select(Ui, control=control_wires)
-    return qml.sample(wires=target_wires)
+    qp.BasisState(index, wires=control_wires)
+    qp.Select(Ui, control=control_wires)
+    return qp.sample(wires=target_wires)
 
 
-qml.draw_mpl(circuit, style="pennylane")(3)
+qp.draw_mpl(circuit, style="pennylane")(3)
 plt.show()
 
 ##############################################################################
@@ -106,13 +106,13 @@ control_wires = [0, 1, 2]
 target_wires = [3, 4]
 
 
-@partial(qml.compile, basis_set="CNOT")  # Line added for resource estimation purposes only.
-@qml.set_shots(1)
-@qml.qnode(dev)
+@partial(qp.compile, basis_set="CNOT")  # Line added for resource estimation purposes only.
+@qp.set_shots(1)
+@qp.qnode(dev)
 def circuit(index):
-    qml.BasisState(index, wires=control_wires)
-    qml.QROM(bitstrings, control_wires, target_wires, work_wires=None)
-    return qml.sample(wires=target_wires)
+    qp.BasisState(index, wires=control_wires)
+    qp.QROM(bitstrings, control_wires, target_wires, work_wires=None)
+    return qp.sample(wires=target_wires)
 
 
 for i in range(8):
@@ -123,8 +123,8 @@ for i in range(8):
 # Here we show the number of 1 and 2 qubit gates we use when decomposing the circuit:
 
 print("Number of qubits: ", len(control_wires + target_wires))
-print("One-qubit gates: ", qml.specs(circuit)(0)["resources"].gate_sizes[1])
-print("Two-qubit gates: ", qml.specs(circuit)(0)["resources"].gate_sizes[2])
+print("One-qubit gates: ", qp.specs(circuit)(0)["resources"].gate_sizes[1])
+print("Two-qubit gates: ", qp.specs(circuit)(0)["resources"].gate_sizes[2])
 
 ##############################################################################
 # You can learn more about these resource estimation methods in
@@ -148,18 +148,18 @@ target_wires = [3, 4]
 work_wires = [5, 6]
 
 
-@partial(qml.compile, basis_set="CNOT") 
-@qml.set_shots(1)
-@qml.qnode(dev)
+@partial(qp.compile, basis_set="CNOT") 
+@qp.set_shots(1)
+@qp.qnode(dev)
 def circuit(index):
-    qml.BasisState(index, wires=control_wires)
+    qp.BasisState(index, wires=control_wires)
     #  added work wires below
-    qml.QROM(bitstrings, control_wires, target_wires, work_wires, clean=False)
-    return qml.sample(wires=control_wires + target_wires + work_wires)
+    qp.QROM(bitstrings, control_wires, target_wires, work_wires, clean=False)
+    return qp.sample(wires=control_wires + target_wires + work_wires)
 
 print("Number of qubits: ", len(control_wires + target_wires + work_wires))
-print("One-qubit gates: ", qml.specs(circuit)(0)["resources"].gate_sizes[1])
-print("Two-qubit gates: ", qml.specs(circuit)(0)["resources"].gate_sizes[2])
+print("One-qubit gates: ", qp.specs(circuit)(0)["resources"].gate_sizes[1])
+print("Two-qubit gates: ", qp.specs(circuit)(0)["resources"].gate_sizes[2])
 
 ##############################################################################
 # The number of 1 and 2 qubit gates is significantly reduced!
@@ -223,16 +223,16 @@ work_wires = [5, 6, 7, 8, 9, 10, 11, 12]
 
 
 # Line added for drawing purposes only
-@partial(qml.transforms.decompose, max_expansion=2)
-@qml.set_shots(1)
-@qml.qnode(qml.device("default.qubit"))
+@partial(qp.transforms.decompose, max_expansion=2)
+@qp.set_shots(1)
+@qp.qnode(qp.device("default.qubit"))
 def circuit(index):
-    qml.BasisState(index, wires=control_wires)
-    qml.QROM(bitstrings, control_wires, target_wires, work_wires, clean=False)
-    return qml.sample(wires=target_wires), qml.sample(wires=target_wires)
+    qp.BasisState(index, wires=control_wires)
+    qp.QROM(bitstrings, control_wires, target_wires, work_wires, clean=False)
+    return qp.sample(wires=target_wires), qp.sample(wires=target_wires)
 
 
-qml.draw_mpl(circuit, style="pennylane")(0)
+qp.draw_mpl(circuit, style="pennylane")(0)
 plt.show()
 
 
@@ -254,12 +254,12 @@ target_wires = [3, 4]
 work_wires = [5, 6]
 
 
-@qml.set_shots(1)
-@qml.qnode(dev)
+@qp.set_shots(1)
+@qp.qnode(dev)
 def circuit(index):
-    qml.BasisState(index, wires=control_wires)
-    qml.QROM(bitstrings, control_wires, target_wires, work_wires, clean=True)
-    return qml.sample(wires=target_wires + work_wires)
+    qp.BasisState(index, wires=control_wires)
+    qp.QROM(bitstrings, control_wires, target_wires, work_wires, clean=True)
+    return qp.sample(wires=target_wires + work_wires)
 
 
 for i in range(8):

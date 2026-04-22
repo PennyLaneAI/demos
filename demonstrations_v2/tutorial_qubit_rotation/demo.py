@@ -86,7 +86,7 @@ and :math:`-1` (if :math:`\left|\psi\right\rangle = \left|1\right\rangle`).
 # The first thing we need to do is import PennyLane, as well as the wrapped version
 # of NumPy provided by Jax.
 
-import pennylane as qml
+import pennylane as qp
 from jax import numpy as np
 import jax
 
@@ -118,7 +118,7 @@ import jax
 # For this tutorial, we are using the qubit model, so let's initialize the ``'lightning.qubit'`` device
 # provided by PennyLane.
 
-dev1 = qml.device("lightning.qubit", wires=1)
+dev1 = qp.device("lightning.qubit", wires=1)
 
 ##############################################################################
 # For all devices, :func:`~.pennylane.device` accepts the following arguments:
@@ -152,9 +152,9 @@ dev1 = qml.device("lightning.qubit", wires=1)
 
 
 def circuit(params):
-    qml.RX(params[0], wires=0)
-    qml.RY(params[1], wires=0)
-    return qml.expval(qml.PauliZ(0))
+    qp.RX(params[0], wires=0)
+    qp.RY(params[1], wires=0)
+    return qp.expval(qp.PauliZ(0))
 
 
 ##############################################################################
@@ -195,11 +195,11 @@ def circuit(params):
 # **directly above** the function definition:
 
 
-@qml.qnode(dev1)
+@qp.qnode(dev1)
 def circuit(params):
-    qml.RX(params[0], wires=0)
-    qml.RY(params[1], wires=0)
-    return qml.expval(qml.PauliZ(0))
+    qp.RX(params[0], wires=0)
+    qp.RY(params[1], wires=0)
+    return qp.expval(qp.PauliZ(0))
 
 
 ##############################################################################
@@ -248,11 +248,11 @@ print(dcircuit(params))
 # two positional arguments, instead of one array argument:
 
 
-@qml.qnode(dev1)
+@qp.qnode(dev1)
 def circuit2(phi1, phi2):
-    qml.RX(phi1, wires=0)
-    qml.RY(phi2, wires=0)
-    return qml.expval(qml.PauliZ(0))
+    qp.RX(phi1, wires=0)
+    qp.RY(phi2, wires=0)
+    return qp.expval(qp.PauliZ(0))
 
 
 ################################################################################

@@ -48,11 +48,11 @@ The LCU representation is crucial for building the **block encoding** operator u
 For a recap on this technique, see our demo on `linear combination of unitaries and block encodings <tutorial_lcu_blockencoding>`_.
 """
 
-import pennylane as qml
+import pennylane as qp
 
-A = 0.1 * (qml.Z(0) @ qml.Z(1)) + 0.2 * (qml.X(0) @ qml.X(1)) + 0.3 * (qml.X(0) @ qml.Z(1))
+A = 0.1 * (qp.Z(0) @ qp.Z(1)) + 0.2 * (qp.X(0) @ qp.X(1)) + 0.3 * (qp.X(0) @ qp.Z(1))
 
-print(qml.matrix(A, wire_order=[0, 1]))
+print(qp.matrix(A, wire_order=[0, 1]))
 
 ##############################################################################
 # Resources from an Executable Workflow
@@ -73,7 +73,7 @@ encoding_wires = [f"e_{i}" for i in range(num_encoding_wires)]
 
 poly = (0, 0, 0, 0, 0, 1)  # f(x) = x^5
 def circ():
-    qml.qsvt(A, poly, encoding_wires=encoding_wires)
+    qp.qsvt(A, poly, encoding_wires=encoding_wires)
     return
 
 ## --- Resource Estimation: ---
