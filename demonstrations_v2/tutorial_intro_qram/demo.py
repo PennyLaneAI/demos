@@ -14,6 +14,7 @@ coherently and, depending on the setting, extended toward read-write memory acce
 
 """
 
+######################################################################
 # We will work with three QRAM constructions that are implemented in PennyLane:
 # 
 # - ```SelectOnlyQRAM`` <https://docs.pennylane.ai/en/stable/code/api/pennylane.SelectOnlyQRAM.html>`__,
