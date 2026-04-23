@@ -21,7 +21,7 @@ coherently and, depending on the setting, extended toward read-write memory acce
 #   the direct select-style construction that is closest to QROM,
 # - :func:`~.pennylane.BBQRAM`, a
 #   bucket-brigade architecture that routes a bus qubit through a binary tree, and
-# - ```HybridQRAM`` <https://docs.pennylane.ai/en/stable/code/api/pennylane.HybridQRAM.html>`__, which
+# - :func:`~.pennylane.HybridQRAM`, which
 #   interpolates between the two by combining a select prefix with a smaller bucket-brigade tree.
 # 
 # For a collection of bitstrings :math:`b_0, b_1, \ldots, b_{N-1}` of length :math:`m`, each
