@@ -236,6 +236,7 @@ def leaf_unitary_rotation(leaf, wires):
     basis_mat = qp.math.kron(leaf, qp.math.eye(2)) # account for spin
     qp.BasisRotation(unitary_matrix=basis_mat, wires=wires)
 
+
 ######################################################################
 # Similarly, the unitary transformation for the core tensors can be applied efficiently
 # via the ``core_unitary_rotation`` function defined below. The function uses the
