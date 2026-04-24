@@ -356,7 +356,7 @@ print(total_cost)
 
 ##############################################################################
 # Constructing the circuit this way makes it tailored for resource estimation, allowing us to scale 
-# up our workflows without worrying about that exponential performance bottlenecks that are common 
+# up our workflows without worrying about the exponential performance bottlenecks that are common 
 # with circuit simulation. Here we push the capabilities for a large scale example:
 
 # Set base parameters:
