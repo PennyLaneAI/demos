@@ -15,7 +15,7 @@ It would be nice if we were certain that applying a finite sequence of gates cou
 
 It turns out that all you need to achieve universal quantum computing are the Clifford gates and at least one non-Clifford gate [#qecbook]_! In principle, you could select any non-Clifford gate, but a common gate set is `(Clifford+T) <https://pennylane.ai/compilation/clifford-t-gate-set>`__. 
 
-The :class:`T gate <pennylane.T>` applies a :math:`45^{\circ}` rotation about the $Z$ axis. On the surface, this doesn’t seem too special --- but with the addition of a non-Clifford gate, the `Solovay-Kitaev theorem <https://en.wikipedia.org/wiki/Solovay%E2%80%93Kitaev_theorem>`__ guarantees that any state can be approximated by a finite sequence of gates. This gate sequence can be found via methods such as the Solovay-Kitaev algorithm [#SK_alg]_ or gridsynth [#gridsynth]_. Putting all these pieces together, we can now obtain, say, a :math:`1^{\circ}` rotation about the $Z$ axis to a :math:`10^{-2}` error with a sequence of $T$, $H$, and $S$ gates. 
+The :class:`T <pennylane.T>` gate applies a :math:`45^{\circ}` rotation about the $Z$ axis. On the surface, this doesn’t seem too special --- but with the addition of a non-Clifford gate, the `Solovay-Kitaev theorem <https://en.wikipedia.org/wiki/Solovay%E2%80%93Kitaev_theorem>`__ guarantees that any state can be approximated by a finite sequence of gates. This gate sequence can be found via methods such as the Solovay-Kitaev algorithm [#SK_alg]_ or gridsynth [#gridsynth]_. Putting all these pieces together, we can now obtain, say, a :math:`1^{\circ}` rotation about the $Z$ axis to a :math:`10^{-2}` error with a sequence of $T$, $H$, and $S$ gates. 
 
 For `noisy intermediate-scale quantum (NISQ) <https://pennylane.ai/blog/2023/06/from-nisq-to-isq>`__ computing, the story ends here. The problem arises when trying to achieve **both** universal **and** fault-tolerant quantum computing. 
 
@@ -35,7 +35,7 @@ The core idea of the Clifford hierarchy lurks beneath many of the concepts you m
 
 :doc:`Stabilizer tableau simulation <demos/tutorial_clifford_circuit_simulations>` is one such method. If $Z$ is a stabilizer corresponding to the state :math:`|0 \rangle`, then the application of a Clifford gate such as $H$ transforms the stabilizer to become :math:`HZH^{\dagger} = X` corresponding to the new state :math:`H |0 \rangle = |+ \rangle`. For any Clifford gate, $C$, and for all Pauli gates :math:`P \in \{X,Y,Z\}`, observe that it is always true that the transformation :math:`CPC^{\dagger}` yields a Pauli gate up to a global phase. 
 
-In other words, Clifford gates map Pauli gates to Pauli gates under conjugation. As my colleague wrote in this :doc:`demo <demos/tutorial_clifford_circuit_simulations>`, one can exploit this fact to efficiently track how stabilizers evolve through a Clifford-only circuit. 
+In other words, Clifford gates map Pauli gates to Pauli gates under conjugation. As my colleague wrote in this :doc:`demo <demos/tutorial_clifford_circuit_simulations>`, one can exploit this fact to efficiently track how stabilizers evolve through a Clifford-only circuit. :doc:`Pauli propagation <demos/tutorial_classical_expval_estimation>` exploits a similar idea to accelerate the classical calculation of circuits' expectation values. 
 
 What do non-Clifford gates map Pauli gates to? Does that mapping help us simplify computation too? 
 
