@@ -3,8 +3,8 @@ r"""Intro to quantum random access memory (QRAM)
  
 Loading classical data into a quantum algorithm is often a nontrivial step of the computation.
 Efficient data access is important in `quantum machine
-learning <https://pennylane.ai/qml/quantum-machine-learning/>`__, search algorithms, and `state
-preparation <https://pennylane.ai/qml/demos/tutorial_initial_state_preparation/>`__. In this
+learning <https://pennylane.ai/qml/quantum-machine-learning/>`__, search algorithms, and :doc:`state
+preparation <demos/tutorial_initial_state_preparation/>`. In this
 demonstration, we introduce quantum random access memory (QRAM), a data-loading model that addresses
 this problem from a more architectural perspective. This is already familiar from :doc:`quantum read-only
 memory (QROM) <demos/tutorial_intro_qrom/>`, where a classical table of
