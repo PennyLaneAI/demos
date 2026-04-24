@@ -223,7 +223,7 @@ print("Two-qubit gates:", bb_specs.gate_sizes.get(2, 0))
 # :math:`k` and a bucket-brigade suffix of size :math:`n-k`. The prefix chooses one block of the
 # classical data, and a smaller bucket-brigade tree is reused inside that block. The PennyLane
 # template follows the circuit-level select/bucket-brigade hybridization idea in [#hybridqram]_, while
-# hybrid QRAM also appears in hardware-oriented architectures such as Ref. [^4].
+# hybrid QRAM also appears in hardware-oriented architectures such as [#hardwareefficient]_.
 # 
 # This gives us a tunable family of constructions:
 # 
