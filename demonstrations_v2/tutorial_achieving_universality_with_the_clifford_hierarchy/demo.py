@@ -300,7 +300,9 @@ print(np.allclose(output_state, correct_density_matrix))
 
 ##########################################
 # 
-# Most generally, this teleportation circuit can be applied indefinitely to apply arbitrarily high level gates using the same idea outlined in Figure 2. Figure 3 below illustrates this idea artistically. It's turtles all the way down!
+# Most generally, this teleportation circuit can be applied indefinitely to apply arbitrarily high level gates using the same idea outlined in :ref:`Figure 2 <fig-2-universal-teleportation-c4>`. :ref:`Figure 3 <fig-3-recursive-universal-teleportation>` below illustrates this idea artistically. It's turtles all the way down!
+# 
+# .. _fig-3-recursive-universal-teleportation:
 # 
 # .. figure:: ../_static/demonstration_assets/universality_and_clifford_hierarchy/Figure-6-recursive-teleportation.png
 #   :alt: Recursive universal teleportation circuit to apply an arbitrary high level gate.
