@@ -324,6 +324,7 @@ print(np.allclose(output_state, correct_density_matrix))
 # 
 # To explain why semi-Clifford gates can be teleported more efficiently, we firstly depict these more efficient 'one-bit' teleportation circuits. There are two such flavours: Z-teleportation and X-teleportation, named after the classically controlled correction these circuits apply. Figure 4a depicts the general one-bit Z-teleportation circuit for $U$, Figure 4b depicts the general one-bit X-teleportation circuit for $U$, and Figure 4c depicts the one-bit teleportation circuit for the $T$ gate. The section within the dashed box is a :doc:`magic state <demos/tutorial_magic_states>`. 
 # 
+# .. _fig-4-one-bit-teleportation:
 # 
 # .. figure:: ../_static/demonstration_assets/universality_and_clifford_hierarchy/Figure-3-one-bit-teleportation.png
 #   :alt: One-bit teleportation circuits.
