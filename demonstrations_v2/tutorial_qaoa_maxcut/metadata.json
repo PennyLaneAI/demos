@@ -3,14 +3,18 @@
     "authors": [
         {
             "username": "alowe"
+        },
+        {
+            "username": "Jay"
         }
     ],
     "executable_stable": true,
     "executable_latest": true,
     "dateOfPublication": "2019-10-11T00:00:00+00:00",
-    "dateOfLastModification": "2026-04-17T00:00:00+00:00",
+    "dateOfLastModification": "2026-04-24T00:00:00+00:00",
     "categories": [
-        "Optimization"
+        "Optimization",
+        "Resource Estimation"
     ],
     "tags": [],
     "previewImages": [
