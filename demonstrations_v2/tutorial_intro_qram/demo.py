@@ -263,7 +263,7 @@ for i in range(len(bitstrings)):
 
 
 ######################################################################
-# Because ``HybridQRAM`` exposes the parameter :math:`k`, it gives us a continuum between the other
+# Because :class:`~.pennylane.HybridQRAM` exposes the parameter :math:`k`, it gives us a continuum between the other
 # two constructions. In larger examples, this can be a practical design knob: we can spend more
 # auxiliary qubits to shrink the effective routing problem, or keep the work register smaller and
 # accept a deeper bucket-brigade component.
