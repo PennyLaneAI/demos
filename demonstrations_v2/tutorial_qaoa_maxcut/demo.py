@@ -294,3 +294,89 @@ for i, samples in enumerate([int_samples1, int_samples2], start=1):
 plt.tight_layout()
 plt.show()
 
+##############################################################################
+# Resource Estimation
+# -------------------
+# In this section we use the :mod:`estimator <pennylane.estimator>` module to estimate the resources for QAOA.
+# We begin by defining the unitary operators :math:`U_B` and :math:`U_C`. For the purpose of
+# resource estimation, we don't need to know the concrete value of the input parameters
+# (:math:`\beta`, :math:`\gamma`); instead we need to specify the ``precision``, which informs how 
+# accurately the single qubit rotation operators would get further compiled to hardware native gates.
+
+import pennylane.estimator as qre  # the estimator module
+
+def U_B_res(n_wires, wires=None, epsilon=1e-5):
+    qre.Prod([(qre.RX(precision=epsilon), n_wires)], wires)
+
+def U_C_res(n_edges, wires=None, epsilon=1e-5):
+    qre.Prod(
+        [
+          (qre.CNOT(), 2 * n_edges), 
+          (qre.RZ(precision=epsilon), n_edges),
+        ], 
+        wires,
+    )
+
+def circuit_res(n_wires, n_edges, n_layers, wires=None, epsilon=None):
+    qre.Prod([(qre.Hadamard(), n_wires)], wires)
+    U_B_res(n_layers * n_wires, wires, epsilon)
+    U_C_res(n_layers * n_edges, wires, epsilon)
+
+
+##############################################################################
+# The :class:`~.pennylane.estimator.ops.op_math.symbolic.Prod` class represents a product of 
+# operators, we can leverage it to account for the number of times the gate is applied.
+# We can now estimate the resources required for a single execution (shot) of the QAOA circuit.
+
+# Set base parameters:
+wires = [0, 1, 2, 3]
+n_wires = len(wires)
+n_edges = len(graph)
+
+# Set hyper parameters:
+n_layers = 2
+epsilon = 1e-6
+
+cost_per_circuit = qre.estimate(circuit_res)(
+    n_wires, n_edges, n_layers, wires, epsilon,
+)
+
+print(cost_per_circuit)
+
+##############################################################################
+# Awesome! We were able to estimate the cost for a single circuit execution. Now we need to take
+# sampling into account. Recall that we sample each circuit 20 times per optimization loop. We 
+# also repeated the optimization loop 30 times to ensure we converged on the optimal parameters. 
+# This means we sampled the circuit 600 times! We can easily scale up our resource estimates
+# with one line of code.
+
+total_shots = 20 * 30
+total_cost = cost_per_circuit.multiply_series(total_shots)
+print(total_cost)
+
+##############################################################################
+# Constructing the circuit this way makes it tailored for resource estimation, allowing us to scale 
+# up our workflows without worrying about the exponential performance bottlenecks that are common 
+# with circuit simulation. Here we push the capabilities for a large scale example:
+
+# Set base parameters:
+n_wires = 500                # 500 qubits
+n_edges = 10_000             # 10,000 graph edges
+wires = list(range(n_wires)) 
+
+# Set hyper parameters:
+n_layers = 100               # 100 layers in the model
+epsilon = 1e-12              # 10^-12 accuracy threshold
+
+cost_per_circuit = qre.estimate(circuit_res)(
+    n_wires, n_edges, n_layers, wires, epsilon,
+)
+
+total_shots = 100 * 500      # 100 shots/loop * 500 loops
+total_cost = cost_per_circuit.multiply_series(total_shots)
+
+print(total_cost)
+
+##############################################################################
+# PennyLane's resource estimation functionality makes it easy to cost out large scale workflows
+# with *hundreds* of qubits and *trillions* of gates!
