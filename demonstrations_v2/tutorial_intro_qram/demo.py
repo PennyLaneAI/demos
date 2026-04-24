@@ -190,7 +190,7 @@ for i in range(len(bitstrings)):
 
 
 ######################################################################
-# The tradeoff is now clear. ``BBQRAM`` replaces large multi-controlled target updates with local
+# The tradeoff is now clear. :class:`~.pennylane.BBQRAM` replaces large multi-controlled target updates with local
 # routing operations, but it needs a substantial auxiliary memory architecture to do so. This is
 # precisely the kind of width-depth tradeoff that motivates QRAM design: depending on the hardware
 # model, extra qubits may be preferable to deeper control logic.
