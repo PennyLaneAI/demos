@@ -6,8 +6,8 @@ Efficient data access is important in `quantum machine
 learning <https://pennylane.ai/qml/quantum-machine-learning/>`__, search algorithms, and `state
 preparation <https://pennylane.ai/qml/demos/tutorial_initial_state_preparation/>`__. In this
 demonstration, we introduce quantum random access memory (QRAM), a data-loading model that addresses
-this problem from a more architectural perspective. This is already familiar from `quantum read-only
-memory (QROM) <https://pennylane.ai/qml/demos/tutorial_intro_qrom/>`__, where a classical table of
+this problem from a more architectural perspective. This is already familiar from :doc:`quantum read-only
+memory (QROM) <demos/tutorial_intro_qrom/>`, where a classical table of
 bitstrings is loaded into a target register; instead of treating the data as a fixed read-only
 lookup table, QRAM is usually discussed as an addressable memory model that can be queried
 coherently and, depending on the setting, extended toward read-write memory access.
@@ -73,7 +73,7 @@ def decode_probs(probs, num_wires):
 # Select-only QRAM
 # ----------------
 # 
-# We start with the most direct construction. ``SelectOnlyQRAM`` applies the appropriate bit flips to
+# We start with the most direct construction. :class:`~.pennylane.SelectOnlyQRAM` applies the appropriate bit flips to
 # the target register, controlled on the address register. Conceptually, this is the QRAM analogue of
 # the select-style QROM story: if the address is :math:`i`, we apply the gates that write :math:`b_i`
 # into the target wires.
@@ -376,9 +376,9 @@ for name, summary in resource_table.items():
 
 
 ######################################################################
-# Even in this small example, the qualitative pattern is already visible. ``SelectOnlyQRAM`` keeps the
-# qubit count low but leans on address-wide control logic. ``BBQRAM`` introduces a dedicated memory
-# architecture that can replace some of that global control with local routing. ``HybridQRAM`` then
+# Even in this small example, the qualitative pattern is already visible. :class:`~.pennylane.SelectOnlyQRAM` keeps the
+# qubit count low but leans on address-wide control logic. :class:`~.pennylane.BBQRAM` introduces a dedicated memory
+# architecture that can replace some of that global control with local routing. :class:`~.pennylane.HybridQRAM` then
 # turns this into a tunable tradeoff through the parameter :math:`k`. For very small tables, this
 # extra structure can look expensive; the purpose of the hybrid construction is to expose a design
 # knob that becomes more useful as the address space grows.
@@ -406,3 +406,31 @@ for name, summary in resource_table.items():
 # logical task is fixed, the implementation details become a question of architecture and resources
 # rather than correctness alone.
 # 
+# 
+# References
+# ----------
+#
+# .. [#qram]
+#
+#     Vittorio Giovannetti, Seth Lloyd, and Lorenzo Maccone,
+#     "Quantum random access memory",
+#     `arXiv:0708.1879 <https://arxiv.org/abs/0708.1879>`__, 2007.
+#
+# .. [#selectqram]
+#
+#     Connor T. Hann, Gideon Lee, S. M. Girvin, and Liang Jiang,
+#     "Resilience of quantum random access memory to generic noise",
+#     `arXiv:2012.05340 <https://arxiv.org/abs/2012.05340>`__, 2012.
+#
+# .. [#hybridqram]
+#
+#     Shifan Xu, Connor T. Hann, Ben Foxman, Steven M. Girvin, and Yongshan Ding,
+#     "Systems Architecture for Quantum Random Access Memory",
+#     `arXiv:2306.03242 <https://arxiv.org/abs/2306.03242>`__, 2023.
+#
+# .. [#hardwareefficient]
+#
+#     Connor T. Hann, Chang-Ling Zou, Yaxing Zhang, Yiwen Chu, Robert J. Schoelkopf, Steven M. Girvin, and Liang Jiang, 
+#     "Hardware-efficient quantum random access memory with hybrid quantum acoustic systems",
+#     `https://arxiv.org/abs/1906.11340 <https://arxiv.org/abs/1906.11340>`__, 2019.
+#
