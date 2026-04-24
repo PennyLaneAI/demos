@@ -150,7 +150,7 @@ print("Two-qubit gates:", select_specs.gate_sizes.get(2, 0))
 # 3. **Address unloading.** The address-loading operation is reversed so that the routing tree is
 #    restored and the work wires can be reused.
 # 
-# In PennyLane, ``BBQRAM`` uses one bus wire plus three wires per internal node of the routing tree:
+# In PennyLane, :class:`~.pennylane.BBQRAM` uses one bus wire plus three wires per internal node of the routing tree:
 # 
 # - one direction wire,
 # - one left-port wire, and
