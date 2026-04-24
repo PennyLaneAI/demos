@@ -297,10 +297,10 @@ plt.show()
 ##############################################################################
 # Resource Estimation
 # -------------------
-# In this section we use the ``estimator`` module to estimate the resources for QAOA.
+# In this section we use the :mod:`estimator <pennylane.estimator>` module to estimate the resources for QAOA.
 # We begin by defining the unitary operators :math:`U_B` and :math:`U_C`. For the purpose of
 # resource estimation, we don't need to know the concrete value of the input parameters
-# (:math:`\beta`, :math:`\gamma`); instead we need to specify ``precision`` which informs how 
+# (:math:`\beta`, :math:`\gamma`); instead we need to specify the ``precision``, which informs how 
 # accurately the single qubit rotation operators would get further compiled to hardware native gates.
 
 import pennylane.estimator as qre  # the estimator module
@@ -345,7 +345,7 @@ print(cost_per_circuit)
 
 ##############################################################################
 # Awesome! We were able to estimate the cost for a single circuit execution. Now we need to take
-# into account sampling. Recall that we sampled each circuit 20 times per optimization loop. We 
+# sampling into account. Recall that we sample each circuit 20 times per optimization loop. We 
 # also repeated the optimization loop 30 times to ensure we converged on the optimal parameters. 
 # This means we sampled the circuit 600 times! We can easily scale up our resource estimates
 # with one line of code.
@@ -355,7 +355,7 @@ total_cost = cost_per_circuit.multiply_series(total_shots)
 print(total_cost)
 
 ##############################################################################
-# Constructing the circuit this makes it tailored for resource estimation, allowing us to scale 
+# Constructing the circuit this way makes it tailored for resource estimation, allowing us to scale 
 # up our workflows without worrying about that exponential performance bottlenecks that are common 
 # with circuit simulation. Here we push the capabilities for a large scale example:
 
@@ -376,3 +376,7 @@ total_shots = 100 * 500      # 100 shots/loop * 500 loops
 total_cost = cost_per_circuit.multiply_series(total_shots)
 
 print(total_cost)
+
+##############################################################################
+# PennyLane's resource estimation functionality makes it easy to cost out large scale workflows
+# with *hundreds* of qubits and *trillions* of gates!
