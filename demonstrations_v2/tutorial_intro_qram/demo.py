@@ -17,7 +17,7 @@ coherently and, depending on the setting, extended toward read-write memory acce
 ######################################################################
 # We will work with three QRAM constructions that are implemented in PennyLane:
 # 
-# - :func:`~.pennylane.SelectOnlyQRAM`,
+# - :class:`~.pennylane.SelectOnlyQRAM`,
 #   the direct select-style construction that is closest to QROM,
 # - :func:`~.pennylane.BBQRAM`, a
 #   bucket-brigade architecture that routes a bus qubit through a binary tree, and
