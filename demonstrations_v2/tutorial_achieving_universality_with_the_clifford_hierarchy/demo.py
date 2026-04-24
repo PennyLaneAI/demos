@@ -453,7 +453,7 @@ print(np.allclose(output_state, correct_density_matrix))
 # 
 #     L. Bastioni, S. Glandon, T. Pllaha, M. Stewart, and P. Waitkevich
 #     "Climbing the Clifford Hierarchy"
-#     `arXiv:2603.12088 <https://arxiv.org/abs/2603.12088>`__, 2026.
+#     `arXiv:2603.12088 <https://arxiv.org/abs/2603.12088>`__, 2026. 
 # 
 # 
 # 
