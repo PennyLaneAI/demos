@@ -1,0 +1,64 @@
+{
+    "title": "Understanding Fault-tolerant Threshold Theorem in Practice",
+    "authors": [{
+        "username": "whatsis"
+    }],
+    "executable_stable": true,
+    "executable_latest": true,
+    "dateOfPublication": "2026-04-24T15:00:00+00:00",
+    "dateOfLastModification": "2026-04-24T15:00:00+00:00",
+    "categories": [
+        "Quantum Computing",
+        "Compilation",
+        "Algorithms"
+    ],
+    "tags": [],
+    "previewImages": [{
+            "type": "thumbnail",
+            "uri": "/_static/demo_thumbnails/regular_demo_thumbnails/pennylane-demo-fault-tolerant-threshold-thumbnail.png"
+        },
+        {
+            "type": "large_thumbnail",
+            "uri": "/_static/demo_thumbnails/large_demo_thumbnails/pennylane-demo-fault-tolerant-threshold-large-thumbnail.png"
+        }
+    ],
+    "seoDescription": "Understanding Fault-tolerant Threshold Theorem in Practice",
+    "doi": "",
+    "references": [{
+        "id": "threshold_theorem",
+        "type": "article",
+        "title": "An Introduction to Quantum Error Correction and Fault - Tolerant Quantum Computation ",
+        "authors": "Daniel Gottesman",
+        "year": "2009",
+        "journal": "arXiv e-prints",
+        "url": "https://arxiv.org/abs/0904.2557"
+    }],
+    "basedOnPapers": [],
+    "referencedByPapers": [],
+    "relatedContent": [{
+            "type": "demonstration",
+            "id": "tutorial_stabilizer_codes",
+            "weight": 1.0
+        },
+        {
+            "type": "demonstration",
+            "id": "tutorial_game_of_surface_codes",
+            "weight": 1.0
+        },
+        {
+            "type": "demonstration",
+            "id": "tutorial_toric_code",
+            "weight": 1.0
+        },
+        {
+            "type": "demonstration",
+            "id": "tutorial_bp_catalyst",
+            "weight": 1.0
+        },
+        {
+            "type": "demonstration",
+            "id": "tutorial_lattice_surgery",
+            "weight": 1.0
+        }
+    ]
+}
