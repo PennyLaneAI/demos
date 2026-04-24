@@ -1,6 +1,6 @@
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "demo.metadata.schema.0.1.9.json",
+    "$id": "demo.metadata.schema.0.1.10.json",
     "title": "Demo Metadata",
     "description": "A demo's metadata",
     "type": "object",
