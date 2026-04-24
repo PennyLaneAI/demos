@@ -42,7 +42,7 @@ Without loss of generality, we set :math:`J = 1` and consider open boundary cond
 We start by importing the necessary libraries for simulation, optimization, and plotting our results, 
 as well as setting some important constants:
 """
-import pennylane as qml
+import pennylane as qp
 import numpy as np
 from jax import jit, vmap, value_and_grad, random, config
 from jax import numpy as jnp
@@ -70,17 +70,17 @@ def get_H(num_spins, k, h):
     """Construction function the ANNNI Hamiltonian (J=1)"""
 
     # Interaction between spins (neighbouring):
-    H = -1 * (qml.PauliX(0) @ qml.PauliX(1))
+    H = -1 * (qp.PauliX(0) @ qp.PauliX(1))
     for i in range(1, num_spins - 1):
-        H = H  - (qml.PauliX(i) @ qml.PauliX(i + 1))
+        H = H  - (qp.PauliX(i) @ qp.PauliX(i + 1))
 
     # Interaction between spins (next-neighbouring):
     for i in range(0, num_spins - 2):
-        H = H + k * (qml.PauliX(i) @ qml.PauliX(i + 2))
+        H = H + k * (qp.PauliX(i) @ qp.PauliX(i + 2))
 
     # Interaction of the spins with the magnetic field
     for i in range(0, num_spins):
-        H = H - h * qml.PauliZ(i)
+        H = H - h * qp.PauliZ(i)
 
     return H
 
@@ -167,7 +167,7 @@ phases = np.empty((len(ks), len(hs)), dtype=int)
 
 for x, k in enumerate(ks):
     for y, h in enumerate(hs):
-        H_matrices[y, x] = np.real(qml.matrix(get_H(num_qubits, k, h))) # Get Hamiltonian matrix
+        H_matrices[y, x] = np.real(qp.matrix(get_H(num_qubits, k, h))) # Get Hamiltonian matrix
         phases[y, x] = get_phase(k, h)  # Get the respective phase given k and h
 
 # Vectorized diagonalization
@@ -211,13 +211,13 @@ def qcnn_ansatz(num_qubits, params):
             groups = wires.reshape(-1, 2)
         else:
             groups = wires[:-1].reshape(-1, 2)
-            qml.RY(params[index], wires=int(wires[-1]))
+            qp.RY(params[index], wires=int(wires[-1]))
             index += 1
 
         for group in groups:
-            qml.CNOT(wires=[int(group[0]), int(group[1])])
+            qp.CNOT(wires=[int(group[0]), int(group[1])])
             for wire in group:
-                qml.RY(params[index], wires=int(wire))
+                qp.RY(params[index], wires=int(wire))
                 index += 1
 
         return index
@@ -226,16 +226,16 @@ def qcnn_ansatz(num_qubits, params):
     def pool(wires, params, index):
         # Process wires in pairs: measure one and conditionally rotate the other.
         for wire_pool, wire in zip(wires[0::2], wires[1::2]):
-            m_0 = qml.measure(int(wire_pool))
-            qml.cond(m_0 == 0, qml.RX)(params[index],     wires=int(wire))
-            qml.cond(m_0 == 1, qml.RX)(params[index + 1], wires=int(wire))
+            m_0 = qp.measure(int(wire_pool))
+            qp.cond(m_0 == 0, qp.RX)(params[index],     wires=int(wire))
+            qp.cond(m_0 == 1, qp.RX)(params[index + 1], wires=int(wire))
             index += 2
             # Remove the measured wire from active wires.
             wires = np.delete(wires, np.where(wires == wire_pool))
 
         # If an odd wire remains, apply a RX rotation.
         if len(wires) % 2 != 0:
-            qml.RX(params[index], wires=int(wires[-1]))
+            qp.RX(params[index], wires=int(wires[-1]))
             index += 1
 
         return index, wires
@@ -246,7 +246,7 @@ def qcnn_ansatz(num_qubits, params):
 
     # Initial layer: apply RY to all wires.
     for wire in active_wires:
-        qml.RY(params[index], wires=int(wire))
+        qp.RY(params[index], wires=int(wire))
         index += 1
 
     # Repeatedly apply convolution and pooling until there are 2 unmeasured wires
@@ -255,32 +255,32 @@ def qcnn_ansatz(num_qubits, params):
         index = conv(active_wires, params, index)
         # Pooling
         index, active_wires = pool(active_wires, params, index)  
-        qml.Barrier()
+        qp.Barrier()
 
     # Final layer: apply RY to the remaining active wires.
     for wire in active_wires:
-        qml.RY(params[index], wires=int(wire))
+        qp.RY(params[index], wires=int(wire))
         index += 1
 
     return index, active_wires
 
 num_params, output_wires = qcnn_ansatz(num_qubits, [0]*100)
 
-@qml.qnode(qml.device("default.qubit", wires=num_qubits))
+@qp.qnode(qp.device("default.qubit", wires=num_qubits))
 def qcnn_circuit(params, state):
     """QNode with QCNN ansatz and probabilities of unmeasured qubits as output"""
     # Input ground state from diagonalization
-    qml.StatePrep(state, wires=range(num_qubits), normalize = True)
+    qp.StatePrep(state, wires=range(num_qubits), normalize = True)
     # QCNN
     _, output_wires = qcnn_ansatz(num_qubits, params)
 
-    return qml.probs([int(k) for k in output_wires])
+    return qp.probs([int(k) for k in output_wires])
 
 # Vectorized circuit through vmap
 vectorized_qcnn_circuit = vmap(jit(qcnn_circuit), in_axes=(None, 0))
 
 # Draw the QCNN Architecture
-fig,ax = qml.draw_mpl(qcnn_circuit)(np.arange(num_params), psis[0,0])
+fig,ax = qp.draw_mpl(qcnn_circuit)(np.arange(num_params), psis[0,0])
 
 ######################################################################
 # Training of the QCNN
@@ -454,11 +454,11 @@ def anomaly_ansatz(n_qubit, params):
         # Connect trash wires
         for i, wire in enumerate(trash):
             target = trash[(i + 1 + shift) % len(trash)]
-            qml.CZ(wires=[int(wire), int(target)])
+            qp.CZ(wires=[int(wire), int(target)])
         # Connect each nontrash wire to a trash wire
         for i, wire in enumerate(nontrash):
             trash_idx = (i + shift) % len(trash)
-            qml.CNOT(wires=[int(wire), int(trash[trash_idx])])
+            qp.CNOT(wires=[int(wire), int(trash[trash_idx])])
 
     depth = 2  # Number of repeated block layers
     n_trashwire = n_qubit // 2
@@ -471,39 +471,39 @@ def anomaly_ansatz(n_qubit, params):
 
     # Initial layer: apply RY rotations on all wires.
     for wire in np.arange(n_qubit):
-        qml.RY(params[index], wires=int(wire))
+        qp.RY(params[index], wires=int(wire))
         index += 1
 
     # Repeatedly apply blocks of entangling gates and additional rotations.
     for shift in range(depth):
         block(nontrash, trash, shift)
-        qml.Barrier()
+        qp.Barrier()
         # In the final layer, only apply rotations on trash wires.
         wires_to_rot = np.arange(n_qubit) if shift < depth - 1 else trash
         for wire in wires_to_rot:
-            qml.RY(params[index], wires=int(wire))
+            qp.RY(params[index], wires=int(wire))
             index += 1
 
     return index, list(trash)
 
 num_anomaly_params, trash_wires = qcnn_ansatz(num_qubits, [0]*100)
 
-@qml.qnode(qml.device("default.qubit", wires=num_qubits))
+@qp.qnode(qp.device("default.qubit", wires=num_qubits))
 def anomaly_circuit(params, state):
     """QNode with QAD ansatz and expectation values of the trash wires as output"""
     # Input ground state from diagonalization
-    qml.StatePrep(state, wires=range(num_qubits), normalize = True)
+    qp.StatePrep(state, wires=range(num_qubits), normalize = True)
     # Quantum Anomaly Circuit
     _, trash_wires = anomaly_ansatz(num_qubits, params)
 
-    return [qml.expval(qml.PauliZ(int(k))) for k in trash_wires]
+    return [qp.expval(qp.PauliZ(int(k))) for k in trash_wires]
 
 # Vectorize the circuit using vmap
 jitted_anomaly_circuit = jit(anomaly_circuit)
 vectorized_anomaly_circuit = vmap(jitted_anomaly_circuit, in_axes=(None, 0))
 
 # Draw the QAD Architecture
-fig,ax = qml.draw_mpl(anomaly_circuit)(np.arange(num_anomaly_params), psis[0,0])
+fig,ax = qp.draw_mpl(anomaly_circuit)(np.arange(num_anomaly_params), psis[0,0])
 
 ######################################################################
 # Training of the QAD

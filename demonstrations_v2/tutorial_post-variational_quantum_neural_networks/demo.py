@@ -83,7 +83,7 @@ Post-variational quantum neural networks
 # testing.
 #
 
-import pennylane as qml
+import pennylane as qp
 from pennylane import numpy as np
 import jax
 from jax import numpy as jnp
@@ -182,35 +182,35 @@ plt.show()
 def feature_map(features):
     # Apply Hadamard gates to all qubits to create an equal superposition state
     for i in range(len(features[0])):
-        qml.Hadamard(i)
+        qp.Hadamard(i)
 
     # Apply angle embeddings based on the feature values
     for i in range(len(features)):
         # For odd-indexed features, use Z-rotation in the angle embedding
         if i % 2:
-            qml.AngleEmbedding(features=features[i], wires=range(8), rotation="Z")
+            qp.AngleEmbedding(features=features[i], wires=range(8), rotation="Z")
         # For even-indexed features, use X-rotation in the angle embedding
         else:
-            qml.AngleEmbedding(features=features[i], wires=range(8), rotation="X")
+            qp.AngleEmbedding(features=features[i], wires=range(8), rotation="X")
 
 # Define the ansatz (quantum circuit ansatz) for parameterized quantum operations
 def ansatz(params):
     # Apply RY rotations with the first set of parameters
     for i in range(8):
-        qml.RY(params[i], wires=i)
+        qp.RY(params[i], wires=i)
 
     # Apply CNOT gates with adjacent qubits (cyclically connected) to create entanglement
     for i in range(8):
-        qml.CNOT(wires=[(i - 1) % 8, (i) % 8])
+        qp.CNOT(wires=[(i - 1) % 8, (i) % 8])
 
     # Apply RY rotations with the second set of parameters
     for i in range(8):
-        qml.RY(params[i + 8], wires=i)
+        qp.RY(params[i + 8], wires=i)
 
     # Apply CNOT gates with qubits in reverse order (cyclically connected)
     # to create additional entanglement
     for i in range(8):
-        qml.CNOT(wires=[(8 - 2 - i) % 8, (8 - i - 1) % 8])
+        qp.CNOT(wires=[(8 - 2 - i) % 8, (8 - i - 1) % 8])
 ######################################################################
 # Variational approach
 # ---------------------
@@ -222,14 +222,14 @@ def ansatz(params):
 # ansatz.
 #
 
-dev = qml.device("default.qubit", wires=8)
+dev = qp.device("default.qubit", wires=8)
 
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def circuit(params, features):
     feature_map(features)
     ansatz(params)
-    return qml.expval(qml.PauliZ(0))
+    return qp.expval(qp.PauliZ(0))
 
 
 def variational_classifier(weights, bias, x):
@@ -237,7 +237,7 @@ def variational_classifier(weights, bias, x):
 
 
 def square_loss(labels, predictions):
-    return np.mean((labels - qml.math.stack(predictions)) ** 2)
+    return np.mean((labels - qp.math.stack(predictions)) ** 2)
 
 
 def accuracy(labels, predictions):
@@ -355,10 +355,10 @@ for locality in range(1, 4):
     print(str(locality) + "-local: ")
 
     # Define a quantum device with 8 qubits using the default simulator.
-    dev = qml.device("default.qubit", wires=8)
+    dev = qp.device("default.qubit", wires=8)
 
     # Define a quantum node (qnode) with the quantum circuit that will be executed on the device.
-    @qml.qnode(dev)
+    @qp.qnode(dev)
     def circuit(features):
         # Generate all possible Pauli strings for the given locality.
         measurements = local_pauli_group(8, locality)
@@ -367,7 +367,7 @@ for locality in range(1, 4):
         feature_map(features)
 
         # Measure the expectation values of the generated Pauli operators.
-        return [qml.expval(qml.pauli.string_to_pauli_word(measurement)) for measurement in measurements]
+        return [qp.expval(qp.pauli.string_to_pauli_word(measurement)) for measurement in measurements]
 
     # Vectorize the quantum circuit function to apply it to multiple data points in parallel.
     vcircuit = jax.vmap(circuit)
@@ -498,14 +498,14 @@ def deriv_params(thetas: int, order: int):
 #
 
 n_wires = 8
-dev = qml.device("default.qubit", wires=n_wires)
+dev = qp.device("default.qubit", wires=n_wires)
 
 @jax.jit
-@qml.qnode(dev, interface="jax")
+@qp.qnode(dev, interface="jax")
 def circuit(features, params, n_wires=8):
     feature_map(features)
     ansatz(params)
-    return qml.expval(qml.PauliZ(0))
+    return qp.expval(qp.PauliZ(0))
 
 ######################################################################
 # For each image sample, we measure the outputs of each parameterised circuit for each feature, and
@@ -612,20 +612,20 @@ for order in range(1, 4):
         print("Locality: " + str(locality) + " Order: " + str(order))
 
         # Define a quantum device with 8 qubits using the default simulator.
-        dev = qml.device("default.qubit", wires=8)
+        dev = qp.device("default.qubit", wires=8)
 
         # Generate the parameter shifts required for the given derivative order and transpose them.
         params = deriv_params(16, order).T
 
         # Define a quantum node (qnode) with the quantum circuit that will be executed on the device.
-        @qml.qnode(dev)
+        @qp.qnode(dev)
         def circuit(features, params):
             # Generate the Pauli group for the given locality.
             measurements = local_pauli_group(8, locality)
             feature_map(features)
             ansatz(params)
             # Measure the expectation values of the generated Pauli operators.
-            return [qml.expval(qml.pauli.string_to_pauli_word(measurement)) for measurement in measurements]
+            return [qp.expval(qp.pauli.string_to_pauli_word(measurement)) for measurement in measurements]
 
         # Vectorize the quantum circuit function to apply it to multiple data points in parallel.
         vcircuit = jax.vmap(circuit)

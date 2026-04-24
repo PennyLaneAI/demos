@@ -15,7 +15,7 @@ Differentiable Hartree-Fock
 
 
 In this tutorial, you will learn how to use PennyLane's differentiable Hartree-Fock solver
-[#arrazola2021]_. The quantum chemistry module in PennyLane, :mod:`qml.qchem  <pennylane.qchem>`,
+[#arrazola2021]_. The quantum chemistry module in PennyLane, :mod:`qp.qchem  <pennylane.qchem>`,
 provides built-in methods for constructing
 atomic and molecular orbitals, building Fock matrices and solving the self-consistent field
 equations to obtain optimized orbitals which can be used to construct fully-differentiable
@@ -99,7 +99,7 @@ To get started, we need to define the atomic symbols and the nuclear coordinates
 For the hydrogen molecule we have
 """
 
-import pennylane as qml
+import pennylane as qp
 import numpy as np
 import jax
 import jax.numpy as jnp
@@ -117,18 +117,18 @@ geometry = jnp.array([[-0.672943567415407, 0.0, 0.0],
 # nuclear coordinates. To do that, we create a molecule object that stores all the molecular
 # parameters needed to perform a Hartree-Fock calculation.
 
-mol = qml.qchem.Molecule(symbols, geometry)
+mol = qp.qchem.Molecule(symbols, geometry)
 
 ##############################################################################
 # The Hartree-Fock energy can now be computed with the
 # :func:`~.pennylane.qchem.hf_energy` function which is a function transform
 
-qml.qchem.hf_energy(mol)()
+qp.qchem.hf_energy(mol)()
 
 ##############################################################################
 # We now compute the gradient of the energy with respect to the nuclear coordinates
 
-jax.grad(qml.qchem.hf_energy(mol), argnums=0)(geometry, mol.coeff, mol.alpha)
+jax.grad(qp.qchem.hf_energy(mol), argnums=0)(geometry, mol.coeff, mol.alpha)
 
 ##############################################################################
 # The obtained gradients are equal or very close to zero because the geometry we used here has been
@@ -180,13 +180,13 @@ S1.l
 # are those of the hydrogen atoms by default and are therefore treated as differentiable parameters
 # by PennyLane.
 
-qml.qchem.overlap_integral(S1, S2)()
+qp.qchem.overlap_integral(S1, S2)()
 
 ##############################################################################
 # You can verify that the overlap integral between two identical atomic orbitals is equal to one.
 # We can now compute the gradient of the overlap integral with respect to the orbital centres
 
-jax.grad(qml.qchem.overlap_integral(S1, S2))(geometry, mol.coeff, mol.alpha)
+jax.grad(qp.qchem.overlap_integral(S1, S2))(geometry, mol.coeff, mol.alpha)
 
 ##############################################################################
 # Can you explain why some of the computed gradients are zero?
@@ -227,7 +227,7 @@ plt.show()
 # plane.
 
 n = 30 # number of grid points along each axis
-qml.qchem.hf_energy(mol)()
+qp.qchem.hf_energy(mol)()
 mol.mo_coefficients = mol.mo_coefficients.T
 mo = mol.molecular_orbital(0)
 x, y = np.meshgrid(np.linspace(-2, 2, n),
@@ -251,7 +251,7 @@ plt.show()
 # over molecular orbitals that can be used to construct the molecular Hamiltonian with the
 # :func:`~.pennylane.qchem.molecular_hamiltonian` function.
 
-hamiltonian, qubits = qml.qchem.molecular_hamiltonian(mol)
+hamiltonian, qubits = qp.qchem.molecular_hamiltonian(mol)
 print(hamiltonian)
 
 ##############################################################################
@@ -263,15 +263,15 @@ print(hamiltonian)
 # to construct the exact ground state. The second set contains the nuclear coordinates of the
 # hydrogen atoms.
 
-dev = qml.device("default.qubit", wires=4)
+dev = qp.device("default.qubit", wires=4)
 def energy():
-    @qml.qnode(dev, interface="jax")
+    @qp.qnode(dev, interface="jax")
     def circuit(*args):
-        qml.BasisState(np.array([1, 1, 0, 0]), wires=range(4))
-        qml.DoubleExcitation(*args[0], wires=[0, 1, 2, 3])
-        mol = qml.qchem.Molecule(symbols, geometry, alpha=args[3], coeff=args[2])
-        H = qml.qchem.molecular_hamiltonian(mol, args=args[1:])[0]
-        return qml.expval(H)
+        qp.BasisState(np.array([1, 1, 0, 0]), wires=range(4))
+        qp.DoubleExcitation(*args[0], wires=[0, 1, 2, 3])
+        mol = qp.qchem.Molecule(symbols, geometry, alpha=args[3], coeff=args[2])
+        H = qp.qchem.molecular_hamiltonian(mol, args=args[1:])[0]
+        return qp.expval(H)
     return circuit
 
 ##############################################################################
@@ -288,7 +288,7 @@ geometry = jnp.array([[0.0, 0.02, -0.672943567415407],
                      [0.1, 0.0, 0.672943567415407]])
 
 for n in range(36):
-    mol = qml.qchem.Molecule(symbols, geometry)
+    mol = qp.qchem.Molecule(symbols, geometry)
     args = [circuit_param, geometry, mol.coeff, mol.alpha]
     # gradient for circuit parameters
     g_param = jax.grad(energy(), argnums = 0)(*args)
@@ -330,12 +330,12 @@ alpha = jnp.array([[3.42525091, 0.62391373, 0.1688554],
 # initial value of the circuit parameter
 circuit_param = jnp.array([0.0])
 
-mol = qml.qchem.Molecule(symbols, geometry, coeff=coeff, alpha=alpha)
+mol = qp.qchem.Molecule(symbols, geometry, coeff=coeff, alpha=alpha)
 args = [circuit_param, geometry, coeff, alpha]
 
 for n in range(36):
     args = [circuit_param, geometry, coeff, alpha]
-    mol = qml.qchem.Molecule(symbols, geometry, alpha=alpha, coeff=coeff)
+    mol = qp.qchem.Molecule(symbols, geometry, alpha=alpha, coeff=coeff)
 
     # gradient for circuit parameters
     g_param = jax.grad(energy(), argnums=[0, 1, 2, 3])(*args)[0]

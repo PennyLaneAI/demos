@@ -32,14 +32,14 @@ The first step is to import the required libraries and packages:
 
 import matplotlib.pyplot as plt
 from pennylane import numpy as np
-import pennylane as qml
+import pennylane as qp
 
 ##############################################################################
 # For this simple example, we consider the following single-qubit Hamiltonian: :math:`\sigma_x + \sigma_z.`
 #
 # We define the device:
 
-dev = qml.device("default.qubit", wires=1)
+dev = qp.device("default.qubit", wires=1)
 
 
 ##############################################################################
@@ -48,8 +48,8 @@ dev = qml.device("default.qubit", wires=1)
 
 
 def circuit(params, wires=0):
-    qml.RX(params[0], wires=wires)
-    qml.RY(params[1], wires=wires)
+    qp.RX(params[0], wires=wires)
+    qp.RY(params[1], wires=wires)
 
 
 ##############################################################################
@@ -58,14 +58,14 @@ def circuit(params, wires=0):
 # crucial component for optimizing with quantum natural gradients.
 
 coeffs = [1, 1]
-obs = [qml.PauliX(0), qml.PauliZ(0)]
+obs = [qp.PauliX(0), qp.PauliZ(0)]
 
-H = qml.Hamiltonian(coeffs, obs)
+H = qp.Hamiltonian(coeffs, obs)
 
-@qml.qnode(dev, interface="autograd")
+@qp.qnode(dev, interface="autograd")
 def cost_fn(params):
     circuit(params)
-    return qml.expval(H)
+    return qp.expval(H)
 
 ##############################################################################
 # To analyze the performance of quantum natural gradient on VQE calculations,
@@ -90,7 +90,7 @@ step_size = 0.01
 ##############################################################################
 # First, we carry out the VQE optimization using the standard gradient descent method.
 
-opt = qml.GradientDescentOptimizer(stepsize=step_size)
+opt = qp.GradientDescentOptimizer(stepsize=step_size)
 
 params = init_params
 
@@ -125,7 +125,7 @@ print("Number of iterations = ", n)
 ##############################################################################
 # We then repeat the process for the optimizer employing quantum natural gradients:
 
-opt = qml.QNGOptimizer(stepsize=step_size, approx="block-diag")
+opt = qp.QNGOptimizer(stepsize=step_size, approx="block-diag")
 
 params = init_params
 
@@ -259,7 +259,7 @@ plt.show()
 #
 # To construct our system Hamiltonian, we can use `PennyLane Datasets <https://pennylane.ai/datasets>`__ to obtain the dataset for a :math:`\text{H}_2` molecule.
 
-dataset = qml.data.load('qchem',molname="H2", bondlength=0.7)[0]
+dataset = qp.data.load('qchem',molname="H2", bondlength=0.7)[0]
 hamiltonian, qubits = dataset.hamiltonian, len(dataset.hamiltonian.wires)
 hamiltonian_coeffs, hamiltonian_ops = hamiltonian.terms()
 
@@ -272,18 +272,18 @@ print("Number of qubits = ", qubits)
 # but expand out the arbitrary single-qubit rotations to elementary
 # gates (RZ-RY-RZ).
 
-dev = qml.device("default.qubit", wires=qubits)
+dev = qp.device("default.qubit", wires=qubits)
 hf_state = np.array([1, 1, 0, 0], requires_grad=False)
 
 def ansatz(params, wires=[0, 1, 2, 3]):
-    qml.BasisState(hf_state, wires=wires)
+    qp.BasisState(hf_state, wires=wires)
     for i in wires:
-        qml.RZ(params[3 * i], wires=i)
-        qml.RY(params[3 * i + 1], wires=i)
-        qml.RZ(params[3 * i + 2], wires=i)
-    qml.CNOT(wires=[2, 3])
-    qml.CNOT(wires=[2, 0])
-    qml.CNOT(wires=[3, 1])
+        qp.RZ(params[3 * i], wires=i)
+        qp.RY(params[3 * i + 1], wires=i)
+        qp.RZ(params[3 * i + 2], wires=i)
+    qp.CNOT(wires=[2, 3])
+    qp.CNOT(wires=[2, 0])
+    qp.CNOT(wires=[3, 1])
 
 
 ##############################################################################
@@ -291,10 +291,10 @@ def ansatz(params, wires=[0, 1, 2, 3]):
 # the Hartree-Fock state of the hydrogen molecule described in the minimal basis.
 # Again, we define the cost function to be the following QNode that measures ``expval(H)``:
 
-@qml.qnode(dev, interface="autograd")
+@qp.qnode(dev, interface="autograd")
 def cost(params):
     ansatz(params)
-    return qml.expval(hamiltonian)
+    return qp.expval(hamiltonian)
 
 ##############################################################################
 # For this problem, we can compute the exact value of the
@@ -316,7 +316,7 @@ conv_tol = 1e-06
 # As was done with our previous VQE example, we run the standard gradient descent
 # optimizer.
 
-opt = qml.GradientDescentOptimizer(step_size)
+opt = qp.GradientDescentOptimizer(step_size)
 
 params = init_params
 
@@ -355,9 +355,9 @@ print("Final circuit parameters = \n", params)
 # Next, we run the optimizer employing quantum natural gradients. We also need to make the
 # Hamiltonian coefficients non-differentiable by setting ``requires_grad=False``.
 
-hamiltonian = qml.Hamiltonian(np.array(hamiltonian_coeffs, requires_grad=False), hamiltonian_ops)
+hamiltonian = qp.Hamiltonian(np.array(hamiltonian_coeffs, requires_grad=False), hamiltonian_ops)
 
-opt = qml.QNGOptimizer(step_size, lam=0.001, approx="block-diag")
+opt = qp.QNGOptimizer(step_size, lam=0.001, approx="block-diag")
 
 params = init_params
 prev_energy = cost(params)

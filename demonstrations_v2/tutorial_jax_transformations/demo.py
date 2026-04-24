@@ -43,28 +43,28 @@ for quantum machine learning (QML), and can be used directly with PennyLane.
 
 import jax
 import jax.numpy as jnp
-import pennylane as qml
+import pennylane as qp
 
 # Added to silence some warnings.
 jax.config.update("jax_enable_x64", True)
 
-dev = qml.device("default.qubit", wires=2)
+dev = qp.device("default.qubit", wires=2)
 
 ##############################################################################
 # Let's start with a simple example circuit that generates a two-qubit entangled state,
 # then evaluates the expectation value of the Pauli-Z operator on the first wire.
 
 
-@qml.qnode(dev, interface="jax")
+@qp.qnode(dev, interface="jax")
 def circuit(param):
     # These two gates represent our QML model.
-    qml.RX(param, wires=0)
-    qml.CNOT(wires=[0, 1])
+    qp.RX(param, wires=0)
+    qp.CNOT(wires=[0, 1])
 
     # The expval here will be the "cost function" we try to minimize.
     # Usually, this would be defined by the problem we want to solve,
     # but for this example we'll just use a single PauliZ.
-    return qml.expval(qml.PauliZ(0))
+    return qp.expval(qp.PauliZ(0))
 
 
 ##############################################################################
@@ -203,11 +203,11 @@ print("\n\nJit Example")
 print("-----------")
 
 
-@qml.qnode(dev, interface="jax")
+@qp.qnode(dev, interface="jax")
 def circuit(param):
-    qml.RX(param, wires=0)
-    qml.CNOT(wires=[0, 1])
-    return qml.expval(qml.PauliZ(0))
+    qp.RX(param, wires=0)
+    qp.CNOT(wires=[0, 1])
+    return qp.expval(qp.PauliZ(0))
 
 
 # Compiling your circuit with JAX is very easy, just add jax.jit!
@@ -271,15 +271,15 @@ print("----------")
 @jax.jit
 def circuit(key, param):
     # Notice how the device construction now happens within the jitted method.
-    dev = qml.device("default.qubit", wires=2, seed=key)
+    dev = qp.device("default.qubit", wires=2, seed=key)
 
     # Now we can create our qnode within the circuit function.
-    @qml.set_shots(10)
-    @qml.qnode(dev, interface="jax", diff_method=None)
+    @qp.set_shots(10)
+    @qp.qnode(dev, interface="jax", diff_method=None)
     def my_circuit():
-        qml.RX(param, wires=0)
-        qml.CNOT(wires=[0, 1])
-        return qml.sample(qml.PauliZ(0))
+        qp.RX(param, wires=0)
+        qp.CNOT(wires=[0, 1])
+        return qp.sample(qp.PauliZ(0))
 
     return my_circuit()
 

@@ -98,7 +98,7 @@ However, group theory is a huge hurdle for even some of the more seasoned quantu
 # Implementation of period finding in PennyLane
 # ----------------
 
-import pennylane as qml
+import pennylane as qp
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -194,7 +194,7 @@ def Oracle(f):
     # check that this is a unitary
     assert np.allclose(U @ np.linalg.inv(U), np.eye(2**7))
 
-    return qml.QubitUnitary(U, wires=range(7))
+    return qp.QubitUnitary(U, wires=range(7))
 
 
 #####################################################################
@@ -208,28 +208,28 @@ def Oracle(f):
 # reason we define a device with 2 shots. We also add some snapshots to the circuit that we will look at later.
 
 
-dev = qml.device("default.qubit", wires=7)
+dev = qp.device("default.qubit", wires=7)
 
 
-@qml.set_shots(2)
-@qml.qnode(dev)
+@qp.set_shots(2)
+@qp.qnode(dev)
 def circuit():
     """Circuit to implement the period finding algorithm."""
 
     for i in range(4):
-        qml.Hadamard(wires=i)
+        qp.Hadamard(wires=i)
 
-    qml.Snapshot("initial_state")
+    qp.Snapshot("initial_state")
 
     Oracle(f)
 
-    qml.Snapshot("loaded_function")
+    qp.Snapshot("loaded_function")
 
-    qml.QFT(wires=range(4))
+    qp.QFT(wires=range(4))
 
-    qml.Snapshot("fourier_spectrum")
+    qp.Snapshot("fourier_spectrum")
 
-    return qml.sample(wires=range(4))
+    return qp.sample(wires=range(4))
 
 
 # take two samples from the circuit
@@ -271,9 +271,9 @@ print(f"Hidden period: {result}")
 # look at the states that were prepared by making use of the snapshots we recorded during the
 # circuit simulation.
 
-dev = qml.device("default.qubit", wires=7)
-qnode = qml.set_shots(qml.QNode(circuit, dev), shots = 1)
-intermediate_states = qml.snapshots(circuit)()
+dev = qp.device("default.qubit", wires=7)
+qnode = qp.set_shots(qp.QNode(circuit, dev), shots = 1)
+intermediate_states = qp.snapshots(circuit)()
 
 #####################################################################
 # We can plot them as discrete functions, where the size of a point indicates the absolute value

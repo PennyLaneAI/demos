@@ -114,24 +114,24 @@ correct gradient value.
 Let's jump into some code and take a look at the parameter-shift rule in action.
 """
 
-import pennylane as qml
+import pennylane as qp
 import matplotlib.pyplot as plt
 from pennylane import numpy as np
 from scipy.linalg import expm
 
 np.random.seed(143)
 angles = np.linspace(0, 2 * np.pi, 50)
-dev = qml.device('default.qubit', wires=2)
+dev = qp.device('default.qubit', wires=2)
 
 
 ##############################################################################
 # We will consider a very simple circuit, containing just a single-qubit
 # rotation about the x-axis, followed by a measurement along the z-axis.
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def rotation_circuit(theta):
-    qml.RX(theta, wires=0)
-    return qml.expval(qml.PauliZ(0))
+    qp.RX(theta, wires=0)
+    return qp.expval(qp.PauliZ(0))
 
 
 ##############################################################################
@@ -143,7 +143,7 @@ def rotation_circuit(theta):
 #
 # .. note::
 #
-#     Check out the :mod:`qml.gradients <pennylane.gradients>` module
+#     Check out the :mod:`qp.gradients <pennylane.gradients>` module
 #     to explore all quantum gradient transforms provided by PennyLane.
 
 def param_shift(theta):
@@ -152,13 +152,13 @@ def param_shift(theta):
     r_minus = rotation_circuit(theta - np.pi / 2)
     return 0.5 * (r_plus - r_minus)
 
-gradient = qml.grad(rotation_circuit, argnums=0)
+gradient = qp.grad(rotation_circuit, argnums=0)
 
 expvals = [rotation_circuit(theta) for theta in angles]
 grad_vals = [gradient(theta) for theta in angles]
 param_shift_vals = [param_shift(theta) for theta in angles]
 plt.plot(angles, expvals, 'b', label="Expecation value")
-plt.plot(angles, grad_vals, 'r', label="qml.grad function")
+plt.plot(angles, grad_vals, 'r', label="qp.grad function")
 plt.plot(angles, param_shift_vals, 'mx', label="Parameter-shift rule")
 plt.xlabel("theta")
 plt.legend()
@@ -291,11 +291,11 @@ def Generator(theta1, theta2, theta3):
     return G
 
 # A simple example circuit that contains the cross-resonance gate
-@qml.qnode(dev)
+@qp.qnode(dev)
 def crossres_circuit(gate_pars):
     G = Generator(*gate_pars)
-    qml.QubitUnitary(expm(-1j * G), wires=[0, 1])
-    return qml.expval(qml.PauliZ(0))
+    qp.QubitUnitary(expm(-1j * G), wires=[0, 1])
+    return qp.expval(qp.PauliZ(0))
 
 # Subcircuit implementing the gates necessary for the
 # stochastic parameter-shift rule.
@@ -304,18 +304,18 @@ def crossres_circuit(gate_pars):
 def SPSRgates(gate_pars, s, sign):
     G = Generator(*gate_pars)
     # step a)
-    qml.QubitUnitary(expm(1j * (1 - s) * G), wires=[0, 1])
+    qp.QubitUnitary(expm(1j * (1 - s) * G), wires=[0, 1])
     # step b)
-    qml.QubitUnitary(expm(1j * sign * np.pi / 4 * X), wires=0)
+    qp.QubitUnitary(expm(1j * sign * np.pi / 4 * X), wires=0)
     # step c)
-    qml.QubitUnitary(expm(1j * s * G), wires=[0,1])
+    qp.QubitUnitary(expm(1j * s * G), wires=[0,1])
 
 # Function which can obtain all expectation vals needed
 # for the stochastic parameter-shift rule
-@qml.qnode(dev)
+@qp.qnode(dev)
 def spsr_circuit(gate_pars, s=None, sign=+1):
     SPSRgates(gate_pars, s, sign)
-    return qml.expval(qml.PauliZ(0))
+    return qp.expval(qp.PauliZ(0))
 
 # Fix the other parameters of the gate
 theta2, theta3 = -0.15, 1.6

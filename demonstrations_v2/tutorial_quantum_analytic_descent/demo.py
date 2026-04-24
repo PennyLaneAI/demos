@@ -88,7 +88,7 @@ Rotosolve/Rotoselect algorithms [#Rotosolve]_ for which there also is `a PennyLa
 Let's look at a toy example to illustrate this structure of the cost function.
 """
 
-import pennylane as qml
+import pennylane as qp
 from pennylane import numpy as np
 import matplotlib.pyplot as plt
 import warnings
@@ -98,14 +98,14 @@ warnings.filterwarnings("ignore")
 np.random.seed(0)
 
 # Create a device with 2 qubits.
-dev = qml.device("lightning.qubit", wires=2)
+dev = qp.device("lightning.qubit", wires=2)
 
 # Define the variational form V and observable M and combine them into a QNode.
-@qml.qnode(dev, diff_method="parameter-shift", max_diff=2)
+@qp.qnode(dev, diff_method="parameter-shift", max_diff=2)
 def circuit(parameters):
-    qml.RX(parameters[0], wires=0)
-    qml.RX(parameters[1], wires=1)
-    return qml.expval(qml.PauliZ(0) @ qml.PauliZ(1))
+    qp.RX(parameters[0], wires=0)
+    qp.RX(parameters[1], wires=1)
+    return qp.expval(qp.PauliZ(0) @ qp.PauliZ(1))
 
 
 ###############################################################################
@@ -308,9 +308,9 @@ def get_model_data(fun, params):
     E_A = fun(params)
 
     # E_B contains the gradient.
-    E_B = qml.grad(fun)(params)
+    E_B = qp.grad(fun)(params)
 
-    hessian = qml.jacobian(qml.grad(fun))(params)
+    hessian = qp.jacobian(qp.grad(fun))(params)
 
     # E_C contains the slightly adapted diagonal of the Hessian.
     E_C = np.diag(hessian) + E_A / 2
@@ -577,7 +577,7 @@ for iter_outer in range(N_iter_outer):
     if iter_outer == 0:
         print(f"True energy at initial parameters: {np.round(coeffs[0], decimals=4)}\n")
 
-    opt = qml.AdamOptimizer(0.05)
+    opt = qp.AdamOptimizer(0.05)
     # Recall that the parameters of the model are relative coordinates.
     # Correspondingly, we initialize at 0, not at parameters.
     relative_parameters = np.zeros_like(parameters, requires_grad=True)

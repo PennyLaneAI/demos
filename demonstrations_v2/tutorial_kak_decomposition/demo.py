@@ -99,17 +99,17 @@ Of course, we could also check the closure manually for this small example.
 """
 
 from itertools import product, combinations
-import pennylane as qml
+import pennylane as qp
 from pennylane import X, Y, Z
 import numpy as np
 
 su2 = [X(0), Y(0), Z(0)]
 print(f"su(2) is {len(su2)}-dimensional")
 
-all_hermitian = all(qml.equal(qml.adjoint(op).simplify(), op) for op in su2)
+all_hermitian = all(qp.equal(qp.adjoint(op).simplify(), op) for op in su2)
 print(f"The operators are all Hermitian: {all_hermitian}")
 
-su2_lie_closed = qml.lie_closure(su2)
+su2_lie_closed = qp.lie_closure(su2)
 print(f"The Lie closure of su(2) is {len(su2_lie_closed)}-dimensional.")
 
 traces = [op.pauli_rep.trace() for op in su2]
@@ -259,7 +259,7 @@ print(f"All operators are traceless: {np.allclose(traces, 0.)}")
 def inner_product(op1, op2):
     """Compute the trace inner product between two operators."""
     # Use two wires to reuse it in the second example on two qubits later on
-    return qml.math.trace(qml.matrix(qml.adjoint(op1) @ op2, wire_order=[0, 1]))
+    return qp.math.trace(qp.matrix(qp.adjoint(op1) @ op2, wire_order=[0, 1]))
 
 
 def is_orthogonal(op, basis):
@@ -354,9 +354,9 @@ def is_orthogonal(op, basis):
 
 def check_cartan_decomp(g, k, space_name):
     """Given an algebra g and an operator subspace k, verify that k is a subalgebra
-    and gives rise to a Cartan decomposition. Similar to qml.liealg.check_cartan_decomp"""
+    and gives rise to a Cartan decomposition. Similar to qp.liealg.check_cartan_decomp"""
     # Check Lie closure of k
-    k_lie_closure = qml.lie_closure(k)
+    k_lie_closure = qp.lie_closure(k)
     k_is_closed = len(k_lie_closure) == len(k)
     print(f"The Lie closure of k is as big as k itself: {k_is_closed}.")
 
@@ -368,7 +368,7 @@ def check_cartan_decomp(g, k, space_name):
     )
 
     # Check reductive property
-    k_p_commutators = [qml.commutator(k_op, p_op) for k_op, p_op in product(k, p)]
+    k_p_commutators = [qp.commutator(k_op, p_op) for k_op, p_op in product(k, p)]
     k_p_coms_in_p = all([is_orthogonal(com, k) for com in k_p_commutators])
 
     print(f"All commutators in [k, p] are in p (orthogonal to k): {k_p_coms_in_p}.")
@@ -376,7 +376,7 @@ def check_cartan_decomp(g, k, space_name):
         print(f"{space_name} is a reductive homogeneous space.")
 
     # Check symmetric property
-    p_p_commutators = [qml.commutator(*ops) for ops in combinations(p, r=2)]
+    p_p_commutators = [qp.commutator(*ops) for ops in combinations(p, r=2)]
     p_p_coms_in_k = all([is_orthogonal(com, p) for com in p_p_commutators])
 
     print(f"All commutators in [p, p] are in k (orthogonal to p): {p_p_coms_in_k}.")
@@ -481,11 +481,11 @@ a = p[1]
 # Rotate CSA by applying some vertical group element exp(i eta Z)
 eta = 0.6
 # The factor -2 compensates the convention -1/2 in the RZ gate
-a_prime = qml.RZ(-2 * eta, 0) @ a @ qml.RZ(2 * eta, 0)
+a_prime = qp.RZ(-2 * eta, 0) @ a @ qp.RZ(2 * eta, 0)
 
 # Expectation from our theoretical calculation
 a_prime_expected = np.cos(2 * eta) * a + np.sin(2 * eta) * p[0]
-a_primes_equal = np.allclose(qml.matrix(a_prime_expected), qml.matrix(a_prime))
+a_primes_equal = np.allclose(qp.matrix(a_prime_expected), qp.matrix(a_prime))
 print(f"The rotated CSAs match between numerics and theory: {a_primes_equal}")
 
 ######################################################################
@@ -607,15 +607,15 @@ print(f"The rotated CSAs match between numerics and theory: {a_primes_equal}")
 
 
 def theta_Z(x):
-    return qml.simplify(Z(0) @ x @ Z(0))
+    return qp.simplify(Z(0) @ x @ Z(0))
 
 
 theta_of_u1 = [theta_Z(x) for x in u1]
-u1_is_su2_plus = all(qml.equal(x, theta_of_x) for x, theta_of_x in zip(u1, theta_of_u1))
+u1_is_su2_plus = all(qp.equal(x, theta_of_x) for x, theta_of_x in zip(u1, theta_of_u1))
 print(f"U(1) is the +1 eigenspace: {u1_is_su2_plus}")
 
 theta_of_p = [theta_Z(x) for x in p]
-p_is_su2_minus = all(qml.equal(-x, theta_of_x) for x, theta_of_x in zip(p, theta_of_p))
+p_is_su2_minus = all(qp.equal(-x, theta_of_x) for x, theta_of_x in zip(p, theta_of_p))
 print(f"p is the -1 eigenspace: {p_is_su2_minus}")
 
 ######################################################################
@@ -625,14 +625,14 @@ print(f"p is the -1 eigenspace: {p_is_su2_minus}")
 
 
 def theta_Y(x):
-    return qml.simplify(Y(0) @ x @ Y(0))
+    return qp.simplify(Y(0) @ x @ Y(0))
 
 
 eigvals = []
 for x in su2:
-    if qml.equal(theta_Y(x), x):
+    if qp.equal(theta_Y(x), x):
         eigvals.append(1)
-    elif qml.equal(theta_Y(x), -x):
+    elif qp.equal(theta_Y(x), -x):
         eigvals.append(-1)
     else:
         raise ValueError("Operator not purely in either eigenspace.")
@@ -766,9 +766,9 @@ print(f"Under theta_Y, the operators\n{su2}\nhave the eigenvalues\n{eigvals}")
 # :math:`SU(2)` gate! PennyLane produces it with :func:`~.pennylane.ops.one_qubit_decomposition`:
 
 x = 0.2j * su2[0] - 0.1j * su2[1] - 0.2j * su2[2]
-G = qml.math.linalg.expm(qml.matrix(x))
+G = qp.math.linalg.expm(qp.matrix(x))
 print("Decomposition:")
-print(*qml.ops.one_qubit_decomposition(G, 0, rotations="ZYZ"), sep="\n")
+print(*qp.ops.one_qubit_decomposition(G, 0, rotations="ZYZ"), sep="\n")
 
 ######################################################################
 # If we pick a *horizontal gate*, i.e., a gate :math:`G\in\mathcal{P}`, we obtain the same
@@ -777,8 +777,8 @@ print(*qml.ops.one_qubit_decomposition(G, 0, rotations="ZYZ"), sep="\n")
 
 horizontal_x = -0.1j * p[0] - 4.1j * p[1]
 print(horizontal_x)
-P = qml.math.linalg.expm(qml.matrix(horizontal_x))
-decomp = qml.ops.one_qubit_decomposition(P, 0, rotations="ZYZ")
+P = qp.math.linalg.expm(qp.matrix(horizontal_x))
+decomp = qp.ops.one_qubit_decomposition(P, 0, rotations="ZYZ")
 print("Decomposition:", *decomp, sep="\n")
 angle_match = np.isclose((decomp[0].data[0] + decomp[-1].data[0]) % (2 * np.pi), 0.0)
 print(f"First and last rotation angle match up to sign and shift by 2kπ: {angle_match}")
@@ -807,7 +807,7 @@ print(f"First and last rotation angle match up to sign and shift by 2kπ: {angle
 # tool from earlier:
 
 # Define su(4). Skip first entry of Pauli group, which is the identity
-su4 = list(qml.pauli.pauli_group(2))[1:]
+su4 = list(qp.pauli.pauli_group(2))[1:]
 print(f"su(4) is {len(su4)}-dimensional")
 
 # Define subalgebra su(2) ⊕ su(2)
@@ -872,17 +872,17 @@ p = check_cartan_decomp(su4, su2_su2, space_name)
 
 def su4_gate(params):
     phi0, phi1, eta, theta0, theta1 = np.split(params, range(3, 15, 3))
-    qml.Rot(*phi0, wires=0)
-    qml.Rot(*phi1, wires=1)
-    qml.IsingXX(eta[0], wires=[0, 1])
-    qml.IsingYY(eta[1], wires=[0, 1])
-    qml.IsingZZ(eta[2], wires=[0, 1])
-    qml.Rot(*theta0, wires=0)
-    qml.Rot(*theta1, wires=1)
+    qp.Rot(*phi0, wires=0)
+    qp.Rot(*phi1, wires=1)
+    qp.IsingXX(eta[0], wires=[0, 1])
+    qp.IsingYY(eta[1], wires=[0, 1])
+    qp.IsingZZ(eta[2], wires=[0, 1])
+    qp.Rot(*theta0, wires=0)
+    qp.Rot(*theta1, wires=1)
 
 
 params = np.random.random(15)
-fig, ax = qml.draw_mpl(su4_gate, wire_order=[0, 1])(params)
+fig, ax = qp.draw_mpl(su4_gate, wire_order=[0, 1])(params)
 
 ######################################################################
 # And that's a wrap on our application of the KAK decomposition for two-qubit gates!

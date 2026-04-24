@@ -133,7 +133,7 @@ import torchvision
 from torchvision import datasets, transforms
 
 # Pennylane
-import pennylane as qml
+import pennylane as qp
 from pennylane import numpy as np
 
 torch.manual_seed(42)
@@ -167,7 +167,7 @@ start_time = time.time()    # Start of the computation timer
 ##############################################################################
 # We initialize a PennyLane device with a ``default.qubit`` backend.
 
-dev = qml.device("default.qubit", wires=n_qubits)
+dev = qp.device("default.qubit", wires=n_qubits)
 
 ##############################################################################
 # We configure PyTorch to use CUDA only if available. Otherwise the CPU is used.
@@ -274,14 +274,14 @@ def H_layer(nqubits):
     """Layer of single-qubit Hadamard gates.
     """
     for idx in range(nqubits):
-        qml.Hadamard(wires=idx)
+        qp.Hadamard(wires=idx)
 
 
 def RY_layer(w):
     """Layer of parametrized qubit rotations around the y axis.
     """
     for idx, element in enumerate(w):
-        qml.RY(element, wires=idx)
+        qp.RY(element, wires=idx)
 
 
 def entangling_layer(nqubits):
@@ -291,9 +291,9 @@ def entangling_layer(nqubits):
     # CNOT  CNOT  CNOT  CNOT...  CNOT
     #   CNOT  CNOT  CNOT...  CNOT
     for i in range(0, nqubits - 1, 2):  # Loop over even indices: i=0,2,...N-2
-        qml.CNOT(wires=[i, i + 1])
+        qp.CNOT(wires=[i, i + 1])
     for i in range(1, nqubits - 1, 2):  # Loop over odd indices:  i=1,3,...N-3
-        qml.CNOT(wires=[i, i + 1])
+        qp.CNOT(wires=[i, i + 1])
 
 
 ##############################################################################
@@ -313,7 +313,7 @@ def entangling_layer(nqubits):
 #   additional post-processing.
 
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def quantum_net(q_input_features, q_weights_flat):
     """
     The variational quantum circuit.
@@ -334,7 +334,7 @@ def quantum_net(q_input_features, q_weights_flat):
         RY_layer(q_weights[k])
 
     # Expectation values in the Z basis
-    exp_vals = [qml.expval(qml.PauliZ(position)) for position in range(n_qubits)]
+    exp_vals = [qp.expval(qp.PauliZ(position)) for position in range(n_qubits)]
     return tuple(exp_vals)
 
 

@@ -218,7 +218,7 @@ wf_hf = import_state(hf_primer)
 # of VQE for obtaining the ground-state energy of a molecule. As a first step, create our 
 # linear :math:`\text{H}_3^+` molecule, a device, and a simple VQE circuit with single and double excitations:
 
-import pennylane as qml
+import pennylane as qp
 from pennylane import qchem
 from jax import numpy as jnp
 
@@ -229,7 +229,7 @@ molecule = qchem.Molecule(symbols, geometry, charge=1)
 
 H2mol, qubits = qchem.molecular_hamiltonian(molecule)
 wires = list(range(qubits))
-dev = qml.device("default.qubit", wires=qubits)
+dev = qp.device("default.qubit", wires=qubits)
 
 # create all possible excitations in H3+
 singles, doubles = qchem.excitations(2, qubits)
@@ -239,15 +239,15 @@ excitations = singles + doubles
 # Now let's run VQE with the Hartree-Fock initial state. We first build the VQE circuit:
 
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def circuit_VQE(theta, initial_state):
-    qml.StatePrep(initial_state, wires=wires)
+    qp.StatePrep(initial_state, wires=wires)
     for i, excitation in enumerate(excitations):
         if len(excitation) == 4:
-            qml.DoubleExcitation(theta[i], wires=excitation)
+            qp.DoubleExcitation(theta[i], wires=excitation)
         else:
-            qml.SingleExcitation(theta[i], wires=excitation)
-    return qml.expval(H2mol)
+            qp.SingleExcitation(theta[i], wires=excitation)
+    return qp.expval(H2mol)
 
 
 def cost_fn(param):

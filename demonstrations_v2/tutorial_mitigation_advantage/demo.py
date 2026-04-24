@@ -79,7 +79,7 @@ single qubit Pauli gates :math:`\{X, Y, Z\}` with probability :math:`p/3` after 
 at the classical mixtures introduced by the Kraus operators of the noise channel. That is why we need to use the mixed state simulator.
 For more information see e.g. our :doc:`demo on simulating noisy circuits <demos/tutorial_noisy_circuits>`.
 """
-import pennylane as qml
+import pennylane as qp
 import jax
 import jax.numpy as jnp
 import matplotlib.pyplot as plt
@@ -88,12 +88,12 @@ jax.config.update('jax_platform_name', 'cpu')
 
 n_wires = 9
 # Describe noise
-noise_gate = qml.DepolarizingChannel
+noise_gate = qp.DepolarizingChannel
 p = 0.005
 
 # Load devices
-dev_ideal = qml.device("default.mixed", wires=n_wires)
-dev_noisy = qml.noise.insert(dev_ideal, noise_gate, p, position="all")
+dev_ideal = qp.device("default.mixed", wires=n_wires)
+dev_noisy = qp.noise.insert(dev_ideal, noise_gate, p, position="all")
 
 # 3x3 grid with nearest neighbors
 connections = [(0, 1), (1, 2),
@@ -103,16 +103,16 @@ connections = [(0, 1), (1, 2),
                (1, 4), (4, 7),
                (2, 5), (5, 8)]
 
-def time_evolution(theta_h, n_layers = 10, obs = qml.PauliZ(4)):
+def time_evolution(theta_h, n_layers = 10, obs = qp.PauliZ(4)):
     for _ in range(n_layers):
         for i, j in connections:
-            qml.IsingZZ(-jnp.pi/2, wires=(i, j))
+            qp.IsingZZ(-jnp.pi/2, wires=(i, j))
         for i in range(n_wires):
-            qml.RX(theta_h, wires=i)
-    return qml.expval(obs)
+            qp.RX(theta_h, wires=i)
+    return qp.expval(obs)
 
-qnode_ideal = qml.QNode(time_evolution, dev_ideal, interface="jax")
-qnode_noisy = qml.QNode(time_evolution, dev_noisy, interface="jax")
+qnode_ideal = qp.QNode(time_evolution, dev_ideal, interface="jax")
+qnode_noisy = qp.QNode(time_evolution, dev_noisy, interface="jax")
 
 ##############################################################################
 # We can now simulate the final expectation value with and without noise. Note that the ``IsingZZ`` gate is not natively
@@ -167,11 +167,11 @@ plt.show()
 # our model by an appropriate gain factor. Here, :math:`G=(1, 1.2, 1.6)` in accordance with [#ibm]_. In order to do this in PennyLane, we simply
 # set up two new noisy devices with the appropriately attenuated noise parameters.
 
-dev_noisy1 = qml.noise.insert(dev_ideal, noise_gate, p*1.2, position="all")
-dev_noisy2 = qml.noise.insert(dev_ideal, noise_gate, p*1.6, position="all")
+dev_noisy1 = qp.noise.insert(dev_ideal, noise_gate, p*1.2, position="all")
+dev_noisy2 = qp.noise.insert(dev_ideal, noise_gate, p*1.6, position="all")
 
-qnode_noisy1 = qml.QNode(time_evolution, dev_noisy1, interface="jax")
-qnode_noisy2 = qml.QNode(time_evolution, dev_noisy2, interface="jax")
+qnode_noisy1 = qp.QNode(time_evolution, dev_noisy1, interface="jax")
+qnode_noisy2 = qp.QNode(time_evolution, dev_noisy2, interface="jax")
 
 res_noisy1 = jax.vmap(qnode_noisy1)(thetas)
 res_noisy2 = jax.vmap(qnode_noisy2)(thetas)
@@ -197,7 +197,7 @@ plt.show()
 # We now repeat this procedure for all values of :math:`\theta_h` and see how the results are much improved.
 # We can use :func:`~pennylane.noise.richardson_extrapolate` that performs a polynomial fit of a degree matching the input data size.
 
-res_mitigated = [qml.noise.richardson_extrapolate(Gs, [res_noisy[i], res_noisy1[i], res_noisy2[i]]) for i in range(len(res_ideal))]
+res_mitigated = [qp.noise.richardson_extrapolate(Gs, [res_noisy[i], res_noisy1[i], res_noisy2[i]]) for i in range(len(res_ideal))]
 
 plt.plot(thetas, res_ideal, label="exact")
 plt.plot(thetas, res_mitigated, label="mitigated")

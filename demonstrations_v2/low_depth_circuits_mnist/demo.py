@@ -121,13 +121,13 @@ def FRQI_decoding(states):
 #
 # The dataset configuration sets the name as ``'low-depth-mnist'`` and constructs the dataset path as
 # ``datasets/low-depth-mnist/low-depth-mnist.h5``. For dataset loading, if the file exists locally, it
-# is loaded using ``qml.data.Dataset.open``. Otherwise, the dataset is downloaded from the PennyLane
-# data repository via ``qml.data.load``, note that the dataset size is approximately 1 GB.
+# is loaded using ``qp.data.Dataset.open``. Otherwise, the dataset is downloaded from the PennyLane
+# data repository via ``qp.data.load``, note that the dataset size is approximately 1 GB.
 #
 
 import os
 import jax
-import pennylane as qml
+import pennylane as qp
 
 # JAX supports the single-precision numbers by default.
 # The following line enables double-precision.
@@ -142,10 +142,10 @@ dataset_path = f"datasets/{DATASET_NAME}.h5"
 
 # Load the dataset if already downloaded
 if os.path.exists(dataset_path):
-    dataset_params = qml.data.Dataset.open(dataset_path)
+    dataset_params = qp.data.Dataset.open(dataset_path)
 else:
     # Download the dataset (~ 1 GB)
-    [dataset_params] = qml.data.load(DATASET_NAME)
+    [dataset_params] = qp.data.load(DATASET_NAME)
 
 ######################################################################
 # In the following cell, we define the ``get_circuit`` function that creates a quantum circuit based
@@ -172,22 +172,22 @@ def get_circuit(circuit_layout):
     :return circuit: A JAX-compiled quantum circuit function that takes parameters and
     returns the quantum state.
     """
-    dev = qml.device("default.qubit", wires=11)
+    dev = qp.device("default.qubit", wires=11)
 
     @jax.jit
-    @qml.qnode(dev)
+    @qp.qnode(dev)
     def circuit(params):
         counter = 0
         for gate, wire in circuit_layout:
 
             if gate == "RY":
-                qml.RY(params[counter], wire)
+                qp.RY(params[counter], wire)
                 counter += 1
 
             elif gate == "CNOT":
-                qml.CNOT(wire)
+                qp.CNOT(wire)
 
-        return qml.state()
+        return qp.state()
 
     return circuit
 
@@ -327,32 +327,32 @@ N_PARAMS_NETWORK = N_PARAMS_FIRST_LAYER + (N_QUBITS - 1) * DEPTH * N_PARAMS_BLOC
 key = jax.random.PRNGKey(SEED)
 
 # Define the model and training functions
-dev = qml.device("default.qubit", wires=N_QUBITS)
+dev = qp.device("default.qubit", wires=N_QUBITS)
 
 
 @jax.jit
-@qml.qnode(dev, interface="jax")
+@qp.qnode(dev, interface="jax")
 def circuit(network_params, state):
     p = iter(network_params)
-    qml.StatePrep(state, wires=range(N_QUBITS))
+    qp.StatePrep(state, wires=range(N_QUBITS))
 
     # First two layers of local RY rotations
     for w in range(N_QUBITS):
-        qml.RY(next(p), wires=w)
+        qp.RY(next(p), wires=w)
 
     # SO(4) building blocks
     for _ in range(DEPTH):
         for j in range(N_QUBITS - 1):
-            qml.CNOT(wires=[j, j + 1])
-            qml.RY(next(p), wires=j)
-            qml.RY(next(p), wires=j + 1)
-            qml.CNOT(wires=[j, j + 1])
-            qml.RY(next(p), wires=j)
-            qml.RY(next(p), wires=j + 1)
+            qp.CNOT(wires=[j, j + 1])
+            qp.RY(next(p), wires=j)
+            qp.RY(next(p), wires=j + 1)
+            qp.CNOT(wires=[j, j + 1])
+            qp.RY(next(p), wires=j)
+            qp.RY(next(p), wires=j + 1)
 
     # Probability of computational basis states of the last qubit
     # Can be extended to more qubits for multiclass case
-    return qml.probs(N_QUBITS - 1)
+    return qp.probs(N_QUBITS - 1)
 
 
 model = jax.vmap(circuit, in_axes=(None, 0))
