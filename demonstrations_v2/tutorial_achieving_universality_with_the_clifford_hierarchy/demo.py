@@ -102,7 +102,7 @@ With the Clifford hierarchy, we can fault-tolerantly implement a :math:`\mathcal
 
   Figure 1: *A universal gate teleportation circuit applies a third level gate to the state using only gates in the second level and measurements, given a magic state (left of the dashed line).*
   
-So, as shown in Figure 1, suppose we apply a gate :math:`U\in \mathcal{C}_3` on Bob’s half of the Bell state pair on the bottom, and proceed with :math:`|\psi\rangle` teleportation as usual. We won't worry about how Bob can apply $U$ but Alice can't just yet. Suffice to say, it's a :doc:`magic state <demos/tutorial_magic_states>`. 🪄
+So, as shown in :ref:`Figure 1 <fig-1-universal-gate-teleportation>`, suppose we apply a gate :math:`U\in \mathcal{C}_3` on Bob’s half of the Bell state pair on the bottom, and proceed with :math:`|\psi\rangle` teleportation as usual. We won't worry about how Bob can apply $U$ but Alice can't just yet. Suffice to say, it's a :doc:`magic state <demos/tutorial_magic_states>`. 🪄
 
 Upon measuring the top two qubits, like in standard state teleportation, a Pauli error $P$ occurs on the bottom qubit. There is an equal chance of :math:`P \in \{X,Y,Z,I\}` occurring. For state teleportation, applying :math:`P^{\dagger}=P` removes that error. However, the difference here with gate teleportation is that Bob applied $U$ already. So, after measurement, the bottom qubit becomes :math:`UP|\psi\rangle`. Applying :math:`P^{\dagger}` does not remove the Pauli error. 
 
