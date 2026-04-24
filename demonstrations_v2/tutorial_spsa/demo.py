@@ -163,25 +163,25 @@ the pieces of an example optimization to come together:
 
 """
 
-import pennylane as qml
+import pennylane as qp
 from pennylane import numpy as np
 
 num_wires = 4
 num_layers = 5
 
-device = qml.device("qiskit.aer", wires=num_wires)
+device = qp.device("qiskit.aer", wires=num_wires)
 
-ansatz = qml.StronglyEntanglingLayers
+ansatz = qp.StronglyEntanglingLayers
 
-all_pauliz_tensor_prod = qml.prod(*[qml.PauliZ(i) for i in range(num_wires)])
+all_pauliz_tensor_prod = qp.prod(*[qp.PauliZ(i) for i in range(num_wires)])
 
 
 def circuit(param):
     ansatz(param, wires=list(range(num_wires)))
-    return qml.expval(all_pauliz_tensor_prod)
+    return qp.expval(all_pauliz_tensor_prod)
 
 
-cost_function = qml.set_shots(qml.QNode(circuit, device), shots = 1000)
+cost_function = qp.set_shots(qp.QNode(circuit, device), shots = 1000)
 
 np.random.seed(50)
 
@@ -262,7 +262,7 @@ def run_optimizer(opt, cost_function, init_param, num_steps, interval, execs_per
 # <https://docs.pennylane.ai/en/stable/code/api/pennylane.SPSAOptimizer.html>`__
 
 num_steps_spsa = 200
-opt = qml.SPSAOptimizer(maxiter=num_steps_spsa, c=0.15, a=0.2)
+opt = qp.SPSAOptimizer(maxiter=num_steps_spsa, c=0.15, a=0.2)
 # We spend 2 circuit evaluations per step:
 execs_per_step = 2
 cost_history_spsa, exec_history_spsa = run_optimizer(
@@ -275,7 +275,7 @@ cost_history_spsa, exec_history_spsa = run_optimizer(
 # convergence.
 
 num_steps_grad = 15
-opt = qml.GradientDescentOptimizer(stepsize=0.3)
+opt = qp.GradientDescentOptimizer(stepsize=0.3)
 # We spend 2 circuit evaluations per parameter per step:
 execs_per_step = 2 * np.prod(param_shape)
 cost_history_grad, exec_history_grad = run_optimizer(
@@ -344,21 +344,21 @@ coordinates = np.array([[0.0, 0.0, -0.6614], [0.0, 0.0, 0.6614]])
 molecule = qchem.Molecule(symbols, coordinates)
 h2_ham, num_qubits = qchem.molecular_hamiltonian(molecule)
 h2_ham_coeffs, h2_ham_ops = h2_ham.terms()
-h2_ham = qml.Hamiltonian(qml.math.real(h2_ham_coeffs), h2_ham_ops)
+h2_ham = qp.Hamiltonian(qp.math.real(h2_ham_coeffs), h2_ham_ops)
 
 true_energy = -1.136189454088
 
 
 # Variational ansatz for H_2 - see Intro VQE demo for more details
 def ansatz(param, wires):
-    qml.BasisState(np.array([1, 1, 0, 0]), wires=wires)
+    qp.BasisState(np.array([1, 1, 0, 0]), wires=wires)
     for i in wires:
-        qml.Rot(*param[0, i], wires=i)
-    qml.CNOT(wires=[2, 3])
-    qml.CNOT(wires=[2, 0])
-    qml.CNOT(wires=[3, 1])
+        qp.Rot(*param[0, i], wires=i)
+    qp.CNOT(wires=[2, 3])
+    qp.CNOT(wires=[2, 0])
+    qp.CNOT(wires=[3, 1])
     for i in wires:
-        qml.Rot(*param[1, i], wires=i)
+        qp.Rot(*param[1, i], wires=i)
 
 
 ##############################################################################
@@ -376,24 +376,24 @@ def ansatz(param, wires):
 # The above line only needs to be run once.
 # List the providers to pick an available backend:
 # IBMProvider().backends()  # List all available backends
-# dev = qml.device("qiskit.ibmq", wires=num_qubits, backend="ibmq_lima")
+# dev = qp.device("qiskit.ibmq", wires=num_qubits, backend="ibmq_lima")
 
 from qiskit_ibm_runtime.fake_provider import FakeLimaV2 as FakeLima
 from qiskit_aer import noise
 
 # Load a fake backed to create a noise model, and create a device using that model
 noise_model = noise.NoiseModel.from_backend(FakeLima())
-noisy_device = qml.device(
+noisy_device = qp.device(
     "qiskit.aer", wires=num_qubits, noise_model=noise_model
 )
 
 
 def circuit(param):
     ansatz(param, range(num_qubits))
-    return qml.expval(h2_ham)
+    return qp.expval(h2_ham)
 
 
-cost_function = qml.set_shots(qml.QNode(circuit, noisy_device), shots = 1000)
+cost_function = qp.set_shots(qp.QNode(circuit, noisy_device), shots = 1000)
 
 # This random seed was used in the original VQE demo and is known to allow the
 # gradient descent algorithm to converge to the global minimum.
@@ -402,7 +402,7 @@ param_shape = (2, num_qubits, 3)
 init_param = np.random.normal(0, np.pi, param_shape, requires_grad=True)
 
 # Initialize the optimizer - optimal step size was found through a grid search
-opt = qml.GradientDescentOptimizer(stepsize=2.2)
+opt = qp.GradientDescentOptimizer(stepsize=2.2)
 
 # We spend 2 * 15 circuit evaluations per parameter per step, as there are
 # 15 Hamiltonian terms
@@ -458,7 +458,7 @@ plt.show()
 # executions.
 
 num_steps_spsa = 160
-opt = qml.SPSAOptimizer(maxiter=num_steps_spsa, c=0.3, a=1.5)
+opt = qp.SPSAOptimizer(maxiter=num_steps_spsa, c=0.3, a=1.5)
 
 # We spend 2 * 15 circuit evaluations per step, as there are 15 Hamiltonian terms
 execs_per_step = 2 * 15

@@ -52,7 +52,7 @@ quantum circuit, but with shifted parameter values (hence the name, parameter-sh
 
 Let's have a go implementing the parameter-shift rule manually in PennyLane.
 """
-import pennylane as qml
+import pennylane as qp
 from jax import numpy as jnp
 from matplotlib import pyplot as plt
 import jax
@@ -65,7 +65,7 @@ key = jax.random.PRNGKey(42)
 
 
 # create a device to execute the circuit on
-dev = qml.device("default.qubit", wires=3)
+dev = qp.device("default.qubit", wires=3)
 
 
 def CNOT_ring(wires):
@@ -73,23 +73,23 @@ def CNOT_ring(wires):
     n_wires = len(wires)
 
     for w in wires:
-        qml.CNOT([w % n_wires, (w + 1) % n_wires])
+        qp.CNOT([w % n_wires, (w + 1) % n_wires])
 
 
-@qml.qnode(dev, diff_method="parameter-shift")
+@qp.qnode(dev, diff_method="parameter-shift")
 def circuit(params):
-    qml.RX(params[0], wires=0)
-    qml.RY(params[1], wires=1)
-    qml.RZ(params[2], wires=2)
+    qp.RX(params[0], wires=0)
+    qp.RY(params[1], wires=1)
+    qp.RZ(params[2], wires=2)
 
     CNOT_ring(wires=[0, 1, 2])
 
-    qml.RX(params[3], wires=0)
-    qml.RY(params[4], wires=1)
-    qml.RZ(params[5], wires=2)
+    qp.RX(params[3], wires=0)
+    qp.RY(params[4], wires=1)
+    qp.RZ(params[5], wires=2)
 
     CNOT_ring(wires=[0, 1, 2])
-    return qml.expval(qml.PauliY(0) @ qml.PauliZ(2))
+    return qp.expval(qp.PauliY(0) @ qp.PauliZ(2))
 
 
 ##############################################################################
@@ -105,7 +105,7 @@ print("Expectation value:", circuit(params))
 ##############################################################################
 # We can also draw the executed quantum circuit:
 
-fig, ax = qml.draw_mpl(circuit, decimals=2)(params)
+fig, ax = qp.draw_mpl(circuit, decimals=2)(params)
 plt.show()
 
 
@@ -152,9 +152,9 @@ print(grad_function(params)[0])
 
 ##############################################################################
 # Alternatively, we can directly compute quantum gradients of QNodes using
-# PennyLane's built in :mod:`qml.gradients <pennylane.gradients>` module:
+# PennyLane's built in :mod:`qp.gradients <pennylane.gradients>` module:
 
-print(jnp.stack(qml.gradients.param_shift(circuit)(params)))
+print(jnp.stack(qp.gradients.param_shift(circuit)(params)))
 
 ##############################################################################
 # If you count the number of quantum evaluations, you will notice that we had to evaluate the circuit
@@ -176,15 +176,15 @@ print(jnp.stack(qml.gradients.param_shift(circuit)(params)))
 # We'll make use of the :class:`~pennylane.StronglyEntanglingLayers` template
 # to make a more complicated QNode.
 
-dev = qml.device("default.qubit", wires=4)
+dev = qp.device("default.qubit", wires=4)
 
-@qml.qnode(dev, diff_method="parameter-shift")
+@qp.qnode(dev, diff_method="parameter-shift")
 def circuit(params):
-    qml.StronglyEntanglingLayers(params, wires=[0, 1, 2, 3])
-    return qml.expval(qml.PauliZ(0) @ qml.PauliZ(1) @ qml.PauliZ(2) @ qml.PauliZ(3))
+    qp.StronglyEntanglingLayers(params, wires=[0, 1, 2, 3])
+    return qp.expval(qp.PauliZ(0) @ qp.PauliZ(1) @ qp.PauliZ(2) @ qp.PauliZ(3))
 
 # initialize circuit parameters
-param_shape = qml.StronglyEntanglingLayers.shape(n_wires=4, n_layers=15)
+param_shape = qp.StronglyEntanglingLayers.shape(n_wires=4, n_layers=15)
 params = jax.random.normal(key, param_shape) * 0.1
 
 print(params.size)
@@ -268,7 +268,7 @@ print(2 * forward_time * params.size)
 # JAX and Autograd interfaces respectively, supports backpropagation.
 # In this demo, we will use the JAX interface.
 
-dev = qml.device("default.qubit", wires=4)
+dev = qp.device("default.qubit", wires=4)
 
 ##############################################################################
 # When defining the QNode, we specify ``diff_method="backprop"`` to ensure that
@@ -276,13 +276,13 @@ dev = qml.device("default.qubit", wires=4)
 # mode* for the ``default.qubit`` device.
 
 
-@qml.qnode(dev, diff_method="backprop")
+@qp.qnode(dev, diff_method="backprop")
 def circuit(params):
-    qml.StronglyEntanglingLayers(params, wires=[0, 1, 2, 3])
-    return qml.expval(qml.PauliZ(0) @ qml.PauliZ(1) @ qml.PauliZ(2) @ qml.PauliZ(3))
+    qp.StronglyEntanglingLayers(params, wires=[0, 1, 2, 3])
+    return qp.expval(qp.PauliZ(0) @ qp.PauliZ(1) @ qp.PauliZ(2) @ qp.PauliZ(3))
 
 # initialize circuit parameters
-param_shape = qml.StronglyEntanglingLayers.shape(n_wires=4, n_layers=15)
+param_shape = qp.StronglyEntanglingLayers.shape(n_wires=4, n_layers=15)
 params = jax.random.normal(key, param_shape) * 0.1
 
 print(circuit(params))
@@ -320,11 +320,11 @@ print(f"Backward pass (best of {reps}): {backward_time} sec per loop")
 # in the variational circuit increases, by timing both the forward pass and the gradient
 # computation as the number of layers is allowed to increase.
 
-dev = qml.device("default.qubit", wires=4)
+dev = qp.device("default.qubit", wires=4)
 
 def circuit(params):
-    qml.StronglyEntanglingLayers(params, wires=[0, 1, 2, 3])
-    return qml.expval(qml.PauliZ(0) @ qml.PauliZ(1) @ qml.PauliZ(2) @ qml.PauliZ(3))
+    qp.StronglyEntanglingLayers(params, wires=[0, 1, 2, 3])
+    return qp.expval(qp.PauliZ(0) @ qp.PauliZ(1) @ qp.PauliZ(2) @ qp.PauliZ(3))
 
 ##############################################################################
 # We'll continue to use the same ansatz as before, but to reduce the time taken
@@ -341,14 +341,14 @@ gradient_shift = []
 forward_backprop = []
 gradient_backprop = []
 
-qnode_shift = jax.jit(qml.QNode(circuit, dev, diff_method="parameter-shift"))
-qnode_backprop = jax.jit(qml.QNode(circuit, dev, diff_method="backprop"))
+qnode_shift = jax.jit(qp.QNode(circuit, dev, diff_method="parameter-shift"))
+qnode_backprop = jax.jit(qp.QNode(circuit, dev, diff_method="backprop"))
 
-grad_qnode_shift = jax.jit(jax.grad(qml.QNode(circuit, dev, diff_method="parameter-shift")))
-grad_qnode_backprop = jax.jit(jax.grad(qml.QNode(circuit, dev, diff_method="backprop")))
+grad_qnode_shift = jax.jit(jax.grad(qp.QNode(circuit, dev, diff_method="parameter-shift")))
+grad_qnode_backprop = jax.jit(jax.grad(qp.QNode(circuit, dev, diff_method="backprop")))
 
 for depth in range(0, 21):
-    param_shape = qml.StronglyEntanglingLayers.shape(n_wires=4, n_layers=depth)
+    param_shape = qp.StronglyEntanglingLayers.shape(n_wires=4, n_layers=depth)
     params = jax.random.normal(key, param_shape) * 0.1
 
     num_params = params.size

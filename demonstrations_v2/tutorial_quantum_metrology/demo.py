@@ -119,7 +119,7 @@ where :math:`J_{kl} = \frac{\partial f_k}{\partial \phi_l}` is the Jacobian of :
 We now turn to the actual implementation of the scheme.
 """
 
-import pennylane as qml
+import pennylane as qp
 from pennylane import numpy as np
 
 
@@ -132,7 +132,7 @@ from pennylane import numpy as np
 # We will choose the ``cirq.mixedsimulator`` device from the
 # `Pennylane-Cirq <https://pennylane-cirq.readthedocs.io/en/latest/>`_
 # plugin for this tutorial.
-dev = qml.device("cirq.mixedsimulator", wires=3)
+dev = qp.device("cirq.mixedsimulator", wires=3)
 
 ##############################################################################
 # Next, we model the parameter encoding. The phase shifts are recreated using
@@ -143,7 +143,7 @@ from pennylane_cirq import ops as cirq_ops
 
 def encoding(phi, gamma):
     for i in range(3):
-        qml.RZ(phi[i], wires=[i])
+        qp.RZ(phi[i], wires=[i])
         cirq_ops.PhaseDamp(gamma, wires=[i])
 
 
@@ -156,7 +156,7 @@ def encoding(phi, gamma):
 
 
 def ansatz(weights):
-    qml.ArbitraryStatePreparation(weights, wires=[0, 1, 2])
+    qp.ArbitraryStatePreparation(weights, wires=[0, 1, 2])
 
 
 NUM_ANSATZ_PARAMETERS = 14
@@ -164,7 +164,7 @@ NUM_ANSATZ_PARAMETERS = 14
 
 def measurement(weights):
     for i in range(3):
-        qml.ArbitraryStatePreparation(weights[2 * i : 2 * (i + 1)], wires=[i])
+        qp.ArbitraryStatePreparation(weights[2 * i : 2 * (i + 1)], wires=[i])
 
 
 NUM_MEASUREMENT_PARAMETERS = 6
@@ -174,19 +174,19 @@ NUM_MEASUREMENT_PARAMETERS = 6
 # We now have everything at hand to model the quantum part of our experiment
 # as a QNode. We will return the output probabilities necessary to compute the
 # Classical Fisher Information Matrix.
-@qml.set_shots(1000)
-@qml.qnode(dev)
+@qp.set_shots(1000)
+@qp.qnode(dev)
 def experiment(weights, phi, gamma=0.0):
     ansatz(weights[:NUM_ANSATZ_PARAMETERS])
     encoding(phi, gamma)
     measurement(weights[NUM_ANSATZ_PARAMETERS:])
 
-    return qml.probs(wires=[0, 1, 2])
+    return qp.probs(wires=[0, 1, 2])
 
 
 # Draw the circuit at the given parameter values
 print(
-    qml.draw(experiment, level="device", max_length=80)(
+    qp.draw(experiment, level="device", max_length=80)(
         np.arange(NUM_ANSATZ_PARAMETERS + NUM_MEASUREMENT_PARAMETERS),
         np.zeros(3),
         gamma=0.2,
@@ -285,7 +285,7 @@ weights = np.random.uniform(
     requires_grad=True,
 )
 
-opt = qml.AdagradOptimizer(stepsize=0.1)
+opt = qp.AdagradOptimizer(stepsize=0.1)
 
 print("Initialization: Cost = {:6.4f}".format(opt_cost(weights)))
 for i in range(20):

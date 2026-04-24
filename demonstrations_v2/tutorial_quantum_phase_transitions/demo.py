@@ -78,7 +78,7 @@ The simplest Ising model consists of :math:`N` qubits arranged along a line.
 #
 # The code below creates this Hamiltonian for three qubits:
 #
-import pennylane as qml
+import pennylane as qp
 
 from pennylane import numpy as np
 
@@ -86,14 +86,14 @@ N = 3
 J = 2
 wires = range(N)
 
-dev = qml.device("lightning.qubit", wires=N)
+dev = qp.device("lightning.qubit", wires=N)
 
 coeffs = [-J] * (N - 1)
 
 obs = []
 for i in range(N - 1):
-    obs.append(qml.Z(i) @ qml.Z(i + 1))
-H = qml.Hamiltonian(coeffs, obs)
+    obs.append(qp.Z(i) @ qp.Z(i + 1))
+H = qp.Hamiltonian(coeffs, obs)
 
 print(f"H={H}")
 
@@ -141,31 +141,31 @@ params = np.array([2 * np.pi * random.uniform(0, 1)] * (6 * N), requires_grad=Tr
 def create_ansatz(params, N):
     # STEP 1: perform single-qubit rotations on all the qubits
     for i in range(N):
-        qml.RZ(phi=params[i], wires=i)
-        qml.RX(phi=params[N + i], wires=i)
-        qml.RZ(phi=params[2 * N + i], wires=i)
+        qp.RZ(phi=params[i], wires=i)
+        qp.RX(phi=params[N + i], wires=i)
+        qp.RZ(phi=params[2 * N + i], wires=i)
     
     # STEP 2: perform a CNOT gate on each pair of neighbouring qubits
     for i in range(N - 1):
-        qml.CNOT(wires=[i, i + 1])
+        qp.CNOT(wires=[i, i + 1])
 
     # STEP 3: perform single-qubit rotations on all the qubits
     for i in range(N):
-        qml.RZ(phi=params[3 * N + i], wires=i)
-        qml.RX(phi=params[4 * N + i], wires=i)
-        qml.RZ(phi=params[5 * N + i], wires=i)
+        qp.RZ(phi=params[3 * N + i], wires=i)
+        qp.RX(phi=params[4 * N + i], wires=i)
+        qp.RZ(phi=params[5 * N + i], wires=i)
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def quantum_circuit(params):
     # Create a quantum state using params
     create_ansatz(params, N)
-    return qml.expval(H)
+    return qp.expval(H)
 
 max_iters = 200
 tolerance = 1e-04
 
 # create an optimizer
-opt = qml.GradientDescentOptimizer(stepsize=0.1)
+opt = qp.GradientDescentOptimizer(stepsize=0.1)
 
 # energy is a list that stores all the estimates for the ground-state energy
 energy = []
@@ -279,30 +279,30 @@ J_list = [0.0, 0.25, 0.75, 0.9, 1.0, 1.1, 2.0, 5.0, 7.5]
 # Store the expectation values of the magnetization operator M for different values of J/h_x
 magnetization_list = []
 
-dev_2 = qml.device("lightning.qubit", wires=N)
+dev_2 = qp.device("lightning.qubit", wires=N)
 
 # This function prepares an estimate of the ground state & calculates its energy.
-@qml.qnode(dev_2)
+@qp.qnode(dev_2)
 def quantum_circuit_2(params):
     # Generate an estimate of the ground state
     create_ansatz(params, N)
-    return qml.expval(H)
+    return qp.expval(H)
 
 # A function that returns the magnetization operator of N qubits.
 def magnetization_op(N):
-    total_op = qml.PauliZ(0)
+    total_op = qp.PauliZ(0)
 
     if N > 1:
         for i in range(1, N):
-            total_op = total_op + qml.PauliZ(i)
+            total_op = total_op + qp.PauliZ(i)
 
     return total_op / N
 
 #Prepare a parameterized state & return the value of the magnetization operator.
-@qml.qnode(dev_2)
+@qp.qnode(dev_2)
 def calculate_magnetization(params):
     create_ansatz(params, N)
-    return qml.expval(magnetization_op(N))
+    return qp.expval(magnetization_op(N))
 
 # Loop through all the different values of J
 for i in range(len(J_list)):
@@ -314,14 +314,14 @@ for i in range(len(J_list)):
 
     obs = []
     for j in range(N - 1):
-        obs.append(qml.Z(j) @ qml.Z(j + 1))
+        obs.append(qp.Z(j) @ qp.Z(j + 1))
 
     # Add Pauli X terms to the Hamiltonian
     for j in range(N):
-        obs.append(qml.X(j))
+        obs.append(qp.X(j))
         coeffs.append(-h_x)
 
-    H = qml.Hamiltonian(coeffs, obs)
+    H = qp.Hamiltonian(coeffs, obs)
 
     params = np.array([2 * np.pi * random.uniform(0, 1)] * (6 * N), requires_grad=True)
 
@@ -329,7 +329,7 @@ for i in range(len(J_list)):
     tolerance = 1e-04
 
     # create an optimizer
-    opt = qml.MomentumOptimizer(stepsize=0.02, momentum=0.9)
+    opt = qp.MomentumOptimizer(stepsize=0.02, momentum=0.9)
 
     energy = []
 
@@ -432,7 +432,7 @@ plt.show()
 
 N = 2
 
-H = qml.spin.transverse_ising(lattice="square", n_cells=[N, N], h=1.0, boundary_condition=True)
+H = qp.spin.transverse_ising(lattice="square", n_cells=[N, N], h=1.0, boundary_condition=True)
 
 print(f"H={H}")
 
@@ -441,23 +441,23 @@ print(f"H={H}")
 #
 
 wires_2D = range(N**2)
-dev_2D = qml.device("lightning.qubit", wires=wires_2D)
+dev_2D = qp.device("lightning.qubit", wires=wires_2D)
 
 random.seed(a=10)
 
 # generate random parameter values for the initial statevector
 params = np.array([2 * np.pi * random.uniform(0, 1)] * (6 * N), requires_grad=True)
 
-@qml.qnode(dev_2D)
+@qp.qnode(dev_2D)
 def quantum_circuit_2D(params):
     create_ansatz(params, N)
-    return qml.expval(H)
+    return qp.expval(H)
 
 max_iters = 500
 tolerance = 3e-04
 
 # create an optimizer
-opt = qml.GradientDescentOptimizer(stepsize=0.015)
+opt = qp.GradientDescentOptimizer(stepsize=0.015)
 
 energy = []
 
@@ -484,7 +484,7 @@ plt.show()
 #
 
 N = 3
-dev_2D_varying_J = qml.device("lightning.qubit", wires=N**2)
+dev_2D_varying_J = qp.device("lightning.qubit", wires=N**2)
 
 # strength of transverse magnetic field
 h_x = 1
@@ -495,19 +495,19 @@ J_list = [0.035, 0.05, 0.1, 0.25, 0.375, 0.5, 0.75, 1.0, 5, 10]
 magnetization_list = []
 
 # Prepare a parameterized state & calculate the value of the magnetization operator.
-@qml.qnode(dev_2D_varying_J)
+@qp.qnode(dev_2D_varying_J)
 def calculate_magnetization_2D(params):
     create_ansatz(params, N)
-    return qml.expval(magnetization_op(N))
+    return qp.expval(magnetization_op(N))
 
-@qml.qnode(dev_2D_varying_J)
+@qp.qnode(dev_2D_varying_J)
 def quantum_circuit_2D_varying_J(params):
     create_ansatz(params, N)
-    return qml.expval(H)
+    return qp.expval(H)
 
 # Loop through all values of J
 for i in range(len(J_list)):
-    H = qml.spin.transverse_ising(
+    H = qp.spin.transverse_ising(
         lattice="square", coupling=J_list[i], n_cells=[N, N], boundary_condition=True
     )
     #Set the initial values of the rotation angle parameters.
@@ -521,7 +521,7 @@ for i in range(len(J_list)):
     max_iters = 500
 
     # create an optimizer
-    opt = qml.MomentumOptimizer(stepsize=0.03, momentum=0.9)
+    opt = qp.MomentumOptimizer(stepsize=0.03, momentum=0.9)
 
     energy = []
 
@@ -584,18 +584,18 @@ wires = range(N)
 # We do this to copy what was done in Reference 13: https://arxiv.org/abs/2008.04894
 obs = []
 for j in range(N - 1):
-    obs.append(qml.Z(j) @ qml.Z(j + 1))
-obs.append(qml.Z(N-1) @ qml.Z(0))
+    obs.append(qp.Z(j) @ qp.Z(j + 1))
+obs.append(qp.Z(N-1) @ qp.Z(0))
 
 # add Pauli X terms to Hamiltonian (transverse field)
 for j in range(N):
-    obs.append(qml.X(j))
+    obs.append(qp.X(j))
 
 # add Pauli Z terms to Hamiltonian (longitudinal field)
 for j in range(N):
-    obs.append(qml.Z(j))
+    obs.append(qp.Z(j))
 
-dev = qml.device("lightning.qubit", wires=N)
+dev = qp.device("lightning.qubit", wires=N)
 
 J = -0.1
 
@@ -613,17 +613,17 @@ Z_coeffs = [h_z] * N
 
 coeffs = J_coeffs + X_coeffs + Z_coeffs
 
-H = qml.Hamiltonian(coeffs, obs)
+H = qp.Hamiltonian(coeffs, obs)
 
 # create the circuit that evolves the system in time
-@qml.qnode(dev)
+@qp.qnode(dev)
 def time_evolution_circuit(H, T):
     #Evolve the system via a sequence of short approximate Trotter time steps
     #https://docs.pennylane.ai/en/stable/code/api/pennylane.TrotterProduct.html
-    qml.TrotterProduct(H, time=T, n=math.ceil(T / 0.1)+1, order=2)
+    qp.TrotterProduct(H, time=T, n=math.ceil(T / 0.1)+1, order=2)
 
     # return the final probabilities
-    return qml.probs(wires=range(N))
+    return qp.probs(wires=range(N))
 
 
 ##############################################################################

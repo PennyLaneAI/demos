@@ -43,20 +43,20 @@ so that the energy of the system is minimized for the given couplings.
 
 import torch
 from torch.autograd import Variable
-import pennylane as qml
+import pennylane as qp
 from pennylane import numpy as np
 
 ###############################################################################
 # A three-qubit quantum circuit is initialized to represent the three spins:
  
-dev = qml.device("default.qubit", wires=3)
+dev = qp.device("default.qubit", wires=3)
 
-@qml.qnode(dev, interface="torch") 
+@qp.qnode(dev, interface="torch") 
 def circuit(p1, p2):
     # We use the general Rot(phi,theta,omega,wires) single-qubit operation
-    qml.Rot(p1[0], p1[1], p1[2], wires=1)
-    qml.Rot(p2[0], p2[1], p2[2], wires=2)
-    return [qml.expval(qml.PauliZ(i)) for i in range(3)]
+    qp.Rot(p1[0], p1[1], p1[2], wires=1)
+    qp.Rot(p2[0], p2[1], p2[2], wires=2)
+    return [qp.expval(qp.PauliZ(i)) for i in range(3)]
 
 ###############################################################################
 # The cost function to be minimized is defined as the energy of the spin configuration:

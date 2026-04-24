@@ -84,7 +84,7 @@ can be easily used to block encode matrices of any given shape. Here, we manuall
 circuit for a structured :math:`4 \times 4` matrix.
 """
 
-import pennylane as qml
+import pennylane as qp
 from pennylane.templates.state_preparations.mottonen import compute_theta, gray_code
 import numpy as np
 import matplotlib.pyplot as plt
@@ -129,35 +129,35 @@ wire_map = {control_index : wire for control_index, wire in enumerate(wires_j + 
 
 def UA(thetas, control_wires, ancilla):
     for theta, control_index in zip(thetas, control_wires):
-        qml.RY(2 * theta, wires=ancilla)
-        qml.CNOT(wires=[wire_map[control_index]] + ancilla)
+        qp.RY(2 * theta, wires=ancilla)
+        qp.CNOT(wires=[wire_map[control_index]] + ancilla)
 
 
 def UB(wires_i, wires_j):
     for w_i, w_j in zip(wires_i, wires_j):
-        qml.SWAP(wires=[w_i, w_j])
+        qp.SWAP(wires=[w_i, w_j])
 
 
 def HN(input_wires):
     for w in input_wires:
-        qml.Hadamard(wires=w)
+        qp.Hadamard(wires=w)
 
 ##############################################################################
 # We construct the circuit using these oracles and draw it.
 
-dev = qml.device('default.qubit', wires=ancilla_wires + wires_i + wires_j)
-@qml.qnode(dev)
+dev = qp.device('default.qubit', wires=ancilla_wires + wires_i + wires_j)
+@qp.qnode(dev)
 def circuit():
     HN(wires_i)
-    qml.Barrier()  # to separate the sections in the circuit
+    qp.Barrier()  # to separate the sections in the circuit
     UA(thetas, control_wires, ancilla_wires)
-    qml.Barrier()
+    qp.Barrier()
     UB(wires_i, wires_j)
-    qml.Barrier()
+    qp.Barrier()
     HN(wires_i)
-    return qml.probs(wires=ancilla_wires + wires_i)
+    return qp.probs(wires=ancilla_wires + wires_i)
 
-qml.draw_mpl(circuit, style='pennylane')()
+qp.draw_mpl(circuit, style='pennylane')()
 plt.show()
 
 ##############################################################################
@@ -166,7 +166,7 @@ plt.show()
 
 print(f"Original matrix:\n{A}", "\n")
 wire_order = ancilla_wires + wires_i[::-1] + wires_j[::-1]
-M = len(A) * qml.matrix(circuit, wire_order=wire_order)().real[0:len(A),0:len(A)]
+M = len(A) * qp.matrix(circuit, wire_order=wire_order)().real[0:len(A),0:len(A)]
 print(f"Block-encoded matrix:\n{M}", "\n")
 
 ##############################################################################
@@ -187,10 +187,10 @@ tolerance= 0.01
 def UA(thetas, control_wires, ancilla):
     for theta, control_index in zip(thetas, control_wires):
         if abs(2 * theta)>tolerance:
-            qml.RY(2 * theta, wires=ancilla)
-        qml.CNOT(wires=[wire_map[control_index]] + ancilla)
+            qp.RY(2 * theta, wires=ancilla)
+        qp.CNOT(wires=[wire_map[control_index]] + ancilla)
 
-qml.draw_mpl(circuit, style='pennylane')()
+qp.draw_mpl(circuit, style='pennylane')()
 plt.show()
 
 ##############################################################################
@@ -204,22 +204,22 @@ def UA(thetas, control_wires, ancilla):
     for theta, control_index in zip(thetas, control_wires):
         if abs(2 * theta) > tolerance:
             for c_wire in nots:
-                qml.CNOT(wires=[c_wire] + ancilla)
-            qml.RY(2 * theta,wires=ancilla)
+                qp.CNOT(wires=[c_wire] + ancilla)
+            qp.RY(2 * theta,wires=ancilla)
             nots=[]
         if (cw := wire_map[control_index]) in nots:
             del(nots[nots.index(cw)])
         else:
             nots.append(wire_map[control_index])
     for c_wire in nots:
-        qml.CNOT([c_wire] + ancilla)
+        qp.CNOT([c_wire] + ancilla)
 
-qml.draw_mpl(circuit, style='pennylane')()
+qp.draw_mpl(circuit, style='pennylane')()
 plt.show()
 
 print(f"Original matrix:\n{A}", "\n")
 wire_order = ancilla_wires + wires_i[::-1] + wires_j[::-1] 
-M = len(A) * qml.matrix(circuit,wire_order=wire_order)().real[0:len(A),0:len(A)]
+M = len(A) * qp.matrix(circuit,wire_order=wire_order)().real[0:len(A),0:len(A)]
 print(f"Block-encoded matrix:\n{M}", "\n")
 
 ##############################################################################
@@ -302,9 +302,9 @@ wires_j = [f"j{index}" for index in range(s)]  # depends on the size of A
 # the FABLE circuit.
 
 def UA(theta, wire_i, ancilla):
-    qml.ctrl(qml.RY, control=wire_i, control_values=[0, 0])(theta[0], wires=ancilla)
-    qml.ctrl(qml.RY, control=wire_i, control_values=[1, 0])(theta[1], wires=ancilla)
-    qml.ctrl(qml.RY, control=wire_i, control_values=[0, 1])(theta[2], wires=ancilla)
+    qp.ctrl(qp.RY, control=wire_i, control_values=[0, 0])(theta[0], wires=ancilla)
+    qp.ctrl(qp.RY, control=wire_i, control_values=[1, 0])(theta[1], wires=ancilla)
+    qp.ctrl(qp.RY, control=wire_i, control_values=[0, 1])(theta[2], wires=ancilla)
 
 ##############################################################################
 # The :math:`U_B` oracle is defined in terms of the so-called ``Left`` and ``Right`` shift operators.
@@ -313,34 +313,34 @@ def UA(theta, wire_i, ancilla):
 def shift_op(s_wires, shift="Left"):        
     for index in range(len(s_wires)-1, 0, -1):
         control_values = [1] * index if shift == "Left" else [0] * index
-        qml.ctrl(qml.PauliX, control=s_wires[:index], control_values=control_values)(wires=s_wires[index])
-    qml.PauliX(s_wires[0])
+        qp.ctrl(qp.PauliX, control=s_wires[:index], control_values=control_values)(wires=s_wires[index])
+    qp.PauliX(s_wires[0])
 
 
 def UB(wires_i, wires_j):
-    qml.ctrl(shift_op, control=wires_i[0])(wires_j, shift="Left")
-    qml.ctrl(shift_op, control=wires_i[1])(wires_j, shift="Right")
+    qp.ctrl(shift_op, control=wires_i[0])(wires_j, shift="Left")
+    qp.ctrl(shift_op, control=wires_i[1])(wires_j, shift="Right")
 
 ##############################################################################
 # We now construct our circuit to block encode the sparse matrix and draw it.
 
-dev = qml.device("default.qubit", wires=(ancilla_wires + wires_i + wires_j))
+dev = qp.device("default.qubit", wires=(ancilla_wires + wires_i + wires_j))
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def complete_circuit(thetas):
     HN(wires_i)
-    qml.Barrier() # to separate the sections in the circuit
+    qp.Barrier() # to separate the sections in the circuit
     UA(thetas, wires_i, ancilla_wires)
-    qml.Barrier()
+    qp.Barrier()
     UB(wires_i, wires_j)
-    qml.Barrier()
+    qp.Barrier()
     HN(wires_i)
-    return qml.probs(wires=ancilla_wires + wires_i)
+    return qp.probs(wires=ancilla_wires + wires_i)
 
 s = 4  # normalization constant
 thetas = 2 * np.arccos(np.array([alpha - 1, beta, gamma]))
 
-qml.draw_mpl(complete_circuit, style='pennylane')(thetas)
+qp.draw_mpl(complete_circuit, style='pennylane')(thetas)
 plt.show()
 
 ##############################################################################
@@ -349,7 +349,7 @@ plt.show()
 
 print("\nBlockEncoded Mat:")
 wire_order = ancilla_wires + wires_i[::-1] + wires_j[::-1] 
-mat = qml.matrix(complete_circuit, wire_order=wire_order)(thetas).real[:len(A), :len(A)] * s
+mat = qp.matrix(complete_circuit, wire_order=wire_order)(thetas).real[:len(A), :len(A)] * s
 print(mat, "\n")
 
 ##############################################################################

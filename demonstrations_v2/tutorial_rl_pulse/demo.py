@@ -177,7 +177,7 @@ device. At the end of the demo, we provide insights on how to extend the impleme
 multi-qubit devices and gates.
 """
 
-import pennylane as qml
+import pennylane as qp
 
 # Quantum computer
 qubit_freqs = [4.81]  # GHz
@@ -185,7 +185,7 @@ connections = []  # No connections
 couplings = []  # No couplings
 wires = [0]
 
-H_int = qml.pulse.transmon_interaction(qubit_freqs, connections, couplings, wires)
+H_int = qp.pulse.transmon_interaction(qubit_freqs, connections, couplings, wires)
 
 # Microwave pulse
 pulse_duration = 22.4  # ns
@@ -193,10 +193,10 @@ n_segments = 8
 segment_duration = pulse_duration / n_segments
 
 freq = qubit_freqs[0]  # Resonant with the qubit
-amplitude = qml.pulse.pwc(pulse_duration)
-phase = qml.pulse.pwc(pulse_duration)
+amplitude = qp.pulse.pwc(pulse_duration)
+phase = qp.pulse.pwc(pulse_duration)
 
-H_drive = qml.pulse.transmon_drive(amplitude, phase, freq, wires)
+H_drive = qp.pulse.transmon_drive(amplitude, phase, freq, wires)
 
 # Full time-dependent parametrized Hamiltonian
 H = H_int + H_drive
@@ -217,16 +217,16 @@ H = H_int + H_drive
 import jax
 from functools import partial
 
-device = qml.device("default.qubit", wires=1)
+device = qp.device("default.qubit", wires=1)
 
 
 @partial(jax.jit, static_argnames="H")
 @partial(jax.vmap, in_axes=(0, None, 0, None))
-@qml.qnode(device=device, interface="jax")
+@qp.qnode(device=device, interface="jax")
 def evolve_states(state, H, params, t):
-    qml.StatePrep(state, wires=wires)
-    qml.evolve(H)(params, t, atol=1e-5)
-    return qml.state()
+    qp.StatePrep(state, wires=wires)
+    qp.evolve(H)(params, t, atol=1e-5)
+    return qp.state()
 
 
 state_size = 2 ** len(wires)
@@ -283,7 +283,7 @@ n_actions = len(ctrl_values)  # 8x11 = 88 possible actions
 # named tuple) and the code below will assume this container is being passed.
 #
 
-target = jnp.array(qml.RX(jnp.pi / 2, 0).matrix())  # RX(pi/2) gate
+target = jnp.array(qp.RX(jnp.pi / 2, 0).matrix())  # RX(pi/2) gate
 
 
 @partial(jax.jit, static_argnames=["H", "config"])
@@ -327,7 +327,7 @@ def sample_random_states(subkey, n_states, dim):
 
 def get_pulse_matrix(H, params, time):
     """Compute the unitary matrix associated to the time evolution of H."""
-    return qml.evolve(H)(params, time, atol=1e-5).matrix()
+    return qp.evolve(H)(params, time, atol=1e-5).matrix()
 
 
 @jax.jit
@@ -757,9 +757,9 @@ def evaluate_program(pulse_program, H, target, config, subkey):
     """Compute the average gate fidelity over 1000 random initial states."""
     states = sample_random_states(subkey, 1000, state_size)
     target_states = jnp.einsum("ab,cb->ca", target, states)
-    pulse_matrix = qml.matrix(qml.evolve(H)(pulse_program, config.pulse_duration))
+    pulse_matrix = qp.matrix(qp.evolve(H)(pulse_program, config.pulse_duration))
     final_states = jnp.einsum("ab,cb->ca", pulse_matrix, states)
-    fidelities = qml.math.fidelity_statevector(final_states, target_states)
+    fidelities = qp.math.fidelity_statevector(final_states, target_states)
     return fidelities
 
 
@@ -774,7 +774,7 @@ pulse_program = get_pulse_program(policy_params, H, ctrl_values, config)
 def vector_to_bloch(vector):
     """Transform a vector into Bloch sphere coordinates."""
     rho = jnp.outer(vector, vector.conj())
-    X, Y, Z = qml.PauliX(0).matrix(), qml.PauliY(0).matrix(), qml.PauliZ(0).matrix()
+    X, Y, Z = qp.PauliX(0).matrix(), qp.PauliY(0).matrix(), qp.PauliZ(0).matrix()
     x, y, z = (
         jnp.trace(rho @ X).real.item(),
         jnp.trace(rho @ Y).real.item(),
@@ -812,12 +812,12 @@ def plot_rotation_axes(rotation_axes, color=["#70CEFF"], fig=None, ax=None):
 ts = jnp.linspace(0, pulse_duration - 1e-3, 100)
 fig, axs = plt.subplots(ncols=3, figsize=(14, 4), constrained_layout=True)
 
-axs[0].plot(ts, qml.pulse.pwc(pulse_duration)(pulse_program[0], ts), color="#70CEFF", linewidth=3)
+axs[0].plot(ts, qp.pulse.pwc(pulse_duration)(pulse_program[0], ts), color="#70CEFF", linewidth=3)
 axs[0].set_ylabel("Amplitude (GHz)", fontsize=14)
 axs[0].set_yticks(values_ampl)
 axs[0].set_ylim([values_ampl[0], values_ampl[-1]])
 
-axs[1].plot(ts, qml.pulse.pwc(pulse_duration)(pulse_program[1], ts), color="#FFE096", linewidth=3)
+axs[1].plot(ts, qp.pulse.pwc(pulse_duration)(pulse_program[1], ts), color="#FFE096", linewidth=3)
 axs[1].set_ylabel("Phase (rad)", fontsize=14)
 axs[1].set_yticks(
     values_phase,
@@ -857,7 +857,7 @@ connections = [[0, 1]]
 couplings = [0.02]
 wires = [0, 1]
 
-H_int = qml.pulse.transmon_interaction(qubit_freqs, connections, couplings, wires)
+H_int = qp.pulse.transmon_interaction(qubit_freqs, connections, couplings, wires)
 
 ######################################################################
 # The CNOT gate is typically constituted by a series of single-qubit pulses and cross-resonant (CR)
@@ -883,9 +883,9 @@ pulse_duration_cr = 100.2  # CR pulse duration
 
 def get_drive(timespan, freq, wire):
     """Parametrized Hamiltonian driving the qubit in wire with a fixed frequency."""
-    amplitude = qml.pulse.pwc(timespan)
-    phase = qml.pulse.pwc(timespan)
-    return qml.pulse.transmon_drive(amplitude, phase, freq, wire)
+    amplitude = qp.pulse.pwc(timespan)
+    phase = qp.pulse.pwc(timespan)
+    return qp.pulse.transmon_drive(amplitude, phase, freq, wire)
 
 
 pulse_durations = jnp.array(
@@ -926,23 +926,23 @@ H_sq_end = H_sq_0_end + H_sq_1_end
 
 @jax.jit
 @partial(jax.vmap, in_axes=(0, None, 0, None))
-@qml.qnode(device=device, interface="jax")
+@qp.qnode(device=device, interface="jax")
 def evolve_states(state, params, t):
     params_sq, params_cr = params
-    qml.StatePrep(state, wires=wires)
+    qp.StatePrep(state, wires=wires)
     # Single qubit pulses
-    qml.evolve(H_int + H_sq_ini)(params_sq, t, atol=1e-5)
+    qp.evolve(H_int + H_sq_ini)(params_sq, t, atol=1e-5)
 
     # Echoed CR
-    qml.evolve(H_int + H_cr_pos)(params_cr, t, atol=1e-5)
-    qml.PauliX(0)  # Flip control qubit
-    qml.evolve(H_int - H_cr_neg)(params_cr, t, atol=1e-5)  # Negative CR
-    qml.PauliX(0)  # Recover control qubit
+    qp.evolve(H_int + H_cr_pos)(params_cr, t, atol=1e-5)
+    qp.PauliX(0)  # Flip control qubit
+    qp.evolve(H_int - H_cr_neg)(params_cr, t, atol=1e-5)  # Negative CR
+    qp.PauliX(0)  # Recover control qubit
 
     # Single qubit pulses
-    qml.evolve(H_int + H_sq_end)(params_sq, t, atol=1e-5)
+    qp.evolve(H_int + H_sq_end)(params_sq, t, atol=1e-5)
 
-    return qml.state()
+    return qp.state()
 
 
 ######################################################################

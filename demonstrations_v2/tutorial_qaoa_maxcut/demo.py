@@ -130,7 +130,7 @@ To get started, we import PennyLane along with the PennyLane-provided
 version of NumPy.
 """
 
-import pennylane as qml
+import pennylane as qp
 from pennylane import numpy as np
 
 np.random.seed(42)
@@ -153,15 +153,15 @@ graph = [(0, 1), (0, 3), (1, 2), (2, 3)]
 # unitary operator U_B with parameter beta
 def U_B(beta):
     for wire in range(n_wires):
-        qml.RX(2 * beta, wires=wire)
+        qp.RX(2 * beta, wires=wire)
 
 
 # unitary operator U_C with parameter gamma
 def U_C(gamma):
     for edge in graph:
-        qml.CNOT(wires=edge)
-        qml.RZ(gamma, wires=edge[1])
-        qml.CNOT(wires=edge)
+        qp.CNOT(wires=edge)
+        qp.RZ(gamma, wires=edge[1])
+        qp.CNOT(wires=edge)
         # Could also do
         # IsingZZ(gamma, wires=edge)
 
@@ -180,7 +180,7 @@ def bitstring_to_int(bit_string_sample):
 # ~~~~~~~
 # Next, we create a quantum device with 4 qubits.
 
-dev = qml.device("lightning.qubit", wires=n_wires)
+dev = qp.device("lightning.qubit", wires=n_wires)
 
 ##############################################################################
 # We also require a quantum node which will apply the operators according to the angle parameters,
@@ -194,12 +194,12 @@ dev = qml.device("lightning.qubit", wires=n_wires)
 # by setting ``return_samples=True``.
 
 
-@qml.set_shots(20)
-@qml.qnode(dev)
+@qp.set_shots(20)
+@qp.qnode(dev)
 def circuit(gammas, betas, return_samples=False):
     # apply Hadamards to get the n qubit |+> state
     for wire in range(n_wires):
-        qml.Hadamard(wires=wire)
+        qp.Hadamard(wires=wire)
     # p instances of unitary operators
     for gamma, beta in zip(gammas, betas):
         U_C(gamma)
@@ -207,10 +207,10 @@ def circuit(gammas, betas, return_samples=False):
 
     if return_samples:
         # sample bitstrings to obtain cuts
-        return qml.sample()
+        return qp.sample()
     # during the optimization phase we are evaluating the objective using expval
-    C = qml.sum(*(qml.Z(w1) @ qml.Z(w2) for w1, w2 in graph))
-    return qml.expval(C)
+    C = qp.sum(*(qp.Z(w1) @ qp.Z(w2) for w1, w2 in graph))
+    return qp.expval(C)
 
 
 def objective(params):
@@ -237,7 +237,7 @@ def qaoa_maxcut(n_layers=1):
     init_params = 0.01 * np.random.rand(2, n_layers, requires_grad=True)
 
     # initialize optimizer: Adagrad works well empirically
-    opt = qml.AdagradOptimizer(stepsize=0.5)
+    opt = qp.AdagradOptimizer(stepsize=0.5)
 
     # optimize parameters in objective
     params = init_params.copy()
@@ -248,7 +248,7 @@ def qaoa_maxcut(n_layers=1):
             print(f"Objective after step {i+1:3d}: {-objective(params): .7f}")
 
     # sample 100 bitstrings by setting return_samples=True and the QNode shot count to 100
-    bitstrings = qml.set_shots(circuit, shots=100)(*params, return_samples=True)
+    bitstrings = qp.set_shots(circuit, shots=100)(*params, return_samples=True)
     # convert the samples bitstrings to integers
     sampled_ints = [bitstring_to_int(string) for string in bitstrings]
 

@@ -76,16 +76,16 @@ plt.show()
 # :doc:`default.qubit <code/api/pennylane.devices.default_qubit.DefaultQubit>` simulator and
 # operations from the :doc:`templates <introduction/templates>` module.
 
-import pennylane as qml
+import pennylane as qp
 
 n_qubits = 2
-dev = qml.device("default.qubit", wires=n_qubits)
+dev = qp.device("default.qubit", wires=n_qubits)
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def qnode(inputs, weights):
-    qml.AngleEmbedding(inputs, wires=range(n_qubits))
-    qml.BasicEntanglerLayers(weights, wires=range(n_qubits))
-    return [qml.expval(qml.PauliZ(wires=i)) for i in range(n_qubits)]
+    qp.AngleEmbedding(inputs, wires=range(n_qubits))
+    qp.BasicEntanglerLayers(weights, wires=range(n_qubits))
+    return [qp.expval(qp.PauliZ(wires=i)) for i in range(n_qubits)]
 
 ###############################################################################
 # Interfacing with Torch
@@ -113,7 +113,7 @@ weight_shapes = {"weights": (n_layers, n_qubits)}
 #
 # Now that ``weight_shapes`` is defined, it is easy to then convert the QNode:
 
-qlayer = qml.qnn.TorchLayer(qnode, weight_shapes)
+qlayer = qp.qnn.TorchLayer(qnode, weight_shapes)
 
 ###############################################################################
 # With this done, the QNode can now be treated just like any other ``torch.nn`` layer and we can
@@ -235,8 +235,8 @@ class HybridModel(torch.nn.Module):
     def __init__(self):
         super().__init__()
         self.clayer_1 = torch.nn.Linear(2, 4)
-        self.qlayer_1 = qml.qnn.TorchLayer(qnode, weight_shapes)
-        self.qlayer_2 = qml.qnn.TorchLayer(qnode, weight_shapes)
+        self.qlayer_1 = qp.qnn.TorchLayer(qnode, weight_shapes)
+        self.qlayer_2 = qp.qnn.TorchLayer(qnode, weight_shapes)
         self.clayer_2 = torch.nn.Linear(4, 2)
         self.softmax = torch.nn.Softmax(dim=1)
 

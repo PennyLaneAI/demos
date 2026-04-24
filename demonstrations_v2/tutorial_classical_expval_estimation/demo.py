@@ -87,7 +87,7 @@ This also allows us to draw the ansatz easily with :func:`~.pennylane.drawer.tap
 To maintain an overview, we set the number of qubits and layers to just 4 and 3, respectively.
 """
 
-import pennylane as qml
+import pennylane as qp
 import numpy as np
 from itertools import combinations, product
 
@@ -100,30 +100,30 @@ def _ansatz(params, num_qubits, H):
     for i, params_layer in enumerate(params):
         # Execute arbitrary parametrized single-qubit rotations
         for j, params_qubit in enumerate(params_layer):
-            qml.RZ(params_qubit[0], j)
-            qml.RY(params_qubit[1], j)
-            qml.RZ(params_qubit[2], j)
+            qp.RZ(params_qubit[0], j)
+            qp.RY(params_qubit[1], j)
+            qp.RZ(params_qubit[2], j)
         # If we are not in the last layer, execute an entangling CNOT layer
         if i < len(params) - 1:
             for j in range(num_qubits):
-                qml.CNOT([j, (j + 1) % num_qubits])
+                qp.CNOT([j, (j + 1) % num_qubits])
 
-    return qml.expval(H)
+    return qp.expval(H)
 
 
-ansatz = qml.transforms.make_tape(_ansatz)
+ansatz = qp.transforms.make_tape(_ansatz)
 
 num_qubits = 4
 num_layers = 3
 np.random.seed(852)
 H_coeffs = np.random.random((num_qubits - 1) * 3)
-H_ops = [op(j) @ op(j + 1) for j in range(num_qubits - 1) for op in [qml.X, qml.Y, qml.Z]]
-H = qml.dot(H_coeffs, H_ops)
+H_ops = [op(j) @ op(j + 1) for j in range(num_qubits - 1) for op in [qp.X, qp.Y, qp.Z]]
+H = qp.dot(H_coeffs, H_ops)
 
 # Smaller parameter set to get smaller circuit to draw
 params = np.random.random((num_layers, num_qubits, 3))
 tape = ansatz(params, num_qubits, H)
-print(qml.drawer.tape_text(tape))
+print(qp.drawer.tape_text(tape))
 
 ##############################################################################
 # Now that we have our example set up, let's look at the core technique behind
@@ -174,12 +174,12 @@ print(qml.drawer.tape_text(tape))
 # on any other two-qubit Pauli word. However, this might get tedious, so let us
 # do it in code.
 
-cnot = qml.CNOT([0, 1])
+cnot = qp.CNOT([0, 1])
 
-for op0, op1 in product([qml.Identity, qml.X, qml.Y, qml.Z], repeat=2):
+for op0, op1 in product([qp.Identity, qp.X, qp.Y, qp.Z], repeat=2):
     original_op = op0(0) @ op1(1)
     new_op = cnot @ original_op @ cnot
-    new_op = qml.pauli_decompose(new_op.matrix())
+    new_op = qp.pauli_decompose(new_op.matrix())
     print(f"CNOT transformed {original_op} to {new_op}")
 
 ##############################################################################
@@ -307,9 +307,9 @@ def apply_single_qubit_rot(pauli, wire, param, H):
         else:
             # Rotation generator does not commute with Pauli word from H;
             # Multiply old coefficient by cosine, and add new term with modified Pauli word
-            new_H[pauli_word] += qml.math.cos(param) * coeff
+            new_H[pauli_word] += qp.math.cos(param) * coeff
             new_pauli_word, factor = list((rot_pauli_word @ pauli_word).items())[0]
-            new_H[new_pauli_word] += (qml.math.sin(param) * coeff * factor * 1j).real
+            new_H[new_pauli_word] += (qp.math.sin(param) * coeff * factor * 1j).real
 
     return new_H
 
@@ -351,10 +351,10 @@ def execute_tape(tape, k=None):
     of its output observable using truncated Pauli propagation."""
     H = tape.measurements[0].obs.pauli_rep
     for op in reversed(tape.operations):
-        if isinstance(op, qml.CNOT):
+        if isinstance(op, qp.CNOT):
             # Apply CNOT
             H = apply_cnot(op.wires, H, k=k)
-        elif isinstance(op, (qml.RZ, qml.RX, qml.RY)):
+        elif isinstance(op, (qp.RZ, qp.RX, qp.RY)):
             # Extract the Pauli rotation generator, wire, and parameter from the gate
             pauli = op.name[-1]
             wire = op.wires[0]
@@ -376,8 +376,8 @@ num_qubits = 25
 num_layers = 5
 k = 7
 H_coeffs = np.random.random((num_qubits - 1) * 3)
-H_ops = [op(j) @ op(j + 1) for j in range(num_qubits - 1) for op in [qml.X, qml.Y, qml.Z]]
-H = qml.dot(H_coeffs, H_ops)
+H_ops = [op(j) @ op(j + 1) for j in range(num_qubits - 1) for op in [qp.X, qp.Y, qp.Z]]
+H = qp.dot(H_coeffs, H_ops)
 params = np.random.random((num_layers, num_qubits, 3))
 
 
@@ -390,7 +390,7 @@ def run_estimate(params, H):
 expval = run_estimate(params, H)
 
 
-@qml.qnode(qml.device("lightning.qubit", wires=num_qubits))
+@qp.qnode(qp.device("lightning.qubit", wires=num_qubits))
 def run_lightning(params, H):
     return _ansatz(params, num_qubits, H)
 
@@ -483,8 +483,8 @@ print(f"Numerically exact expectation value:                        {exact_expva
 num_qubits = 15
 num_layers = 3
 H_coeffs = np.random.random((num_qubits - 1) * 3)
-H_ops = [op(j) @ op(j + 1) for j in range(num_qubits - 1) for op in [qml.X, qml.Y, qml.Z]]
-H = qml.dot(H_coeffs, H_ops)
+H_ops = [op(j) @ op(j + 1) for j in range(num_qubits - 1) for op in [qp.X, qp.Y, qp.Z]]
+H = qp.dot(H_coeffs, H_ops)
 specific_params = np.ones((num_layers, num_qubits, 3)) * np.pi / 4
 
 expval = run_estimate(specific_params, H)

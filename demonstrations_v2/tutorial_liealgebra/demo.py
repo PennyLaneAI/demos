@@ -98,22 +98,22 @@ Let us briefly test some of these properties numerically.
 First, let us do a linear combination of :math:`\{iX, iY, iZ\}` with some real values and check unitarity after putting them in the exponent.
 """
 import numpy as np
-import pennylane as qml
+import pennylane as qp
 from pennylane import X, Y, Z
 
 su2 = [1j * X(0), 1j * Y(0), 1j * Z(0)]
 
 coeffs = [1., 2., 3.]                           # some real coefficients
-exponent = qml.dot(coeffs, su2)                 # linear combination of operators
-U = qml.math.expm(exponent.matrix())            # compute matrix exponent of lin. comb.
+exponent = qp.dot(coeffs, su2)                 # linear combination of operators
+U = qp.math.expm(exponent.matrix())            # compute matrix exponent of lin. comb.
 print(np.allclose(U.conj().T @ U, np.eye(2)))   # check that result is unitary UU* = 1
 
 ##############################################################################
 # If we throw complex values in the mix, the resulting matrix is not unitary anymore.
 
 coeffs = [1., 2.+ 1j, 3.]                       # some complex coefficients
-exponent = qml.dot(coeffs, su2)
-U = qml.math.expm(exponent.matrix())
+exponent = qp.dot(coeffs, su2)
+U = qp.math.expm(exponent.matrix())
 print(np.allclose(U.conj().T @ U, np.eye(2)))   # result is not unitary anymore
 
 ##############################################################################
@@ -158,7 +158,7 @@ print(np.allclose(U.conj().T @ U, np.eye(2)))   # result is not unitary anymore
 #
 # Let us do a quick example and compute the Lie closure of :math:`\{iX, iY\}` (more examples later).
 
-print(qml.commutator(1j * X(0), 1j * Y(0)))
+print(qp.commutator(1j * X(0), 1j * Y(0)))
 
 ##############################################################################
 # We know that the commutator between :math:`iX` and :math:`iY` yields a new operator :math:`\propto iZ.`
@@ -168,15 +168,15 @@ print(qml.commutator(1j * X(0), 1j * Y(0)))
 list_ops = [1j * X(0), 1j * Y(0), 1j * Z(0)]
 for op1 in list_ops:
     for op2 in list_ops:
-        print(qml.commutator(op1, op2))
+        print(qp.commutator(op1, op2))
 
 ##############################################################################
 # Since no new operators have been created we know the lie closure is complete and our dynamical Lie algebra
 # is :math:`\langle\{iX, iY\}\rangle_\text{Lie} = \{iX, iY, iZ\}( = \mathfrak{su}(2)).` 
 # 
-# PennyLane provides some dedicated functionality for Lie algebras. We can compute the Lie closure of the generators using ``qml.lie_closure``.
+# PennyLane provides some dedicated functionality for Lie algebras. We can compute the Lie closure of the generators using ``qp.lie_closure``.
 
-dla = qml.lie_closure([X(0), Y(0)])
+dla = qp.lie_closure([X(0), Y(0)])
 dla
 
 ##############################################################################
@@ -187,14 +187,14 @@ dla
 # these :math:`X` and :math:`Y` rotations :math:`e^{-i \phi X}` and :math:`e^{-i \phi Y}.` 
 # For example, let us write a Pauli-Z rotation at non-trivial angle :math:`0.5` as a product of them.
 
-U_target = qml.matrix(qml.RZ(-0.5, 0))
-decomp = qml.ops.one_qubit_decomposition(U_target, 0, rotations="XYX")
+U_target = qp.matrix(qp.RZ(-0.5, 0))
+decomp = qp.ops.one_qubit_decomposition(U_target, 0, rotations="XYX")
 print(decomp)
 
 ##############################################################################
 # We can check that this is indeed a valid decomposition by computing the trace distance to the target.
 
-U = qml.prod(*decomp).matrix()
+U = qp.prod(*decomp).matrix()
 print(1 - np.real(np.trace(U_target @ U))/2)
 
 ##############################################################################
@@ -215,10 +215,10 @@ print(1 - np.real(np.trace(U_target @ U))/2)
 generators = [1j * (X(0) @ X(1)), 1j * Z(0), 1j * Z(1)]
 
 # collection of linearly independent basis vectors, automatically discards linearly dependent ones
-dla = qml.pauli.PauliVSpace(generators, dtype=complex)
+dla = qp.pauli.PauliVSpace(generators, dtype=complex)
 for i, op1 in enumerate(generators):
     for op2 in generators[i+1:]:
-        res = qml.commutator(op1, op2)/2
+        res = qp.commutator(op1, op2)/2
         res = res.simplify() # ensures all products of scalars are executed
         print(f"[{op1}, {op2}] = {res}")
 
@@ -234,7 +234,7 @@ for i, op1 in enumerate(generators):
 
 for i, op1 in enumerate(dla.basis.copy()):
     for op2 in dla.basis.copy()[i+1:]:
-        res = qml.commutator(op1, op2)/2
+        res = qp.commutator(op1, op2)/2
         res = res.simplify()
         print(f"[{op1}, {op2}] = {res}")
 
@@ -257,7 +257,7 @@ for op in dla.basis:
 # We have constructed the DLA by hand to showcase the process. We can use the PennyLane function :func:`~lie_closure` for convenience.
 # In that case, we omit the explicit use of the imgaginary factor.
 
-dla2 = qml.lie_closure([X(0) @ X(1), Z(0), Z(1)])
+dla2 = qp.lie_closure([X(0) @ X(1), Z(0), Z(1)])
 for op in dla2:
     print(op)
 
@@ -277,8 +277,8 @@ def IsingGenerators(n, bc="open"):
     return gens
 
 for n in range(2, 5):
-    open_ = qml.lie_closure(IsingGenerators(n, "open"))
-    periodic_ = qml.lie_closure(IsingGenerators(n, "periodic"))
+    open_ = qp.lie_closure(IsingGenerators(n, "open"))
+    periodic_ = qp.lie_closure(IsingGenerators(n, "periodic"))
     print(f"Ising for n = {n}")
     print(f"open: {len(open_)} = {n*(2*n-1)} = 2n * (2n - 1)/2")
     print(f"open: {len(periodic_)} = {2*n*(2*n-1)} = 2 * 2n * (2n - 1)/2")
@@ -328,15 +328,15 @@ for n in range(2, 5):
 # Let us briefly verify this for a small example for ``n = 3`` qubits that readily generalizes to arbitrary sizes.
 
 n = 3
-H = qml.sum(*(P(i) @ P(i+1) for i in range(n-1) for P in [X, Y, Z]))
+H = qp.sum(*(P(i) @ P(i+1) for i in range(n-1) for P in [X, Y, Z]))
 
-SX = qml.sum(*(X(i) for i in range(n)))
-SY = qml.sum(*(Y(i) for i in range(n)))
-SZ = qml.sum(*(Z(i) for i in range(n)))
+SX = qp.sum(*(X(i) for i in range(n)))
+SY = qp.sum(*(Y(i) for i in range(n)))
+SZ = qp.sum(*(Z(i) for i in range(n)))
 
-print(qml.commutator(H, SX))
-print(qml.commutator(H, SY))
-print(qml.commutator(H, SZ))
+print(qp.commutator(H, SX))
+print(qp.commutator(H, SY))
+print(qp.commutator(H, SZ))
 
 ##############################################################################
 #
@@ -363,9 +363,9 @@ print(qml.commutator(H, SZ))
 # This is easily verified by looking at the commutation relation between these operators that match :math:`[\hat{O}_i, \hat{O}_j] = 2i \varepsilon_{ij\ell} \hat{O}_\ell,` the defining
 # property of :math:`\mathfrak{su}(2).`
 
-print(qml.commutator(SX, SY) == (2j*SZ).simplify())
-print(qml.commutator(SZ, SX) == (2j*SY).simplify())
-print(qml.commutator(SY, SZ) == (2j*SX).simplify())
+print(qp.commutator(SX, SY) == (2j*SZ).simplify())
+print(qp.commutator(SZ, SX) == (2j*SY).simplify())
+print(qp.commutator(SY, SZ) == (2j*SX).simplify())
 
 ##############################################################################
 #

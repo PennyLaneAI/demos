@@ -129,7 +129,7 @@ observables.
 #
 # We will now demonstrate how to obtain classical shadows using PennyLane.
 
-import pennylane as qml
+import pennylane as qp
 import pennylane.numpy as np
 import matplotlib.pyplot as plt
 import time
@@ -170,7 +170,7 @@ def calculate_classical_shadow(circuit_template, params, shadow_size, num_qubits
         column corresponds to a different qubit.
     """
     # applying the single-qubit Clifford circuit is equivalent to measuring a Pauli
-    unitary_ensemble = [qml.PauliX, qml.PauliY, qml.PauliZ]
+    unitary_ensemble = [qp.PauliX, qp.PauliY, qp.PauliZ]
 
     # sample random Pauli measurements uniformly, where 0,1,2 = X,Y,Z
     unitary_ids = np.random.randint(0, 3, size=(shadow_size, num_qubits))
@@ -194,18 +194,18 @@ def calculate_classical_shadow(circuit_template, params, shadow_size, num_qubits
 num_qubits = 2
 
 # set up a two-qubit device with shots = 1 to ensure that we only get a single measurement
-dev = qml.device("lightning.qubit", wires=num_qubits)
+dev = qp.device("lightning.qubit", wires=num_qubits)
 
 
 # simple circuit to prepare rho
-@qml.set_shots(1)
-@qml.qnode(dev)
+@qp.set_shots(1)
+@qp.qnode(dev)
 def local_qubit_rotation_circuit(params, **kwargs):
     observables = kwargs.pop("observable")
     for w in dev.wires:
-        qml.RY(params[w], wires=w)
+        qp.RY(params[w], wires=w)
 
-    return [qml.expval(o) for o in observables]
+    return [qp.expval(o) for o in observables]
 
 
 # arrays in which to collect data
@@ -300,8 +300,8 @@ def snapshot_state(b_list, obs_list):
 
     # local qubit unitaries
     phase_z = np.array([[1, 0], [0, -1j]], dtype=complex)
-    hadamard = qml.matrix(qml.Hadamard(0))
-    identity = qml.matrix(qml.Identity(0))
+    hadamard = qp.matrix(qp.Hadamard(0))
+    identity = qp.matrix(qp.Identity(0))
 
     # undo the rotations that were added implicitly to the circuit for the Pauli measurements
     unitaries = [hadamard, hadamard @ phase_z, identity]
@@ -350,20 +350,20 @@ def shadow_state_reconstruction(shadow):
 
 num_qubits = 2
 
-dev = qml.device("lightning.qubit", wires=num_qubits)
+dev = qp.device("lightning.qubit", wires=num_qubits)
 
 
 # circuit to create a Bell state and measure it in
 # the bases specified by the 'observable' keyword argument.
-@qml.set_shots(1)
-@qml.qnode(dev)
+@qp.set_shots(1)
+@qp.qnode(dev)
 def bell_state_circuit(params, **kwargs):
     observables = kwargs.pop("observable")
 
-    qml.Hadamard(0)
-    qml.CNOT(wires=[0, 1])
+    qp.Hadamard(0)
+    qp.CNOT(wires=[0, 1])
 
-    return [qml.expval(o) for o in observables]
+    return [qp.expval(o) for o in observables]
 
 
 ##############################################################################
@@ -495,8 +495,8 @@ def estimate_shadow_obervable(shadow, observable, k=10):
 
     Args:
         shadow (tuple): A shadow tuple obtained from `calculate_classical_shadow`.
-        observable (qml.Observable): Single PennyLane observable consisting of single Pauli
-            operators e.g. qml.PauliX(0) @ qml.PauliY(1).
+        observable (qp.Observable): Single PennyLane observable consisting of single Pauli
+            operators e.g. qp.PauliX(0) @ qp.PauliY(1).
         k (int): number of splits in the median of means estimator.
 
     Returns:
@@ -506,7 +506,7 @@ def estimate_shadow_obervable(shadow, observable, k=10):
 
     # convert Pennylane observables to indices
     map_name_to_int = {"PauliX": 0, "PauliY": 1, "PauliZ": 2}
-    if isinstance(observable, (qml.PauliX, qml.PauliY, qml.PauliZ)):
+    if isinstance(observable, (qp.PauliX, qp.PauliY, qp.PauliZ)):
         target_obs, target_locs = np.array(
             [map_name_to_int[observable.name]]
         ), np.array([observable.wires[0]])
@@ -582,22 +582,22 @@ def shadow_bound(error, observables, failure_rate=0.01):
 # We first create a simple circuit
 
 num_qubits = 10
-dev = qml.device("lightning.qubit", wires=num_qubits)
+dev = qp.device("lightning.qubit", wires=num_qubits)
 
 
 def circuit_base(params, **kwargs):
     observables = kwargs.pop("observable")
     for w in range(num_qubits):
-        qml.Hadamard(wires=w)
-        qml.RY(params[w], wires=w)
+        qp.Hadamard(wires=w)
+        qp.RY(params[w], wires=w)
     for w in dev.wires[:-1]:
-        qml.CNOT(wires=[w, w + 1])
+        qp.CNOT(wires=[w, w + 1])
     for w in dev.wires:
-        qml.RZ(params[w + num_qubits], wires=w)
-    return [qml.expval(o) for o in observables]
+        qp.RZ(params[w + num_qubits], wires=w)
+    return [qp.expval(o) for o in observables]
 
 
-circuit = qml.set_shots(qml.QNode(circuit_base, dev), shots = 1)
+circuit = qp.set_shots(qp.QNode(circuit_base, dev), shots = 1)
 
 params = np.random.randn(2 * num_qubits)
 
@@ -609,9 +609,9 @@ params = np.random.randn(2 * num_qubits)
 #   O = \sum_{i=0}^{n-1} X_i X_{i+1} + Y_i Y_{i+1} + Z_i Z_{i+1}.
 
 list_of_observables = (
-        [qml.PauliX(i) @ qml.PauliX(i + 1) for i in range(num_qubits - 1)]
-        + [qml.PauliY(i) @ qml.PauliY(i + 1) for i in range(num_qubits - 1)]
-        + [qml.PauliZ(i) @ qml.PauliZ(i + 1) for i in range(num_qubits - 1)]
+        [qp.PauliX(i) @ qp.PauliX(i + 1) for i in range(num_qubits - 1)]
+        + [qp.PauliY(i) @ qp.PauliY(i + 1) for i in range(num_qubits - 1)]
+        + [qp.PauliZ(i) @ qp.PauliZ(i + 1) for i in range(num_qubits - 1)]
 )
 
 ##############################################################################
@@ -625,7 +625,7 @@ list_of_observables = (
 # for all :math:`1\leq i \leq M.`
 
 shadow_size_bound, k = shadow_bound(
-    error=2e-1, observables=[qml.matrix(o) for o in list_of_observables]
+    error=2e-1, observables=[qp.matrix(o) for o in list_of_observables]
 )
 shadow_size_bound
 
@@ -642,7 +642,7 @@ estimates = []
 for error in epsilon_grid:
     # get the number of samples needed so that the absolute error < epsilon.
     shadow_size_bound, k = shadow_bound(
-        error=error, observables=[qml.matrix(o) for o in list_of_observables]
+        error=error, observables=[qp.matrix(o) for o in list_of_observables]
     )
     shadow_sizes.append(shadow_size_bound)
     print(f"{shadow_size_bound} samples required ")
@@ -655,9 +655,9 @@ for error in epsilon_grid:
 ##############################################################################
 # Then, we calculate the ground truth by changing the device backend.
 
-dev_exact = qml.device("lightning.qubit", wires=num_qubits)
+dev_exact = qp.device("lightning.qubit", wires=num_qubits)
 # change the simulator to be the exact one.
-circuit = qml.QNode(circuit_base, dev_exact)
+circuit = qp.QNode(circuit_base, dev_exact)
 
 expval_exact = [
     circuit(params, observable=[o]) for o in list_of_observables

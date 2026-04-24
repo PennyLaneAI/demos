@@ -63,12 +63,12 @@ This demo is based on some of the techniques and results of the paper titled
 # `PennyLane Datasets <https://pennylane.ai/datasets/h2o-molecule>`_ or the :mod:`pennylane.qchem`
 # module. We use the pre-calculated results below to create a :class:`~pennylane.ops.Hamiltonian` object.
 
-import pennylane as qml
+import pennylane as qp
 import numpy as np
 
 coeffs = [-2.6055398817649027, 0.4725512342017669, 0.06908378485045799, 0.06908378485045799, 0.42465877221739423, 0.040785962774025165, 0.02016371425557293, 0.33650704944175736, 0.059002396986463035, 0.059002396986463035, 0.2401948108687125, 0.2696430914655511, 0.04971997220167805, 0.04971997220167805, 0.2751875205710399, 0.30033122257656397, 0.22551650339251875]
-paulis = [qml.GlobalPhase(0, 0), qml.Z(0), qml.Y(0) @ qml.Z(1) @ qml.Y(2), qml.X(0) @ qml.Z(1) @ qml.X(2), qml.Z(1), qml.Z(2), qml.Z(3), qml.Z(0) @ qml.Z(1), qml.Y(0) @ qml.Y(2), qml.X(0) @ qml.X(2), qml.Z(0) @ qml.Z(2), qml.Z(0) @ qml.Z(3), qml.Y(0) @ qml.Z(1) @ qml.Y(2) @ qml.Z(3), qml.X(0) @ qml.Z(1) @ qml.X(2) @ qml.Z(3), qml.Z(1) @ qml.Z(2), qml.Z(1) @ qml.Z(3), qml.Z(2) @ qml.Z(3)]
-hamiltonian = qml.Hamiltonian(coeffs, paulis)
+paulis = [qp.GlobalPhase(0, 0), qp.Z(0), qp.Y(0) @ qp.Z(1) @ qp.Y(2), qp.X(0) @ qp.Z(1) @ qp.X(2), qp.Z(1), qp.Z(2), qp.Z(3), qp.Z(0) @ qp.Z(1), qp.Y(0) @ qp.Y(2), qp.X(0) @ qp.X(2), qp.Z(0) @ qp.Z(2), qp.Z(0) @ qp.Z(3), qp.Y(0) @ qp.Z(1) @ qp.Y(2) @ qp.Z(3), qp.X(0) @ qp.Z(1) @ qp.X(2) @ qp.Z(3), qp.Z(1) @ qp.Z(2), qp.Z(1) @ qp.Z(3), qp.Z(2) @ qp.Z(3)]
+hamiltonian = qp.Hamiltonian(coeffs, paulis)
 
 ######################################################################
 # Next, we will define the Krylov subspace, :math:`\mathcal{K}`.
@@ -175,15 +175,15 @@ hamiltonian = qml.Hamiltonian(coeffs, paulis)
 
 def rotation_about_reflection_axis(angle, wires):
     """Rotation operation, S(phi_k)"""
-    qml.ctrl(qml.PauliX(wires[0]), wires[1:], (0,) * len(wires[1:]))
-    qml.RZ(angle, wires[0])
-    qml.ctrl(qml.PauliX(wires[0]), wires[1:], (0,) * len(wires[1:]))
+    qp.ctrl(qp.PauliX(wires[0]), wires[1:], (0,) * len(wires[1:]))
+    qp.RZ(angle, wires[0])
+    qp.ctrl(qp.PauliX(wires[0]), wires[1:], (0,) * len(wires[1:]))
 
 def qsp(lcu, angles, rot_wires, prep_wires):
     """Applies QSP by alternating between S(phi_k) and U_{QSP}"""
     for angle in angles[::-1][:-1]:
         rotation_about_reflection_axis(angle, rot_wires)
-        qml.PrepSelPrep(lcu, control=prep_wires)
+        qp.PrepSelPrep(lcu, control=prep_wires)
     rotation_about_reflection_axis(angles[0], rot_wires)
 
 ######################################################################
@@ -192,19 +192,19 @@ def qsp(lcu, angles, rot_wires, prep_wires):
 # polynomial.
 
 def qsp_poly_complex(lcu, angles_real, angles_imag, ctrl_wire, rot_wires, prep_wires):
-    qml.H(ctrl_wire)
-    qml.ctrl(qsp, ctrl_wire, 0)(lcu, angles_real, rot_wires, prep_wires)
-    qml.ctrl(qsp, ctrl_wire, 1)(lcu, angles_imag, rot_wires, prep_wires)
-    qml.H(ctrl_wire)
+    qp.H(ctrl_wire)
+    qp.ctrl(qsp, ctrl_wire, 0)(lcu, angles_real, rot_wires, prep_wires)
+    qp.ctrl(qsp, ctrl_wire, 1)(lcu, angles_imag, rot_wires, prep_wires)
+    qp.H(ctrl_wire)
 
 ######################################################################
 # Additionally, we require a template to perform the :math:`R_0` reflection for our measurements.
 
 def reflection(wire, ctrl_wires):
     """Reflection operator, R_0"""
-    qml.ctrl(qml.X(wire), ctrl_wires, [0] * len(ctrl_wires))
-    qml.Z(wire)
-    qml.ctrl(qml.X(wire), ctrl_wires, [0] * len(ctrl_wires))
+    qp.ctrl(qp.X(wire), ctrl_wires, [0] * len(ctrl_wires))
+    qp.Z(wire)
+    qp.ctrl(qp.X(wire), ctrl_wires, [0] * len(ctrl_wires))
 
 ######################################################################
 # We will also need to split even- and odd-parity polynomial terms, which is captured in the
@@ -221,10 +221,10 @@ def reflection(wire, ctrl_wires):
 # and return measurements of the elements of
 # the one-particle reduced density matrix:
 
-dev = qml.device("lightning.qubit")
-ref_state = qml.qchem.hf_state(electrons=4, orbitals=4) 
+dev = qp.device("lightning.qubit")
+ref_state = qp.qchem.hf_state(electrons=4, orbitals=4) 
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def krylov_qsp(lcu, even_real, even_imag, odd_real, odd_imag, obs, measure_reflection=False):
     """Prepares the Krylov ground-state by applying QSP with the input angles.
     Then measures the expectation value of the desired observable. 
@@ -239,22 +239,22 @@ def krylov_qsp(lcu, even_real, even_imag, odd_real, odd_imag, obs, measure_refle
 
     #prepare the reference state
     for i in hamiltonian.wires:
-        qml.X(i)
+        qp.X(i)
 
     if measure_reflection: # preprocessing for reflection measurement
-        qml.X(rdm_ctrl_wire)
+        qp.X(rdm_ctrl_wire)
 
-    qml.H(ctrl_wires[0])
-    qml.ctrl(qsp_poly_complex, ctrl_wires[0], 0)(lcu, even_real, even_imag, ctrl_wires[1],
+    qp.H(ctrl_wires[0])
+    qp.ctrl(qsp_poly_complex, ctrl_wires[0], 0)(lcu, even_real, even_imag, ctrl_wires[1],
                                                  rot_wires, prep_wires)
-    qml.ctrl(qsp_poly_complex, ctrl_wires[0], 1)(lcu, odd_real, odd_imag, ctrl_wires[1],
+    qp.ctrl(qsp_poly_complex, ctrl_wires[0], 1)(lcu, odd_real, odd_imag, ctrl_wires[1],
                                                  rot_wires, prep_wires)
-    qml.H(ctrl_wires[0])
+    qp.H(ctrl_wires[0])
 
     # measurements
     if measure_reflection:
-        return qml.expval(qml.prod(reflection)(rdm_ctrl_wire, set(ctrl_wires+prep_wires))@obs)
-    return qml.expval(obs)
+        return qp.expval(qp.prod(reflection)(rdm_ctrl_wire, set(ctrl_wires+prep_wires))@obs)
+    return qp.expval(obs)
 
 
 ######################################################################
@@ -262,8 +262,8 @@ def krylov_qsp(lcu, even_real, even_imag, odd_real, odd_imag, obs, measure_refle
 # We can obtain the Jordan-Wigner mapping of the fermionic operators via PennyLane using the
 # :func:`~pennylane.fermi.from_string` and :func:`~pennylane.jordan_wigner` functions as follows:
 
-Epq = qml.fermi.from_string('0+ 0-')
-obs = qml.jordan_wigner(Epq)
+Epq = qp.fermi.from_string('0+ 0-')
+obs = qp.jordan_wigner(Epq)
 
 ######################################################################
 # For this demo, we used a Krylov subspace dimension of :math:`D=15` and pre-computed QSP angles
@@ -301,7 +301,7 @@ print("Coherent result:", coherent_result)
 # We first convert the PennyLane circuit to a Qualtran bloq using :func:`~pennylane.to_bloq` and
 # then use the call graph to count the required gates:
 
-bloq = qml.to_bloq(krylov_qsp, map_ops=False,
+bloq = qp.to_bloq(krylov_qsp, map_ops=False,
     even_real=even_real, even_imag=even_imag,
     odd_real=odd_real, odd_imag=odd_imag,
     lcu=hamiltonian, obs=obs)
@@ -333,7 +333,7 @@ even_real = even_imag = odd_real = odd_imag = np.random.random(20)
 ######################################################################
 # We then repeat the gate counts and see they have increased:
 
-bloq = qml.to_bloq(krylov_qsp, map_ops=False, even_real=even_real,
+bloq = qp.to_bloq(krylov_qsp, map_ops=False, even_real=even_real,
                    even_imag=even_imag, odd_real=odd_real,
                    odd_imag=odd_imag, lcu=hamiltonian, obs=obs)
 
@@ -352,7 +352,7 @@ from qualtran.bloqs.basic_gates import Toffoli, CNOT, XGate
 
 def count_cnots(krylov_dimension):
     even_real = even_imag = odd_real = odd_imag = np.random.random(krylov_dimension)
-    bloq = qml.to_bloq(krylov_qsp, map_ops=False, even_real=even_real,
+    bloq = qp.to_bloq(krylov_qsp, map_ops=False, even_real=even_real,
                        even_imag=even_imag, odd_real=odd_real,
                        odd_imag=odd_imag, lcu=hamiltonian, obs=obs)
     _, sigma = bloq.call_graph(generalizer=generalize_rotation_angle)

@@ -67,7 +67,7 @@ We will also define the device, which has two qubits, using :func:`~.pennylane.d
 """
 
 import matplotlib.pyplot as plt
-import pennylane as qml
+import pennylane as qp
 from pennylane import numpy as pnp
 import jax
 from jax import numpy as jnp
@@ -75,7 +75,7 @@ import optax
 
 pnp.random.seed(42)
 
-dev = qml.device('default.qubit', wires=2)
+dev = qp.device('default.qubit', wires=2)
 
 ######################################################################
 # Now we will construct the data-encoding circuit block, :math:`S(\vec{x})`, as a product of :math:`R_z` rotations:
@@ -86,18 +86,18 @@ dev = qml.device('default.qubit', wires=2)
 # Specifically, we define the :math:`S(\vec{x})` operator using the :class:`~.pennylane.AngleEmbedding` function.
 
 def S(x):
-    qml.AngleEmbedding( x, wires=[0,1],rotation='Z')
+    qp.AngleEmbedding( x, wires=[0,1],rotation='Z')
 
 ######################################################################
 # For the :math:`W(\vec{\theta})` operator, we will use an ansatz that is available in PennyLane, called :class:`~.pennylane.StronglyEntanglingLayers`.
 
 def W(params):
-    qml.StronglyEntanglingLayers(params, wires=[0,1])
+    qp.StronglyEntanglingLayers(params, wires=[0,1])
 
 ######################################################################
 # Now we will build the circuit in PennyLane by alternating layers of :math:`W(\vec{\theta})` and :math:`S(\vec{x})` layers. On this prepared state, we estimate the expectation value of the :math:`Z\otimes Z` operator, using PennyLane's :func:`~.pennylane.expval` function.
 
-@qml.qnode(dev,interface="jax")
+@qp.qnode(dev,interface="jax")
 def quantum_neural_network(params, x):
     layers=len(params[:,0,0])-1
     n_wires=len(params[0,:,0])
@@ -107,7 +107,7 @@ def quantum_neural_network(params, x):
       S(x)
     W(params[-1,:,:].reshape(1,n_wires,n_params_rot))
 
-    return qml.expval(qml.PauliZ(wires=0)@qml.PauliZ(wires=1))
+    return qp.expval(qp.PauliZ(wires=0)@qp.PauliZ(wires=1))
 
 ######################################################################
 # The function we will be fitting is :math:`f(x_1, x_2) = \frac{1}{2} \left( x_1^2 + x_2^2 \right)`, which we will define as ``target_function``:
@@ -203,7 +203,7 @@ def optimization_jit(params, data, targets, print_training=False):
 
 wires=2
 layers=4
-params_shape = qml.StronglyEntanglingLayers.shape(n_layers=layers+1,n_wires=wires)
+params_shape = qp.StronglyEntanglingLayers.shape(n_layers=layers+1,n_wires=wires)
 params=pnp.random.default_rng().random(size=params_shape)
 best_params=optimization_jit(params, x_train, jnp.array(y_train), print_training=True)
 

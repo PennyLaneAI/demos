@@ -107,7 +107,7 @@ This demonstration discusses theory and experiments relating to a recently propo
 #
 
 
-import pennylane as qml
+import pennylane as qp
 from matplotlib import pyplot as plt
 import numpy as np
 import scipy
@@ -148,9 +148,9 @@ def create_hamiltonian_matrix(n, graph):
         x = y = z = 1
         for j in range(0, n):
             if j == i[0] or j == i[1]:
-                x = np.kron(x, qml.matrix(qml.PauliX(0)))
-                y = np.kron(y, qml.matrix(qml.PauliY(0)))
-                z = np.kron(z, qml.matrix(qml.PauliZ(0)))
+                x = np.kron(x, qp.matrix(qp.PauliX(0)))
+                y = np.kron(y, qp.matrix(qp.PauliY(0)))
+                z = np.kron(z, qp.matrix(qp.PauliZ(0)))
             else:
                 x = np.kron(x, np.identity(2))
                 y = np.kron(y, np.identity(2))
@@ -237,7 +237,7 @@ def single_rotation(phi_params, qubits):
 
     rotations = ["Z", "Y", "X"]
     for i in range(0, len(rotations)):
-        qml.AngleEmbedding(phi_params[i], wires=qubits, rotation=rotations[i])
+        qp.AngleEmbedding(phi_params[i], wires=qubits, rotation=rotations[i])
 
 
 ######################################################################
@@ -254,17 +254,17 @@ def CRX_ring(parameters, wires):
     n_wires = len(wires)
 
     for param, w in zip(parameters, wires):
-        qml.CRX(param, wires=[w % n_wires, (w + 1) % n_wires])
+        qp.CRX(param, wires=[w % n_wires, (w + 1) % n_wires])
 
 
 depth = 4
-dev = qml.device("lightning.qubit", wires=nr_qubits)
+dev = qp.device("lightning.qubit", wires=nr_qubits)
 
 
 def quantum_circuit(rotation_params, coupling_params, sample=None, return_state=False):
 
     # Prepares the initial basis state corresponding to the sample
-    qml.BasisState(sample, wires=range(nr_qubits))
+    qp.BasisState(sample, wires=range(nr_qubits))
 
     # Prepares the variational ansatz for the circuit
     for i in range(0, depth):
@@ -272,14 +272,14 @@ def quantum_circuit(rotation_params, coupling_params, sample=None, return_state=
         CRX_ring(coupling_params[i], list(range(nr_qubits)))
 
     if return_state:
-        return qml.state()
+        return qp.state()
 
     # Calculates the expectation value of the Hamiltonian with respect to the prepared states
-    return qml.expval(qml.Hermitian(ham_matrix, wires=range(nr_qubits)))
+    return qp.expval(qp.Hermitian(ham_matrix, wires=range(nr_qubits)))
 
 
 # Constructs the QNode
-qnode = qml.QNode(quantum_circuit, dev, interface="autograd")
+qnode = qp.QNode(quantum_circuit, dev, interface="autograd")
 
 
 ######################################################################
@@ -291,7 +291,7 @@ qnode = qml.QNode(quantum_circuit, dev, interface="autograd")
 rotation_params = [[[1, 1, 1, 1], [1, 1, 1, 1], [1, 1, 1, 1]] for i in range(0, depth)]
 coupling_params = [[1, 1, 1, 1] for i in range(0, depth)]
 print(
-    qml.draw(qnode, level="device", show_matrices=True)(
+    qp.draw(qnode, level="device", show_matrices=True)(
         rotation_params, coupling_params, sample=[1, 0, 1, 0]
     )
 )

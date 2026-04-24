@@ -79,53 +79,53 @@ simulators and noisy operations natively, so we can use the
 to carry out our noisy simulations.
 """
 
-import pennylane as qml
+import pennylane as qp
 from pennylane import numpy as np
 import matplotlib.pyplot as plt
 
-dev = qml.device("cirq.mixedsimulator", wires=2)
+dev = qp.device("cirq.mixedsimulator", wires=2)
 
 # CHSH observables
-A1 = qml.PauliZ(0)
-A2 = qml.PauliX(0)
-B1 = qml.Hermitian(np.array([[1, 1], [1, -1]]) / np.sqrt(2), wires=1)
-B2 = qml.Hermitian(np.array([[1, -1], [-1, -1]]) / np.sqrt(2), wires=1)
+A1 = qp.PauliZ(0)
+A2 = qp.PauliX(0)
+B1 = qp.Hermitian(np.array([[1, 1], [1, -1]]) / np.sqrt(2), wires=1)
+B2 = qp.Hermitian(np.array([[1, -1], [-1, -1]]) / np.sqrt(2), wires=1)
 CHSH_observables = [A1 @ B1, A1 @ B2, A2 @ B1, A2 @ B2]
 
 
 # subcircuit for creating an entangled pair of qubits
 def bell_pair():
-    qml.Hadamard(wires=0)
-    qml.CNOT(wires=[0, 1])
+    qp.Hadamard(wires=0)
+    qp.CNOT(wires=[0, 1])
 
 
 # circuits for measuring each distinct observable
-@qml.set_shots(1000)
-@qml.qnode(dev)
+@qp.set_shots(1000)
+@qp.qnode(dev)
 def measure_A1B1():
     bell_pair()
-    return qml.expval(A1 @ B1)
+    return qp.expval(A1 @ B1)
 
 
-@qml.set_shots(1000)
-@qml.qnode(dev)
+@qp.set_shots(1000)
+@qp.qnode(dev)
 def measure_A1B2():
     bell_pair()
-    return qml.expval(A1 @ B2)
+    return qp.expval(A1 @ B2)
 
 
-@qml.set_shots(1000)
-@qml.qnode(dev)
+@qp.set_shots(1000)
+@qp.qnode(dev)
 def measure_A2B1():
     bell_pair()
-    return qml.expval(A2 @ B1)
+    return qp.expval(A2 @ B1)
 
 
-@qml.set_shots(1000)
-@qml.qnode(dev)
+@qp.set_shots(1000)
+@qp.qnode(dev)
 def measure_A2B2():
     bell_pair()
-    return qml.expval(A2 @ B2)
+    return qp.expval(A2 @ B2)
 
 
 # now we measure each circuit and construct the CHSH inequality
@@ -181,8 +181,8 @@ for p in noise_vals:
     # we overwrite the bell_pair() subcircuit to add
     # extra noisy channels after the entangled state is created
     def bell_pair():
-        qml.Hadamard(wires=0)
-        qml.CNOT(wires=[0, 1])
+        qp.Hadamard(wires=0)
+        qp.CNOT(wires=[0, 1])
         cirq_ops.BitFlip(p, wires=0)
         cirq_ops.BitFlip(p, wires=1)
 
@@ -261,13 +261,13 @@ plt.show()
 #           situations.
 
 
-@qml.set_shots(1000)
-@qml.qnode(dev)
+@qp.set_shots(1000)
+@qp.qnode(dev)
 def circuit(gate_params, noise_param=0.0):
-    qml.RX(gate_params[0], wires=0)
-    qml.RY(gate_params[1], wires=0)
+    qp.RX(gate_params[0], wires=0)
+    qp.RY(gate_params[1], wires=0)
     cirq_ops.Depolarize(noise_param, wires=0)
-    return qml.expval(qml.PauliZ(0))
+    return qp.expval(qp.PauliZ(0))
 
 
 gate_pars = [0.54, 0.12]
@@ -316,7 +316,7 @@ def noisy_cost(x):
 
 
 # initialize the optimizer
-opt = qml.GradientDescentOptimizer(stepsize=0.4)
+opt = qp.GradientDescentOptimizer(stepsize=0.4)
 
 # set the number of steps
 steps = 100
