@@ -183,7 +183,7 @@ This Python code requires *PennyLane* and the plotting library *matplotlib*.
 """
 
 # Pennylane
-import pennylane as qml
+import pennylane as qp
 from pennylane import numpy as np
 
 # Plotting
@@ -219,7 +219,7 @@ c = np.array([1.0, 0.2, 0.2])
 def U_b():
     """Unitary matrix rotating the ground state to the problem vector |b> = U_b |0>."""
     for idx in range(n_qubits):
-        qml.Hadamard(wires=idx)
+        qp.Hadamard(wires=idx)
 
 def CA(idx):
     """Controlled versions of the unitary components A_l of the problem matrix A."""
@@ -228,11 +228,11 @@ def CA(idx):
         None
 
     elif idx == 1:
-        qml.CNOT(wires=[ancilla_idx, 0])
-        qml.CZ(wires=[ancilla_idx, 1])
+        qp.CNOT(wires=[ancilla_idx, 0])
+        qp.CZ(wires=[ancilla_idx, 1])
 
     elif idx == 2:
-        qml.CNOT(wires=[ancilla_idx, 0])
+        qp.CNOT(wires=[ancilla_idx, 0])
 
 
 ##############################################################################
@@ -256,11 +256,11 @@ def variational_block(weights):
     """Variational circuit mapping the ground state |0> to the ansatz state |x>."""
     # We first prepare an equal superposition of all the states of the computational basis.
     for idx in range(n_qubits):
-        qml.Hadamard(wires=idx)
+        qp.Hadamard(wires=idx)
 
     # A very minimal variational circuit.
     for idx, element in enumerate(weights):
-        qml.RY(element, wires=idx)
+        qp.RY(element, wires=idx)
 
 
 ##############################################################################
@@ -276,18 +276,18 @@ def variational_block(weights):
 # and will be used to estimate the coefficients :math:`\mu_{l,l',j}` defined in the introduction.
 # A graphical representation of this circuit is shown at the top of this tutorial.
 
-dev_mu = qml.device("lightning.qubit", wires=tot_qubits)
+dev_mu = qp.device("lightning.qubit", wires=tot_qubits)
 
-@qml.qnode(dev_mu, interface="autograd")
+@qp.qnode(dev_mu, interface="autograd")
 def local_hadamard_test(weights, l=None, lp=None, j=None, part=None):
 
     # First Hadamard gate applied to the ancillary qubit.
-    qml.Hadamard(wires=ancilla_idx)
+    qp.Hadamard(wires=ancilla_idx)
 
     # For estimating the imaginary part of the coefficient "mu", we must add a "-i"
     # phase gate.
     if part == "Im" or part == "im":
-        qml.PhaseShift(-np.pi / 2, wires=ancilla_idx)
+        qp.PhaseShift(-np.pi / 2, wires=ancilla_idx)
 
     # Variational circuit generating a guess for the solution vector |x>
     variational_block(weights)
@@ -301,7 +301,7 @@ def local_hadamard_test(weights, l=None, lp=None, j=None, part=None):
 
     # Controlled Z operator at position j. If j = -1, apply the identity.
     if j != -1:
-        qml.CZ(wires=[ancilla_idx, j])
+        qp.CZ(wires=[ancilla_idx, j])
 
     # Unitary U_b associated to the problem vector |b>.
     U_b()
@@ -311,10 +311,10 @@ def local_hadamard_test(weights, l=None, lp=None, j=None, part=None):
     CA(lp)
 
     # Second Hadamard gate applied to the ancillary qubit.
-    qml.Hadamard(wires=ancilla_idx)
+    qp.Hadamard(wires=ancilla_idx)
 
     # Expectation value of Z for the ancillary qubit.
-    return qml.expval(qml.PauliZ(wires=ancilla_idx))
+    return qp.expval(qp.PauliZ(wires=ancilla_idx))
 
 
 ##############################################################################################
@@ -382,7 +382,7 @@ w = q_delta * np.random.randn(n_qubits, requires_grad=True)
 
 ##############################################################################
 # To minimize the cost function we use the gradient-descent optimizer.
-opt = qml.GradientDescentOptimizer(eta)
+opt = qp.GradientDescentOptimizer(eta)
 
 
 ##############################################################################
@@ -463,10 +463,10 @@ c_probs = (x / np.linalg.norm(x)) ** 2
 # For this task, we initialize a new PennyLane device and define the associated
 # *qnode* circuit.
 
-dev_x = qml.device("lightning.qubit", wires=n_qubits)
+dev_x = qp.device("lightning.qubit", wires=n_qubits)
 
-@qml.set_shots(n_shots)
-@qml.qnode(dev_x, interface="autograd")
+@qp.set_shots(n_shots)
+@qp.qnode(dev_x, interface="autograd")
 def prepare_and_sample(weights):
 
     # Variational circuit generating a guess for the solution vector |x>
@@ -475,7 +475,7 @@ def prepare_and_sample(weights):
     # We assume that the system is measured in the computational basis.
     # then sampling the device will give us a value of 0 or 1 for each qubit (n_qubits)
     # this will be repeated for the total number of shots provided (n_shots)
-    return qml.sample()
+    return qp.sample()
 
 
 ##############################################################################

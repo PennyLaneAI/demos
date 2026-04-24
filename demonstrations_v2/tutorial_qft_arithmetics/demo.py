@@ -94,25 +94,25 @@ Let’s see how we would represent all the integers from :math:`0` to :math:`7` 
     representation that helps better visualize and interpret quantum gates such as rotations.
 
 We can use
-the :class:`qml.BasisEmbedding <pennylane.BasisEmbedding>`
+the :class:`qp.BasisEmbedding <pennylane.BasisEmbedding>`
 template to obtain the binary representation in a simple way.
 Let's see how we would code the number :math:`6.`
 """
 
-import pennylane as qml
+import pennylane as qp
 import matplotlib.pyplot as plt
 
-dev = qml.device("default.qubit", wires=3)
+dev = qp.device("default.qubit", wires=3)
 
-@qml.compile
-@qml.qnode(dev)
+@qp.compile
+@qp.qnode(dev)
 def basis_embedding_circuit(m):
-    qml.BasisEmbedding(m, wires=range(3))
-    return qml.state()
+    qp.BasisEmbedding(m, wires=range(3))
+    return qp.state()
 
 m = 6 # number to be encoded
 
-qml.draw_mpl(basis_embedding_circuit, show_all_wires=True)(m)
+qp.draw_mpl(basis_embedding_circuit, show_all_wires=True)(m)
 plt.show()
 
 ######################################################################
@@ -168,28 +168,28 @@ plt.show()
 # Let's see how this process would look in PennyLane.
 #
 
-import pennylane as qml
+import pennylane as qp
 import numpy as np
 
 n_wires = 4
-dev = qml.device("default.qubit", wires=n_wires)
+dev = qp.device("default.qubit", wires=n_wires)
 
 def add_k_fourier(k, wires):
     for j in range(len(wires)):
-        qml.RZ(k * np.pi / (2**j), wires=wires[j])
+        qp.RZ(k * np.pi / (2**j), wires=wires[j])
 
-@qml.set_shots(1)
-@qml.qnode(dev)
+@qp.set_shots(1)
+@qp.qnode(dev)
 def sum(m, k):
-    qml.BasisEmbedding(m, wires=range(n_wires))  # m encoding
+    qp.BasisEmbedding(m, wires=range(n_wires))  # m encoding
 
-    qml.QFT(wires=range(n_wires))  # step 1
+    qp.QFT(wires=range(n_wires))  # step 1
 
     add_k_fourier(k, range(n_wires))  # step 2
 
-    qml.adjoint(qml.QFT)(wires=range(n_wires))  # step 3
+    qp.adjoint(qp.QFT)(wires=range(n_wires))  # step 3
 
-    return qml.sample()
+    return qp.sample()
 
 
 print(f"The ket representation of the sum of 3 and 4 is {sum(3,4)}")
@@ -233,41 +233,41 @@ wires_m = [0, 1, 2]             # qubits needed to encode m
 wires_k = [3, 4, 5]             # qubits needed to encode k
 wires_solution = [6, 7, 8, 9]   # qubits needed to encode the solution
 
-dev = qml.device("default.qubit", wires=wires_m + wires_k + wires_solution)
+dev = qp.device("default.qubit", wires=wires_m + wires_k + wires_solution)
 
 n_wires = len(dev.wires) # total number of qubits used
 
 def addition(wires_m, wires_k, wires_solution):
     # prepare solution qubits to counting
-    qml.QFT(wires=wires_solution)
+    qp.QFT(wires=wires_solution)
 
     # add m to the counter
     for i in range(len(wires_m)):
-        qml.ctrl(add_k_fourier, control=wires_m[i])(2 **(len(wires_m) - i - 1), wires_solution)
+        qp.ctrl(add_k_fourier, control=wires_m[i])(2 **(len(wires_m) - i - 1), wires_solution)
 
     # add k to the counter
     for i in range(len(wires_k)):
-        qml.ctrl(add_k_fourier, control=wires_k[i])(2 **(len(wires_k) - i - 1), wires_solution)
+        qp.ctrl(add_k_fourier, control=wires_k[i])(2 **(len(wires_k) - i - 1), wires_solution)
 
     # return to computational basis
-    qml.adjoint(qml.QFT)(wires=wires_solution)
+    qp.adjoint(qp.QFT)(wires=wires_solution)
 
-@qml.set_shots(1)
-@qml.qnode(dev)
+@qp.set_shots(1)
+@qp.qnode(dev)
 def sum2(m, k, wires_m, wires_k, wires_solution):
     # m and k codification
-    qml.BasisEmbedding(m, wires=wires_m)
-    qml.BasisEmbedding(k, wires=wires_k)
+    qp.BasisEmbedding(m, wires=wires_m)
+    qp.BasisEmbedding(k, wires=wires_k)
 
     # apply the addition circuit
     addition(wires_m, wires_k, wires_solution)
 
-    return qml.sample(wires=wires_solution)
+    return qp.sample(wires=wires_solution)
 
 print(f"The ket representation of the sum of 7 and 3 is "
       f"{sum2(7, 3, wires_m, wires_k, wires_solution)}")
 
-qml.draw_mpl(sum2, show_all_wires=True)(7, 3, wires_m, wires_k, wires_solution)
+qp.draw_mpl(sum2, show_all_wires=True)(7, 3, wires_m, wires_k, wires_solution)
 plt.show()
 
 ######################################################################
@@ -300,39 +300,39 @@ wires_m = [0, 1, 2]           # qubits needed to encode m
 wires_k = [3, 4, 5]           # qubits needed to encode k
 wires_solution = [6, 7, 8, 9, 10]  # qubits needed to encode the solution
 
-dev = qml.device("default.qubit", wires=wires_m + wires_k + wires_solution)
+dev = qp.device("default.qubit", wires=wires_m + wires_k + wires_solution)
 
 n_wires = len(dev.wires)
 
 def multiplication(wires_m, wires_k, wires_solution):
     # prepare sol-qubits to counting
-    qml.QFT(wires=wires_solution)
+    qp.QFT(wires=wires_solution)
 
     # add m to the counter
     for i in range(len(wires_k)):
         for j in range(len(wires_m)):
             coeff = 2 ** (len(wires_m) + len(wires_k) - i - j - 2)
-            qml.ctrl(add_k_fourier, control=[wires_k[i], wires_m[j]])(coeff, wires_solution)
+            qp.ctrl(add_k_fourier, control=[wires_k[i], wires_m[j]])(coeff, wires_solution)
 
     # return to computational basis
-    qml.adjoint(qml.QFT)(wires=wires_solution)
+    qp.adjoint(qp.QFT)(wires=wires_solution)
 
-@qml.set_shots(1)
-@qml.qnode(dev)
+@qp.set_shots(1)
+@qp.qnode(dev)
 def mul(m, k):
     # m and k codification
-    qml.BasisEmbedding(m, wires=wires_m)
-    qml.BasisEmbedding(k, wires=wires_k)
+    qp.BasisEmbedding(m, wires=wires_m)
+    qp.BasisEmbedding(k, wires=wires_k)
 
     # Apply multiplication
     multiplication(wires_m, wires_k, wires_solution)
 
-    return qml.sample(wires=wires_solution)
+    return qp.sample(wires=wires_solution)
 
 
 print(f"The ket representation of the multiplication of 3 and 7 is {mul(3,7)}")
 
-qml.draw_mpl(mul, show_all_wires=True)(3, 7)
+qp.draw_mpl(mul, show_all_wires=True)(3, 7)
 plt.show()
 
 
@@ -375,32 +375,32 @@ wires_m = [0, 1, 2]                 # qubits needed to encode m
 wires_k = [3, 4, 5]                 # qubits needed to encode k
 wires_solution = [6, 7, 8, 9, 10]   # qubits needed to encode the solution
 
-dev = qml.device("default.qubit", wires=wires_m + wires_k + wires_solution)
+dev = qp.device("default.qubit", wires=wires_m + wires_k + wires_solution)
 
 n_wires = len(dev.wires)
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def factorization(n, wires_m, wires_k, wires_solution):
     # Superposition of the input
     for wire in wires_m:
-        qml.Hadamard(wires=wire)
+        qp.Hadamard(wires=wire)
 
     for wire in wires_k:
-        qml.Hadamard(wires=wire)
+        qp.Hadamard(wires=wire)
 
     # Apply the multiplication
     multiplication(wires_m, wires_k, wires_solution)
 
     # Change sign of n
-    qml.FlipSign(n, wires=wires_solution)
+    qp.FlipSign(n, wires=wires_solution)
 
     # Uncompute multiplication
-    qml.adjoint(multiplication)(wires_m, wires_k, wires_solution)
+    qp.adjoint(multiplication)(wires_m, wires_k, wires_solution)
 
     # Apply Grover operator
-    qml.GroverOperator(wires=wires_m + wires_k)
+    qp.GroverOperator(wires=wires_m + wires_k)
 
-    return qml.probs(wires=wires_m)
+    return qp.probs(wires=wires_m)
 
 
 plt.bar(range(2 ** len(wires_m)), factorization(n, wires_m, wires_k, wires_solution))

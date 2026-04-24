@@ -209,7 +209,7 @@ plt.show()
 #
 
 
-import pennylane as qml
+import pennylane as qp
 
 def perm_equivariant_embedding(A, betas, gammas):
     """
@@ -225,17 +225,17 @@ def perm_equivariant_embedding(A, betas, gammas):
 
     # initialise in the plus state
     for i in range(n_nodes):
-        qml.Hadamard(i)
+        qp.Hadamard(i)
 
     for l in range(n_layers):
 
         for i in range(n_nodes):
             for j in range(i):
                 # factor of 2 due to definition of gate
-                qml.IsingZZ(2*gammas[l]*A[i,j], wires=[i,j]) 
+                qp.IsingZZ(2*gammas[l]*A[i,j], wires=[i,j]) 
 
         for i in range(n_nodes):
-            qml.RX(A[i,i]*betas[l], wires=i)
+            qp.RX(A[i,i]*betas[l], wires=i)
 
 ######################################################################
 # We can use this ansatz in a circuit.
@@ -243,22 +243,22 @@ def perm_equivariant_embedding(A, betas, gammas):
 n_qubits = 5
 n_layers = 2
 
-dev = qml.device("lightning.qubit", wires=n_qubits)
+dev = qp.device("lightning.qubit", wires=n_qubits)
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def eqc(adjacency_matrix, observable, trainable_betas, trainable_gammas):
     """Circuit that uses the permutation equivariant embedding"""
     
     perm_equivariant_embedding(adjacency_matrix, trainable_betas, trainable_gammas)
-    return qml.expval(observable)
+    return qp.expval(observable)
 
 
 A = create_data_point(n_qubits)
 betas = rng.random(n_layers)
 gammas = rng.random(n_layers)
-observable = qml.PauliX(0) @ qml.PauliX(1) @ qml.PauliX(3)
+observable = qp.PauliX(0) @ qp.PauliX(1) @ qp.PauliX(3)
 
-qml.draw_mpl(eqc, decimals=2)(A, observable, betas, gammas)
+qp.draw_mpl(eqc, decimals=2)(A, observable, betas, gammas)
 plt.show()
 
 
@@ -294,11 +294,11 @@ print("Model output for permutation of A: ", result_Aperm)
 #
 # As a result, the final state before measurement is only the same if we
 # permute the qubits in the same manner that we permute the input adjacency matrix. We could insert a
-# permutation operator ``qml.Permute(perm)`` to achieve this, or we simply permute the wires
+# permutation operator ``qp.Permute(perm)`` to achieve this, or we simply permute the wires
 # of the observables!
 #
 
-observable_perm = qml.PauliX(perm[0]) @ qml.PauliX(perm[1]) @ qml.PauliX(perm[3])
+observable_perm = qp.PauliX(perm[0]) @ qp.PauliX(perm[1]) @ qp.PauliX(perm[3])
 
 ######################################################################
 # Now everything should work out!

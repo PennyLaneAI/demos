@@ -41,21 +41,21 @@ have a read of the :doc:`how-to on MCM statistics <demos/tutorial_how_to_collect
 # - Finally, the expectation value of the Pauli ``Y`` operator on the first qubit is returned.
 #
 
-import pennylane as qml
+import pennylane as qp
 import numpy as np
 
-dev = qml.device("lightning.qubit", wires=2)
+dev = qp.device("lightning.qubit", wires=2)
 
 
-@qml.qnode(dev, interface="numpy")
+@qp.qnode(dev, interface="numpy")
 def circuit(x):
-    qml.RX(x, 0)
-    qml.T(1)
-    qml.CNOT(wires=[0, 1])
-    mcm = qml.measure(1)
-    qml.cond(mcm, qml.S)(wires=0)
+    qp.RX(x, 0)
+    qp.T(1)
+    qp.CNOT(wires=[0, 1])
+    mcm = qp.measure(1)
+    qp.cond(mcm, qp.S)(wires=0)
 
-    return qml.expval(qml.Y(0))
+    return qp.expval(qp.Y(0))
 
 
 x = 1.361
@@ -89,11 +89,11 @@ print(circuit(x))
 def init_state(x):
     # Rotate the first three qubits
     for w in range(3):
-        qml.RX(x[w], w)
+        qp.RX(x[w], w)
     # Entangle the first three qubits
-    qml.CNOT([0, 1])
-    qml.CNOT([1, 2])
-    qml.CNOT([2, 0])
+    qp.CNOT([0, 1])
+    qp.CNOT([1, 2])
+    qp.CNOT([2, 0])
 
 
 ######################################################################
@@ -102,19 +102,19 @@ def init_state(x):
 #
 
 shots = 100
-dev = qml.device("default.qubit", seed=0)
+dev = qp.device("default.qubit", seed=0)
 
 
-@qml.set_shots(shots)
-@qml.qnode(dev)
+@qp.set_shots(shots)
+@qp.qnode(dev)
 def create_half_filled_state(x):
     init_state(x)
     for w in range(3):
         # Measure one qubit at a time and flip another, fresh qubit if measured 0
-        mcm = qml.measure(w)
-        qml.cond(~mcm, qml.X)(w + 3)
+        mcm = qp.measure(w)
+        qp.cond(~mcm, qp.X)(w + 3)
 
-    return qml.counts(wires=range(6))
+    return qp.counts(wires=range(6))
 
 
 ######################################################################
@@ -124,7 +124,7 @@ def create_half_filled_state(x):
 np.random.seed(652)
 x = np.random.random(3) * np.pi
 
-print(qml.draw(create_half_filled_state)(x))
+print(qp.draw(create_half_filled_state)(x))
 
 ######################################################################
 # We see an initial block of gates that prepares the starting state on the
@@ -153,16 +153,16 @@ for key, val in counts.items():
 #
 
 
-@qml.set_shots(shots)
-@qml.qnode(dev)
+@qp.set_shots(shots)
+@qp.qnode(dev)
 def postselect_half_filled_state(x, selection):
     init_state(x)
     for w in range(3):
         # Postselect the measured qubit to match the selection criterion
-        mcm = qml.measure(w, postselect=selection[w])
-        qml.cond(~mcm, qml.X)(w + 3)
+        mcm = qp.measure(w, postselect=selection[w])
+        qp.cond(~mcm, qp.X)(w + 3)
 
-    return qml.counts(wires=range(6))
+    return qp.counts(wires=range(6))
 
 
 ######################################################################
@@ -173,7 +173,7 @@ def postselect_half_filled_state(x, selection):
 #
 
 selection = [0, None, 1]
-print(qml.draw(postselect_half_filled_state)(x, selection))
+print(qp.draw(postselect_half_filled_state)(x, selection))
 
 ######################################################################
 # Note the indicated postselection values next to the drawn MCMs.
@@ -203,28 +203,28 @@ for key, val in counts.items():
 #
 
 
-@qml.set_shots(shots)
-@qml.qnode(dev)
+@qp.set_shots(shots)
+@qp.qnode(dev)
 def create_selected_half_filled_state(x, selection):
     init_state(x)
     all_mcms = []
     for w in range(3):
         # Don't postselect on the selection criterion, but store the MCM for later
-        mcm = qml.measure(w)
-        qml.cond(~mcm, qml.X)(w + 3)
+        mcm = qp.measure(w)
+        qp.cond(~mcm, qp.X)(w + 3)
         all_mcms.append(mcm)
 
     for w, sel, mcm in zip(range(3), selection, all_mcms):
         # If the postselection criterion is not None, flip the corresponding pair
         # of qubits conditioned on the mcm not satisfying the selection criterion
         if sel is not None:
-            qml.cond(mcm != sel, qml.X)(w)
-            qml.cond(mcm != sel, qml.X)(w + 3)
+            qp.cond(mcm != sel, qp.X)(w)
+            qp.cond(mcm != sel, qp.X)(w + 3)
 
-    return qml.counts(wires=range(6))
+    return qp.counts(wires=range(6))
 
 
-print(qml.draw(create_selected_half_filled_state)(x, selection))
+print(qp.draw(create_selected_half_filled_state)(x, selection))
 
 ######################################################################
 # We can see how the measured values are fed not only into the original conditioned operation,
@@ -244,7 +244,7 @@ for key, val in counts.items():
 # Note that we kept all samples because we did not postselect, and that (in this particular case)
 # this evened out the probabilities of measuring either of the two possible bit strings.
 # Also, note that we conditionally
-# applied the bit flip operators ``qml.X`` by comparing an MCM result to
+# applied the bit flip operators ``qp.X`` by comparing an MCM result to
 # the corresponding selection criterion (``mcm!=sel``). More generally, MCM
 # results in PennyLane can be processed with standard arithmetic operations. For details,
 # see the `introduction to MCMs

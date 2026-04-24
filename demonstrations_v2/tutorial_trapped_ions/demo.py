@@ -397,7 +397,7 @@ and read future papers to keep up-to-date with the most recent developments.
 # :math:`\exp(-i \hat{H} t/\hbar)` as a function of :math:`\varphi` and the
 # duration :math:`t` of the pulse, with :math:`\Omega` set to 100 kHz.
 
-import pennylane as qml
+import pennylane as qp
 import numpy as np
 from scipy.linalg import expm
 
@@ -416,36 +416,36 @@ def evolution(phi, t):
 # produce common gates. For example,  there is a combination of pulses
 # with different phases and durations that yield the Hadamard gate:
 
-dev = qml.device("default.qubit", wires=1)
+dev = qp.device("default.qubit", wires=1)
 
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def ion_hadamard(state):
 
     if state == 1:
-        qml.PauliX(wires=0)
+        qp.PauliX(wires=0)
     
     """We use a series of seemingly arbitrary pulses that will give the Hadamard gate.
     Why this is the case will become clear later"""
 
-    qml.QubitUnitary(evolution(0, -np.pi / 2 / Omega), wires=0)
-    qml.QubitUnitary(evolution(np.pi / 2, np.pi / 2 / Omega), wires=0)
-    qml.QubitUnitary(evolution(0, np.pi / 2 / Omega), wires=0)
-    qml.QubitUnitary(evolution(np.pi / 2, np.pi / 2 / Omega), wires=0)
-    qml.QubitUnitary(evolution(0, np.pi / 2 / Omega), wires=0)
+    qp.QubitUnitary(evolution(0, -np.pi / 2 / Omega), wires=0)
+    qp.QubitUnitary(evolution(np.pi / 2, np.pi / 2 / Omega), wires=0)
+    qp.QubitUnitary(evolution(0, np.pi / 2 / Omega), wires=0)
+    qp.QubitUnitary(evolution(np.pi / 2, np.pi / 2 / Omega), wires=0)
+    qp.QubitUnitary(evolution(0, np.pi / 2 / Omega), wires=0)
 
-    return qml.state()
+    return qp.state()
 
 #For comparison, we use the Hadamard built into PennyLane
-@qml.qnode(dev)
+@qp.qnode(dev)
 def hadamard(state):
 
     if state == 1:
-        qml.PauliX(wires=0)
+        qp.PauliX(wires=0)
 
-    qml.Hadamard(wires=0)
+    qp.Hadamard(wires=0)
 
-    return qml.state()
+    return qp.state()
 
 #We confirm that the values given by both functions are the same up to numerical error
 print(np.isclose(1j * ion_hadamard(0), hadamard(0)))
@@ -456,28 +456,28 @@ print(np.isclose(1j * ion_hadamard(1), hadamard(1)))
 # A similar exercise can be done for the :math:`T` gate:
 
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def ion_Tgate(state):
 
     if state == 1:
-        qml.PauliX(wires=0)
+        qp.PauliX(wires=0)
 
-    qml.QubitUnitary(evolution(0, -np.pi / 2 / Omega), wires=0)
-    qml.QubitUnitary(evolution(np.pi / 2, np.pi / 4 / Omega), wires=0)
-    qml.QubitUnitary(evolution(0, np.pi / 2 / Omega), wires=0)
+    qp.QubitUnitary(evolution(0, -np.pi / 2 / Omega), wires=0)
+    qp.QubitUnitary(evolution(np.pi / 2, np.pi / 4 / Omega), wires=0)
+    qp.QubitUnitary(evolution(0, np.pi / 2 / Omega), wires=0)
 
-    return qml.state()
+    return qp.state()
 
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def tgate(state):
 
     if state == 1:
-        qml.PauliX(wires=0)
+        qp.PauliX(wires=0)
 
-    qml.T(wires=0)
+    qp.T(wires=0)
 
-    return qml.state()
+    return qp.state()
 
 
 print(np.isclose(np.exp(1j * np.pi / 8) * ion_Tgate(0), tgate(0)))
@@ -501,12 +501,12 @@ print(np.isclose(np.exp(1j * np.pi / 8) * ion_Tgate(1), tgate(1)))
 import matplotlib.pyplot as plt
 
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def evolution_prob(t):
 
-    qml.QubitUnitary(evolution(0, t / Omega), wires=0)
+    qp.QubitUnitary(evolution(0, t / Omega), wires=0)
 
-    return qml.probs(wires=0)
+    return qp.probs(wires=0)
 
 
 t = np.linspace(0, 4 * np.pi, 101)
@@ -806,32 +806,32 @@ def Molmer_Sorensen(t):
 # time :math:`t/\Omega_{MS}.` Let us verify that this is indeed the case
 # by building the circuit in PennyLane:
 
-dev2 = qml.device("default.qubit",wires=2)
+dev2 = qp.device("default.qubit",wires=2)
 
-@qml.qnode(dev2)
+@qp.qnode(dev2)
 def ion_cnot(basis_state):
     
     #Prepare the two-qubit basis states from the input
-    qml.BasisState(basis_state, wires=range(2))
+    qp.BasisState(basis_state, wires=range(2))
     
     #Implements the circuit shown above
-    qml.RY(np.pi/2, wires=0)
-    qml.QubitUnitary(Molmer_Sorensen(np.pi/2/Omega),wires=[0,1])
-    qml.RX(-np.pi/2, wires=0)
-    qml.RX(-np.pi/2, wires=1)
-    qml.RY(-np.pi/2, wires=0)
+    qp.RY(np.pi/2, wires=0)
+    qp.QubitUnitary(Molmer_Sorensen(np.pi/2/Omega),wires=[0,1])
+    qp.RX(-np.pi/2, wires=0)
+    qp.RX(-np.pi/2, wires=1)
+    qp.RY(-np.pi/2, wires=0)
     
-    return qml.state()
+    return qp.state()
 
 #Compare with built-in CNOT
-@qml.qnode(dev2)
+@qp.qnode(dev2)
 def cnot_gate(basis_state):
     
-    qml.BasisState(basis_state, wires=range(2))
+    qp.BasisState(basis_state, wires=range(2))
 
-    qml.CNOT(wires=[0,1])
+    qp.CNOT(wires=[0,1])
     
-    return qml.state()
+    return qp.state()
 
 #Check that they are the same up to numerical error and global phase    
 print(np.isclose(np.exp(-1j*np.pi/4)*ion_cnot([0,0]),cnot_gate([0,0])))   

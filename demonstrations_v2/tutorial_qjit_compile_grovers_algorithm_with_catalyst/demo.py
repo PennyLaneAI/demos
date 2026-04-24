@@ -65,16 +65,16 @@ How to quantum just-in-time (QJIT) compile Grover's algorithm with Catalyst
 
 import matplotlib.pyplot as plt
 import numpy as np
-import pennylane as qml
+import pennylane as qp
 
 
 def equal_superposition(wires):
     for wire in wires:
-        qml.Hadamard(wires=wire)
+        qp.Hadamard(wires=wire)
 
 
 def oracle(wires, omega):
-    qml.FlipSign(omega, wires=wires)
+    qp.FlipSign(omega, wires=wires)
 
 
 def num_grover_iterations(N, M):
@@ -95,9 +95,9 @@ def grover_circuit(num_qubits):
     for _ in range(num_grover_iterations(N, M)):
         for omg in omega:
             oracle(wires, omg)
-        qml.templates.GroverOperator(wires)
+        qp.templates.GroverOperator(wires)
 
-    return qml.probs(wires=wires)
+    return qp.probs(wires=wires)
 
 
 ######################################################################
@@ -108,10 +108,10 @@ def grover_circuit(num_qubits):
 
 NUM_QUBITS = 12
 
-dev = qml.device("default.qubit", wires=NUM_QUBITS)
+dev = qp.device("default.qubit", wires=NUM_QUBITS)
 
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def circuit_default_qubit():
     return grover_circuit(NUM_QUBITS)
 
@@ -157,10 +157,10 @@ print_most_probable_states_descending(results, N=2)
 # performant state simulators written in C++. See the :doc:`Catalyst documentation
 # <catalyst:dev/devices>` for the full list of devices supported by Catalyst.
 
-dev = qml.device("lightning.qubit", wires=NUM_QUBITS)
+dev = qp.device("lightning.qubit", wires=NUM_QUBITS)
 
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def circuit_lightning():
     return grover_circuit(NUM_QUBITS)
 
@@ -168,7 +168,7 @@ def circuit_lightning():
 ######################################################################
 # Then, to QJIT compile our circuit with Catalyst, we simply wrap it with :func:`~pennylane.qjit`.
 
-circuit_qjit = qml.qjit(circuit_lightning)
+circuit_qjit = qp.qjit(circuit_lightning)
 
 
 ######################################################################
@@ -264,15 +264,15 @@ runtimes_native_lightning = timeit.repeat(
     repeat=NUM_REPS,
 )
 runtimes_compilation = timeit.repeat(
-    "qml.qjit(circuit_lightning)",
-    setup="import pennylane as qml",
+    "qp.qjit(circuit_lightning)",
+    setup="import pennylane as qp",
     globals={"circuit_lightning": circuit_lightning},
     number=1,
     repeat=1,
 )
 runtimes_qjit_call = timeit.repeat(
     "_circuit_qjit()",
-    setup="import pennylane as qml; _circuit_qjit = qml.qjit(circuit_lightning);",
+    setup="import pennylane as qp; _circuit_qjit = qp.qjit(circuit_lightning);",
     globals={"circuit_lightning": circuit_lightning},
     number=1,
     repeat=NUM_REPS,

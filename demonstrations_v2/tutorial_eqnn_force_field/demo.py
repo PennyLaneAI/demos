@@ -129,7 +129,7 @@ Let’s implement the model depicted above!
 # --------------------------
 # We start by importing the libraries that we will need.
 
-import pennylane as qml
+import pennylane as qp
 import numpy as np
 
 import jax
@@ -171,10 +171,10 @@ sigmas_sigmas = jnp.array(
 def singlet(wires):
     # Encode a 2-qubit rotation-invariant initial state, i.e., the singlet state.
 
-    qml.Hadamard(wires=wires[0])
-    qml.PauliZ(wires=wires[0])
-    qml.PauliX(wires=wires[1])
-    qml.CNOT(wires=wires)
+    qp.Hadamard(wires=wires[0])
+    qp.PauliZ(wires=wires[0])
+    qp.PauliX(wires=wires[1])
+    qp.CNOT(wires=wires)
 
 
 ######################################################################
@@ -190,7 +190,7 @@ def singlet(wires):
 # For this, we have noticed that any rotation on the data level can be parametrized by three angles
 # :math:`V_g = r(\psi,\theta,\phi),` which can also be used to parametrize the corresponding
 # single-qubit rotation :math:`\mathcal{R}_g = U(\psi,\theta,\phi),` implemented by the usual
-# `qml.rot <https://docs.pennylane.ai/en/stable/code/api/pennylane.Rot.html>`__
+# `qp.rot <https://docs.pennylane.ai/en/stable/code/api/pennylane.Rot.html>`__
 # operation. We choose to encode each atom
 # twice in parallel, resulting in higher expressivity. We can do so by simply using this encoding scheme twice for each
 # active atom (the two Hydrogens in our case):
@@ -205,7 +205,7 @@ def equivariant_encoding(alpha, data, wires):
 
     hamiltonian = jnp.einsum("i,ijk", data, sigmas)  # Heisenberg Hamiltonian
     U = jax.scipy.linalg.expm(-1.0j * alpha * hamiltonian / 2)
-    qml.QubitUnitary(U, wires=wires, id="E")
+    qp.QubitUnitary(U, wires=wires, id="E")
 
 
 ######################################################################
@@ -260,16 +260,16 @@ def equivariant_encoding(alpha, data, wires):
 def trainable_layer(weight, wires):
     hamiltonian = jnp.einsum("ijk->jk", sigmas_sigmas)
     U = jax.scipy.linalg.expm(-1.0j * weight * hamiltonian)
-    qml.QubitUnitary(U, wires=wires, id="U")
+    qp.QubitUnitary(U, wires=wires, id="U")
 
 
 # Invariant observable
 Heisenberg = [
-    qml.PauliX(0) @ qml.PauliX(1),
-    qml.PauliY(0) @ qml.PauliY(1),
-    qml.PauliZ(0) @ qml.PauliZ(1),
+    qp.PauliX(0) @ qp.PauliX(1),
+    qp.PauliY(0) @ qp.PauliY(1),
+    qp.PauliZ(0) @ qp.PauliZ(1),
 ]
-Observable = qml.Hamiltonian(np.ones((3)), Heisenberg)
+Observable = qp.Hamiltonian(np.ones((3)), Heisenberg)
 
 ######################################################################
 # It has been observed that a small amount of **symmetry-breaking** (SB) can improve the convergence
@@ -279,7 +279,7 @@ Observable = qml.Hamiltonian(np.ones((3)), Heisenberg)
 
 def noise_layer(epsilon, wires):
     for _, w in enumerate(wires):
-        qml.RZ(epsilon[_], wires=[w])
+        qp.RZ(epsilon[_], wires=[w])
 
 
 ######################################################################
@@ -301,10 +301,10 @@ num_qubits = active_atoms * rep
 #################################
 
 
-dev = qml.device("default.qubit", wires=num_qubits)
+dev = qp.device("default.qubit", wires=num_qubits)
 
 
-@qml.qnode(dev, interface="jax")
+@qp.qnode(dev, interface="jax")
 def vqlm(data, params):
 
     weights = params["params"]["weights"]
@@ -323,7 +323,7 @@ def vqlm(data, params):
 
     # Reuploading model
     for d in range(D):
-        qml.Barrier()
+        qp.Barrier()
 
         for b in range(B):
             # Even layer
@@ -346,7 +346,7 @@ def vqlm(data, params):
                 wires=[i],
             )
 
-    return qml.expval(Observable)
+    return qp.expval(Observable)
 
 
 ######################################################################

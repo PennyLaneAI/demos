@@ -164,7 +164,7 @@ Let us define it in PennyLane and also import some libraries that we are going t
 
 """
 
-import pennylane as qml
+import pennylane as qp
 import numpy as np
 import jax.numpy as jnp
 import jax
@@ -176,7 +176,7 @@ jax.config.update("jax_platform_name", "cpu")
 
 import matplotlib.pyplot as plt
 
-H_obj = qml.sum(qml.PauliX(0) @ qml.PauliX(1), qml.PauliY(0) @ qml.PauliY(1), qml.PauliZ(0) @ qml.PauliZ(1))
+H_obj = qp.sum(qp.PauliX(0) @ qp.PauliX(1), qp.PauliY(0) @ qp.PauliY(1), qp.PauliZ(0) @ qp.PauliZ(1))
 E_exact = -3.
 wires = H_obj.wires
 
@@ -209,17 +209,17 @@ def drive_field(T, wdrive):
     """Set the evolution time ``T`` and drive frequency ``wdrive``"""
     def wrapped(p, t):
         # The first len(p) values of the trainable params p characterize the pwc function
-        amp = qml.pulse.pwc(T)(p[:len(p)//2], t)
-        phi = qml.pulse.pwc(T)(p[len(p)//2:], t)
+        amp = qp.pulse.pwc(T)(p[:len(p)//2], t)
+        phi = qp.pulse.pwc(T)(p[len(p)//2:], t)
         return amp * jnp.sin(wdrive * t + phi)
 
     return wrapped
 
-H_pulse = qml.dot(-0.5*qubit_freq, [qml.PauliZ(i) for i in wires])
-H_pulse += g * (qml.PauliX(wires[0]) @ qml.PauliX(wires[1]) + qml.PauliY(wires[0]) @ qml.PauliY(wires[1]))
+H_pulse = qp.dot(-0.5*qubit_freq, [qp.PauliZ(i) for i in wires])
+H_pulse += g * (qp.PauliX(wires[0]) @ qp.PauliX(wires[1]) + qp.PauliY(wires[0]) @ qp.PauliY(wires[1]))
 
-H_pulse += drive_field(T_CR, qubit_freq[0]) * qml.PauliY(wires[0]) # on-resonance driving of qubit 0
-H_pulse += drive_field(T_CR, qubit_freq[0]) * qml.PauliY(wires[1]) # off-resonance driving of qubit 1
+H_pulse += drive_field(T_CR, qubit_freq[0]) * qp.PauliY(wires[0]) # on-resonance driving of qubit 0
+H_pulse += drive_field(T_CR, qubit_freq[0]) * qp.PauliY(wires[1]) # off-resonance driving of qubit 1
 
 ##############################################################################
 # We can now define the cost function that computes the expectation value of
@@ -227,26 +227,26 @@ H_pulse += drive_field(T_CR, qubit_freq[0]) * qml.PauliY(wires[1]) # off-resonan
 # We then define the two separate qnodes with ODEgen and SPS as their differentiation methods, respectively.
 
 def qnode0(params):
-    qml.evolve(H_pulse)((params[0], params[1]), t=T_CR)
-    return qml.expval(H_obj)
+    qp.evolve(H_pulse)((params[0], params[1]), t=T_CR)
+    return qp.expval(H_obj)
 
-dev = qml.device("default.qubit", wires=range(2))
+dev = qp.device("default.qubit", wires=range(2))
 
-qnode_jax = qml.QNode(qnode0, dev, interface="jax")
+qnode_jax = qp.QNode(qnode0, dev, interface="jax")
 value_and_grad_jax = jax.jit(jax.value_and_grad(qnode_jax))
 
 num_split_times = 8
 gradient_kwargs = {"use_broadcasting": True, "num_split_times": num_split_times}
-qnode_sps = qml.QNode(
+qnode_sps = qp.QNode(
     qnode0,
     dev,
     interface="jax",
-    diff_method=qml.gradients.stoch_pulse_grad,
+    diff_method=qp.gradients.stoch_pulse_grad,
     gradient_kwargs=gradient_kwargs,
 )
 value_and_grad_sps = jax.value_and_grad(qnode_sps)
 
-qnode_odegen = qml.QNode(qnode0, dev, interface="jax", diff_method=qml.gradients.pulse_odegen)
+qnode_odegen = qp.QNode(qnode0, dev, interface="jax", diff_method=qp.gradients.pulse_odegen)
 value_and_grad_odegen = jax.value_and_grad(qnode_odegen)
 
 ##############################################################################

@@ -32,18 +32,18 @@ A local inversion is a unitary circuit that locally disentangles one qubit after
 make an explicit example in PennyLane after some boilerplate imports. Let us look at a very shallow unitary circuit
 :math:`U^\text{test} = \text{CNOT}_{(0, 1)}\text{CNOT}_{(2, 3)}\text{CNOT}_{(1, 2)} H^{\otimes n}.`
 """
-import pennylane as qml
+import pennylane as qp
 import numpy as np
 import matplotlib.pyplot as plt
 
 def U_test():
     for i in range(4):
-        qml.Hadamard(i)
-    qml.CNOT((1, 2))
-    qml.CNOT((2, 3))
-    qml.CNOT((0, 1))
+        qp.Hadamard(i)
+    qp.CNOT((1, 2))
+    qp.CNOT((2, 3))
+    qp.CNOT((0, 1))
 
-qml.draw_mpl(U_test)()
+qp.draw_mpl(U_test)()
 plt.show()
 
 
@@ -55,17 +55,17 @@ plt.show()
 # and perform the inverse operations in reverse order in :math:`V_0.`
 
 def V_0():
-    qml.CNOT((0, 1))
-    qml.CNOT((1, 2))
-    qml.Hadamard(0)
+    qp.CNOT((0, 1))
+    qp.CNOT((1, 2))
+    qp.Hadamard(0)
     
-dev = qml.device("default.qubit")
+dev = qp.device("default.qubit")
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def local_inversion():
     U_test()   # some shallow unitary circuit
     V_0()      # supposed to disentangle qubit 0
-    return qml.density_matrix(wires=[0])
+    return qp.density_matrix(wires=[0])
 
 print(np.allclose(local_inversion(), np.array([[1., 0.], [0., 0.]])))
 
@@ -84,19 +84,19 @@ print(np.allclose(local_inversion(), np.array([[1., 0.], [0., 0.]])))
 # reverse-engineer them from knowing :math:`U^\text{test}.`
 
 def V_1():
-    qml.CNOT((0, 1))
-    qml.CNOT((1, 2))
-    qml.Hadamard(1)
+    qp.CNOT((0, 1))
+    qp.CNOT((1, 2))
+    qp.Hadamard(1)
 
 def V_2():
-    qml.CNOT((2, 3))
-    qml.CNOT((1, 2))
-    qml.Hadamard(2)
+    qp.CNOT((2, 3))
+    qp.CNOT((1, 2))
+    qp.Hadamard(2)
 
 def V_3():
-    qml.CNOT((2, 3))
-    qml.CNOT((1, 2))
-    qml.Hadamard(3)
+    qp.CNOT((2, 3))
+    qp.CNOT((1, 2))
+    qp.Hadamard(3)
 
 
 ##############################################################################
@@ -116,21 +116,21 @@ def V_3():
 
 n = 4 # number of qubits
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def sewing_1():
     U_test()              # some shallow unitary circuit
-    qml.Barrier()
+    qp.Barrier()
     V_0()                 # disentangle qubit 0
-    qml.Barrier()
-    qml.SWAP((0, n))      # swap out disentangled qubit 0 and n+0
-    qml.Barrier()
-    qml.adjoint(V_0)()    # repair circuit from V_0
-    qml.Barrier()
+    qp.Barrier()
+    qp.SWAP((0, n))      # swap out disentangled qubit 0 and n+0
+    qp.Barrier()
+    qp.adjoint(V_0)()    # repair circuit from V_0
+    qp.Barrier()
     V_1()                 # disentangle qubit 1
-    return qml.density_matrix(wires=[1]), qml.density_matrix(wires=[n])
+    return qp.density_matrix(wires=[1]), qp.density_matrix(wires=[n])
 
 # The Barriers are to see which part of the circuit corresponds to which gate
-qml.draw_mpl(sewing_1)()
+qp.draw_mpl(sewing_1)()
 plt.show()
 
 r1, rn = sewing_1()
@@ -141,17 +141,17 @@ print(f"rho_0+n = |0⟩⟨0| {np.allclose(rn, np.array([[1, 0], [0, 0]]))}")
 ##############################################################################
 # We can continue this process for all qubits. Let us be tedious and do all steps one by one.
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def sewing_2():
     U_test()              # some shallow unitary circuit
     V_0()                 # disentangle qubit 0
-    qml.SWAP((0, n))      # swap out disentangled qubit 0 and n+0
-    qml.adjoint(V_0)()    # repair circuit from V_0
+    qp.SWAP((0, n))      # swap out disentangled qubit 0 and n+0
+    qp.adjoint(V_0)()    # repair circuit from V_0
     V_1()                 # disentangle qubit 1
-    qml.SWAP((1, n + 1))  # swap out disentangled qubit 1 to n+1
-    qml.adjoint(V_1)()    # repair circuit from V_1
+    qp.SWAP((1, n + 1))  # swap out disentangled qubit 1 to n+1
+    qp.adjoint(V_1)()    # repair circuit from V_1
     V_2()                 # disentangle qubit 2
-    return qml.density_matrix(wires=[2]), qml.density_matrix(wires=[n]), qml.density_matrix(wires=[n + 1])
+    return qp.density_matrix(wires=[2]), qp.density_matrix(wires=[n]), qp.density_matrix(wires=[n + 1])
 
 r2, rn, rn1 = sewing_2()
 print(f"Sewing qubit 2")
@@ -162,20 +162,20 @@ print(f"rho_1+n = |0⟩⟨0| {np.allclose(rn1, np.array([[1, 0], [0, 0]]))}")
 ##############################################################################
 # We continue to show that the swapped out wires remain decoupled, as well as the qubit we are currently decoupling.
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def sewing_3():
     U_test()              # some shallow unitary circuit
     V_0()                 # disentangle qubit 0
-    qml.SWAP((0, n))      # swap out disentangled qubit 0 and n+0
-    qml.adjoint(V_0)()    # repair circuit from V_0
+    qp.SWAP((0, n))      # swap out disentangled qubit 0 and n+0
+    qp.adjoint(V_0)()    # repair circuit from V_0
     V_1()                 # disentangle qubit 1
-    qml.SWAP((1, n + 1))  # swap out disentangled qubit 1 to n+1
-    qml.adjoint(V_1)()    # repair circuit from V_1
+    qp.SWAP((1, n + 1))  # swap out disentangled qubit 1 to n+1
+    qp.adjoint(V_1)()    # repair circuit from V_1
     V_2()                 # disentangle qubit 2
-    qml.SWAP((2, n + 2))  # swap out disentangled qubit 2 to n+2
-    qml.adjoint(V_2)()    # repair circuit from V_2
+    qp.SWAP((2, n + 2))  # swap out disentangled qubit 2 to n+2
+    qp.adjoint(V_2)()    # repair circuit from V_2
     V_3()                 # disentangle qubit 3
-    return qml.density_matrix(wires=[3]), qml.density_matrix(wires=[n]), qml.density_matrix(wires=[n + 1]), qml.density_matrix(wires=[n + 2])
+    return qp.density_matrix(wires=[3]), qp.density_matrix(wires=[n]), qp.density_matrix(wires=[n + 1]), qp.density_matrix(wires=[n + 2])
 
 r3, rn, rn1, rn2 = sewing_3()
 print(f"Sewing qubit 3")
@@ -189,24 +189,24 @@ print(f"rho_2+n = |0⟩⟨0| {np.allclose(rn2, np.array([[1, 0], [0, 0]]))}")
 # with a global SWAP. 
 # But not just that, we also now know that, globally, the original :math:`U^\text{test}` is inverted.
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def V_dagger_test():
     U_test()              # some shallow unitary circuit
     V_0()                 # disentangle qubit 0
-    qml.SWAP((0, n))      # swap out disentangled qubit 0 and n+0
-    qml.adjoint(V_0)()    # repair circuit from V_0
+    qp.SWAP((0, n))      # swap out disentangled qubit 0 and n+0
+    qp.adjoint(V_0)()    # repair circuit from V_0
     V_1()                 # disentangle qubit 1
-    qml.SWAP((1, n + 1))  # swap out disentangled qubit 1 to n+1
-    qml.adjoint(V_1)()    # repair circuit from V_1
+    qp.SWAP((1, n + 1))  # swap out disentangled qubit 1 to n+1
+    qp.adjoint(V_1)()    # repair circuit from V_1
     V_2()                 # disentangle qubit 2
-    qml.SWAP((2, n + 2))  # swap out disentangled qubit 2 to n+2
-    qml.adjoint(V_2)()    # repair circuit from V_2
+    qp.SWAP((2, n + 2))  # swap out disentangled qubit 2 to n+2
+    qp.adjoint(V_2)()    # repair circuit from V_2
     V_3()                 # disentangle qubit 3
-    qml.SWAP((3, n + 3))  # swap out disentangled qubit 3 to n+3
-    qml.adjoint(V_3)()    # repair circuit from V_3
+    qp.SWAP((3, n + 3))  # swap out disentangled qubit 3 to n+3
+    qp.adjoint(V_3)()    # repair circuit from V_3
     for i in range(n):    # swap back all decoupled wires to their original registers
-        qml.SWAP((i + n, i))
-    return qml.density_matrix([0, 1, 2, 3])
+        qp.SWAP((i + n, i))
+    return qp.density_matrix([0, 1, 2, 3])
 
 psi0 = np.eye(2**4)[0] # |0>^n
 np.allclose(V_dagger_test(), np.outer(psi0, psi0))
@@ -217,19 +217,19 @@ np.allclose(V_dagger_test(), np.outer(psi0, psi0))
 
 def V_dagger():
     V_0()                 # disentangle qubit 0
-    qml.SWAP((0, n))      # swap out disentangled qubit 0 and n+0
-    qml.adjoint(V_0)()    # repair circuit from V_0
+    qp.SWAP((0, n))      # swap out disentangled qubit 0 and n+0
+    qp.adjoint(V_0)()    # repair circuit from V_0
     V_1()                 # disentangle qubit 1
-    qml.SWAP((1, n + 1))  # swap out disentangled qubit 1 to n+1
-    qml.adjoint(V_1)()    # repair circuit from V_1
+    qp.SWAP((1, n + 1))  # swap out disentangled qubit 1 to n+1
+    qp.adjoint(V_1)()    # repair circuit from V_1
     V_2()                 # disentangle qubit 2
-    qml.SWAP((2, n + 2))  # swap out disentangled qubit 2 to n+2
-    qml.adjoint(V_2)()    # repair circuit from V_2
+    qp.SWAP((2, n + 2))  # swap out disentangled qubit 2 to n+2
+    qp.adjoint(V_2)()    # repair circuit from V_2
     V_3()                 # disentangle qubit 3
-    qml.SWAP((3, n + 3))  # swap out disentangled qubit 3 to n+3
-    qml.adjoint(V_3)()    # repair circuit from V_3
+    qp.SWAP((3, n + 3))  # swap out disentangled qubit 3 to n+3
+    qp.adjoint(V_3)()    # repair circuit from V_3
     for i in range(n):    # swap back all decoupled wires to their original registers
-        qml.SWAP((i + n, i))
+        qp.SWAP((i + n, i))
 
 ##############################################################################
 # It is such that the action of :math:`U^\text{test}` on :math:`|0 \rangle^{\otimes n}` is reverted when tracing out the ancilla qubits.
@@ -266,14 +266,14 @@ U_params = jax.random.normal(jax.random.PRNGKey(0), shape=(2, n//2), dtype=float
 
 def U_target(wires):
     for i in range(n):
-        qml.Hadamard(wires=wires[i])
+        qp.Hadamard(wires=wires[i])
     # brick-wall ansatz
     for i in range(0, n, 2):
-        qml.IsingXX(U_params[0, i], wires=(wires[i], wires[(i+1)%len(wires)]))
+        qp.IsingXX(U_params[0, i], wires=(wires[i], wires[(i+1)%len(wires)]))
     for i in range(1, n, 2):
-        qml.IsingXX(U_params[1, i], wires=(wires[i], wires[(i+1)%len(wires)]))
+        qp.IsingXX(U_params[1, i], wires=(wires[i], wires[(i+1)%len(wires)]))
 
-qml.draw_mpl(U_target)(wires)
+qp.draw_mpl(U_target)(wires)
 plt.show()
 
 ##############################################################################
@@ -284,23 +284,23 @@ n_layers = 2
 def V_i(params, wires):
 
     for i in range(n):
-        qml.RX(params[0, 0, i], i)
+        qp.RX(params[0, 0, i], i)
     for i in range(n):
-        qml.RY(params[0, 1, i], i)
+        qp.RY(params[0, 1, i], i)
     
     for ll in range(n_layers):
         for i in range(0, n, 2):
-            qml.CNOT((wires[i], wires[i+1]))
+            qp.CNOT((wires[i], wires[i+1]))
         for i in range(1, n, 2):
-            qml.CNOT((wires[i], wires[(i+1)%n]))
+            qp.CNOT((wires[i], wires[(i+1)%n]))
         for i in range(n):
-            qml.RX(params[ll+1, 0, i], i)
+            qp.RX(params[ll+1, 0, i], i)
         for i in range(n):
-            qml.RY(params[ll+1, 1, i], i)
+            qp.RY(params[ll+1, 1, i], i)
 
 params = jax.random.normal(jax.random.PRNGKey(10), shape=(n_layers+1, 2, n), dtype=float)
 
-qml.draw_mpl(V_i)(params, wires)
+qp.draw_mpl(V_i)(params, wires)
 plt.show()
 
 ##############################################################################
@@ -312,7 +312,7 @@ import optax
 from datetime import datetime
 from functools import partial
 
-X, Y, Z = qml.PauliX, qml.PauliY, qml.PauliZ
+X, Y, Z = qp.PauliX, qp.PauliY, qp.PauliZ
 
 def run_opt(value_and_grad, theta, n_epochs=100, lr=0.1, b1=0.9, b2=0.999):
 
@@ -344,17 +344,17 @@ def run_opt(value_and_grad, theta, n_epochs=100, lr=0.1, b1=0.9, b2=0.999):
     
     return thetas, energy
 
-dev = qml.device("default.qubit")
+dev = qp.device("default.qubit")
 
 ##############################################################################
 # As a cost function, we perform state tomography after applying :math:`U^\text{target}` and our Ansatz :math:`V_i.`
 # Our aim is to bring the state on qubit ``i`` back to the north pole of the Bloch sphere, and we specify our cost function accordingly.
 
-@qml.qnode(dev, interface="jax")
+@qp.qnode(dev, interface="jax")
 def qnode_i(params, i):
     U_target(wires)
     V_i(params, wires)
-    return [qml.expval(P(i)) for P in [X, Y, Z]]
+    return [qp.expval(P(i)) for P in [X, Y, Z]]
     
 @partial(jax.jit, static_argnums=1)
 @jax.value_and_grad
@@ -386,18 +386,18 @@ def V_sew():
     for i in range(n):
         # local sewing: inversion, exchange, heal
         V_i(params_i[i], range(n))
-        qml.SWAP((i, i+n))
-        qml.adjoint(V_i)(params_i[i], range(n))
+        qp.SWAP((i, i+n))
+        qp.adjoint(V_i)(params_i[i], range(n))
 
     # global SWAP
     for i in range(n):
-        qml.SWAP((i, i+n))
+        qp.SWAP((i, i+n))
 
-@qml.qnode(dev, interface="jax")
+@qp.qnode(dev, interface="jax")
 def sewing_test():
     U_target(range(n))
     V_sew()
-    return qml.density_matrix(range(4))
+    return qp.density_matrix(range(4))
 
 print(np.allclose(sewing_test(), np.outer(psi0, psi0), atol=1e-1))
 

@@ -52,9 +52,9 @@ import jax
 jax.config.update("jax_platform_name", "cpu")
 jax.config.update('jax_enable_x64', True)
 
-import pennylane as qml
+import pennylane as qp
 
-dataset = qml.data.load('qchem', molname="H2")[0]
+dataset = qp.data.load('qchem', molname="H2")[0]
 H, qubits = dataset.hamiltonian, len(dataset.hamiltonian.wires)
 print("Number of qubits = ", qubits)
 print("The Hamiltonian is ", H)
@@ -85,8 +85,8 @@ print("The Hamiltonian is ", H)
 #
 #         symbols = ["H", "H"]
 #         coordinates = np.array([[-0.70108983, 0.0, 0.0], [0.70108983, 0.0, 0.0]])
-#         molecule = qml.qchem.Molecule(symbols, coordinates)
-#         H, qubits = qml.qchem.molecular_hamiltonian(molecule)
+#         molecule = qp.qchem.Molecule(symbols, coordinates)
+#         H, qubits = qp.qchem.molecular_hamiltonian(molecule)
 #
 # Implementing the VQE algorithm
 # ------------------------------
@@ -94,7 +94,7 @@ print("The Hamiltonian is ", H)
 # algorithms and optimizers. We begin by defining the device, in this case PennyLane’s
 # standard qubit simulator:
 
-dev = qml.device("lightning.qubit", wires=qubits)
+dev = qp.device("lightning.qubit", wires=qubits)
 
 ##############################################################################
 # Next, we need to define the quantum circuit that prepares the trial state of the
@@ -134,7 +134,7 @@ dev = qml.device("lightning.qubit", wires=qubits)
 # :func:`~.pennylane.qchem.hf_state` function to generate the vector representing the Hartree-Fock state.
 
 electrons = 2
-hf = qml.qchem.hf_state(electrons, qubits)
+hf = qp.qchem.hf_state(electrons, qubits)
 print(hf)
 
 ##############################################################################
@@ -145,11 +145,11 @@ print(hf)
 # We do this using the :func:`~.pennylane.expval` function. The decorator syntax allows us to
 # run the cost function as an executable QNode with the gate parameter :math:`\theta:`
 
-@qml.qnode(dev, interface="jax")
+@qp.qnode(dev, interface="jax")
 def circuit(param, wires):
-    qml.BasisState(hf, wires=wires)
-    qml.DoubleExcitation(param, wires=[0, 1, 2, 3])
-    return qml.expval(H)
+    qp.BasisState(hf, wires=wires)
+    qp.DoubleExcitation(param, wires=[0, 1, 2, 3])
+    return qp.expval(H)
 
 
 ##############################################################################

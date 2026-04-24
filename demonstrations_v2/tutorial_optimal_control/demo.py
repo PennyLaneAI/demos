@@ -444,9 +444,9 @@ plt.show()
 # up the subsequent executions a lot. For optimization workflows of small-scale
 # functions, this almost always pays off.
 
-import pennylane as qml
+import pennylane as qp
 
-X, Y, Z = qml.PauliX, qml.PauliY, qml.PauliZ
+X, Y, Z = qp.PauliX, qp.PauliY, qp.PauliZ
 
 num_wires = 2
 # Hamiltonian terms of the drift and parametrized parts of H
@@ -455,20 +455,20 @@ ops_param = [Z(0), X(1), Y(1), Z(1), Z(0) @ X(1)]
 # Coefficients: 1 for drift Hamiltonian and smooth rectangles for parametrized part
 coeffs = [1.0, 1.0] + [S_k for op in ops_param]
 # Build H
-H = qml.dot(coeffs, ops_H_d + ops_param)
+H = qp.dot(coeffs, ops_H_d + ops_param)
 # Set tolerances for the ODE solver
 atol = rtol = 1e-10
 
 # Target unitary is CNOT. We get its matrix and note that we do not need the dagger
 # because CNOT is Hermitian.
-target = qml.CNOT([0, 1]).matrix()
+target = qp.CNOT([0, 1]).matrix()
 target_name = "CNOT"
 print(f"Our target unitary is a {target_name} gate, with matrix\n{target.astype('int')}")
 
 
 def pulse_matrix(params):
     """Compute the unitary time evolution matrix of the pulse for given parameters."""
-    return qml.evolve(H, atol=atol, rtol=rtol)(params, T).matrix()
+    return qp.evolve(H, atol=atol, rtol=rtol)(params, T).matrix()
 
 
 @jax.jit
@@ -644,20 +644,20 @@ ops_param += [Z(0) @ X(1), Z(1) @ X(2), Z(2) @ X(0)]
 # Coefficients: 1. for drift Hamiltonian and smooth rectangles for parametrized part
 coeffs = [1.0, 1.0, 1.0] + [S_k for op in ops_param]
 # Build H
-H = qml.dot(coeffs, ops_H_d + ops_param)
+H = qp.dot(coeffs, ops_H_d + ops_param)
 # Set tolerances for the ODE solver
 atol = rtol = 1e-10
 
 # Target unitary is Toffoli. We get its matrix and note that we do not need the dagger
 # because Toffoli is Hermitian and unitary.
-target = qml.Toffoli([0, 1, 2]).matrix()
+target = qp.Toffoli([0, 1, 2]).matrix()
 target_name = "Toffoli"
 print(f"Our target unitary is a {target_name} gate, with matrix\n{target.astype('int')}")
 
 
 def pulse_matrix(params):
     """Compute the unitary time evolution matrix of the pulse for given parameters."""
-    return qml.evolve(H, atol=atol, rtol=rtol)(params, T).matrix()
+    return qp.evolve(H, atol=atol, rtol=rtol)(params, T).matrix()
 
 
 @jax.jit
@@ -697,18 +697,18 @@ max_params = params_hist[jnp.argmax(jnp.array(profit_hist))]
 # flip the third qubit, returning a probability of one in the last entry
 # and zeros elsewhere.
 
-dev = qml.device("default.qubit", wires=3)
+dev = qp.device("default.qubit", wires=3)
 
 
-@qml.qnode(dev, interface="jax")
+@qp.qnode(dev, interface="jax")
 def node(params):
     # Prepare |110>
-    qml.PauliX(0)
-    qml.PauliX(1)
+    qp.PauliX(0)
+    qp.PauliX(1)
     # Apply pulse sequence
-    qml.evolve(H, atol=atol, rtol=rtol)(params, T)
+    qp.evolve(H, atol=atol, rtol=rtol)(params, T)
     # Return quantum state
-    return qml.probs()
+    return qp.probs()
 
 
 probs = node(max_params)

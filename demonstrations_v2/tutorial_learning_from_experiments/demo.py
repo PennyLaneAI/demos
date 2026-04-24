@@ -159,7 +159,7 @@ n_shots = 100  # the number of times we can use each unitary
 # will allow rotations about X,Y, and Z.
 #
 
-import pennylane as qml
+import pennylane as qp
 from pennylane.templates.layers import RandomLayers
 import numpy as np
 
@@ -173,21 +173,21 @@ def generate_circuit(shots):
     generate a random circuit that returns a number of measuement samples
     given by shots
     """
-    dev = qml.device("lightning.qubit", wires=qubits)
+    dev = qp.device("lightning.qubit", wires=qubits)
 
-    @qml.set_shots(shots)
-    @qml.qnode(dev)
+    @qp.set_shots(shots)
+    @qp.qnode(dev)
     def circuit(ts=False):
 
         if ts == True:
-            ops = [qml.RY]  # time-symmetric unitaries
+            ops = [qp.RY]  # time-symmetric unitaries
         else:
-            ops = [qml.RX, qml.RY, qml.RZ]  # general unitaries
+            ops = [qp.RX, qp.RY, qp.RZ]  # general unitaries
 
         weights = np.random.rand(layers, gates) * np.pi
         RandomLayers(weights, wires=range(qubits), rotations=ops, seed=np.random.randint(0, 10000))
 
-        return [qml.sample(op=qml.PauliY(q)) for q in range(qubits)]
+        return [qp.sample(op=qp.PauliY(q)) for q in range(qubits)]
 
     return circuit
 
@@ -342,30 +342,30 @@ plt.show()
 n_shots = 50
 qubits = 8
 
-dev = qml.device("lightning.qubit", wires=qubits * 2)
+dev = qp.device("lightning.qubit", wires=qubits * 2)
 
 
 def CNOT_sequence(control_wires, target_wires):
     """Apply CNOTs in sequence using the provided control and target wires"""
     for c_wire, t_wire in zip(control_wires, target_wires):
-        qml.CNOT([c_wire, t_wire])
+        qp.CNOT([c_wire, t_wire])
 
 
-@qml.set_shots(n_shots)
-@qml.qnode(dev)
+@qp.set_shots(n_shots)
+@qp.qnode(dev)
 def enhanced_circuit(ts=False):
     "implement the enhanced circuit, using a random unitary"
 
     if ts == True:
-        ops = [qml.RY]
+        ops = [qp.RY]
     else:
-        ops = [qml.RX, qml.RY, qml.RZ]
+        ops = [qp.RX, qp.RY, qp.RZ]
 
     weights = np.random.rand(layers, n_shots) * np.pi
     seed = np.random.randint(0, 10000)
 
     for q in range(qubits):
-        qml.Hadamard(wires=q)
+        qp.Hadamard(wires=q)
 
     CNOT_sequence(control_wires=range(qubits), target_wires=range(qubits, 2 * qubits))
     RandomLayers(weights, wires=range(0, qubits), rotations=ops, seed=seed)
@@ -373,9 +373,9 @@ def enhanced_circuit(ts=False):
     CNOT_sequence(control_wires=range(qubits), target_wires=range(qubits, 2 * qubits))
 
     for q in range(qubits):
-        qml.Hadamard(wires=q)
+        qp.Hadamard(wires=q)
 
-    return [qml.sample(op=qml.PauliZ(q)) for q in range(2 * qubits)]
+    return [qp.sample(op=qp.PauliZ(q)) for q in range(2 * qubits)]
 
 
 ######################################################################
@@ -457,7 +457,7 @@ def noise_layer(epsilon):
     "apply a random rotation to each qubit"
     for q in range(2 * qubits):
         angles = (2 * np.random.rand(3) - 1) * epsilon
-        qml.Rot(angles[0], angles[1], angles[2], wires=q)
+        qp.Rot(angles[0], angles[1], angles[2], wires=q)
 
 
 ######################################################################
@@ -466,21 +466,21 @@ def noise_layer(epsilon):
 #
 
 
-@qml.set_shots(n_shots)
-@qml.qnode(dev)
+@qp.set_shots(n_shots)
+@qp.qnode(dev)
 def enhanced_circuit(ts=False):
     "implement the enhanced circuit, using a random unitary with a noise layer"
 
     if ts == True:
-        ops = [qml.RY]
+        ops = [qp.RY]
     else:
-        ops = [qml.RX, qml.RY, qml.RZ]
+        ops = [qp.RX, qp.RY, qp.RZ]
 
     weights = np.random.rand(layers, n_shots) * np.pi
     seed = np.random.randint(0, 10000)
 
     for q in range(qubits):
-        qml.Hadamard(wires=q)
+        qp.Hadamard(wires=q)
 
     CNOT_sequence(control_wires=range(qubits), target_wires=range(qubits, 2 * qubits))
     RandomLayers(weights, wires=range(0, qubits), rotations=ops, seed=seed)
@@ -489,9 +489,9 @@ def enhanced_circuit(ts=False):
     CNOT_sequence(control_wires=range(qubits, 2 * qubits), target_wires=range(qubits))
 
     for q in range(qubits):
-        qml.Hadamard(wires=qubits + q)
+        qp.Hadamard(wires=qubits + q)
 
-    return [qml.sample(op=qml.PauliZ(q)) for q in range(2 * qubits)]
+    return [qp.sample(op=qp.PauliZ(q)) for q in range(2 * qubits)]
 
 
 ######################################################################

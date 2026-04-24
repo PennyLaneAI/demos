@@ -227,7 +227,7 @@ plt.show()
 # This works because the Fourier transform, if normalised appropriately, is a unitary transform!
 #
 # Let us verify this by comparing the DFT of a function, as coded up above, with the result of a quantum circuit
-# that implements ``qml.QFT``. However, now we need a function that, written as a vector, can be interpreted
+# that implements ``qp.QFT``. However, now we need a function that, written as a vector, can be interpreted
 # as a normalised quantum state. We therefore apply a slight modification to our function ``f`` from before.
 #
 
@@ -249,16 +249,16 @@ def h_hat(k):
 # the output state vector from the simulator.
 #
 
-import pennylane as qml
+import pennylane as qp
 
-dev = qml.device("default.qubit", wires=4, shots=None)
+dev = qp.device("default.qubit", wires=4, shots=None)
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def qft(state):
     """Prepare a state \sum_x f(x) |x> and apply the discrete Fourier transform."""
-    qml.StatePrep(state, wires=range(4))
-    qml.QFT(wires=range(4))
-    return qml.state()
+    qp.StatePrep(state, wires=range(4))
+    qp.QFT(wires=range(4))
+    return qp.state()
 
 
 #####################################################################
@@ -272,7 +272,7 @@ h_hat_state = qft(h_vec)
 print("QFT and DFT coincide:", np.allclose(h_hat_state, h_hat_vec))
 
 #####################################################################
-# But of course, ``qml.QFT`` only implements the Fourier transform with respect to the group :math:`Z_N`, which
+# But of course, ``qp.QFT`` only implements the Fourier transform with respect to the group :math:`Z_N`, which
 # interprets computational basis states as integers.
 # As mentioned before, we can alternatively interpret bit strings as a collection of binary variables, which changes the group
 # to :math:`Z_2^n`. Both map into a Fourier basis, but with respect a different
@@ -280,13 +280,13 @@ print("QFT and DFT coincide:", np.allclose(h_hat_state, h_hat_vec))
 #
 
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def qft2(state):
     """Prepare a state \sum_x f(x) |x> and apply the Fourier transform over Z_2^4."""
-    qml.StatePrep(state, wires=range(4))
+    qp.StatePrep(state, wires=range(4))
     for i in range(4):
-        qml.Hadamard(wires=i)
-    return qml.state()
+        qp.Hadamard(wires=i)
+    return qp.state()
 
 h_hat_state2 = qft2(h_vec)
 print("QFTs over different groups coincide:", np.allclose(h_hat_state, h_hat_state2))
