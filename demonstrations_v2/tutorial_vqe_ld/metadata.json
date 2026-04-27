@@ -1,0 +1,26 @@
+{
+  "title": "VQE-LD",
+  "authors": [
+    {
+      "username": "souzateixeira"
+    }
+  ],
+  "executable_stable": true,
+  "executable_latest": true,
+  "dateOfPublication": "2026-04-27T00:00:00+00:00",
+  "dateOfLastModification": "2026-04-27T00:00:00+00:00",
+  "categories": [],
+  "tags": [],
+  "previewImages": [
+    {
+      "type": "thumbnail",
+      "uri": "/_static/demo_thumbnails/regular_demo_thumbnails/thumbnail_placeholder.png"
+    }
+  ],
+  "seoDescription": "Improving energy and molecular properties by convergence of the one-particle reduced density matrix in VQE.",
+  "doi": "",
+  "references": [],
+  "basedOnPapers": [],
+  "referencedByPapers": [],
+  "relatedContent": []
+}
