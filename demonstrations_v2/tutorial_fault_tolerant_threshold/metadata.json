@@ -1,12 +1,12 @@
 {
-    "title": "Understanding Fault-tolerant Threshold Theorem in Practice",
+    "title": "Understanding the Fault-tolerant Threshold Theorem in Practice",
     "authors": [{
         "username": "whatsis"
     }],
     "executable_stable": true,
     "executable_latest": true,
     "dateOfPublication": "2026-04-24T15:00:00+00:00",
-    "dateOfLastModification": "2026-04-24T15:00:00+00:00",
+    "dateOfLastModification": "2026-04-28T15:00:00+00:00",
     "categories": [
         "Quantum Computing",
         "Compilation",
@@ -22,7 +22,7 @@
             "uri": "/_static/demo_thumbnails/large_demo_thumbnails/pennylane-demo-fault-tolerant-threshold-large-thumbnail.png"
         }
     ],
-    "seoDescription": "Understanding Fault-tolerant Threshold Theorem in Practice",
+    "seoDescription": "Understanding the Fault-tolerant Threshold Theorem in Practice",
     "doi": "",
     "references": [{
         "id": "threshold_theorem",
