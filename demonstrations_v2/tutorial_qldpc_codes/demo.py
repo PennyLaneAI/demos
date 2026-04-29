@@ -801,7 +801,7 @@ print(f"Result: The gate operation is transversal: {preserved and consistent}")
 # .. [#HGP]
 #
 #     J.-P. Tillich, G. Zémor,
-#     "Quantum LDPC Codes With Positive Rate and Minimum Distance Proportional to the :math:`\sqrt{n}^\frac{1}{2}`",
+#     "Quantum LDPC Codes With Positive Rate and Minimum Distance Proportional to the :math:`n^\frac{1}{2}`",
 #     `IEEE Transactions on Information Theory 60(1), 119–136 <https://ieeexplore.ieee.org/document/6671468>`__, 2014.
 #
 # .. [#LPCodes]
