@@ -48,7 +48,7 @@ It turns out that there is a structure connecting infinite classes of gates call
 Pauli group (:math:`\mathcal{C}_1`)
 ^^^^^^^^^^^^^^
 
-At the bottom of this hierarchy is the Pauli group, which contains the familiar Pauli gates and their tensor products :math:`\mathcal{C}_1 = \{X, Y, Z\}^{\otimes n}`.
+At the bottom of this hierarchy is the Pauli group, which contains the familiar Pauli gates and their tensor products :math:`\mathcal{C}_1 = \{X, Y, Z\}^{\otimes n}` for :math:`n` qubits.
 
 
 Clifford group (:math:`\mathcal{C}_2`)
