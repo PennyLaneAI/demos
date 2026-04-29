@@ -1,4 +1,4 @@
-r"""Understanding Fault-tolerant Threshold Theorem in Practice
+r"""Understanding the Fault-tolerant Threshold Theorem in Practice
 ===============================================================
 
 The current generation of quantum hardware faces a critical roadblock, namely physical
@@ -44,7 +44,7 @@ threshold is the ultimate goal for building a utility-scale quantum computer.
     :math:`p` is the error probability per physical operation and :math:`p_{L}` is the
     probability that the decoded logical state of the encoded qubit is wrong.
 
-Fault-tolerant Threshold Theorem
+The Fault-tolerant Threshold Theorem
 ---------------------------------
 
 The threshold theorem is the mathematical bedrock of scalable quantum computing.
