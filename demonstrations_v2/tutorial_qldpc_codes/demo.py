@@ -315,14 +315,16 @@ print(f"Physical qubits (n) of the HGP code: {n1*n2 + m1*m2} == {2*dist*(dist-1)
 # physical qubits with distance :math:`d=\min(d_1,d_2,d_1^t,d_2^t)`. This means that
 # the HGP codes achieve a constant encoding rate :math:`R=\Theta(1)`, but their distance
 # grows only as :math:`d=\mathcal{O}(\sqrt{n})`, matching the surface code scaling.
-# Note that the distance computed here is technically a classical distance, caclulated
+# Note that the distance computed here is technically a classical distance, calculated
 # as the minimum of the classical distances of the seed codes and their transposes.
 # In general quantum code constructions, such a classical distance serves only as an
-# upper bound for the true quantum distance, which is inherently complex to compute.
-# However, for HGP codes specifically, it has been rigorously proven that this computed
-# classical distance is exactly equal to the true quantum distance [#HGP]_. This exact
-# equivalence is a special feature of HGP codes; for other code families, the two can
-# diverge significantly, often requiring numerical estimation to find the true value.
+# upper bound for the true quantum distance, which is inherently complex to compute as
+# it requires finding the minimum weight of an error that goes undetected by the checks
+# but is not a stabilizer. However, for HGP codes specifically, it has been rigorously
+# proven that this computed classical distance is exactly equal to the true quantum
+# distance [#HGP]_. This exact equivalence is a special feature of HGP codes; for other
+# code families, the two can diverge significantly, and numerical estimation is needed
+# to find the true value.
 #
 # Modern qLDPC Codes
 # -------------------
