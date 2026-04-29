@@ -338,7 +338,7 @@ print(np.allclose(output_state, correct_density_matrix))
 # 
 # The one-bit teleportation protocol halves the number of ancilla qubits, measurements, and gates compared to the general two-bit teleportation protocol above. Note that the diagonal $V$ in $U = G_b V G_a$ need not commute with the CNOT gates because you are always free to select $X$-teleportation. All diagonal gates commute with the control part of a CNOT gate. For this reason, this circuit can implement a controlled-Hadamard gate, which does not commute with CNOT [#onebit]_. 
 # 
-# Recursive application of this one-bit teleportation circuit leads to the implementation of semi-Clifford :math:`\mathcal{C}_k` gates. :ref:`Figure 5 <fig-5-one-bit-teleportation-c4>` illustrates an example of X-teleportation of a semi-Clifford :math:`C_4\in\mathcal{C}_4` gate. 
+# Recursive application of this one-bit teleportation circuit leads to the implementation of semi-Clifford :math:`\mathcal{C}_k` gates. :ref:`Figure 5 <fig-5-one-bit-teleportation-c4>` illustrates an example of X-teleportation of a semi-Clifford :math:`C_4\in\mathcal{C}_4` gate assuming that only :math:`\mathcal{C}_2` gates are implemented transversally. This means we must use two teleportation circuits in total. 
 # 
 # .. _fig-5-one-bit-teleportation-c4:
 # 
