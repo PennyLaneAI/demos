@@ -1,0 +1,167 @@
+{
+    "title": "Achieving Universality with the Clifford Hierarchy",
+    "authors": [
+        {
+            "username": "dren"
+        }
+    ],
+    "executable_stable": true,
+    "executable_latest": true,
+    "dateOfPublication": "2026-04-29T16:30:00+00:00",
+    "dateOfLastModification": "2026-04-29T16:36:00+00:00",
+    "categories": [
+        "FTQC",
+        "Quantum Computing"
+    ],
+    "tags": [],
+    "previewImages": [
+        {
+            "type": "thumbnail",
+            "uri": "/_static/demo_thumbnails/regular_demo_thumbnails/pennylane-demo-universality-and-clifford-hierarchy-thumbnail.png"
+        },
+        {
+            "type": "large_thumbnail",
+            "uri": "/_static/demo_thumbnails/large_demo_thumbnails/pennylane-demo-universality-and-clifford-hierarchy-large-thumbnail.png"
+        }
+    ],
+    "seoDescription": "Learn about a hidden mathematical structure connecting many quantum gates that enables universal and fault-tolerant quantum computing: the Clifford hierarchy",
+    "doi": "",
+    "references": [
+        {
+            "id": "anynonclifford",
+            "type": "article",
+            "title": "The invariants of the Clifford groups",
+            "authors": "G. Nebe, E.M. Rains, N.J.A. Sloane",
+            "year": "2000",
+            "journal": "arXiv",
+            "url": "https://arxiv.org/abs/math/0001038"
+        },
+        {
+        "id": "universality",
+        "type": "article",
+        "title": "Universality in Quantum Computation",
+        "authors": "D. Deutsch, A. Barenco, and A. Ekert",
+        "year": "1995",
+        "journal": "arXiv",
+        "url": "https://arxiv.org/abs/quant-ph/9505018"
+    },
+    {
+        "id": "qecbook",
+        "type": "book",
+        "title": "Surviving as a Quantum Computer in a Classical World",
+        "authors": "D. Gottesman",
+        "year": "2024",
+        "journal": "arXiv",
+        "url": "https://www.cs.umd.edu/~dgottesm/QECCbook-2024.pdf"
+    },
+    {
+        "id": "SK_alg",
+        "type": "article",
+        "title": "The Solovay-Kitaev Algorithm",
+        "authors": "C.M. Dawnson and M.A. Nielsen",
+        "year": "2005",
+        "journal": "arXiv",
+        "url": "https://arxiv.org/abs/quant-ph/0505030"
+    },
+    {
+        "id": "gridsynth",
+        "type": "article",
+        "title": "Optimal ancilla-free Clifford+T approximation of z-rotations",
+        "authors": "N.J. Ross and P. Selinger",
+        "year": "2016",
+        "journal": "arXiv",
+        "url": "https://arxiv.org/abs/1403.2975"
+    },
+    {
+        "id": "gottesmanchuang",
+        "type": "article",
+        "title": "Quantum teleportation is a universal computational primitive",
+        "authors": "D. Gottesman and I.L. Chuang",
+        "year": "1999",
+        "journal": "arXiv",
+        "url": "https://arxiv.org/abs/quant-ph/9908010"
+    },
+    {
+        "id": "onebit",
+        "type": "article",
+        "title": "Methodology for quantum logic gate construction",
+        "authors": "X. Zhou, D.W. Leung, and I.L. Chuang",
+        "year": "2000",
+        "journal": "arXiv",
+        "url": "https://arxiv.org/abs/quant-ph/0002039"
+    },
+    {
+        "id": "semiclifford",
+        "type": "article",
+        "title": "Semi-Clifford operations, structure of :math:`C_k` hierarchy, and gate complexity for fault-tolerant quantum computation",
+        "authors": "B. Zeng, X. Chen, and I.L. Chuang",
+        "year": "2008",
+        "journal": "arXiv",
+        "url": "https://arxiv.org/abs/0712.2084"
+    },
+    {
+        "id": "diagonal",
+        "type": "article",
+        "title": "Diagonal gates in the Clifford hierarchy",
+        "authors": "S.X. Cui, D. Gottesman, and A. Krishna",
+        "year": "2016",
+        "journal": "arXiv",
+        "url": "https://arxiv.org/abs/1608.06596"
+    },
+    {
+        "id": "pauliframetracking",
+        "type": "article",
+        "title": "Fault-tolerant quantum computing in the Pauli or Clifford frame with slow error diagnostics",
+        "authors": "C. Chamberland, P. Iyer, and D. Poulin",
+        "year": "2017",
+        "journal": "arXiv",
+        "url": "https://arxiv.org/abs/1704.06662"
+    },
+        {
+            "id": "climbdiagonal",
+            "type": "article",
+            "title": "Climbing the Diagonal Clifford Hierarchy",
+            "authors": "J. Hu, Q. Liang, and R. Calderbank",
+            "year": "2019",
+            "journal": "arXiv",
+            "url": "https://arxiv.org/abs/2110.11923"
+        },
+        {
+            "id": "controlledgates",
+            "type": "article",
+            "title": "Controlled Gates in the Clifford Hierarchy",
+            "authors": "J.T. Anderson and M. Weippert",
+            "year": "2025",
+            "journal": "arXiv",
+            "url": "https://arxiv.org/abs/2410.04711"
+        },
+        {
+            "id": "climb",
+            "type": "article",
+            "title": "Climbing the Clifford Hierarchy",
+            "authors": "L. Bastioni, S. Glandon, T. Pllaha, M. Stewart, and P. Waitkevich",
+            "year": "2026",
+            "journal": "arXiv",
+            "url": "https://arxiv.org/abs/2603.12088"
+        }
+    ],
+    "basedOnPapers": [],
+    "referencedByPapers": [],
+    "relatedContent": [
+        {
+            "type": "demonstration",
+            "id": "tutorial_teleportation",
+            "weight": 1.0
+        },
+        {
+            "type": "demonstration",
+            "id": "tutorial_magic_states",
+            "weight": 1.0
+        },
+        {
+            "type": "demonstration",
+            "id": "tutorial_magic_state_distillation",
+            "weight": 0.5
+        }
+    ]
+}
