@@ -36,6 +36,7 @@ from jax import numpy as jnp
 import jaxopt
 
 jax.config.update("jax_platform_name", "cpu")
+jax.config.update("jax_enable_x64", True)
 
 n_wires = 5
 data = jnp.sin(jnp.mgrid[-2:2:0.2].reshape(n_wires, -1)) ** 3

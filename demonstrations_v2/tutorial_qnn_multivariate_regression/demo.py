@@ -73,6 +73,8 @@ import jax
 from jax import numpy as jnp
 import optax
 
+jax.config.update("jax_enable_x64", True)
+
 pnp.random.seed(42)
 
 dev = qp.device('default.qubit', wires=2)

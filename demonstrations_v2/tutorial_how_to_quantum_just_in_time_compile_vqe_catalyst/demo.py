@@ -44,7 +44,10 @@ We will break the implementation into three steps:
 #
 
 import pennylane as qp
-from pennylane import numpy as np
+import numpy as np
+import warnings
+
+warnings.filterwarnings(action="ignore", category=UserWarning)
 
 dataset = qp.data.load('qchem', molname="H3+")[0]
 H, qubits = dataset.hamiltonian, len(dataset.hamiltonian.wires)

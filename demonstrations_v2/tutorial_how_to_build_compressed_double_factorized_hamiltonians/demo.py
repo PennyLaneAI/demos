@@ -31,6 +31,10 @@ and :math:`p, q, r, s` are the orbital indices. In PennyLane, we can obtain :mat
 """
 
 import pennylane as qp
+import numpy as np
+
+import warnings
+warnings.filterwarnings(action="ignore", category=np.exceptions.ComplexWarning)
 
 symbols = ["H", "H", "H", "H"]
 geometry = qp.math.array([[0., 0., -0.2], [0., 0., -0.1], [0., 0., 0.1], [0., 0., 0.2]])
