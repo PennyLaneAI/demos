@@ -779,7 +779,7 @@ for wire in range(5):
 #    `<https://arxiv.org/abs/quant-ph/9705052>`__, 1997.
 #
 # .. [#Laflamme1996]
-#    R. Selinger, C. Miquel, J.P. Paz, W.H Surek.
+#    R. Laflamme, C. Miquel, J.P. Paz, W.H Surek.
 #    "Perfect Quantum Error Correcting Code",
 #    `<https://doi.org/10.1103/PhysRevLett.77.198>`__, Phys. Rev. Lett, vol. 77, no. 1, Jul 1996.
 #
