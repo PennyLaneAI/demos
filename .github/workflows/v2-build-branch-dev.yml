@@ -2,8 +2,8 @@ name: V2 Build Branch - Dev
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 7 * * 1,3,5' # At 07:00 (2am EST) on Monday, Wednesday, Friday.
-    #- cron: '0 10 * * *' # At 10:00 (5am EST) on every day-of-week. Use this during feature freeze.
+    #- cron: '0 7 * * 1,3,5' # At 07:00 (2am EST) on Monday, Wednesday, Friday.
+    - cron: '0 10 * * *' # At 10:00 (5am EST) on every day-of-week. Use this during feature freeze.
 
 concurrency:
   group: v2-build-demo-branch-dev
