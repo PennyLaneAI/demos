@@ -6,10 +6,11 @@
     "executable_stable": true,
     "executable_latest": true,
     "dateOfPublication": "2026-04-13T00:00:00+00:00",
-    "dateOfLastModification": "2026-04-13T00:00:00+00:00",
-    "categories": [
-        "Algorithms",
-        "Quantum Computing",
+    "dateOfLastModification": "2026-05-06T15:00:00+00:00",
+"categories": [
+"Algorithms",
+"FTQC",
+"Quantum Computing",
         "Quantum Hardware"
     ],
     "tags": [],
