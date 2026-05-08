@@ -2,11 +2,11 @@ r"""
 Iterative Quantum Amplitude Estimation in Pennylane
 =
 
-Classical search algorithms are expensive. To carry out a search in a string of length N with the goal of identifying a specific element, individual guesses must be made and tested until the target entry is found. The resources required to carry this out scale with the size of the string being queried, reducing the feasibility of using Monte Carlo methods, for example, in complex searches. 'Grover's algorithm <https://pennylane.ai/qml/demos/tutorial_grovers_algorithm/>'_ demonstrated the possbility of circumventing these efficiency challenges by using quantum computing techniques to search a data set in parallel. Grover's algorithm, however, is specifically designed in which a specific state that is known to exist is being sought in a data set. In 2000, the quantum amplitude estimation (QAE) algorithm was put forward as a generalization of Grover's algorithm that seeks to estimate the probability that a certain state exists within a data set, if at all [#Brassard2000]. In this generalization, a superposition state with uneven probabilities is operated on by the Grover operator :math:'n' times, where :math:'n' is the size of the evaluation register. The rotation and amplification induced by the Grover operator should, in theory, make the "good" states (a common term used to refer to the states that meet the success criteria of the search) dominant in amplitude, which can be extracted following processing via 'quantum fourier transform (QFT) <https://pennylane.ai/qml/demos/tutorial_qft/>' to carry out 'quantum phase estimation (QPE) <https://pennylane.ai/qml/demos/tutorial_qp/>'_.
+Classical search algorithms are expensive. If, for example, you want to find a specific element in a list of length N, basic techniques require individual guesses to be evaluated sequentially. The resources required to carry this out scale with the size of the string being queried, implying :math:'\mathcal{O}(N)' efficiency and reducing feasibility. Though Monte Carlo methods can be employed to alleviate some of this demand, resource requirements still scale intensely with complexity. Since quantum computing, in theory, enables efficient parallel computation, its utility in search techniques is prevalent. 'Grover's algorithm <https://pennylane.ai/qml/demos/tutorial_grovers_algorithm/>'_ demonstrated the possbility of circumventing the efficiency challenges of classical search techniques by taking advantage of quantum information processing methods to search a data set for a specific entry via signal interference, eliminating the need to "guess and check" and improving efficiency to :math:'\mathcal{O}(\sqrt{N})'. Being limited to cases in which it is known that the target entry exists in the data set in question, however, limits the algorithm's use cases. In 2000, the quantum amplitude estimation (QAE) algorithm was put forward as a generalization of Grover's algorithm that seeks to estimate the probability that a certain state exists within a data set, if at all [#Brassard2000]. In this generalization, a superposition state with uneven probabilities is operated on by the Grover operator :math:'2^n' times, where :math:'n' is the size of the evaluation register. The rotation and amplification induced by the Grover operator should, in theory, encode an amplitude in an evaluation register indicating the concentration of "good" states (a common term used to refer to the states that meet the success criteria of the search) in a data set, which is obtained through quantum processing via 'quantum Fourier transform (QFT) <https://pennylane.ai/qml/demos/tutorial_qft/>' to carry out 'quantum phase estimation (QPE) <https://pennylane.ai/qml/demos/tutorial_qp/>'_.
 
-Though QAE is a major improvement on its predecessors, its reliance on QPE limits its practicality. To carry out the required QFT, a large set of qubits must be dedicated to the evaluation register that stores the information introduced by the Grover operator. This causes the required hardware depth to increase very quickly beyond current practicality, which introduces a difficult question, how can we take advantage of the benefits of a quantum implementation without performing the QPE measurements that are required to make sense of the results? In [#Grinko2021], an alternative is proposed: Iterative Quantum Amplitude Estimation (IQAE). In essense, IQAE is a quantum-classical hybrid algorithm that executes the Grover operator :math:'k' times, as defined by a classical processing technique. So, where QAE attempts to find the solution in one shot by interfering all elements of the superposition state after the Grover operator has been applied and prior to measurement, IQAE measures directly after the application of the Grover operator to gather information and narrow the range that the solution may exist in. Since no QPE is taking place, we no longer require the evaluation register and, therefore, have come upon an algorithm that has the potential for near-term hardware implementation!
+Though QAE is a major improvement on its predecessors, its reliance on QPE limits its practicality. To execute the required QFT, a large set of qubits (whose size depends on the desired precision) must be dedicated to the evaluation register that stores the information introduced by the Grover operator. This causes the required hardware depth to increase very quickly beyond current practicality. If we want to, therefore, employ QAE using near-term hardware, we need to find a way to take advantage of the benefits of a quantum search algorithm and extract meaningful results without performing the QPE measurements. In [#Grinko2021], an alternative is proposed: Iterative Quantum Amplitude Estimation (IQAE). In essense, IQAE is a quantum-classical hybrid algorithm that executes the Grover operator :math:'k' times with the goal of extracting an amplitude that corresponds to the frequency of a type of entry in a data set. The value of :math:'k' is determined and applied iteratively, hense the name, via classical methods. So, where QAE attempts to find the solution in one shot by interfering all elements of the superposition state after the Grover operator has been applied and prior to measurement, IQAE measures directly after the application of the Grover operator to gather information and "zoom in" on the range the solution may exist in. Since no QPE is taking place, we no longer require the full evaluation register and, therefore, have come upon an algorithm that has the potential for near-term hardware implementation!
 
-The goal of this demo is to introduce the IQAE algorithm and implement a simple example in Pennylane.
+The goal of this demo is to introduce the IQAE algorithm and implement a simple example using Pennylane.
 """
 
 ###############################################################################
@@ -219,13 +219,31 @@ def IQAE(eps, alpha, N):
   return a_lower, a_upper
 
 ##############################################################################
-#Upon calling IQAE(), the output will consist of the upper and lower bounds between which the true amplitude lies. Since the probability distribution in this example is random, the outcome will change between runs of the full script.
-a_lower, a_upper = IQAE(eps, alpha, N)
+#Upon calling IQAE(), the output will consist of the upper and lower bounds between which the true amplitude lies. Since the probability distribution in this example is random, the outcome will change between runs of the full script. To compare the confidence interval obtained by the IQAE algorithm, the :math:'\mathcal{A}' state can be measured in a single shot, though this is not a realistic analogy to a physical system and is used here only for comparison. 
 
-print("Expected probability:", circuit(k_i)[1])
+# Create a shot-free device for the analytic value
+dev_exact = qp.device("default.qubit", wires=num_qubits+1)
+
+@qp.qnode(dev_exact)
+def circuit_exact():
+    A(distribution)
+    return qp.probs(wires=[num_qubits])
+
+a_lower, a_upper = IQAE(eps, alpha, N)
+true_a = circuit_exact()[1]
+
+print("TRUE probability (analytic):", true_a)
 print("Lower prediction bound:", a_lower)
 print("Upper prediction bound:", a_upper)
+print("Contains true value?", a_lower <= true_a <= a_upper)
 
+#Taking one full run of the script:
+#Analytic probability: 0.15640716689890746
+#Lower prediction bound: 0.15638107866557757
+#Upper prediction bound: 0.15643405588103368
+#Contains true value? True
+##############################################################################
+#
 
 ##############################################################################
 #References
