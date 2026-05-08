@@ -1,12 +1,13 @@
 r"""
-Iterative Quantum Amplitude Estimation in Pennylane
 =
 
 Classical search algorithms are expensive. If, for example, you want to find a specific element in a list of length N, basic techniques require individual guesses to be evaluated sequentially. The resources required to carry this out scale with the size of the string being queried, implying :math:`\mathcal{O}(N)` efficiency and reducing feasibility. Though Monte Carlo methods can be employed to alleviate some of this demand, resource requirements still scale intensely with complexity. Since quantum computing, in theory, enables efficient parallel computation, its utility in search techniques is prevalent. `Grover's algorithm <https://pennylane.ai/qml/demos/tutorial_grovers_algorithm/>`_ demonstrated the possbility of circumventing the efficiency challenges of classical search techniques by taking advantage of quantum information processing methods to search a data set for a specific entry via signal interference, eliminating the need to "guess and check" and improving efficiency to :math:`\mathcal{O}(\sqrt{N})`. Being limited to cases in which it is known that the target entry exists in the data set in question, however, limits the algorithm's use cases. 
 
-In 2000, the quantum amplitude estimation (QAE) algorithm was put forward as a generalization of Grover's algorithm that seeks to estimate the probability that a certain state exists within a data set, if at all [#Brassard2000]. In this generalization, a superposition state with uneven probabilities is operated on by the Grover operator :math:`2^n` times, where :math:`n` is the size of the evaluation register. The rotation and amplification induced by the Grover operator should, in theory, encode an amplitude in an evaluation register indicating the concentration of "good" states (a common term used to refer to the states that meet the success criteria of the search) in a data set, which is obtained through quantum processing via `quantum Fourier transform (QFT) <https://pennylane.ai/qml/demos/tutorial_qft/>` to carry out `quantum phase estimation (QPE) <https://pennylane.ai/qml/demos/tutorial_qp/>`_.
+In 2000, the quantum amplitude estimation (QAE) algorithm was put forward as a generalization of Grover's algorithm that seeks to estimate the probability that a certain state exists within a data set, if at all [#Brassard2000]. In this generalization, a superposition state with uneven probabilities is operated on by the Grover operator :math:`2^n` times, where :math:`n` is the size of the evaluation register. The rotation and amplification induced by the Grover operator should, in theory, encode an amplitude in an evaluation register indicating the concentration of "good" states (a common term used to refer to the states that meet the success criteria of the search) in a data set, which is obtained through quantum processing via `quantum Fourier transform (QFT) <https://pennylane.ai/qml/demos/tutorial_qft/>_` to carry out `quantum phase estimation (QPE) <https://pennylane.ai/qml/demos/tutorial_qp/>`_.
 
-Though QAE is a major improvement on its predecessors, its reliance on QPE limits its practicality. To execute the required QFT, a large set of qubits (whose size depends on the desired precision) must be dedicated to the evaluation register that stores the information introduced by the Grover operator. This causes the required hardware depth to increase very quickly beyond current practicality. If we want to, therefore, employ QAE using near-term hardware, we need to find a way to take advantage of the benefits of a quantum search algorithm and extract meaningful results without performing the QPE measurements. In [#Grinko2021], an alternative is proposed: Iterative Quantum Amplitude Estimation (IQAE). In essense, IQAE is a quantum-classical hybrid algorithm that executes the Grover operator :math:`k` times with the goal of extracting an amplitude that corresponds to the frequency of a type of entry in a data set. The value of :math:`k` is determined and applied iteratively, hence the name, via classical methods. So, where QAE attempts to find the solution in one shot by interfering all elements of the superposition state after the Grover operator has been applied and prior to measurement, IQAE measures directly after the application of the Grover operator to gather information and "zoom in" on the range the solution may exist in. Since no QPE is taking place, we no longer require the full evaluation register and, therefore, have come upon an algorithm that has the potential for near-term hardware implementation!
+Though QAE is a major improvement on its predecessors, its reliance on QPE limits its practicality. To execute the required QFT, a large set of qubits (whose size depends on the desired precision) must be dedicated to the evaluation register that stores the information introduced by the Grover operator. This causes the required hardware depth to increase very quickly beyond current practicality. If we want to, therefore, employ QAE using near-term hardware, we need to find a way to take advantage of the benefits of a quantum search algorithm and extract meaningful results without performing the QPE measurements. 
+
+In [#Grinko2021], an alternative is proposed: Iterative Quantum Amplitude Estimation (IQAE). In essense, IQAE is a quantum-classical hybrid algorithm that executes the Grover operator :math:`k` times with the goal of extracting an amplitude that corresponds to the frequency of a type of entry in a data set. The value of :math:`k` is determined and applied iteratively, hence the name, via classical methods. So, where QAE attempts to find the solution in one shot by interfering all elements of the superposition state after the Grover operator has been applied and prior to measurement, IQAE measures directly after the application of the Grover operator to gather information and "zoom in" on the range the solution may exist in. Since no QPE is taking place, we no longer require the full evaluation register and, therefore, have come upon an algorithm that has the potential for near-term hardware implementation!
 
 The goal of this demo is to introduce the IQAE algorithm and implement a simple example using Pennylane.
 """
@@ -63,6 +64,14 @@ control_wires = [num_qubits-3,num_qubits-2,num_qubits-1,num_qubits]
 # 3. Implement MultiControlledX such that wire :math:`n+1` takes on the :math:`|1\rangle` state if the success criteria is met.
 # 4. Flip the state of the 3 final qubits back to the original. 
 
+
+######################################################################
+# .. figure:: ../demonstrations_v2/iterative_quantum_amplitude_estimation_in_pennylane/A_Operator.png
+#    :align: center
+#    :width: 80%
+#
+#
+
 #Define A operator
 @qp.prod
 def A(state):
@@ -83,6 +92,11 @@ def A(state):
 ##############################################################################
 #Since the "good" state is marked by a :math:`|1\rangle`, the oracle can be constructed simply using a PauliZ gate, which will flip the phase of any state that has this marker and allow any state marked by :math:`|0\rangle` to pass unchanged. The :math:`\mathcal{S}_0` operator is analogous to a simple FlipSign operation defined to act on the :math:`|0\rangle` state. Thus, the full :math:`\mathcal{Q}` state can be implemented as follows.
 
+# .. figure:: ../demonstrations_v2/iterative_quantum_amplitude_estimation_in_pennylane/Q_Operator.png
+#    :align: center
+#    :width: 80%
+#
+
 #Phase flip oracle
 @qp.prod
 def Oracle():
@@ -102,7 +116,10 @@ def Q():
 ##############################################################################
 #These operators can be used to build the final, iterative circuit in which the number of Grover operator applications will vary.
 
-#INSERT CIRCUIT DRAWING HERE
+# .. figure:: ../demonstrations_v2/iterative_quantum_amplitude_estimation_in_pennylane/Final_Circuit_Drawing.png
+#    :align: center
+#    :width: 80%
+#
 
 k_i = 0 #Begin with no Grover iterations
 #Build the circuit Q^kA|0>n|0>
@@ -124,7 +141,13 @@ def circuit(k_i):
 
 #In [#Grinko2021], the goal of the FindNextK function is to identify the largest possible :math:`k` that adheres to what will be refered to as the half-plane condition. The core principle of IQAE is the narrowing of a range of potential amplitudes to, eventually, hone in on an accurate estimate that answers the search criteria. To do this, each iteration of the algorithm must operate between an upper and lower bound defines what is referred to as the confidence interval. The bounds of this interval set the upper and lower limits of possible angles that correspond to the range of probabilities which will, due to the nature of angular relationships on the unit circle, be periodic. As such, there is a risk that taking any random guess of the upper and lower bounds will result in uninterpretable results if the location on the probability curve is lost. Think, for example, of measuring a probability of 40%. Without information on the range in which this measurement falls, it is impossible to know whether you are approaching a peak or a plateau in the sinusoidal probability curve. Thus, valid results will should always fall in either the upper or lower half-plane of the unit circle so it is known whether the outcome is on a rising or falling edge.
 
-#HALF PLANE ILLUSTRATION (WITH RISING FALLING EDGE?)
+######################################################################
+# .. figure:: ../demonstrations_v2/iterative_quantum_amplitude_estimation_in_pennylane/Half_Plane_Illustration.png
+#    :align: center
+#    :width: 80%
+#
+#    Half-Plane Condition as Defined by [#Grinko2021].
+#
 
 #The FindNextK function validates this condition. The logic is as follows: for an initial guess :math:`k_i` yeilding confidence interval :math:`[\theta_{min}^i,\theta_{max}]=[theta_{lower}*K_i,theta_{upper}*K_i]`, the function will return the current guess of :math:`k` if either both the upper and lower bounds are less than pi (ie. they fall in the upper half of the unit circle) or both the upper and lower bounds are greater than pi (ie. they fall in the lower half of the unit circle). If neither of these conditions are met (ie. the two bounds fall in different half-planes), the magnitude of the guess needs to be reduced.
 
@@ -258,8 +281,10 @@ print("Contains true value?", a_lower <= true_a <= a_upper)
 ##############################################################################
 #References
 
-# .. [#Grinko2021]
-#    D. Grinko, J. Gacon, C. Zoufal, and S. Woerner, "Iterative quantum amplitude estimation," Dec. 2019, arXiv:1912.05559
+# .. [Grinko2021] Grinko, D., Gacon, J., Zoufal, C., & Woerner, S. (2021). 
+#   Iterative quantum amplitude estimation. *npj Quantum Information*, 7(52). 
+#   https://doi.org/10.1038/s41534-021-00379-1
 #
-# .. [#Brassard2000]
-#    G. Brassard, P. Høyer, M. Mosca, and A. Tapp, "Quantum amplitude amplification and estimation," May 2000, arXiv:quant-ph/0005055. 
+# .. [#Brassard2000] Brassard, G., Høyer, P., Mosca, M., & Tapp, A. (2002). 
+#    Quantum Amplitude Amplification and Estimation. *Contemporary Mathematics*, 
+#    305, 53-74. https://arxiv.org/abs/quant-ph/0005055
