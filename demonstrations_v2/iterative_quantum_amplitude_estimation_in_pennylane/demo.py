@@ -19,6 +19,8 @@ The goal of this demo is to introduce the IQAE algorithm and implement a simple 
 #   |\Psi_{IQAE}\rangle = \sqrt{1-a}|\psi_0\rangle|0\rangle+\sqrt{a}|\psi_1\rangle|1\rangle
 #Where :math:`a`` is the probability amplitude, :math:`|\psi_0\rangle` is a "bad" state, and :math:`|\psi_1\rangle` is a "good" state.
 
+################################################################################
+
 #In this implementation, the goal of the IQAE algorithm will be to identify how many multiples of 8 exist in the given data set. When encoded in binary, multiples of 8 will always have 0 in the last three positions. Thus, this will act as our success criteria. To carry this search out, we will define an operator :math:`\mathcal{A}` that maps a set of input qubits onto the problem, this case being a list of integers. More specifically, :math:`\mathcal{A}` should impose a unitary operation on the input states that produces a superposition state that is identical to :math:`|\Psi_{IQAE}\rangle`. In this case, a randomly weighted superposition of all combinations of the input qubits should be generated and the final 3 qubits in each string should be checked for adherence to the success criteria (ie. are they all zero?) via a multi-controlled CNOT gate. If the logic gate is triggered, a marker qubit will be flipped to :math:`|1\rangle`, indicating a "good" result. However, the goal will not be to identify all "good" results in one sweep. Instead, several iterations will be carried out in which the Grover operator is applied multiple times with the goal of extracting a probability amplitude with adequate accuracy by refining the interval within which the solution is likely to lie. To do this, each iteration of the IQAE algorithm will yeild the following state:
 
 # .. math::
@@ -55,9 +57,11 @@ control_wires = [num_qubits-3,num_qubits-2,num_qubits-1,num_qubits]
 
 ###############################################################################
 # As mentioned, the backbone of the quantum portion of the IQAE algorithm is the Grover operator :math:`\mathcal{Q}`, which aims to identify "good" states and introduce an identifiable phase flip and `amplitude amplification <https://pennylane.ai/qml/demos/tutorial_intro_amplitude_amplification/>`_. The basic structure of :math:`\mathcal{Q}` is 
+
 # .. math ::
 #    \mathcal{Q}=-\mathcal{A}\mathcal{S}_0\mathcal{A}^{-1}\mathcal{S}_\psi_1
-# In which :math:`\mathcal{S}_\psi_1` acts as the oracle and flips the phase of (marks) a "good" state and :math:`\mathcal{S}_0` flips everything except the :math:`|0\rangle` state. This process is outlined in Grover's algorithm. Since this is an uneven superposition, this operator needs to be defined. 
+
+# In which :math:`\mathcal{S}_{\psi_1}` acts as the oracle and flips the phase of (marks) a "good" state and :math:`\mathcal{S}_0` flips everything except the :math:`|0\rangle` state. This process is outlined in Grover's algorithm. Since this is an uneven superposition, this operator needs to be defined. 
 # First, :math:`\mathcal{A}` can be defined according to the following procedure: 
 # 1. Generate :math:`n` qubits with amplitudes according to the previously generated random probability distribution using StatePrep.
 # 2. Flip the state of the 3 final qubits in the string so that MultiControlledX is triggered by a :math:`|111\rangle` state.
@@ -135,6 +139,7 @@ def circuit(k_i):
 # ---------------------------------
 
 #As shown, the iteration variable :math:`k` is directly tied to the total angle of the state. Since the :math:`sin^2(x)` function adds complexity to the probability calculations, standard trigonometric identities can be employed to achieve
+
 # .. math::
 #    \mathbb{p}(|1\rangle)=\frac{1-cos((4k+2)\theta_a)}{2}=\frac{1-cos(K_i\theta_a)}{2}
 #Letting :math:'K_i=4k+2'.
@@ -148,7 +153,7 @@ def circuit(k_i):
 #
 #    Half-Plane Condition as Defined by [#Grinko2021].
 #
-
+########################################################################
 #The FindNextK function validates this condition. The logic is as follows: for an initial guess :math:`k_i` yeilding confidence interval :math:`[\theta_{min}^i,\theta_{max}]=[theta_{lower}*K_i,theta_{upper}*K_i]`, the function will return the current guess of :math:`k` if either both the upper and lower bounds are less than pi (ie. they fall in the upper half of the unit circle) or both the upper and lower bounds are greater than pi (ie. they fall in the lower half of the unit circle). If neither of these conditions are met (ie. the two bounds fall in different half-planes), the magnitude of the guess needs to be reduced.
 
 #To carry out the actual comparison logic, however, some translation is required. First, the maximum possible value of :math:`k` must be defined in relation to the angles. [#Grinko2021] defines this value as:
