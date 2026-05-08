@@ -17,13 +17,15 @@ The goal of this demo is to introduce the IQAE algorithm and implement a simple 
 # Initial State
 # -------------
 #
-#IQAE is specifically focused on analyzing data sets composed of an uneven superposition of "good" and "bad" states. In order to make this state searchable, each component must be assigned a marker that indicates which of the two categories it falls in. Taking :math:`|0\rangle` to be a "bad" marker and :math:`\|1\rangle` to be a "good" marker following Boolean logic, this state can be defined as follows
+# IQAE is specifically focused on analyzing data sets composed of an uneven superposition of "good" and "bad" states. In order to make this state searchable, each component must be assigned a marker that indicates which of the two categories it falls in. Taking :math:`|0\rangle` to be a "bad" marker and :math:`|1\rangle` to be a "good" marker following Boolean logic, this state can be defined as follows
 # .. math::
-#   |\Psi_{IQAE}\rangle = \sqrt{1-a}|\psi_0\rangle|0\rangle+\sqrt{a}|\psi_1\rangle|1\rangle
+#    |\Psi_{IQAE}\rangle = \sqrt{1-a}|\psi_0\rangle|0\rangle+\sqrt{a}|\psi_1\rangle|1\rangle
+#
 # Where :math:`a` is the probability amplitude, :math:`|\psi_0\rangle` is a "bad" state, and :math:`|\psi_1\rangle` is a "good" state.
+#
 ################################################################################
 #
-#In this implementation, the goal of the IQAE algorithm will be to identify how many multiples of 8 exist in the given data set. When encoded in binary, multiples of 8 will always have 0 in the last three positions. Thus, this will act as our success criteria. To carry this search out, we will define an operator :math:`\mathcal{A}` that maps a set of input qubits onto the problem, this case being a list of integers. More specifically, :math:`\mathcal{A}` should impose a unitary operation on the input states that produces a superposition state that is identical to :math:`|\Psi_{IQAE}\rangle`. In this case, a randomly weighted superposition of all combinations of the input qubits should be generated and the final 3 qubits in each string should be checked for adherence to the success criteria (ie. are they all zero?) via a multi-controlled CNOT gate. If the logic gate is triggered, a marker qubit will be flipped to :math:`|1\rangle`, indicating a "good" result. However, the goal will not be to identify all "good" results in one sweep. Instead, several iterations will be carried out in which the Grover operator is applied multiple times with the goal of extracting a probability amplitude with adequate accuracy by refining the interval within which the solution is likely to lie. To do this, each iteration of the IQAE algorithm will yield the following state:
+# In this implementation, the goal of the IQAE algorithm will be to identify how many multiples of 8 exist in the given data set. When encoded in binary, multiples of 8 will always have 0 in the last three positions. Thus, this will act as our success criteria. To carry this search out, we will define an operator :math:`\mathcal{A}` that maps a set of input qubits onto the problem, this case being a list of integers. More specifically, :math:`\mathcal{A}` should impose a unitary operation on the input states that produces a superposition state that is identical to :math:`|\Psi_{IQAE}\rangle`. In this case, a randomly weighted superposition of all combinations of the input qubits should be generated and the final 3 qubits in each string should be checked for adherence to the success criteria (ie. are they all zero?) via a multi-controlled CNOT gate. If the logic gate is triggered, a marker qubit will be flipped to :math:`|1\rangle`, indicating a "good" result. However, the goal will not be to identify all "good" results in one sweep. Instead, several iterations will be carried out in which the Grover operator is applied multiple times with the goal of extracting a probability amplitude with adequate accuracy by refining the interval within which the solution is likely to lie. To do this, each iteration of the IQAE algorithm will yield the following state:
 # .. math::
 #    \mathcal{Q}^k\mathcal{A}|0\rangle_n|0\rangle_n = \cos((2k+1)\theta_a)|\psi_0\rangle_n|0\rangle+\sin((2k+1)\theta_a)|\psi_1\rangle_n|1\rangle
 #
@@ -31,12 +33,13 @@ The goal of this demo is to introduce the IQAE algorithm and implement a simple 
 # .. math::
 #    \mathbb{P}(|1\rangle)=\sin^2((2k+1)\theta_a)
 #
-#From this, it is clear that the probability is correlated to the angle imposed by the Grover operator, meaning that if we can figure out this angle we can obtain the probability of extracting a "good" state. Since we do not aspire to use QPE, our best bet is to use our :math:`k` guess combined with our iterative measurement of the quantum circuit to obtain this value. This equation also points out how :math:`k` correlates to the resolution of the search, with a large :math:`k` corresponding to a high frequency and a high resolution. Thus, if an adequately sized :math:`k` is identified, a high accuracy estimation for the amplitude can be identified by taking :math:`a=sin^2(\theta_a)` to be the amplitude of the "good" state [#Grinko2021]_.
+# From this, it is clear that the probability is correlated to the angle imposed by the Grover operator, meaning that if we can figure out this angle we can obtain the probability of extracting a "good" state. Since we do not aspire to use QPE, our best bet is to use our :math:`k` guess combined with our iterative measurement of the quantum circuit to obtain this value. This equation also points out how :math:`k` correlates to the resolution of the search, with a large :math:`k` corresponding to a high frequency and a high resolution. Thus, if an adequately sized :math:`k` is identified, a high accuracy estimation for the amplitude can be identified by taking :math:`a=sin^2(\theta_a)` to be the amplitude of the "good" state [#Grinko2021]_.
+#
 ######################################################################
 # Defining The Input State and Operators
 # --------------------------------------
 #
-#First, we can define the circuit specifications, generating a random list of probabilities that will be assigned as weights in the input state.
+# First, we can define the circuit specifications, generating a random list of probabilities that will be assigned as weights in the input state.
 
 import pennylane as qp
 import numpy as np
@@ -138,6 +141,7 @@ def circuit(k_i):
 #
 # .. math::
 #    \mathbb{p}(|1\rangle)=\frac{1-cos((4k+2)\theta_a)}{2}=\frac{1-cos(K_i\theta_a)}{2}
+#
 # Letting :math:`K_i=4k+2`.
 #
 # In [#Grinko2021]_, the goal of the FindNextK function is to identify the largest possible :math:`k` that adheres to what will be referred to as the half-plane condition. The core principle of IQAE is the narrowing of a range of potential amplitudes to, eventually, hone in on an accurate estimate that answers the search criteria. To do this, each iteration of the algorithm must operate between an upper and lower bound defines what is referred to as the confidence interval. The bounds of this interval set the upper and lower limits of possible angles that correspond to the range of probabilities which will, due to the nature of angular relationships on the unit circle, be periodic. As such, there is a risk that taking any random guess of the upper and lower bounds will result in uninterpretable results if the location on the probability curve is lost. Think, for example, of measuring a probability of 40%. Without information on the range in which this measurement falls, it is impossible to know whether you are approaching a peak or a plateau in the sinusoidal probability curve. Thus, valid results will should always fall in either the upper or lower half-plane of the unit circle so it is known whether the outcome is on a rising or falling edge.
@@ -233,7 +237,7 @@ def IQAE(eps, alpha, N):
       theta_upper_est = 2*math.pi - 2*math.asin((p_min)**0.5)
       theta_lower_est = 2*math.pi - 2*math.asin((p_max)**0.5)
 
-     #Compute total rotation
+    #Compute total rotation
     new_lower = (2*math.pi*(math.floor(K_i*theta_lower/(2*math.pi))) + theta_lower_est)/K_i
     new_upper = (2*math.pi*(math.floor(K_i*theta_upper/(2*math.pi))) + theta_upper_est)/K_i
 
