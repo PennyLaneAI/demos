@@ -30,6 +30,7 @@ The goal of this demo is to introduce the IQAE algorithm and implement a simple 
 #    \mathcal{Q}^k\mathcal{A}|0\rangle_n|0\rangle_n = \cos((2k+1)\theta_a)|\psi_0\rangle_n|0\rangle+\sin((2k+1)\theta_a)|\psi_1\rangle_n|1\rangle
 #
 # Where :math:`n` is the number of qubits, :math:`\mathcal{Q}` is the Grover operator, :math:`\theta_a` is the angle between the state vector found during a specific iteration and the "bad" state axis, and :math:`k` is the number of times that the Grover operator is applied to the state in a single IQAE iteration. The specifications of this equation are covered thoroughly in [#Brassard2000]_, but the important result is that the probability of measuring a "good" state at the end of an iteration is given by
+#
 # .. math::
 #    \mathbb{P}(|1\rangle)=\sin^2((2k+1)\theta_a)
 #
