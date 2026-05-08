@@ -12,6 +12,8 @@ In [#Grinko2021]_, an alternative is proposed: Iterative Quantum Amplitude Estim
 
 The goal of this demo is to introduce the IQAE algorithm and implement a simple example using Pennylane.
 """
+
+######################################################################
 # Initial State
 # -------------
 #
@@ -34,7 +36,7 @@ The goal of this demo is to introduce the IQAE algorithm and implement a simple 
 #
 # From this, it is clear that the probability is correlated to the angle imposed by the Grover operator, meaning that if we can figure out this angle we can obtain the probability of extracting a "good" state. Since we do not aspire to use QPE, our best bet is to use our :math:`k` guess combined with our iterative measurement of the quantum circuit to obtain this value. This equation also points out how :math:`k` correlates to the resolution of the search, with a large :math:`k` corresponding to a high frequency and a high resolution. Thus, if an adequately sized :math:`k` is identified, a high accuracy estimation for the amplitude can be identified by taking :math:`a=sin^2(\theta_a)` to be the amplitude of the "good" state [#Grinko2021]_.
 #
-######################################################################
+
 # Defining The Input State and Operators
 # --------------------------------------
 #
@@ -287,7 +289,6 @@ print("Contains true value?", a_lower <= true_a <= a_upper)
 # ----------
 # As quantum hardware continues to develop, it is crucial that methods to make use of current capabilities are developed and implemented. QAE has shown promise for applications in finance to provide speedup over classical Monte Carlo methods that are typically employed to carry out risk analysis and derivative pricing simulations. IQAE is capable of addressing the same problems now rather than alluding to utility in the future. By taking advantage of a quantum-classical hybrid scheme, IQAE lowers the resource threshold and provides an avenue to compatibility with current classical and quantum systems.
 
-##############################################################################
 # References
 # ----------
 # .. [#Grinko2021] Grinko, D., Gacon, J., Zoufal, C., & Woerner, S. (2021). 
