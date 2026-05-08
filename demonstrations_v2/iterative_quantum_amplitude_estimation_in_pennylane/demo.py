@@ -14,6 +14,12 @@ The goal of this demo is to introduce the IQAE algorithm and implement a simple 
 """
 
 ######################################################################
+import pennylane as qp
+import numpy as np
+import matplotlib.pyplot as plt
+import math
+
+######################################################################
 # Initial State
 # -------------
 #
@@ -41,11 +47,6 @@ The goal of this demo is to introduce the IQAE algorithm and implement a simple 
 # --------------------------------------
 #
 # First, we can define the circuit specifications, generating a random list of probabilities that will be assigned as weights in the input state.
-
-import pennylane as qp
-import numpy as np
-import matplotlib.pyplot as plt
-import math
 
 #Define system parameters
 N = 10000 #Number of shots
