@@ -13,7 +13,6 @@ In [#Grinko2021]_, an alternative is proposed: Iterative Quantum Amplitude Estim
 The goal of this demo is to introduce the IQAE algorithm and implement a simple example using Pennylane.
 """
 
-######################################################################
 import pennylane as qp
 import numpy as np
 import matplotlib.pyplot as plt
@@ -44,7 +43,6 @@ import math
 #
 # From this, it is clear that the probability is correlated to the angle imposed by the Grover operator. This relationship can be made clearer by taking into consideration the fact that :math:`\mathcal{Q}` invokes a :math:`2\theta_a` rotation in a 2D space defined by the "good" and "bad" state axes each time it is applied. So, if we can figure out the angle that has been imposed on the state as a result of the operator application, we can obtain the probability of extracting a "good" state. Since we do not aspire to use QPE, our best bet is to use our iterative :math:`k` value combined with an measurement of the quantum circuit that outputs an intermediate amplitude guess. The above equation also shows that the size of :math:`k` determines the resolution of the search, with a large :math:`k` corresponding to a high probability oscillation frequency and, therefore, a high resolution. Thus, if an adequately sized :math:`k` is identified, a high accuracy estimation for the "good" state amplitude can be calculated [#Grinko2021]_.
 #
-######################################################################
 # Defining The Input State and Operators
 # --------------------------------------
 #
