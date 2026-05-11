@@ -30,19 +30,21 @@ import math
 #
 # Where :math:`a` is the probability of measuring a "good" state, :math:`|\psi_0\rangle` is a "bad" state, and :math:`|\psi_1\rangle` is a "good" state.
 #
-# In this implementation, the goal of the IQAE algorithm will be to identify the probability that a given entry in a data set is a multiple of 8. When encoded in binary, multiples of 8 will always have 0 in the last three positions, which serves as a simple success criteria for the algorithm (ie. a "good" state will always have 0s in the 3 least significant positions). To carry this search out, we will define an operator :math:`\mathcal{A}` that maps a set of input qubits onto the problem, meaning the structure of :math:`\mathcal{A}` will differ depending on the application. :math:`\mathcal{A}` should impose a unitary operation on the input states that produces a superposition state that is identical to :math:`|\Psi_{IQAE}\rangle`, implying that an accompanying evaluation register is required to introduce the aforementioned marker. In this case, a randomly weighted superposition of all combinations of the input qubits should be generated and the final 3 qubits in each string should be checked for adherence to the success criteria (ie. are they all zero?) via a multi-controlled CNOT gate. If the logic gate is triggered, the single-qubit evaluation register will be flipped to :math:`|1\rangle`, indicating a "good" result. However, the goal will not be to identify all "good" results in one sweep. Instead, several iterations will be carried out in which the Grover operator is applied multiple times with the goal of extracting a probability amplitude with adequate accuracy by refining the interval within which the solution is likely to lie. To do this, each iteration of the IQAE algorithm will yield the following state:
+# In this implementation, the goal of the IQAE algorithm will be to identify the probability that a given entry in a data set is a multiple of 8. When encoded in binary, multiples of 8 will always have 0 in the last three positions, which serves as a simple success criteria for the algorithm (ie. a "good" state will always have 0s in the 3 least significant positions). 
+#
+#To carry this search out, we will define an operator :math:`\mathcal{A}` that maps a set of input qubits onto the problem, meaning the structure of :math:`\mathcal{A}` will differ depending on the application. :math:`\mathcal{A}` should impose a unitary operation on the input states that invokes a superposition state that is identical to :math:`|\Psi_{IQAE}\rangle`. In this case, a randomly weighted superposition of all combinations of the input qubits should be generated and the final 3 qubits in each string should be checked for adherence to the success criteria (ie. are they all zero?) via a multi-controlled CNOT gate. If the logic gate is triggered, a single-qubit evaluation register will be flipped to :math:`|1\rangle`, indicating a "good" result. However, the goal will not be to identify all "good" results in one sweep. Instead, several iterations will be carried out in which the Grover operator is applied multiple times with the goal of extracting a probability amplitude with adequate accuracy by refining the interval within which the solution is likely to lie. To do this, each iteration of the IQAE algorithm will yield the following state:
 #
 # .. math::
-#    \mathcal{Q}^k\mathcal{A}|0\rangle_n|0\rangle_{eval} = \cos((2k+1)\theta_a)|\psi_0\rangle_n|0\rangle+\sin((2k+1)\theta_a)|\psi_1\rangle_n|1\rangle
+#    \mathcal{Q}^k\mathcal{A}|0\rangle_n|0\rangle_{eval} = \cos((2k+1)\theta_a)|\psi_0\rangle_n|0\rangle_{eval}+\sin((2k+1)\theta_a)|\psi_1\rangle_n|1\rangle_{eval}
 #
-# Where :math:`n` is the number of qubits, :math:`\mathcal{Q}` is the Grover operator, :math:`\theta_a` is related to the angle that the state is rotated by Grover's operator (note :math:`a=sin^2(\theta_a)`), and :math:`k` is the number of times that the Grover operator is applied to the state in a single IQAE iteration. The specifications of this equation are covered thoroughly in [#Brassard2000]_, but the important result is that the probability of measuring a "good" state at the end of an iteration is given by
+# Where :math:`n` is the number of qubits, :math:`\mathcal{Q}` is the Grover operator, :math:`\theta_a` is related to the angle that the state is rotated by Grover's operator (note :math:`a=sin^2(\theta_a)`), and :math:`k` is the number of times that the Grover operator is applied to the state in a single IQAE iteration. The specifications of this equation are covered thoroughly in [#Brassard2000]_, but the important result is that the probability of measuring a "good" state at the end of an iteration is given by:
 #
 # .. math::
 #    \mathbb{P}(|1\rangle)=\sin^2((2k+1)\theta_a)
 #
-# From this, it is clear that the probability is correlated to the angle imposed by the Grover operator. This relationship can be made clearer by taking into consideration the fact that :math:`\mathcal{Q}` invokes a :math:`2\theta_a` rotation in a 2D space defined by the "good" and "bad" state axes each time it is applied. So, if we can figure out the angle that has been imposed on the state as a result of the operator application, we can obtain the probability of extracting a "good" state. Since we do not aspire to use QPE, our best bet is to use our ierative :math:`k` value combined with an iterative measurement of the quantum circuit to obtain this value. This equation also shows that the size of :math:`k` determines the resolution of the search, with a large :math:`k` corresponding to a high frequency probability oscillation and, therefore, a high resolution. Thus, if an adequately sized :math:`k` is identified, a high accuracy estimation for the "good" state amplitude can be calculated [#Grinko2021]_.
+# From this, it is clear that the probability is correlated to the angle imposed by the Grover operator. This relationship can be made clearer by taking into consideration the fact that :math:`\mathcal{Q}` invokes a :math:`2\theta_a` rotation in a 2D space defined by the "good" and "bad" state axes each time it is applied. So, if we can figure out the angle that has been imposed on the state as a result of the operator application, we can obtain the probability of extracting a "good" state. Since we do not aspire to use QPE, our best bet is to use our iterative :math:`k` value combined with an measurement of the quantum circuit that outputs an intermediate amplitude guess. The above equation also shows that the size of :math:`k` determines the resolution of the search, with a large :math:`k` corresponding to a high probability oscillation frequency and, therefore, a high resolution. Thus, if an adequately sized :math:`k` is identified, a high accuracy estimation for the "good" state amplitude can be calculated [#Grinko2021]_.
 #
-
+######################################################################
 # Defining The Input State and Operators
 # --------------------------------------
 #
@@ -66,11 +68,12 @@ control_wires = [num_qubits-3,num_qubits-2,num_qubits-1,num_qubits]
 # .. math::
 #    \mathcal{Q}=-\mathcal{A}\mathcal{S}_0\mathcal{A}^{-1}\mathcal{S}_{\psi_1}
 #
-# In which :math:`\mathcal{S}_{\psi_1}` acts as the oracle and flips the phase of (marks) a "good" state and :math:`\mathcal{S}_0` flips everything except the :math:`|0\rangle` state (see figures 1 through 3 in `amplitude amplification <https://pennylane.ai/qml/demos/tutorial_intro_amplitude_amplification/>`_ for an intuitive visualization). This process is outlined in Grover's algorithm. Since this is an uneven superposition, this operator needs to be defined. 
+# In which :math:`\mathcal{S}_{\psi_1}` acts as the oracle and flips the phase of (marks) a "good" state and :math:`\mathcal{S}_0` flips everything except the :math:`|0\rangle` state (see figures 1 through 3 in the `amplitude amplification <https://pennylane.ai/qml/demos/tutorial_intro_amplitude_amplification/>`_ demo for an intuitive visualization). Since this is an uneven superposition, this operator that carries out this process needs to be defined rather than using Pennylane's built in GroverOperator() function, which assumes an even superposition. 
 #
 # First, :math:`\mathcal{A}` can be defined according to the following procedure: 
+#
 # 1. Generate :math:`n` qubits with amplitudes according to the previously generated random probability distribution using StatePrep.
-# 2. Flip the state of the 3 final qubits in the string so that MultiControlledX is triggered by a :math:`|111\rangle` state.
+# 2. Flip the state of the 3 final qubits in the string so that MultiControlledX() is triggered by a :math:`|111\rangle` state.
 # 3. Implement MultiControlledX such that wire :math:`n+1` takes on the :math:`|1\rangle` state if the success criteria is met.
 # 4. Flip the state of the 3 final qubits back to the original. 
 #
@@ -97,7 +100,7 @@ def A(state):
   qp.PauliX(wires=num_qubits-1)
 
 ##############################################################################
-# Since the "good" state is marked by a :math:`|1\rangle`, the :math: `\mathcal{S}_{\psi_1}` operator (also known as the oracle) can be constructed simply using a PauliZ gate, which will flip the phase of any state that has this marker and allow any state marked by :math:`|0\rangle` to pass unchanged. The :math:`\mathcal{S}_0` operator is analogous to a simple FlipSign operation defined to act on the :math:`|0\rangle` state. When defining the operator, the global phase term can be neglected since it does not impact the final measurement.
+# Since the "good" state is marked by a :math:`|1\rangle`, the :math:`\mathcal{S}_{\psi_1}` operator (also known as the oracle) can be constructed simply using a PauliZ gate, which will flip the phase of any state that has this marker and allow any state marked by :math:`|0\rangle` to pass unchanged. The :math:`\mathcal{S}_0` operator is analogous to a simple FlipSign() operation defined to act on the :math:`|0\rangle` state. When defining the operator, the global phase term can be neglected since it does not impact the final measurement.
 #
 # .. figure:: ../demonstrations_v2/iterative_quantum_amplitude_estimation_in_pennylane/Q_Operator.png
 #    :align: center
@@ -141,14 +144,14 @@ def circuit(k_i):
 # Digesting the FindNextK Function
 # --------------------------------
 #
-# As shown, the iteration variable :math:`k` is directly tied to the total angle of the state since the Grover operator invokes a deterministic rotation each time it is applied. Since the :math:`sin^2(x)` function adds complexity to the probability calculations, standard trigonometric identities can be employed to achieve
+# As shown, the iteration variable :math:`k` is directly tied to the total angle of the state since the Grover operator invokes a deterministic rotation each time it is applied. The :math:`sin^2(x)` function adds complexity to the probability calculations, so standard trigonometric identities can be employed to achieve:
 #
 # .. math::
 #    \mathbb{P}(|1\rangle)=\frac{1-cos((4k+2)\theta_a)}{2}=\frac{1-cos(K_i\theta_a)}{2}
 #
 # Letting :math:`K_i=4k+2` be the frequency term.
 #
-# In [#Grinko2021]_, the goal of the FindNextK function is to identify the largest possible :math:`k` that adheres to what will be referred to as the half-plane condition. The core principle of IQAE is the narrowing of a range of potential amplitudes to, eventually, hone in on an accurate estimate of the "good" state probability. To do this, each iteration of the algorithm must operate between an upper and lower bound that make up the function's confidence interval, which corresponds to the range of probabilities within which the final probability amplitude will exist. Since the calculation involves a :math:`\arcsin(x)` calculation, it is possible that this confidence interval could yield uninterpretable results if one angle falls in the upper half of the unit circle (ie. between 0 and :math:`\pi`) and the other falls in the lower half of the unit circle (ie. between :math:`\pi` and :math:`2\pi`) since information about the measurement's position on the probability curve would be lost. Think, for example, of measuring a probability of 40%. Without information on the range in which this measurement falls, it is impossible to know whether you are approaching a peak or a plateau in the sinusoidal probability curve. In addition, having both bounds of the confidence interval on the same helf-plane of the unit circle will result in unambiguous knowledge on which branch of :math:`\arcsin(x)` to use. Thus, valid results will should always fall in either the upper or lower half-plane of the unit circle.
+# In [#Grinko2021]_, the authors define FindNextK() to iterate the number of times :math:`\mathcal{Q}` is implemented. The goal of FindNextK() is to identify the largest possible :math:`k` that adheres to what we will call the half-plane condition. The core principle of IQAE is the narrowing of a range of potential amplitudes to, eventually, hone in on an accurate estimate of the "good" state probability. To do this, each iteration of the algorithm must operate between an upper and lower bound that make up the function's confidence interval, which corresponds to the range of probabilities within which the final probability amplitude will exist. Since the calculation involves a :math:`\arcsin(x)` calculation, it is possible that this confidence interval could yield uninterpretable results if one angle falls in the upper half of the unit circle (ie. between 0 and :math:`\pi`) and the other falls in the lower half of the unit circle (ie. between :math:`\pi` and :math:`2\pi`) since information about the measurement's position on the probability curve would be lost. Think, for example, of measuring a probability of 40%. Without information on the range in which this measurement falls, it is impossible to know whether you are approaching a peak or a plateau in the sinusoidal probability curve. In addition, having both bounds of the confidence interval on the same helf-plane of the unit circle will result in unambiguous knowledge on which branch of :math:`\arcsin(x)` to use. Thus, valid results will should always fall in either the upper or lower half-plane of the unit circle.
 #
 # .. figure:: ../demonstrations_v2/iterative_quantum_amplitude_estimation_in_pennylane/Half_Plane_Illustration.png
 #    :align: center
@@ -157,7 +160,7 @@ def circuit(k_i):
 #    Half-Plane Condition as Defined by [#Grinko2021]_.
 #
 # The FindNextK function validates this condition. The logic is as follows: 
-
+#
 # 1. For an initial guess :math:`k_i` yielding confidence interval :math:`[\theta_{min}^i,\theta_{max}]=[\theta_{lower}K_i,\theta_{upper}K_i]`, the function will return the current guess of :math:`k` if either both the upper and lower bounds are less than pi (ie. they fall in the upper half of the unit circle) or both the upper and lower bounds are greater than pi (ie. they fall in the lower half of the unit circle). 
 # 2. If neither of these conditions are met (ie. the two bounds fall in different half-planes), the magnitude of the guess needs to be reduced.
 #
@@ -206,7 +209,7 @@ def FindNextK(k_i,theta_min, theta_max, HalfPlane_Bool):
 # Implementing the IQAE Algorithm
 # -------------------------------
 #
-# With FindNextK defined, the IQAE algorithm can now be implemented! The main objective of this function is to apply the :math:`k` value returned by FindNextK to the previously defined quantum circuit, obtain a measurement, and determine if this measurement is adequately accurate with respect to a defined tolerance or if the confidence interval should be updated and passed back into the classical function for another iteration. The logic is as follows: 
+# With FindNextK() defined, the IQAE algorithm can now be implemented! The main objective of this function is to apply the :math:`k` value returned by FindNextK() to the previously defined quantum circuit, obtain a measurement, and determine if this measurement is adequately accurate with respect to a defined tolerance or if the confidence interval should be updated and passed back into the classical function for another iteration. The logic is as follows: 
 #
 # 1. Call circuit() after FindNextK() outputs a guess for :math:`k` and take a probability measurement. 
 # 2. Use this value to update the confidence interval, in which both the upper and lower bound on the angles and probabilities are computed from the measured amplitude. 
@@ -218,7 +221,7 @@ def FindNextK(k_i,theta_min, theta_max, HalfPlane_Bool):
 # .. math::
 #    \epsilon_{a_i}=\sqrt{\frac{1}{2N}\log{\frac{2T}{\alpha}}}
 #
-# Where :math:`\epsilon_{a_i}` is change between the previous amplitude estimation and current amplitude estimation and :math:'T' defines the maximum number of iterations required to achieve a precision of :math:'\epsilon_{a_i}` and is given by
+# Where :math:`\epsilon_{a_i}` is change between the previous amplitude estimation and current amplitude estimation and :math:`T` defines the maximum number of iterations required to achieve a precision of :math:`\epsilon_{a_i}` and is given by:
 #
 # .. math::
 #    T = \lceil \log_{2}{\frac{\pi}{8\epsilon}} \rceil
@@ -295,16 +298,16 @@ HalfPlane_Bool = True
 a_lower, a_upper = IQAE(eps, alpha, N)
 true_a = circuit_exact()[1]
 
-print("TRUE probability (analytic):", true_a)
+print("Analytic probability:", true_a)
 print("Lower prediction bound:", a_lower)
 print("Upper prediction bound:", a_upper)
-print("Contains true value?", a_lower <= true_a <= a_upper)
+print("Contains true value?", a_lower <= true_a <= a_upper) #Boolean indicating whether the analytical value falls within the final confidence interval
+print("-------------------------")
+if a_lower <= true_a <= a_upper:
+  print("The probability of measuring a multiple of 8 falls between", (100*a_lower),"%", "and", (100*a_upper),"%")
+else:
+  print("No valid answer found")
 
-#Taking one full run of the script:
-#Analytic probability: 0.15640716689890746
-#Lower prediction bound: 0.15638107866557757
-#Upper prediction bound: 0.15643405588103368
-#Contains true value? True
 ##############################################################################
 # Conclusion
 # ----------
