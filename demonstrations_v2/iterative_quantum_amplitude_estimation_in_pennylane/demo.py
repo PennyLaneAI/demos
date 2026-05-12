@@ -17,7 +17,10 @@ import pennylane as qp
 import numpy as np
 import matplotlib.pyplot as plt
 import math
-
+import jax.numpy as jnp
+import time
+import catalyst
+from catalyst import for_loop
 ######################################################################
 # Initial State
 # -------------
@@ -57,7 +60,7 @@ n = 2**num_qubits #Number of possible states
 random_vector = np.sqrt(np.random.rand(n))
 distribution = random_vector/np.linalg.norm(random_vector)
 
-#Define which indices should be checked for success criteria against the reference register
+#Define which indices should be checked for success criteria
 control_wires = [num_qubits-3,num_qubits-2,num_qubits-1,num_qubits]
 
 ###############################################################################
@@ -128,15 +131,40 @@ def Q():
 #    :align: center
 #    :width: 80%
 #
-#
+# Due to the repeated applications of the Grover operator (which, as will be explored soon, grows quickly between iterations) and the exponential scale of the input state with number of qubits, the computational demand of this algorithm can become quickly unmanagable. To mitigate this, the `Pennylane Catalyst <https://pennylane.ai/blog/2023/03/introducing-catalyst-quantum-just-in-time-compilation>`_ can be used to compile the :math:`\mathcal{Q}` loop and reduce the demand. For small systems (like, for example, a 5 qubit example), the difference is neglegible but becomes more apparent as the system grows.
+
 k_i = 0 #Begin with no Grover iterations
+#Declare if Catalyst compiler should be used
+catalyst_bool = True
+
 #Build the circuit Q^kA|0>n|0>
-@qp.qnode(dev, shots=N)
-def circuit(k_i):
-  A(distribution)
-  for i in range(k_i):
-    Q()
-  return qp.probs(wires=[num_qubits]) #Return the probability of measuring "good" and "bad" state
+def circuit_builder(catalyst_bool):
+  @qp.qnode(dev, shots=N)
+  def circuit(state, k_i):
+    A(state)
+    k_int = jnp.int64(k_i)
+    #Implement circuit in JAX compatible format for Catalyst
+    if catalyst_bool:
+      @catalyst.for_loop(0, k_int, 1)
+      def apply_Q(k_int):
+        # Oracle: phase flip on marked state
+        qp.PauliZ(wires=num_qubits)
+        qp.adjoint(A(state))
+        qp.FlipSign(0, wires=range(num_qubits + 1))
+        A(state)
+      apply_Q()
+    #Carry out Python loop without Catalyst
+    else:
+      for i in range(int(k_i)):
+        Q(i)
+    return qp.probs(wires=[num_qubits]) #Return the probability of measuring "good" and "bad" state
+  
+  if catalyst_bool:
+    circuit = catalyst.qjit(circuit)
+  
+  return circuit
+
+circuit = circuit_builder(catalyst_bool)
 
 ##############################################################################
 # Digesting the FindNextK Function
@@ -180,21 +208,21 @@ def circuit(k_i):
 # 2. The bounds of the confidence interval fall in different half-planes, indicating the current guess is too large. If an adequate guess is not reached while the While loop runs, the previous guess is returned. 
 # 
 
-def FindNextK(k_i,theta_min, theta_max, HalfPlane_Bool):
-    K_i = 4*k_i+2 #Define coefficient 
+def FindNextK(k_i,theta_min, theta_max, HalfPlane_bool):
+    K_i = 4*k_i+2 #Define coefficient
     theta_min_i = theta_min*K_i
     theta_max_i = theta_max*K_i
     Kmax = math.floor(math.pi/(theta_max-theta_min)) #Maximum K value
     K = Kmax-(Kmax-2)%4
 
     while K>=2*K_i:
-      q = K/K_i 
-      if (q*theta_max_i)%(2*math.pi)<=math.pi and (q*theta_min_i)%(2*math.pi)<=math.pi: #Is this guess in the upper half?
+      q = K/K_i
+      if (q*theta_max_i)%(2*math.pi)<=math.pi and (q*theta_min_i)%(2*math.pi)<=math.pi:
         k_i_it = ((K-2)/4)
         HalfPlane_Bool_it = True
         return k_i_it, HalfPlane_Bool_it
 
-      elif (q*theta_max_i)%(2*math.pi)>=math.pi and (q*theta_min_i)%(2*math.pi)>=math.pi: #Is this guess in the lower half?
+      elif (q*theta_max_i)%(2*math.pi)>=math.pi and (q*theta_min_i)%(2*math.pi)>=math.pi:
         k_i_it = ((K-2)/4)
         HalfPlane_Bool_it = False
         return k_i_it, HalfPlane_Bool_it
@@ -235,10 +263,17 @@ def FindNextK(k_i,theta_min, theta_max, HalfPlane_Bool):
 # In which :math:`a_i` is the outcome of the quantum circuit measurement for iteration :math:`i`. 
 #
 
+#Define IQAE parameters
+eps = 0.0001 #Precision
+alpha = 0.01 #Confidence
+HalfPlane_Bool = True
+
+#Actually implement IQAE!
+#Pre-selecting the use of Chernoff-Hoeffding to determine confidence interval
 def IQAE(eps, alpha, N):
   k_current = 0
   theta_lower = 0
-  theta_upper = math.pi/2 #Beginning search in the upper quadrant [0,pi/2]
+  theta_upper = math.pi/2 #Beginning search in the upper quadrant - this differs from the paper, is this correct?
   HalfPlane_Bool = True
   T = math.ceil(math.log2(math.pi/(8*eps)))
 
@@ -247,7 +282,7 @@ def IQAE(eps, alpha, N):
     K_i = int(4*k_i+2)
 
     #Call circuit
-    a_estimate = (circuit(int(k_i))[1])
+    a_estimate = (circuit(distribution,k_i)[1])
 
     eps_ai = ((1/(2*N))*math.log(2*T/alpha))**0.5
 
@@ -262,7 +297,7 @@ def IQAE(eps, alpha, N):
       theta_upper_est = 2*math.pi - 2*math.asin((p_min)**0.5)
       theta_lower_est = 2*math.pi - 2*math.asin((p_max)**0.5)
 
-    #Compute total rotationk, "unwrapping" from the scaled guess in FindNextK
+    #Compute total rotation
     new_lower = (2*math.pi*(math.floor(K_i*theta_lower/(2*math.pi))) + theta_lower_est)/K_i
     new_upper = (2*math.pi*(math.floor(K_i*theta_upper/(2*math.pi))) + theta_upper_est)/K_i
 
@@ -293,9 +328,15 @@ eps = 0.0001 #Precision
 alpha = 0.01 #Confidence
 HalfPlane_Bool = True
 
+t0 = time.time()
 a_lower, a_upper = IQAE(eps, alpha, N)
+t1 = time.time()
 true_a = circuit_exact()[1]
 
+#Read results
+if catalyst_bool:
+  print("Compiled with Catalyst")
+print("Execution time:", t1-t0,"s")
 print("Analytic probability:", true_a)
 print("Lower prediction bound:", a_lower)
 print("Upper prediction bound:", a_upper)
