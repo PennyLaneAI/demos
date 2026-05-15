@@ -21,8 +21,8 @@ and more. And you can also already explore some of these models in detail using 
 # Hamiltonian templates
 # ---------------------
 # PennyLane provides a set of built-in
-# `functions <https://docs.pennylane.ai/en/latest/code/qml_spin.html#hamiltonian-functions>`__
-# in the `qp.spin <https://docs.pennylane.ai/en/latest/code/qml_spin.html>`__ module for
+# :doc:`functions </code/qp_spin>`
+# in the :doc:`qp.spin </code/qp_spin>` module for
 # constructing spin Hamiltonians with minimal input needed from the user: we only need to specify
 # the lattice that describes spin sites and the parameters that describe the interactions in our
 # system. Let’s look at some examples for the models that are currently supported in PennyLane.
@@ -386,12 +386,12 @@ hamiltonian
 
 ######################################################################
 # You can see that it is easy and intuitive to construct this anisotropic Hamiltonian with the tools
-# available in the `qp.spin <https://docs.pennylane.ai/en/latest/code/qml_spin.html>`__ module. You can
+# available in the :doc:`qp.spin </code/qp_spin>` module. You can
 # use these tools to construct custom Hamiltonians for other interesting systems.
 #
 # Conclusion
 # ----------
-# The `spin module <https://docs.pennylane.ai/en/latest/code/qml_spin.html>`__ in PennyLane provides
+# The :doc:`spin module </code/qp_spin>` in PennyLane provides
 # a set of powerful tools for constructing spin Hamiltonians.
 # Here we learned how to use these tools to construct predefined Hamiltonian templates such as the
 # Fermi–Hubbard Hamiltonian. This can be done with our built-in functions that currently support

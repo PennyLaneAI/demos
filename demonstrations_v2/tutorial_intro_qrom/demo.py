@@ -128,7 +128,7 @@ print("Two-qubit gates: ", qp.specs(circuit)(0)["resources"].gate_sizes[2])
 
 ##############################################################################
 # You can learn more about these resource estimation methods in
-# the `PennyLane documentation <https://docs.pennylane.ai/en/stable/code/qml_resource.html>`__.
+# the :doc:`PennyLane documentation </code/qp_resource>`.
 # There are numerous works that attempt to simplify this, of which
 # we highlight reference [#unary]_, which introduces an efficient technique using measurements in the middle
 # of the circuit. Another clever approach was introduced in [#selectSwap]_ , with a smart structure known as *SelectSwap*,

@@ -794,5 +794,5 @@ Handily, both references have an associated PennyLane demo!
 - `Generalized parameter-shift rules <https://pennylane.ai/qml/demos/tutorial_general_parshift>`__ (2021). David Wierichs.
 
 Finally, PennyLane is jam-packed with tools for analyzing circuits as Fourier series.
-Check out the documentation on the `Fourier module <https://docs.pennylane.ai/en/stable/code/qml_fourier.html>`__ to learn more!
+Check out the documentation on the :doc:`Fourier module </code/qp_fourier>` to learn more!
 """
