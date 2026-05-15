@@ -386,12 +386,12 @@ hamiltonian
 
 ######################################################################
 # You can see that it is easy and intuitive to construct this anisotropic Hamiltonian with the tools
-# available in the :doc:`qp.spin </code/qp_spin>` module. You can
+# available in the :mod:`qp.spin <pennylane.qp_spin>` module. You can
 # use these tools to construct custom Hamiltonians for other interesting systems.
 #
 # Conclusion
 # ----------
-# The :doc:`spin module </code/qp_spin>` in PennyLane provides
+# The :mod:`spin module <pennylane.qp_spin>` in PennyLane provides
 # a set of powerful tools for constructing spin Hamiltonians.
 # Here we learned how to use these tools to construct predefined Hamiltonian templates such as the
 # Fermi–Hubbard Hamiltonian. This can be done with our built-in functions that currently support
