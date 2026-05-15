@@ -11,10 +11,10 @@ Trapped ion quantum computers
    tutorial_sc_qubits Quantum computing with superconducting qubits
    tutorial_photonics Photonic quantum computers
 
-The race for quantum advantage is on! 
+The race for quantum advantage is on!
 A host of competitors are using different technologies to build a useful quantum
 computer. Some common approaches are trapped ions,
-:doc:`superconducting qubits <demos/tutorial_sc_qubits>`, and 
+:doc:`superconducting qubits <demos/tutorial_sc_qubits>`, and
 :doc:`photonics <demos/tutorial_photonics>`, among others. Discussing whether there
 is a superior framework leads to a neverending debate. All of them pose
 complex technological challenges, which we can only solve through
@@ -26,33 +26,33 @@ of this race is not easy at all!
 Here, we introduce **trapped ion quantum
 computers**. It is the preferred technology that research groups use at
 several universities around the world, and at research companies like
-`Honeywell <https://www.honeywell.com/us/en/company/quantum>`_ and `IonQ <https://ionq.com/>`_. 
-In particular, Honeywell has achieved a 
+`Honeywell <https://www.honeywell.com/us/en/company/quantum>`_ and `IonQ <https://ionq.com/>`_.
+In particular, Honeywell has achieved a
 :doc:`quantum volume <demos/quantum_volume>`
 of 128, the largest in the market! As the name suggests, the
 qubits are ions trapped by electric fields and manipulated with lasers.
 Trapped ions have relatively long coherence times, which means that the qubits are
-long-lived. Moreover, they can easily interact with their neighbours. 
+long-lived. Moreover, they can easily interact with their neighbours.
 Scalability is a challenge, but, as we will see, there are
 innovative ways to get around them.
 
 After reading this demo, you will learn how trapped ion quantum computers
-prepare, evolve, and measure quantum states. In particular, you will gain 
-knowledge on how single and multi-qubit gates are implemented and how we can 
+prepare, evolve, and measure quantum states. In particular, you will gain
+knowledge on how single and multi-qubit gates are implemented and how we can
 simulate them using PennyLane. You will also identify the features that
-make trapped ion quantum computers an appropriate physical implementation, and where the 
-technical challenges lie, in terms of **DiVincenzo's criteria** (see box below). 
-Finally, you will become familiar with the concepts required to understand recent articles on the topic 
+make trapped ion quantum computers an appropriate physical implementation, and where the
+technical challenges lie, in terms of **DiVincenzo's criteria** (see box below).
+Finally, you will become familiar with the concepts required to understand recent articles on the topic
 and read future papers to keep up-to-date with the most recent developments.
 
 .. container:: alert alert-block alert-info
-    
+
     **Di Vincenzo's criteria**: In the year 2000, David DiVincenzo proposed a
     wishlist for the experimental characteristics of a quantum computer [#DiVincenzo2000]_.
     DiVincenzo's criteria have since become the main guideline for
     physicists and engineers building quantum computers:
 
-    1. **Well-characterized and scalable qubits**. Many of the quantum systems that 
+    1. **Well-characterized and scalable qubits**. Many of the quantum systems that
     we find in nature are not qubits, so we must find a way to make them behave as such.
     Moreover, we need to put many of these systems together.
 
@@ -67,7 +67,7 @@ and read future papers to keep up-to-date with the most recent developments.
     qubits. To do this, we require both single-qubit gates and two-qubit gates.
 
     5. **Measurement of individual qubits**. To read the result of a quantum algorithm,
-    we must accurately measure the final state of a pre-chosen set of qubits. 
+    we must accurately measure the final state of a pre-chosen set of qubits.
 
 """
 
@@ -88,7 +88,7 @@ and read future papers to keep up-to-date with the most recent developments.
 # application was proposed [#CiracZoller]_!
 #
 # It is not easy to create electric fields that contain the ion in a tiny
-# region of space. The ideal configuration of an electric field 
+# region of space. The ideal configuration of an electric field
 # —also known as a *potential*— would look like this:
 #
 # .. figure:: ../_static/demonstration_assets/trapped_ions/confining.png
@@ -371,7 +371,7 @@ and read future papers to keep up-to-date with the most recent developments.
 # field due to the laser, and :math:`\mu_m` is the magnetic moment of the
 # ion. The phase :math:`\varphi` measures the initial displacement of the
 # light wave at the atom's position. The matrices :math:`S_+` and
-# :math:`S_-` are 
+# :math:`S_-` are
 #
 # .. math:: S_+=\left( \begin{array}{cc} 0 & 0 \\ 1 & 0\end{array}\right), \qquad S_-=\left( \begin{array}{cc} 0 & 1 \\ 0 & 0\end{array}\right).
 #
@@ -379,7 +379,7 @@ and read future papers to keep up-to-date with the most recent developments.
 # change with time in the presence of external interactions. In quantum
 # mechanics, Hamiltonians are represented by matrices, and the evolution of a system is
 # calculated using Schrödinger's equation. When the Hamiltonian does not
-# depend on time, a qubit starting in state 
+# depend on time, a qubit starting in state
 # :math:`\left\lvert g \right\rangle` will evolve into the following
 # time-dependent state:
 #
@@ -424,7 +424,7 @@ def ion_hadamard(state):
 
     if state == 1:
         qp.PauliX(wires=0)
-    
+
     """We use a series of seemingly arbitrary pulses that will give the Hadamard gate.
     Why this is the case will become clear later"""
 
@@ -436,7 +436,8 @@ def ion_hadamard(state):
 
     return qp.state()
 
-#For comparison, we use the Hadamard built into PennyLane
+
+# For comparison, we use the Hadamard built into PennyLane
 @qp.qnode(dev)
 def hadamard(state):
 
@@ -447,7 +448,8 @@ def hadamard(state):
 
     return qp.state()
 
-#We confirm that the values given by both functions are the same up to numerical error
+
+# We confirm that the values given by both functions are the same up to numerical error
 print(np.isclose(1j * ion_hadamard(0), hadamard(0)))
 print(np.isclose(1j * ion_hadamard(1), hadamard(1)))
 
@@ -517,9 +519,9 @@ fig1, ax1 = plt.subplots(figsize=(9, 6))
 ax1.plot(t, s, color="#9D2EC5")
 
 ax1.set(
-    xlabel="time (in units of 1/Ω)", 
-    ylabel="Probability", 
-    title="Probability of measuring the excited state"
+    xlabel="time (in units of 1/Ω)",
+    ylabel="Probability",
+    title="Probability of measuring the excited state",
 )
 ax1.grid()
 
@@ -565,8 +567,8 @@ plt.show()
 # kHz, the single-qubit gates can be implemented in a few milliseconds
 # with high accuracy. Thus, we can implement quantum algorithms involving
 # many gates even for the seemingly short lifespans of optical qubits. As
-# a consequence, we have now satisfied the single-qubit gate requirement of criterion 4. 
-# The rest of this criterion is not theoretically difficult to implement. 
+# a consequence, we have now satisfied the single-qubit gate requirement of criterion 4.
+# The rest of this criterion is not theoretically difficult to implement.
 # However, it can be experimentally challenging.
 #
 # The ion chain as a harmonic oscillator
@@ -806,38 +808,41 @@ def Molmer_Sorensen(t):
 # time :math:`t/\Omega_{MS}.` Let us verify that this is indeed the case
 # by building the circuit in PennyLane:
 
-dev2 = qp.device("default.qubit",wires=2)
+dev2 = qp.device("default.qubit", wires=2)
+
 
 @qp.qnode(dev2)
 def ion_cnot(basis_state):
-    
-    #Prepare the two-qubit basis states from the input
+
+    # Prepare the two-qubit basis states from the input
     qp.BasisState(basis_state, wires=range(2))
-    
-    #Implements the circuit shown above
-    qp.RY(np.pi/2, wires=0)
-    qp.QubitUnitary(Molmer_Sorensen(np.pi/2/Omega),wires=[0,1])
-    qp.RX(-np.pi/2, wires=0)
-    qp.RX(-np.pi/2, wires=1)
-    qp.RY(-np.pi/2, wires=0)
-    
+
+    # Implements the circuit shown above
+    qp.RY(np.pi / 2, wires=0)
+    qp.QubitUnitary(Molmer_Sorensen(np.pi / 2 / Omega), wires=[0, 1])
+    qp.RX(-np.pi / 2, wires=0)
+    qp.RX(-np.pi / 2, wires=1)
+    qp.RY(-np.pi / 2, wires=0)
+
     return qp.state()
 
-#Compare with built-in CNOT
+
+# Compare with built-in CNOT
 @qp.qnode(dev2)
 def cnot_gate(basis_state):
-    
+
     qp.BasisState(basis_state, wires=range(2))
 
-    qp.CNOT(wires=[0,1])
-    
+    qp.CNOT(wires=[0, 1])
+
     return qp.state()
 
-#Check that they are the same up to numerical error and global phase    
-print(np.isclose(np.exp(-1j*np.pi/4)*ion_cnot([0,0]),cnot_gate([0,0])))   
-print(np.isclose(np.exp(-1j*np.pi/4)*ion_cnot([0,1]),cnot_gate([0,1]))) 
-print(np.isclose(np.exp(-1j*np.pi/4)*ion_cnot([1,0]),cnot_gate([1,0]))) 
-print(np.isclose(np.exp(-1j*np.pi/4)*ion_cnot([1,1]),cnot_gate([1,1])))
+
+# Check that they are the same up to numerical error and global phase
+print(np.isclose(np.exp(-1j * np.pi / 4) * ion_cnot([0, 0]), cnot_gate([0, 0])))
+print(np.isclose(np.exp(-1j * np.pi / 4) * ion_cnot([0, 1]), cnot_gate([0, 1])))
+print(np.isclose(np.exp(-1j * np.pi / 4) * ion_cnot([1, 0]), cnot_gate([1, 0])))
+print(np.isclose(np.exp(-1j * np.pi / 4) * ion_cnot([1, 1]), cnot_gate([1, 1])))
 
 ##############################################################################
 # This is indeed the CNOT gate, up to a global phase.
