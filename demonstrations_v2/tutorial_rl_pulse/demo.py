@@ -991,7 +991,7 @@ def evolve_states(state, params, t):
 # To learn more about reinforcement learning, we recommend [#SuttonBarto18]_ for an introduction to
 # the topic, and [#Dawid22]_ for an introduction of machine learning for physics (reinforcement
 # learning in chapter 6). To learn more about how superconducting
-# quantum computers work, see [#KrantzAPR19]_ for an extensive review, and the related :doc:`PennyLane documentation </code/qp_pulse>`.
+# quantum computers work, see [#KrantzAPR19]_ for an extensive review, and the related :mod:`PennyLane documentation <pennylane.pulse>`.
 #
 # Finally, check out the related demos for alternative ways to tune pulse programs. In particular,
 # `this demo <https://pennylane.ai/qml/demos/tutorial_optimal_control/>`__ for an optimal control

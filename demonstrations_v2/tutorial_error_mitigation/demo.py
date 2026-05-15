@@ -345,7 +345,7 @@ _ = fac.plot_fit()
 # Now that we understand the ZNE method for error mitigation, we can provide a few more details on
 # how it can be performed using PennyLane. As we have seen, the
 # :func:`mitigate_with_zne <pennylane.noise.mitigate_with_zne>` function provides the main
-# entry point. This function is an example of a :doc:`circuit transform, </code/qp_transforms>` and
+# entry point. This function is an example of a :mod:`circuit transform <pennylane.transforms>`, and
 # it can be applied to pre-constructed QNodes as well as being used as a decorator when constructing
 # new QNodes. For example, suppose we have a ``qnode`` already defined. A mitigated QNode can be
 # created using:

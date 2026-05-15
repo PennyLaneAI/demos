@@ -55,7 +55,7 @@ This alternative approach requires a different type of control than what you mig
 PennyLane, where circuits are generally defined in terms of a series of gates. Specifically, pulse control
 is implemented via the functionality provided in the Pennylane :mod:`~pennylane.pulse` module. For
 more information on pulse programming in PennyLane, see the
-:doc:`PennyLane docs </code/qp_pulse>`, or check out the demo
+:mod:`PennyLane docs <pennylane.pulse>`, or check out the demo
 about
 :doc:`running a ctrl-VQE algorithm with pulse control <demos/tutorial_pulse_programming101>` on the PennyLane `default.qubit` simulator.
 

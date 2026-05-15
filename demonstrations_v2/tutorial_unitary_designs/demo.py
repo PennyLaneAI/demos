@@ -454,7 +454,7 @@ def ideal_experiment():
 
 ######################################################################
 # Next, we apply some noise. We do so by making use of a relatively new feature
-# in PennyLane called :doc:`quantum function transforms </code/qp_transforms>`. Such transforms work by
+# in PennyLane called :mod:`quantum function transforms <pennylane.transforms>`. Such transforms work by
 # modifying the underlying, low-level quantum tapes which queue the quantum
 # operations. Suppose the noisy channel is composed of the following:
 
