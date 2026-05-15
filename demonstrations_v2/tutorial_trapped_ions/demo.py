@@ -13,7 +13,7 @@ Trapped ion quantum computers
 
 The race for quantum advantage is on! 
 A host of competitors are using different technologies to build a useful quantum
-computer. Some common approaches are **trapped ions,
+computer. Some common approaches are trapped ions,
 :doc:`superconducting qubits <demos/tutorial_sc_qubits>`, and 
 :doc:`photonics <demos/tutorial_photonics>`, among others. Discussing whether there
 is a superior framework leads to a neverending debate. All of them pose
@@ -287,7 +287,7 @@ and read future papers to keep up-to-date with the most recent developments.
 # We have now learned how trapped ions make for very stable qubits that
 # allow us to implement many quantum operations without decohering too
 # soon. We have also learned how to prepare these qubits in a stable
-# ground state. Does this mean that we have already satisfied DiVincezo's
+# ground state. Does this mean that we have already satisfied DiVincenzo's
 # first, second, and third criteria? We have definitely fulfilled the
 # second one since optical pumping is a very robust method. However, we
 # have mainly been focusing on a single qubit and, since we have not
@@ -1003,7 +1003,7 @@ print(np.isclose(np.exp(-1j*np.pi/4)*ion_cnot([1,1]),cnot_gate([1,1])))
 # .. [#Paul1953]
 #
 #     W. Paul, H. Steinwedel. (1953) "Ein neues Massenspektrometer ohne Magnetfeld",
-#     RZeitschrift für Naturforschung A 8 (7): 448-450.
+#     Zeitschrift für Naturforschung A 8 (7): 448-450.
 #
 # .. [#CiracZoller]
 #
@@ -1051,7 +1051,7 @@ print(np.isclose(np.exp(-1j*np.pi/4)*ion_cnot([1,1]),cnot_gate([1,1])))
 #
 # .. [#Monroe2014]
 #
-#     C. Monroe, R. Ruassendorf, A Ruthven, et al. (2019)
+#     C. Monroe, R. Raussendorf, A Ruthven, et al. (2019)
 #     "Large scale modular quantum computer architecture with atomic memory and photonic interconnects",
 #     `Phys. Rev. A 89 022317
 #     <https://journals.aps.org/pra/abstract/10.1103/PhysRevA.89.022317>`__.
@@ -1075,7 +1075,7 @@ print(np.isclose(np.exp(-1j*np.pi/4)*ion_cnot([1,1]),cnot_gate([1,1])))
 #
 # .. [#Pino2021]
 #
-#     J. Pino, J. Dreiling, J, C, Figgatt, et al. (2021)
+#     J. Pino, J. Dreiling, C. Figgatt, et al. (2021)
 #     "Demonstration of the trapped-ion quantum CCD computer architecture".
 #     `Nature 592, 209–213
 #     <https://www.nature.com/articles/s41586-021-03318-4>`__.
