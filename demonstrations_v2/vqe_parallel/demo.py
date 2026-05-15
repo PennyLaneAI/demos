@@ -35,7 +35,7 @@ import dask
 
 import matplotlib.pyplot as plt
 from pennylane import numpy as np
-import pennylane as qml
+import pennylane as qp
 from pennylane import qchem
 
 ##############################################################################
@@ -66,7 +66,7 @@ from pennylane import qchem
 # `PennyLane Datasets library <https://pennylane.ai/datasets/qchem/h2-molecule>`__:
 
 bonds = [0.5, 0.58, 0.7, 0.9, 1.1, 1.3, 1.5, 1.7, 1.9, 2.1]
-datasets = qml.data.load("qchem", molname="H2", bondlength=bonds, basis="STO-3G")
+datasets = qp.data.load("qchem", molname="H2", bondlength=bonds, basis="STO-3G")
 
 ##############################################################################
 # We can now extract the qubit Hamiltonians from these datasets for each bond length:
@@ -136,8 +136,8 @@ for op in h_ops:
 #
 # To do this, start by instantiating a device for each term:
 
-dev1 = [qml.device("rigetti.qvm", device="4q-qvm") for _ in range(8)]
-dev2 = [qml.device("rigetti.qvm", device="9q-square-qvm") for _ in range(7)]
+dev1 = [qp.device("rigetti.qvm", device="4q-qvm") for _ in range(8)]
+dev2 = [qp.device("rigetti.qvm", device="9q-square-qvm") for _ in range(7)]
 devs = dev1 + dev2
 
 ##############################################################################
@@ -168,12 +168,12 @@ devs = dev1 + dev2
 
 
 def circuit(param, H):
-    qml.BasisState(np.array([1, 1, 0, 0], requires_grad=False), wires=[0, 1, 2, 3])
-    qml.RY(param, wires=2)
-    qml.CNOT(wires=[2, 3])
-    qml.CNOT(wires=[2, 0])
-    qml.CNOT(wires=[3, 1])
-    return qml.expval(H)
+    qp.BasisState(np.array([1, 1, 0, 0], requires_grad=False), wires=[0, 1, 2, 3])
+    qp.RY(param, wires=2)
+    qp.CNOT(wires=[2, 3])
+    qp.CNOT(wires=[2, 0])
+    qp.CNOT(wires=[3, 1])
+    return qp.expval(H)
 
 
 ##############################################################################
@@ -200,7 +200,7 @@ for i, (h, param) in enumerate(zip(hamiltonians, params)):
     print(
         f"{i+1} / {len(bonds)}: Sequential execution; Running for inter-atomic distance {bonds[i]} Å"
     )
-    energies_seq.append(qml.QNode(circuit, devs[0])(param, h))
+    energies_seq.append(qp.QNode(circuit, devs[0])(param, h))
 
 dt_seq = time.time() - t0
 
@@ -218,7 +218,7 @@ def compute_energy_parallel(H, devs, param):
     results = []
 
     for i in range(len(H_ops)):
-        qnode = qml.QNode(circuit, devs[i])
+        qnode = qp.QNode(circuit, devs[i])
         results.append(dask.delayed(qnode)(param, H_ops[i]))
 
     results = dask.compute(*results, scheduler="threads")
@@ -229,7 +229,7 @@ def compute_energy_parallel(H, devs, param):
 ##############################################################################
 # We can now compute all 10 samples from the energy surface sequentially, where each execution is making use of
 # parallel device execution. Curiously, in this example the overhead from doing so outweighs the speed-up
-# and the execution is slower than standard execution using ``qml.expval``. For different circuits and
+# and the execution is slower than standard execution using ``qp.expval``. For different circuits and
 # different Hamiltonians, however, parallelization may provide significant speed-ups.
 
 print("Evaluating the potential energy surface in parallel")
@@ -259,16 +259,16 @@ def compute_energy_parallel_optimized(H, devs, param):
     assert len(H_ops) == len(devs)
     results = []
 
-    obs_groupings, coeffs_groupings = qml.pauli.group_observables(
+    obs_groupings, coeffs_groupings = qp.pauli.group_observables(
         H_ops, H_coeffs, "qwc"
     )
 
     for i, (obs, coeffs) in enumerate(zip(obs_groupings, coeffs_groupings)):
-        H_part = qml.Hamiltonian(coeffs, obs)
-        qnode = qml.QNode(circuit, devs[i])
+        H_part = qp.Hamiltonian(coeffs, obs)
+        qnode = qp.QNode(circuit, devs[i])
         results.append(dask.delayed(qnode)(param, H_part))
 
-    result = qml.math.sum(dask.compute(*results, scheduler="threads"))
+    result = qp.math.sum(dask.compute(*results, scheduler="threads"))
     return result
 
 print(

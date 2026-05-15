@@ -111,7 +111,7 @@ We can solve for the ground state energy using the variational quantum eigensolv
 
 First, let's import NumPy and PennyLane, and define our Hamiltonian.
 """
-import pennylane as qml
+import pennylane as qp
 from pennylane import numpy as np
 
 # set the random seed
@@ -120,11 +120,11 @@ np.random.seed(4)
 coeffs = [2, 4, -1, 5, 2]
 
 obs = [
-  qml.PauliX(1),
-  qml.PauliZ(1),
-  qml.PauliX(0) @ qml.PauliX(1),
-  qml.PauliY(0) @ qml.PauliY(1),
-  qml.PauliZ(0) @ qml.PauliZ(1)
+  qp.PauliX(1),
+  qp.PauliZ(1),
+  qp.PauliX(0) @ qp.PauliX(1),
+  qp.PauliY(0) @ qp.PauliY(1),
+  qp.PauliZ(0) @ qp.PauliZ(1)
 ]
 
 
@@ -135,10 +135,10 @@ num_layers = 2
 num_wires = 2
 
 # create a device that estimates expectation values using a finite number of shots
-non_analytic_dev = qml.device("default.qubit", wires=num_wires, seed=432423)
+non_analytic_dev = qp.device("default.qubit", wires=num_wires, seed=432423)
 
 # create a device that calculates exact expectation values
-analytic_dev = qml.device("default.qubit", wires=num_wires)
+analytic_dev = qp.device("default.qubit", wires=num_wires)
 
 ##############################################################################
 # Now, let's set the total number of shots, and determine the probability
@@ -185,11 +185,11 @@ print(sum(samples))
 from pennylane.templates.layers import StronglyEntanglingLayers
 
 
-@qml.set_shots(100)
-@qml.qnode(non_analytic_dev, diff_method="parameter-shift", interface="autograd")
+@qp.set_shots(100)
+@qp.qnode(non_analytic_dev, diff_method="parameter-shift", interface="autograd")
 def qnode(weights, observable):
     StronglyEntanglingLayers(weights, wires=non_analytic_dev.wires)
-    return qml.expval(observable)
+    return qp.expval(observable)
 
 def cost(params):
     # sample from the multinomial distribution
@@ -200,7 +200,7 @@ def cost(params):
     for o, c, s in zip(obs, coeffs, shots_per_term):
         # evaluate the QNode corresponding to
         # the Hamiltonian term, and add it on to our running sum
-        result += c * qml.set_shots(qnode, shots=int(s))(params, o)
+        result += c * qp.set_shots(qnode, shots=int(s))(params, o)
 
     return result
 
@@ -218,7 +218,7 @@ print(cost(init_params))
 # Performing the optimization, with the number of shots randomly
 # determined at each optimization step:
 
-opt = qml.AdamOptimizer(0.05)
+opt = qp.AdamOptimizer(0.05)
 params = init_params
 
 cost_wrs = []
@@ -235,11 +235,11 @@ for i in range(100):
 # Here, we will split the 8000 total shots evenly across all Hamiltonian terms,
 # also known as *uniform deterministic sampling*.
 
-@qml.set_shots(100)
-@qml.qnode(non_analytic_dev, diff_method="parameter-shift", interface="autograd")
+@qp.set_shots(100)
+@qp.qnode(non_analytic_dev, diff_method="parameter-shift", interface="autograd")
 def qnode(weights, obs):
     StronglyEntanglingLayers(weights, wires=non_analytic_dev.wires)
-    return qml.expval(obs)
+    return qp.expval(obs)
 
 def cost(params):
     shots_per_term = int(total_shots / len(coeffs))
@@ -250,11 +250,11 @@ def cost(params):
 
         # evaluate the QNode corresponding to
         # the Hamiltonian term, and add it on to our running sum
-        result += c * qml.set_shots(qnode, shots=shots_per_term)(params, o)
+        result += c * qp.set_shots(qnode, shots=shots_per_term)(params, o)
 
     return result
 
-opt = qml.AdamOptimizer(0.05)
+opt = qp.AdamOptimizer(0.05)
 params = init_params
 
 cost_adam = []
@@ -438,7 +438,7 @@ class Rosalin:
         set to 'sample' mode.
         """
         # note that convergence depends on seed for random number generation
-        rosalin_device = qml.device("default.qubit", wires=num_wires, seed=93754352)
+        rosalin_device = qp.device("default.qubit", wires=num_wires, seed=93754352)
 
         # determine the shot probability per term
         prob_shots = np.abs(coeffs) / np.sum(np.abs(coeffs))
@@ -450,11 +450,11 @@ class Rosalin:
 
         results = []
 
-        @qml.set_shots(100)
-        @qml.qnode(rosalin_device, diff_method="parameter-shift", interface="autograd")
+        @qp.set_shots(100)
+        @qp.qnode(rosalin_device, diff_method="parameter-shift", interface="autograd")
         def qnode(weights, observable):
             StronglyEntanglingLayers(weights, wires=rosalin_device.wires)
-            return qml.sample(observable)
+            return qp.sample(observable)
 
         for o, c, p, s in zip(self.obs, self.coeffs, prob_shots, shots_per_term):
 
@@ -464,7 +464,7 @@ class Rosalin:
 
             # evaluate the QNode corresponding to
             # the Hamiltonian term
-            res = qml.set_shots(qnode, shots=int(s))(params, o)
+            res = qp.set_shots(qnode, shots=int(s))(params, o)
 
             # Note that, unlike above, we divide each term by the
             # probability per shot. This is because we are sampling one at a time.
@@ -555,10 +555,10 @@ class Rosalin:
 # also create a separate cost function using an 'exact' quantum device, so that we can keep track of the
 # *exact* cost function value at each iteration.
 
-@qml.qnode(analytic_dev, interface="autograd")
+@qp.qnode(analytic_dev, interface="autograd")
 def cost_analytic(weights):
     StronglyEntanglingLayers(weights, wires=analytic_dev.wires)
-    return qml.expval(qml.Hamiltonian(coeffs, obs))
+    return qp.expval(qp.Hamiltonian(coeffs, obs))
 
 ##############################################################################
 # Creating the optimizer and beginning the optimization:
@@ -589,15 +589,15 @@ print(adam_shots_per_step)
 # Thus, Adam is using 2400 shots per update step.
 
 params = init_params
-opt = qml.AdamOptimizer(0.07)
+opt = qp.AdamOptimizer(0.07)
 
-adam_dev = qml.device('default.qubit', seed=595905)
+adam_dev = qp.device('default.qubit', seed=595905)
 
-@qml.set_shots(adam_shots_per_eval)
-@qml.qnode(adam_dev, diff_method="parameter-shift", interface="autograd")
+@qp.set_shots(adam_shots_per_eval)
+@qp.qnode(adam_dev, diff_method="parameter-shift", interface="autograd")
 def cost(weights):
     StronglyEntanglingLayers(weights, wires=non_analytic_dev.wires)
-    return qml.expval(qml.Hamiltonian(coeffs, obs))
+    return qp.expval(qp.Hamiltonian(coeffs, obs))
 
 cost_adam = [cost_analytic(params)]
 shots_adam = [0]

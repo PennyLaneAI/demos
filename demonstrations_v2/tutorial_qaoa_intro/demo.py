@@ -79,9 +79,9 @@ which is a unitary defined as:"""
 # In PennyLane, this is implemented using the :func:`~.pennylane.ApproxTimeEvolution`
 # template. For example, let's say we have the following Hamiltonian:
 
-import pennylane as qml
+import pennylane as qp
 
-H = qml.Hamiltonian([1, 1, 0.5], [qml.PauliX(0), qml.PauliZ(1), qml.PauliX(0) @ qml.PauliX(1)])
+H = qp.Hamiltonian([1, 1, 0.5], [qp.PauliX(0), qp.PauliZ(1), qp.PauliX(0) @ qp.PauliX(1)])
 print(H)
 
 
@@ -90,19 +90,19 @@ print(H)
 # We can implement the approximate time-evolution operator corresponding to this
 # Hamiltonian:
 
-dev = qml.device("default.qubit", wires=2)
+dev = qp.device("default.qubit", wires=2)
 
 t = 1
 n = 2
 
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def circuit():
-    qml.ApproxTimeEvolution(H, t, n)
-    return [qml.expval(qml.PauliZ(i)) for i in range(2)]
+    qp.ApproxTimeEvolution(H, t, n)
+    return [qp.expval(qp.PauliZ(i)) for i in range(2)]
 
 
-print(qml.draw(circuit, level="device")())
+print(qp.draw(circuit, level="device")())
 
 ######################################################################
 # Layering circuits
@@ -139,18 +139,18 @@ print(qml.draw(circuit, level="device")())
 
 
 def circ(theta):
-    qml.RX(theta, wires=0)
-    qml.Hadamard(wires=1)
-    qml.CNOT(wires=[0, 1])
+    qp.RX(theta, wires=0)
+    qp.Hadamard(wires=1)
+    qp.CNOT(wires=[0, 1])
 
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def circuit(param):
     circ(param)
-    return [qml.expval(qml.PauliZ(i)) for i in range(2)]
+    return [qp.expval(qp.PauliZ(i)) for i in range(2)]
 
 
-print(qml.draw(circuit)(0.5))
+print(qp.draw(circuit)(0.5))
 
 ######################################################################
 #
@@ -158,13 +158,13 @@ print(qml.draw(circuit)(0.5))
 #
 
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def circuit(params, **kwargs):
-    qml.layer(circ, 3, params)
-    return [qml.expval(qml.PauliZ(i)) for i in range(2)]
+    qp.layer(circ, 3, params)
+    return [qp.expval(qp.PauliZ(i)) for i in range(2)]
 
 
-print(qml.draw(circuit)([0.3, 0.4, 0.5]))
+print(qp.draw(circuit)([0.3, 0.4, 0.5]))
 
 ######################################################################
 #
@@ -308,8 +308,8 @@ depth = 2
 
 def circuit(params, **kwargs):
     for w in wires:
-        qml.Hadamard(wires=w)
-    qml.layer(qaoa_layer, depth, params[0], params[1])
+        qp.Hadamard(wires=w)
+    qp.layer(qaoa_layer, depth, params[0], params[1])
 
 
 ######################################################################
@@ -325,13 +325,13 @@ def circuit(params, **kwargs):
 # PennyLane-Qulacs plugin to run the circuit on the Qulacs simulator:
 #
 
-dev = qml.device("qulacs.simulator", wires=wires)
+dev = qp.device("qulacs.simulator", wires=wires)
 
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def cost_function(params):
     circuit(params)
-    return qml.expval(cost_h)
+    return qp.expval(cost_h)
 
 
 ######################################################################
@@ -341,7 +341,7 @@ def cost_function(params):
 # parameters:
 
 
-optimizer = qml.GradientDescentOptimizer()
+optimizer = qp.GradientDescentOptimizer()
 steps = 70
 params = np.array([[0.5, 0.5], [0.5, 0.5]], requires_grad=True)
 
@@ -375,10 +375,10 @@ print(params)
 #
 
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def probability_circuit(gamma, alpha):
     circuit([gamma, alpha])
-    return qml.probs(wires=wires)
+    return qp.probs(wires=wires)
 
 
 probs = probability_circuit(params[0], params[1])
@@ -451,14 +451,14 @@ def qaoa_layer(gamma, alpha):
 
 def circuit(params, **kwargs):
     for w in wires:
-        qml.Hadamard(wires=w)
-    qml.layer(qaoa_layer, depth, params[0], params[1])
+        qp.Hadamard(wires=w)
+    qp.layer(qaoa_layer, depth, params[0], params[1])
 
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def cost_function(params):
     circuit(params)
-    return qml.expval(new_cost_h)
+    return qp.expval(new_cost_h)
 
 
 params = np.array([[0.5, 0.5], [0.5, 0.5]], requires_grad=True)
@@ -476,10 +476,10 @@ print(params)
 #
 
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def probability_circuit(gamma, alpha):
     circuit([gamma, alpha])
-    return qml.probs(wires=wires)
+    return qp.probs(wires=wires)
 
 
 probs = probability_circuit(params[0], params[1])

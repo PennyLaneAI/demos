@@ -56,7 +56,7 @@ local cost functions.
 We first need to import the following modules.
 """
 
-import pennylane as qml
+import pennylane as qp
 from pennylane import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.ticker import LinearLocator, FormatStrFormatter
@@ -76,7 +76,7 @@ np.random.seed(42)
 # how many qubits we train on will effect our results.
 
 wires = 6
-dev = qml.device("lightning.qubit", wires=wires)
+dev = qp.device("lightning.qubit", wires=wires)
 
 
 ######################################################################
@@ -111,19 +111,19 @@ dev = qml.device("lightning.qubit", wires=wires)
 
 def global_cost_simple(rotations):
     for i in range(wires):
-        qml.RX(rotations[0][i], wires=i)
-        qml.RY(rotations[1][i], wires=i)
-    return qml.probs(wires=range(wires))
+        qp.RX(rotations[0][i], wires=i)
+        qp.RY(rotations[1][i], wires=i)
+    return qp.probs(wires=range(wires))
 
 def local_cost_simple(rotations):
     for i in range(wires):
-        qml.RX(rotations[0][i], wires=i)
-        qml.RY(rotations[1][i], wires=i)
-    return [qml.probs(wires=i) for i in range(wires)]
+        qp.RX(rotations[0][i], wires=i)
+        qp.RY(rotations[1][i], wires=i)
+    return [qp.probs(wires=i) for i in range(wires)]
 
-global_circuit = qml.set_shots(qml.QNode(global_cost_simple, dev, interface="autograd"), shots = 10000)
+global_circuit = qp.set_shots(qp.QNode(global_cost_simple, dev, interface="autograd"), shots = 10000)
 
-local_circuit = qml.set_shots(qml.QNode(local_cost_simple, dev, interface="autograd"), shots = 10000)
+local_circuit = qp.set_shots(qp.QNode(local_cost_simple, dev, interface="autograd"), shots = 10000)
 
 def cost_local(rotations):
     return 1 - np.sum([i for (i, _) in local_circuit(rotations)]) / wires
@@ -150,12 +150,12 @@ rotations = [[RX for i in range(wires)], [RY for i in range(wires)]]
 print("Global Cost: {: .7f}".format(cost_global(rotations)))
 print("Local Cost: {: .7f}".format(cost_local(rotations)))
 
-qml.drawer.use_style('black_white')
-fig1, ax1 = qml.draw_mpl(global_circuit, decimals=2)(rotations)
+qp.drawer.use_style('black_white')
+fig1, ax1 = qp.draw_mpl(global_circuit, decimals=2)(rotations)
 fig1.suptitle("Global Cost", fontsize='xx-large')
 plt.show()
 
-fig2, ax2 = qml.draw_mpl(local_circuit, decimals=2)(rotations)
+fig2, ax2 = qp.draw_mpl(local_circuit, decimals=2)(rotations)
 fig2.suptitle("Local Cost", fontsize='xx-large')
 plt.show()
 
@@ -237,23 +237,23 @@ plot_surface(local_surface)
 
 def global_cost_simple(rotations):
     for i in range(wires):
-        qml.RX(rotations[0][i], wires=i)
-        qml.RY(rotations[1][i], wires=i)
+        qp.RX(rotations[0][i], wires=i)
+        qp.RY(rotations[1][i], wires=i)
     for i in range(wires - 1):
-        qml.CNOT([i, i + 1])
-    return qml.probs(wires=range(wires))
+        qp.CNOT([i, i + 1])
+    return qp.probs(wires=range(wires))
 
 def local_cost_simple(rotations):
     for i in range(wires):
-        qml.RX(rotations[0][i], wires=i)
-        qml.RY(rotations[1][i], wires=i)
+        qp.RX(rotations[0][i], wires=i)
+        qp.RY(rotations[1][i], wires=i)
     for i in range(wires - 1):
-        qml.CNOT([i, i + 1])
-    return qml.probs(wires=[0])
+        qp.CNOT([i, i + 1])
+    return qp.probs(wires=[0])
 
-global_circuit = qml.set_shots(qml.QNode(global_cost_simple, dev, interface="autograd"), shots = 10000)
+global_circuit = qp.set_shots(qp.QNode(global_cost_simple, dev, interface="autograd"), shots = 10000)
 
-local_circuit = qml.set_shots(qml.QNode(local_cost_simple, dev, interface="autograd"), shots = 10000)
+local_circuit = qp.set_shots(qp.QNode(local_cost_simple, dev, interface="autograd"), shots = 10000)
 
 def cost_local(rotations):
     return 1 - local_circuit(rotations)[0]
@@ -285,7 +285,7 @@ plot_surface(local_surface)
 
 
 rotations = np.array([[3.] * len(range(wires)), [0.] * len(range(wires))], requires_grad=True)
-opt = qml.GradientDescentOptimizer(stepsize=0.2)
+opt = qp.GradientDescentOptimizer(stepsize=0.2)
 steps = 100
 params_global = rotations
 for i in range(steps):
@@ -296,7 +296,7 @@ for i in range(steps):
         print("Cost after step {:5d}: {: .7f}".format(i + 1, cost_global(params_global)))
     if cost_global(params_global) < 0.1:
         break
-fig, ax = qml.draw_mpl(global_circuit, decimals=2)(params_global)
+fig, ax = qp.draw_mpl(global_circuit, decimals=2)(params_global)
 plt.show()
 
 
@@ -307,7 +307,7 @@ plt.show()
 #
 
 rotations = np.array([[3. for i in range(wires)], [0. for i in range(wires)]], requires_grad=True)
-opt = qml.GradientDescentOptimizer(stepsize=0.2)
+opt = qp.GradientDescentOptimizer(stepsize=0.2)
 steps = 100
 params_local = rotations
 for i in range(steps):
@@ -319,7 +319,7 @@ for i in range(steps):
     if cost_local(params_local) < 0.05:
         break
 
-fig, ax = qml.draw_mpl(local_circuit, decimals=2)(params_local)
+fig, ax = qp.draw_mpl(local_circuit, decimals=2)(params_local)
 plt.show()
 
 
@@ -343,8 +343,8 @@ cost_global(params_local)
 # us the exact representation.
 #
 
-_dev = qml.device("lightning.qubit", wires=wires)
-global_circuit = qml.QNode(global_cost_simple, _dev, interface="autograd")
+_dev = qp.device("lightning.qubit", wires=wires)
+global_circuit = qp.QNode(global_cost_simple, _dev, interface="autograd")
 print(
     "Current cost: "
     + str(cost_global(params_local))
@@ -369,24 +369,24 @@ print(
 
 def tunable_cost_simple(rotations):
     for i in range(wires):
-        qml.RX(rotations[0][i], wires=i)
-        qml.RY(rotations[1][i], wires=i)
+        qp.RX(rotations[0][i], wires=i)
+        qp.RY(rotations[1][i], wires=i)
     for i in range(wires - 1):
-        qml.CNOT([i, i + 1])
-    return qml.probs(range(locality))
+        qp.CNOT([i, i + 1])
+    return qp.probs(range(locality))
 
 def cost_tunable(rotations):
     return 1 - tunable_circuit(rotations)[0]
 
-tunable_circuit = qml.set_shots(qml.QNode(tunable_cost_simple, dev, interface="autograd"), shots = 10000)
+tunable_circuit = qp.set_shots(qp.QNode(tunable_cost_simple, dev, interface="autograd"), shots = 10000)
 locality = 2
 params_tunable = params_local
-fig, ax = qml.draw_mpl(tunable_circuit, decimals=2)(params_tunable)
+fig, ax = qp.draw_mpl(tunable_circuit, decimals=2)(params_tunable)
 plt.show()
 print(cost_tunable(params_tunable))
 
 locality = 2
-opt = qml.GradientDescentOptimizer(stepsize=0.1)
+opt = qp.GradientDescentOptimizer(stepsize=0.1)
 steps = 600
 for i in range(steps):
     # update the circuit parameters
@@ -406,7 +406,7 @@ for i in range(steps):
         continue
     elif runCost < 0.1 and locality >= wires:
         break
-fig, ax = qml.draw_mpl(tunable_circuit, decimals=2)(params_tunable)
+fig, ax = qp.draw_mpl(tunable_circuit, decimals=2)(params_tunable)
 plt.show()
 
 
@@ -436,12 +436,12 @@ plt.show()
 samples = 10
 plateau = 0
 trained = 0
-opt = qml.GradientDescentOptimizer(stepsize=0.2)
+opt = qp.GradientDescentOptimizer(stepsize=0.2)
 steps = 400
 wires = 8
 
-dev = qml.device("lightning.qubit", wires=wires)
-global_circuit = qml.set_shots(qml.QNode(global_cost_simple, dev, interface="autograd"), shots = 10000)
+dev = qp.device("lightning.qubit", wires=wires)
+global_circuit = qp.set_shots(qp.QNode(global_cost_simple, dev, interface="autograd"), shots = 10000)
 
 for runs in range(samples):
     print("--- New run! ---")
@@ -469,12 +469,12 @@ for runs in range(samples):
 samples = 10
 plateau = 0
 trained = 0
-opt = qml.GradientDescentOptimizer(stepsize=0.2)
+opt = qp.GradientDescentOptimizer(stepsize=0.2)
 steps = 400
 wires = 8
 
-dev = qml.device("lightning.qubit", wires=wires)
-tunable_circuit = qml.set_shots(qml.QNode(tunable_cost_simple, dev, interface="autograd"), shots = 10000)
+dev = qp.device("lightning.qubit", wires=wires)
+tunable_circuit = qp.set_shots(qp.QNode(tunable_cost_simple, dev, interface="autograd"), shots = 10000)
 
 for runs in range(samples):
     locality = 1

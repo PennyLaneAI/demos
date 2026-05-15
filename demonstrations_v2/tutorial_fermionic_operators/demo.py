@@ -133,7 +133,7 @@ print(f"eigenvectors:\n{np.real(vec.T)}")
 # :func:`~.pennylane.qchem.electron_integrals` function. We can build the molecular Hamiltonian for
 # the hydrogen molecule as an example. We first define the atom types and the atomic coordinates.
 
-import pennylane as qml
+import pennylane as qp
 from jax import numpy as jnp
 
 symbols = ["H", "H"]
@@ -144,8 +144,8 @@ geometry = jnp.array([[-0.67294, 0.0, 0.0], [0.67294, 0.0, 0.0]])
 # second quantized molecular Hamiltonian defined above. We also obtain the core constant, which is
 # later used to calculate the contribution of the nuclear energy to the Hamiltonian.
 
-mol = qml.qchem.Molecule(symbols, geometry)
-core, one, two = qml.qchem.electron_integrals(mol)()
+mol = qp.qchem.Molecule(symbols, geometry)
+core, one, two = qp.qchem.electron_integrals(mol)()
 
 ##############################################################################
 # These integrals are computed over molecular orbitals. Each molecular orbital contains a pair of
@@ -198,7 +198,7 @@ h = jordan_wigner(h)
 ##############################################################################
 # We also need to include the contribution of the nuclear energy.
 
-h += np.sum(core * qml.Identity(0))
+h += np.sum(core * qp.Identity(0))
 
 ##############################################################################
 # This gives us the qubit Hamiltonian which can be used as an input for quantum algorithms. We can

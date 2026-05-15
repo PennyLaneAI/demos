@@ -193,10 +193,10 @@ as the coefficients, or rotation angles, for :math:`A\in\exp(\mathfrak{a}_{\text
 We may check that this works with the following code.
 We apply ``cossin`` to some input ``U``, from which we create the block matrices :math:`K_1`
 and :math:`K_2` with ``numpy`` and the Cartan subgroup matrix :math:`A` via a Select-applied,
-or multiplexed, ``qml.RY`` rotation. Then we check that those matrices multiplied together
+or multiplexed, ``qp.RY`` rotation. Then we check that those matrices multiplied together
 yield the input ``U`` again.
 """
-import pennylane as qml
+import pennylane as qp
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.linalg import cossin, eig, qr
@@ -220,8 +220,8 @@ U = unitary_group.rvs(2**n, random_state=214)
 # Check that the decomposition is valid
 zero = np.zeros_like(u_1)
 K_1 = np.block([[u_1, zero], [zero, u_2]])
-ry_ops = [qml.RY(2 * th, 0) for th in theta]
-A = qml.matrix(qml.Select(ry_ops, control=range(1, n)), wire_order=range(n))
+ry_ops = [qp.RY(2 * th, 0) for th in theta]
+A = qp.matrix(qp.Select(ry_ops, control=range(1, n)), wire_order=range(n))
 K_2 = np.block([[v_1, zero], [zero, v_2]])
 
 reconstructed_U = K_1 @ A @ K_2
@@ -249,8 +249,8 @@ def aiii_decomposition_rotated(U):
     zero = np.zeros_like(u_1)
     K_1 = np.block([[u_1, zero], [zero, u_2]])
     K_2 = np.block([[v_1, zero], [zero, v_2]])
-    rotation = (qml.X(0) + qml.Y(0)) / np.sqrt(2)
-    rotation_mat = qml.matrix(rotation, wire_order=range(n))
+    rotation = (qp.X(0) + qp.Y(0)) / np.sqrt(2)
+    rotation_mat = qp.matrix(rotation, wire_order=range(n))
     # Transform K_1 and K_2. No need to transform theta, just re-interpret as RX angles
     K_1 = K_1 @ rotation_mat
     K_2 = rotation_mat @ K_2
@@ -273,8 +273,8 @@ plt.show()
 
 # The decomposition is still valid:
 
-rx_ops = [qml.RX(2 * th, 0) for th in theta]
-new_A = qml.matrix(qml.Select(rx_ops, control=range(1, n)), wire_order=range(n))
+rx_ops = [qp.RX(2 * th, 0) for th in theta]
+new_A = qp.matrix(qp.Select(rx_ops, control=range(1, n)), wire_order=range(n))
 reconstructed_U = new_K_1 @ new_A @ new_K_2
 print(np.allclose(reconstructed_U, U))
 
@@ -379,8 +379,8 @@ U_1, phi, U_2 = demultiplex(u_1, u_2)
 # The demultiplexed matrices make up :math:`K_1=u_1\oplus u_2` from above:
 #
 
-rz_ops = [qml.RZ(-2 * p, 0) for p in phi]
-demultiplex_A = qml.matrix(qml.Select(rz_ops, control=range(1, n)), wire_order=range(n))
+rz_ops = [qp.RZ(-2 * p, 0) for p in phi]
+demultiplex_A = qp.matrix(qp.Select(rz_ops, control=range(1, n)), wire_order=range(n))
 demultiplex_K_1 = np.block([[U_1, zero], [zero, U_1]])
 demultiplex_K_2 = np.block([[U_2, zero], [zero, U_2]])
 reconstructed_K_1 = demultiplex_K_1 @ demultiplex_A @ demultiplex_K_2

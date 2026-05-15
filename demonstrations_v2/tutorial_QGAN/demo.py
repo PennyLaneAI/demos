@@ -50,13 +50,13 @@ training signal for the generator to improve its fake generated data.
 # We begin by importing PennyLane, NumPy, and TensorFlow.
 
 import numpy as np
-import pennylane as qml
+import pennylane as qp
 import tensorflow as tf
 
 ##############################################################################
 # We also declare a 3-qubit simulator device running in Cirq.
 
-dev = qml.device('cirq.simulator', wires=3)
+dev = qp.device('cirq.simulator', wires=3)
 
 
 ##############################################################################
@@ -73,8 +73,8 @@ dev = qml.device('cirq.simulator', wires=3)
 # arbitrary, but fixed, state.
 
 def real(angles, **kwargs):
-    qml.Hadamard(wires=0)
-    qml.Rot(*angles, wires=0)
+    qp.Hadamard(wires=0)
+    qp.Rot(*angles, wires=0)
 
 
 ##############################################################################
@@ -87,31 +87,31 @@ def real(angles, **kwargs):
 # output will be on wire 2.
 
 def generator(w, **kwargs):
-    qml.Hadamard(wires=0)
-    qml.RX(w[0], wires=0)
-    qml.RX(w[1], wires=1)
-    qml.RY(w[2], wires=0)
-    qml.RY(w[3], wires=1)
-    qml.RZ(w[4], wires=0)
-    qml.RZ(w[5], wires=1)
-    qml.CNOT(wires=[0, 1])
-    qml.RX(w[6], wires=0)
-    qml.RY(w[7], wires=0)
-    qml.RZ(w[8], wires=0)
+    qp.Hadamard(wires=0)
+    qp.RX(w[0], wires=0)
+    qp.RX(w[1], wires=1)
+    qp.RY(w[2], wires=0)
+    qp.RY(w[3], wires=1)
+    qp.RZ(w[4], wires=0)
+    qp.RZ(w[5], wires=1)
+    qp.CNOT(wires=[0, 1])
+    qp.RX(w[6], wires=0)
+    qp.RY(w[7], wires=0)
+    qp.RZ(w[8], wires=0)
 
 
 def discriminator(w):
-    qml.Hadamard(wires=0)
-    qml.RX(w[0], wires=0)
-    qml.RX(w[1], wires=2)
-    qml.RY(w[2], wires=0)
-    qml.RY(w[3], wires=2)
-    qml.RZ(w[4], wires=0)
-    qml.RZ(w[5], wires=2)
-    qml.CNOT(wires=[0, 2])
-    qml.RX(w[6], wires=2)
-    qml.RY(w[7], wires=2)
-    qml.RZ(w[8], wires=2)
+    qp.Hadamard(wires=0)
+    qp.RX(w[0], wires=0)
+    qp.RX(w[1], wires=2)
+    qp.RY(w[2], wires=0)
+    qp.RY(w[3], wires=2)
+    qp.RZ(w[4], wires=0)
+    qp.RZ(w[5], wires=2)
+    qp.CNOT(wires=[0, 2])
+    qp.RX(w[6], wires=2)
+    qp.RY(w[7], wires=2)
+    qp.RZ(w[8], wires=2)
 
 
 ##############################################################################
@@ -119,18 +119,18 @@ def discriminator(w):
 # discriminator, and one where the generator is connected to the
 # discriminator.
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def real_disc_circuit(phi, theta, omega, disc_weights):
     real([phi, theta, omega])
     discriminator(disc_weights)
-    return qml.expval(qml.PauliZ(2))
+    return qp.expval(qp.PauliZ(2))
 
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def gen_disc_circuit(gen_weights, disc_weights):
     generator(gen_weights)
     discriminator(disc_weights)
-    return qml.expval(qml.PauliZ(2))
+    return qp.expval(qp.PauliZ(2))
 
 
 ##############################################################################
@@ -283,17 +283,17 @@ print("Discriminator cost: ", disc_cost(disc_weights).numpy())
 # real data circuit. An easy way to access the state of the first qubit is through its
 # `Bloch sphere <https://en.wikipedia.org/wiki/Bloch_sphere>`__ representation:
 
-obs = [qml.PauliX(0), qml.PauliY(0), qml.PauliZ(0)]
+obs = [qp.PauliX(0), qp.PauliY(0), qp.PauliZ(0)]
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def bloch_vector_real(angles):
     real(angles)
-    return [qml.expval(o) for o in obs]
+    return [qp.expval(o) for o in obs]
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def bloch_vector_generator(angles):
     generator(angles)
-    return [qml.expval(o) for o in obs]
+    return [qp.expval(o) for o in obs]
 
 print(f"Real Bloch vector: {bloch_vector_real([phi, theta, omega])}")
 print(f"Generator Bloch vector: {bloch_vector_generator(gen_weights)}")

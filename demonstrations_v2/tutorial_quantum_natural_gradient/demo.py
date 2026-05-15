@@ -185,36 +185,36 @@ where :math:`g^{+}` refers to the pseudo-inverse.
 # Let's consider a small variational quantum circuit example coded in PennyLane:
 
 import numpy as np
-import pennylane as qml
+import pennylane as qp
 from pennylane import numpy as pnp
 
-dev = qml.device("lightning.qubit", wires=3)
+dev = qp.device("lightning.qubit", wires=3)
 
 
-@qml.qnode(dev, interface="autograd", diff_method="parameter-shift")
+@qp.qnode(dev, interface="autograd", diff_method="parameter-shift")
 def circuit(params):
     # |psi_0>: state preparation
-    qml.RY(np.pi / 4, wires=0)
-    qml.RY(np.pi / 3, wires=1)
-    qml.RY(np.pi / 7, wires=2)
+    qp.RY(np.pi / 4, wires=0)
+    qp.RY(np.pi / 3, wires=1)
+    qp.RY(np.pi / 7, wires=2)
 
     # V0(theta0, theta1): Parametrized layer 0
-    qml.RZ(params[0], wires=0)
-    qml.RZ(params[1], wires=1)
+    qp.RZ(params[0], wires=0)
+    qp.RZ(params[1], wires=1)
 
     # W1: non-parametrized gates
-    qml.CNOT(wires=[0, 1])
-    qml.CNOT(wires=[1, 2])
+    qp.CNOT(wires=[0, 1])
+    qp.CNOT(wires=[1, 2])
 
     # V_1(theta2, theta3): Parametrized layer 1
-    qml.RY(params[2], wires=1)
-    qml.RX(params[3], wires=2)
+    qp.RY(params[2], wires=1)
+    qp.RX(params[3], wires=2)
 
     # W2: non-parametrized gates
-    qml.CNOT(wires=[0, 1])
-    qml.CNOT(wires=[1, 2])
+    qp.CNOT(wires=[0, 1])
+    qp.CNOT(wires=[1, 2])
 
-    return qml.expval(qml.PauliY(0))
+    return qp.expval(qp.PauliY(0))
 
 # Use pennylane.numpy for trainable parameters
 params = pnp.array([0.432, -0.123, 0.543, 0.233])
@@ -255,9 +255,9 @@ g0 = np.zeros([2, 2])
 def layer0_subcircuit(params):
     """This function contains all gates that
     precede parametrized layer 0"""
-    qml.RY(np.pi / 4, wires=0)
-    qml.RY(np.pi / 3, wires=1)
-    qml.RY(np.pi / 7, wires=2)
+    qp.RY(np.pi / 4, wires=0)
+    qp.RY(np.pi / 3, wires=1)
+    qp.RY(np.pi / 7, wires=2)
 
 
 ##############################################################################
@@ -272,10 +272,10 @@ def layer0_subcircuit(params):
 # We can see that the diagonal terms are simply given by the variance:
 
 
-@qml.qnode(dev, interface="autograd")
+@qp.qnode(dev, interface="autograd")
 def layer0_diag(params):
     layer0_subcircuit(params)
-    return qml.var(qml.PauliZ(0)), qml.var(qml.PauliZ(1))
+    return qp.var(qp.PauliZ(0)), qp.var(qp.PauliZ(1))
 
 
 # calculate the diagonal terms
@@ -288,17 +288,17 @@ g0[1, 1] = varK1 / 4
 # off-diagonal covariance terms of :math:`g^{(0)}:`
 
 
-@qml.qnode(dev, interface="autograd")
+@qp.qnode(dev, interface="autograd")
 def layer0_off_diag_single(params):
     layer0_subcircuit(params)
-    return qml.expval(qml.PauliZ(0)), qml.expval(qml.PauliZ(1))
+    return qp.expval(qp.PauliZ(0)), qp.expval(qp.PauliZ(1))
 
 
-@qml.qnode(dev, interface="autograd")
+@qp.qnode(dev, interface="autograd")
 def layer0_off_diag_double(params):
     layer0_subcircuit(params)
     ZZ = np.kron(np.diag([1, -1]), np.diag([1, -1]))
-    return qml.expval(qml.Hermitian(ZZ, wires=[0, 1]))
+    return qp.expval(qp.Hermitian(ZZ, wires=[0, 1]))
 
 
 # calculate the off-diagonal terms
@@ -327,17 +327,17 @@ def layer1_subcircuit(params):
     """This function contains all gates that
     precede parametrized layer 1"""
     # |psi_0>: state preparation
-    qml.RY(np.pi / 4, wires=0)
-    qml.RY(np.pi / 3, wires=1)
-    qml.RY(np.pi / 7, wires=2)
+    qp.RY(np.pi / 4, wires=0)
+    qp.RY(np.pi / 3, wires=1)
+    qp.RY(np.pi / 7, wires=2)
 
     # V0(theta0, theta1): Parametrized layer 0
-    qml.RZ(params[0], wires=0)
-    qml.RZ(params[1], wires=1)
+    qp.RZ(params[0], wires=0)
+    qp.RZ(params[1], wires=1)
 
     # W1: non-parametrized gates
-    qml.CNOT(wires=[0, 1])
-    qml.CNOT(wires=[1, 2])
+    qp.CNOT(wires=[0, 1])
+    qp.CNOT(wires=[1, 2])
 
 
 ##############################################################################
@@ -349,10 +349,10 @@ def layer1_subcircuit(params):
 #     :target: javascript:void(0)
 
 
-@qml.qnode(dev, interface="autograd")
+@qp.qnode(dev, interface="autograd")
 def layer1_diag(params):
     layer1_subcircuit(params)
-    return qml.var(qml.PauliY(1)), qml.var(qml.PauliX(2))
+    return qp.var(qp.PauliY(1)), qp.var(qp.PauliX(2))
 
 
 ##############################################################################
@@ -368,19 +368,19 @@ g1[1, 1] = varK1 / 4
 # observables to be computed.
 
 
-@qml.qnode(dev, interface="autograd")
+@qp.qnode(dev, interface="autograd")
 def layer1_off_diag_single(params):
     layer1_subcircuit(params)
-    return qml.expval(qml.PauliY(1)), qml.expval(qml.PauliX(2))
+    return qp.expval(qp.PauliY(1)), qp.expval(qp.PauliX(2))
 
 
-@qml.qnode(dev, interface="autograd")
+@qp.qnode(dev, interface="autograd")
 def layer1_off_diag_double(params):
     layer1_subcircuit(params)
     X = np.array([[0, 1], [1, 0]])
     Y = np.array([[0, -1j], [1j, 0]])
     YX = np.kron(Y, X)
-    return qml.expval(qml.Hermitian(YX, wires=[1, 2]))
+    return qp.expval(qp.Hermitian(YX, wires=[1, 2]))
 
 
 # calculate the off-diagonal terms
@@ -404,7 +404,7 @@ print(np.round(g, 8))
 # PennyLane contains a built-in function for computing the Fubini-Study metric
 # tensor, :func:`~.pennylane.metric_tensor`, which
 # we can use to verify this result:
-print(np.round(qml.metric_tensor(circuit, approx="block-diag")(params), 8))
+print(np.round(qp.metric_tensor(circuit, approx="block-diag")(params), 8))
 
 ##############################################################################
 # As opposed to our manual computation, which required 6 different quantum
@@ -420,7 +420,7 @@ print(np.round(qml.metric_tensor(circuit, approx="block-diag")(params), 8))
 #
 # Note that the :func:`~.pennylane.metric_tensor` function also supports computing the diagonal
 # approximation to the metric tensor:
-print(qml.metric_tensor(circuit, approx='diag')(params))
+print(qp.metric_tensor(circuit, approx='diag')(params))
 
 ##############################################################################
 # Furthermore, the returned metric tensor is **full differentiable**; include it
@@ -442,7 +442,7 @@ init_params = pnp.array([0.432, -0.123, 0.543, 0.233], requires_grad=True)
 # Performing vanilla gradient descent:
 
 gd_cost = []
-opt = qml.GradientDescentOptimizer(0.01)
+opt = qp.GradientDescentOptimizer(0.01)
 
 theta = init_params
 for _ in range(steps):
@@ -453,7 +453,7 @@ for _ in range(steps):
 # Performing quantum natural gradient descent:
 
 qng_cost = []
-opt = qml.QNGOptimizer(0.01)
+opt = qp.QNGOptimizer(0.01)
 
 theta = init_params
 for _ in range(steps):

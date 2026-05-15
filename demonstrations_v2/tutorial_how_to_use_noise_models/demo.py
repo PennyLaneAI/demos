@@ -58,16 +58,16 @@ r"""How to use noise models in PennyLane
 # gate operations with :math:`|\phi| < 1.0` and wires :math:`\in \{0, 1\}`:
 #
 
-import pennylane as qml
+import pennylane as qp
 import numpy as np
 
-@qml.BooleanFn
+@qp.BooleanFn
 def rx_cond(op):
-    return isinstance(op, qml.RX) and np.abs(op.parameters[0]) < 1.0
+    return isinstance(op, qp.RX) and np.abs(op.parameters[0]) < 1.0
 
 # Combine this arbitrary conditional with a wire-based conditional
-rx_and_wires_cond = rx_cond & qml.noise.wires_in([0, 1])
-for op in [qml.RX(0.05, wires=[0]), qml.RX(2.34, wires=[1])]:
+rx_and_wires_cond = rx_cond & qp.noise.wires_in([0, 1])
+for op in [qp.RX(0.05, wires=[0]), qp.RX(2.34, wires=[1])]:
     print(f"Result for {op}: {rx_and_wires_cond(op)}")
 
 ######################################################################
@@ -89,9 +89,9 @@ for op in [qml.RX(0.05, wires=[0]), qml.RX(2.34, wires=[1])]:
 # the error that gets queued with an example gate operation:
 #
 
-depol_error = qml.noise.partial_wires(qml.DepolarizingChannel, 0.01)
+depol_error = qp.noise.partial_wires(qp.DepolarizingChannel, 0.01)
 
-op = qml.X('w1') # Example gate operation
+op = qp.X('w1') # Example gate operation
 print(f"Error for {op}: {depol_error(op)}")
 
 ######################################################################
@@ -112,11 +112,11 @@ fcond1, noise1 = rx_and_wires_cond, depol_error
 # Next, we construct a pair to mimic thermal relaxation errors that are encountered
 # during the state preparation via :class:`~.pennylane.ThermalRelaxationError`:
 
-fcond2 = qml.noise.op_eq(qml.StatePrep)
+fcond2 = qp.noise.op_eq(qp.StatePrep)
 
 def noise2(op, **kwargs):
     for wire in op.wires:
-        qml.ThermalRelaxationError(0.1, kwargs["t1"], kwargs["t2"], kwargs["tg"], wire)
+        qp.ThermalRelaxationError(0.1, kwargs["t1"], kwargs["t2"], kwargs["tg"], wire)
 
 ######################################################################
 # By default, noise operations specified by a noise function will be inserted *after* the
@@ -126,19 +126,19 @@ def noise2(op, **kwargs):
 # rotation error for :class:`~.pennylane.Hadamard` gates on the wires :math:`\in \{0, 1\}`:
 #
 
-fcond3 = qml.noise.op_eq("Hadamard") & qml.noise.wires_in([0, 1])
+fcond3 = qp.noise.op_eq("Hadamard") & qp.noise.wires_in([0, 1])
 
 def noise3(op, **kwargs):
-    qml.RX(np.pi / 16, op.wires)
-    qml.apply(op)
-    qml.RY(np.pi / 8, op.wires)
+    qp.RX(np.pi / 16, op.wires)
+    qp.apply(op)
+    qp.RY(np.pi / 8, op.wires)
 
 ######################################################################
 # Finally, we can build the noise model with some required ``metadata`` for ``noise2``:
 #
 
 metadata = dict(t1=0.02, t2=0.03, tg=0.001)  # times unit: sec
-noise_model = qml.NoiseModel(
+noise_model = qp.NoiseModel(
     {fcond1: noise1, fcond2: noise2, fcond3: noise3}, **metadata
 )
 print(noise_model)
@@ -156,33 +156,33 @@ print(noise_model)
 
 from matplotlib import pyplot as plt
 
-qml.drawer.use_style("pennylane")
-dev = qml.device("default.mixed", wires=3)
+qp.drawer.use_style("pennylane")
+dev = qp.device("default.mixed", wires=3)
 init_state = np.random.RandomState(42).rand(2 ** len(dev.wires))
 init_state /= np.linalg.norm(init_state)
 
 def circuit(theta, phi):
     # State preparation
-    qml.StatePrep(init_state, wires=[0, 1, 2])
+    qp.StatePrep(init_state, wires=[0, 1, 2])
 
     # Evolve state
-    qml.Hadamard(0)
-    qml.RX(theta, 1)
-    qml.RX(phi, 2)
-    qml.CNOT([1, 2])
-    qml.CNOT([0, 1])
+    qp.Hadamard(0)
+    qp.RX(theta, 1)
+    qp.RX(phi, 2)
+    qp.CNOT([1, 2])
+    qp.CNOT([0, 1])
 
     # De-evolve state
-    qml.CNOT([0, 1])
-    qml.CNOT([1, 2])
-    qml.RX(-phi, 2)
-    qml.RX(-theta, 1)
-    qml.Hadamard(0)
-    return qml.state()
+    qp.CNOT([0, 1])
+    qp.CNOT([1, 2])
+    qp.RX(-phi, 2)
+    qp.RX(-theta, 1)
+    qp.Hadamard(0)
+    return qp.state()
 
 theta, phi = 0.21, 0.43
-ideal_circuit = qml.QNode(circuit, dev)
-qml.draw_mpl(ideal_circuit)(theta, phi)
+ideal_circuit = qp.QNode(circuit, dev)
+qp.draw_mpl(ideal_circuit)(theta, phi)
 plt.show()
 
 ######################################################################
@@ -190,8 +190,8 @@ plt.show()
 # :func:`~.pennylane.add_noise` transform:
 #
 
-noisy_circuit = qml.add_noise(ideal_circuit, noise_model)
-qml.draw_mpl(noisy_circuit)(theta, phi)
+noisy_circuit = qp.add_noise(ideal_circuit, noise_model)
+qp.draw_mpl(noisy_circuit)(theta, phi)
 plt.show()
 
 ######################################################################
@@ -199,8 +199,8 @@ plt.show()
 #
 
 init_dm = np.outer(init_state, init_state) # density matrix for the init_state
-ideal_res = np.round(qml.math.fidelity(ideal_circuit(theta, phi), init_dm), 8)
-noisy_res = np.round(qml.math.fidelity(noisy_circuit(theta, phi), init_dm), 8)
+ideal_res = np.round(qp.math.fidelity(ideal_circuit(theta, phi), init_dm), 8)
+noisy_res = np.round(qp.math.fidelity(noisy_circuit(theta, phi), init_dm), 8)
 
 print(f"Ideal v/s Noisy: {ideal_res} and {noisy_res}")
 

@@ -47,7 +47,7 @@ how to:
 #
 # To start, we import PennyLane, NumPy, and PyTorch for the optimization:
 
-import pennylane as qml
+import pennylane as qp
 import numpy as np
 import torch
 from torch.autograd import Variable
@@ -99,20 +99,20 @@ params = Variable(torch.tensor(params), requires_grad=True)
 # a layer of the circuit ansatz
 def layer(params, j):
     for i in range(nr_qubits):
-        qml.RX(params[i, j, 0], wires=i)
-        qml.RY(params[i, j, 1], wires=i)
-        qml.RZ(params[i, j, 2], wires=i)
+        qp.RX(params[i, j, 0], wires=i)
+        qp.RY(params[i, j, 1], wires=i)
+        qp.RZ(params[i, j, 2], wires=i)
 
-    qml.CNOT(wires=[0, 1])
-    qml.CNOT(wires=[0, 2])
-    qml.CNOT(wires=[1, 2])
+    qp.CNOT(wires=[0, 1])
+    qp.CNOT(wires=[0, 2])
+    qp.CNOT(wires=[1, 2])
 
 
 ##############################################################################
 # Here, we use the ``default.qubit`` device to perform the optimization, but this can be changed to
 # any other supported device.
 
-dev = qml.device("default.qubit", wires=3)
+dev = qp.device("default.qubit", wires=3)
 
 ##############################################################################
 # When defining the QNode, we introduce as input a Hermitian operator
@@ -124,7 +124,7 @@ dev = qml.device("default.qubit", wires=3)
 # to use the PyTorch interface:
 
 
-@qml.qnode(dev, interface="torch")
+@qp.qnode(dev, interface="torch")
 def circuit(params, A):
 
     # repeatedly apply each layer in the circuit
@@ -132,7 +132,7 @@ def circuit(params, A):
         layer(params, j)
 
     # returns the expectation of the input matrix A on the first qubit
-    return qml.expval(qml.Hermitian(A, wires=0))
+    return qp.expval(qp.Hermitian(A, wires=0))
 
 
 ##############################################################################

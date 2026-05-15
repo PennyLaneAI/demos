@@ -1,5 +1,5 @@
 [
-  {"name": "pennylane-catalyst", "version": "0.15.0"},
-  {"name": "pennylane-lightning", "version": "0.45.0"},
-  {"name": "pennylane", "version": "0.45.0"}
+  {"name": "pennylane-catalyst", "version": "0.16.0"},
+  {"name": "pennylane-lightning", "version": "0.46.0"},
+  {"name": "pennylane", "version": "0.46.0"}
 ]

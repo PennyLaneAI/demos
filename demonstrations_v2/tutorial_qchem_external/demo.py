@@ -46,16 +46,16 @@ For example, the molecular Hamiltonian for a water molecule can be constructed w
 backend as:
 """
 
-import pennylane as qml
+import pennylane as qp
 import numpy as np
 
 symbols = ["H", "O", "H"]
 geometry = np.array([[-0.0399, -0.0038, 0.0000],
                      [ 1.5780,  0.8540, 0.0000],
                      [ 2.7909, -0.5159, 0.0000]])
-molecule = qml.qchem.Molecule(symbols, geometry)
+molecule = qp.qchem.Molecule(symbols, geometry)
 
-H, qubits = qml.qchem.molecular_hamiltonian(molecule, method="pyscf")
+H, qubits = qp.qchem.molecular_hamiltonian(molecule, method="pyscf")
 print(H)
 
 ##############################################################################
@@ -72,7 +72,7 @@ print(H)
 from openfermion.ops import QubitOperator
 
 H = 0.1 * QubitOperator('X0 X1') + 0.2 * QubitOperator('Z0')
-H = qml.qchem.import_operator(H)
+H = qp.qchem.import_operator(H)
 
 print(f'Type: \n {type(H)} \n')
 print(f'Hamiltonian: \n {H}')
@@ -135,13 +135,13 @@ core_constant = np.array([rhf.energy_nuc()])
 # for creating and manipulating
 # :doc:`fermionic operators <demos/tutorial_fermionic_operators>`:
 
-H_fermionic = qml.qchem.fermionic_observable(core_constant, one_mo, two_mo)
+H_fermionic = qp.qchem.fermionic_observable(core_constant, one_mo, two_mo)
 
 ##############################################################################
 # The Hamiltonian can be mapped to the qubit basis with the :func:`~.pennylane.jordan_wigner`
 # function:
 
-H = qml.jordan_wigner(H_fermionic)
+H = qp.jordan_wigner(H_fermionic)
 
 ##############################################################################
 # Importing initial states
@@ -173,7 +173,7 @@ mycc = cc.CCSD(myhf).run()
 # Then, we use the :func:`~.pennylane.qchem.import_state` function to obtain the
 # state vector.
 
-state = qml.qchem.import_state(mycc)
+state = qp.qchem.import_state(mycc)
 print(state)
 
 ##############################################################################
@@ -190,14 +190,14 @@ print(state)
 
 from openfermion import FermionOperator
 openfermion_op = 0.5 * FermionOperator('0^ 2') + FermionOperator('0 2^')
-pennylane_op = qml.from_openfermion(openfermion_op)
+pennylane_op = qp.from_openfermion(openfermion_op)
 print(pennylane_op)
 
 ##############################################################################
 # The resulting operator can be used in PennyLane like any other fermionic object. We now take this
 # PennyLane fermionic operator and convert it back to an OpenFermion operator.
 
-openfermion_op = qml.to_openfermion(pennylane_op)
+openfermion_op = qp.to_openfermion(pennylane_op)
 print(openfermion_op)
 
 ##############################################################################

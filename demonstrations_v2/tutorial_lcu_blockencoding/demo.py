@@ -45,7 +45,7 @@ in the code below for a simple example.
 
 """
 import numpy as np
-import pennylane as qml
+import pennylane as qp
 
 a = 0.25
 b = 0.75
@@ -58,7 +58,7 @@ A = np.array(
      [b,  0, 0, -a]]
 )
 
-LCU = qml.pauli_decompose(A)
+LCU = qp.pauli_decompose(A)
 LCU_coeffs, LCU_ops = LCU.terms()
 
 print(f"LCU decomposition:\n {LCU}")
@@ -142,16 +142,16 @@ print(f"Unitaries:\n {LCU_ops}")
 # Prepare circuits can be constructed using the :class:`~.pennylane.StatePrep` operation, which takes
 # the normalized target state as input:
 
-dev1 = qml.device("default.qubit", wires=1)
+dev1 = qp.device("default.qubit", wires=1)
 
 # normalized square roots of coefficients
 alphas = (np.sqrt(LCU_coeffs) / np.linalg.norm(np.sqrt(LCU_coeffs)))
 
 
-@qml.qnode(dev1)
+@qp.qnode(dev1)
 def prep_circuit():
-    qml.StatePrep(alphas, wires=0)
-    return qml.state()
+    qp.StatePrep(alphas, wires=0)
+    return qp.state()
 
 
 print("Target state: ", alphas)
@@ -165,21 +165,21 @@ print("Output state: ", np.real(prep_circuit()))
 
 import matplotlib.pyplot as plt
 
-dev2 = qml.device("default.qubit", wires=3)
+dev2 = qp.device("default.qubit", wires=3)
 
 # unitaries
 ops = LCU_ops
 # relabeling wires: 0 → 1, and 1 → 2
-unitaries = [qml.map_wires(op, {0: 1, 1: 2}) for op in ops]
+unitaries = [qp.map_wires(op, {0: 1, 1: 2}) for op in ops]
 
 
-@qml.qnode(dev2)
+@qp.qnode(dev2)
 def sel_circuit(qubit_value):
-    qml.BasisState(qubit_value, wires=0)
-    qml.Select(unitaries, control=0)
-    return qml.expval(qml.PauliZ(2))
+    qp.BasisState(qubit_value, wires=0)
+    qp.Select(unitaries, control=0)
+    return qp.expval(qp.PauliZ(2))
 
-qml.draw_mpl(sel_circuit, style='pennylane')([0])
+qp.draw_mpl(sel_circuit, style='pennylane')([0])
 plt.show()
 ##############################################################################
 # Based on the controlled operations, the circuit above will flip the measured qubit
@@ -197,20 +197,20 @@ print('Expectation value for input |1>:', sel_circuit([1]))
 # encoding.
 
 
-@qml.qnode(dev2)
+@qp.qnode(dev2)
 def lcu_circuit():  # block_encode
     # PREP
-    qml.StatePrep(alphas, wires=0)
+    qp.StatePrep(alphas, wires=0)
 
     # SEL
-    qml.Select(unitaries, control=0)
+    qp.Select(unitaries, control=0)
 
     # PREP_dagger
-    qml.adjoint(qml.StatePrep(alphas, wires=0))
-    return qml.state()
+    qp.adjoint(qp.StatePrep(alphas, wires=0))
+    return qp.state()
 
 
-output_matrix = qml.matrix(lcu_circuit)()
+output_matrix = qp.matrix(lcu_circuit)()
 print("A:\n", A, "\n")
 print("Block-encoded A:\n")
 print(np.real(np.round(output_matrix,2)))
@@ -240,7 +240,7 @@ print(np.real(np.round(output_matrix,2)))
 coeffs = np.array([1/2, 1/2])
 alphas = np.sqrt(coeffs) / np.linalg.norm(np.sqrt(coeffs))
 
-proj_unitaries = [qml.Identity(0), qml.PauliZ(0)]
+proj_unitaries = [qp.Identity(0), qp.PauliZ(0)]
 
 ##############################################################################
 # Note that the second term in our LCU simplifies to a Pauli :math:`Z` operation. We can now
@@ -249,17 +249,17 @@ proj_unitaries = [qml.Identity(0), qml.PauliZ(0)]
 
 def lcu_circuit():  # block_encode
     # PREP
-    qml.StatePrep(alphas, wires="ancilla")
+    qp.StatePrep(alphas, wires="ancilla")
 
     # SEL
-    qml.Select(proj_unitaries, control="ancilla")
+    qp.Select(proj_unitaries, control="ancilla")
 
     # PREP_dagger
-    qml.adjoint(qml.StatePrep(alphas, wires="ancilla"))
-    return qml.state()
+    qp.adjoint(qp.StatePrep(alphas, wires="ancilla"))
+    return qp.state()
 
 
-output_matrix = qml.matrix(lcu_circuit, wire_order=["ancilla", 0])()
+output_matrix = qp.matrix(lcu_circuit, wire_order=["ancilla", 0])()
 print("Block-encoded projector:\n")
 print(np.real(np.round(output_matrix,2)))
 

@@ -28,19 +28,19 @@ Quantify Error using the Spectral Norm
 Before we can track the error in our quantum workflow, we need to quantify it. A common method for quantifying the error 
 between operators is to compute the "distance" between them; specifically, the spectral norm of the difference between
 the operators. We can use the new :class:`~.pennylane.resource.error.SpectralNormError` class to compute and represent this error. 
-Consider for example, that instead of applying :code:`qml.RX(1.234)` we incur some *rounding* error in the rotation angle;
+Consider for example, that instead of applying :code:`qp.RX(1.234)` we incur some *rounding* error in the rotation angle;
 how much error would the resulting operators have?
 
 We can compute this easily with PennyLane:
 """
 
-import pennylane as qml
+import pennylane as qp
 from pennylane.resource import SpectralNormError
 
-exact_op = qml.RX(1.234, wires=0)
+exact_op = qp.RX(1.234, wires=0)
 
 thetas = [1.23, 1.2, 1.0]
-ops = [qml.RX(theta, wires=0) for theta in thetas]
+ops = [qp.RX(theta, wires=0) for theta in thetas]
 
 for approx_op, theta in zip(ops, thetas):
     error = SpectralNormError.get_error(exact_op, approx_op)
@@ -63,10 +63,10 @@ for approx_op, theta in zip(ops, thetas):
 # Let's explicitly compute the error from this algorithm for a simple Hamiltonian:
 
 time = 0.1
-Hamiltonian = qml.X(0) + qml.Y(0)
+Hamiltonian = qp.X(0) + qp.Y(0)
 
-exact_op = qml.exp(Hamiltonian, 1j * time)  #  U = e^iHt ~ TrotterProduct(..., order=2)
-approx_op = qml.TrotterProduct(  #  eg: e^iHt ~ e^iXt/2 * e^iYt * e^iXt/2
+exact_op = qp.exp(Hamiltonian, 1j * time)  #  U = e^iHt ~ TrotterProduct(..., order=2)
+approx_op = qp.TrotterProduct(  #  eg: e^iHt ~ e^iXt/2 * e^iYt * e^iXt/2
     Hamiltonian,
     time,
     order=2,
@@ -84,7 +84,7 @@ print(f"Error from Suzuki-Trotter algorithm: {error:.5f}")
 # We provide two common methods for bounding the error from literature [#TrotterError]_.
 # They can be accessed by using :code:`op.error()` and specifying the :code:`method` keyword argument:
 
-op = qml.TrotterProduct(Hamiltonian, time, order=2)
+op = qp.TrotterProduct(Hamiltonian, time, order=2)
 
 one_norm_error_bound = op.error(method="one-norm-bound")
 commutator_error_bound = op.error(method="commutator-bound")
@@ -112,10 +112,10 @@ print("commutator bound: ", commutator_error_bound)
 
 from pennylane import numpy as np
 
-op1 = qml.RX(np.pi / 4, 0)
-op2 = qml.GlobalPhase(np.pi / 8) @ qml.Hadamard(0) @ qml.T(0) @ qml.Hadamard(0)
+op1 = qp.RX(np.pi / 4, 0)
+op2 = qp.GlobalPhase(np.pi / 8) @ qp.Hadamard(0) @ qp.T(0) @ qp.Hadamard(0)
 
-np.allclose(qml.matrix(op1), qml.matrix(op2))
+np.allclose(qp.matrix(op1), qp.matrix(op2))
 
 
 ###############################################################################
@@ -148,9 +148,9 @@ class Approximate_RX(ErrorOperation):
         num_iterations = int(phi // (np.pi / 4))  # how many rotations of pi/4 to apply
         global_phase = num_iterations * np.pi / 8
 
-        decomposition = [qml.GlobalPhase(global_phase)]
+        decomposition = [qp.GlobalPhase(global_phase)]
         for _ in range(num_iterations):
-            decomposition += [qml.Hadamard(wires), qml.T(wires), qml.Hadamard(wires)]
+            decomposition += [qp.Hadamard(wires), qp.T(wires), qp.Hadamard(wires)]
 
         return decomposition
 
@@ -170,7 +170,7 @@ class Approximate_RX(ErrorOperation):
 # we did for Hamiltonian simulation, using :code:`op.error()`.
 
 phi = 1.23
-true_op = qml.RX(phi, wires=0)
+true_op = qp.RX(phi, wires=0)
 approx_op = Approximate_RX(phi, wires=0)
 
 error_from_theory = approx_op.error()
@@ -186,25 +186,25 @@ print("Error from function:  ", error_from_theory.error)
 # pieces together in a quantum circuit. PennyLane now automatically tracks and propagates these errors through
 # the circuit. This means we can write our circuits as usual and get all the benefits of error tracking for free.
 
-dev = qml.device("default.qubit")
+dev = qp.device("default.qubit")
 
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def circ(H, t, phi1, phi2):
-    qml.Hadamard(0)
-    qml.Hadamard(1)
+    qp.Hadamard(0)
+    qp.Hadamard(1)
 
     # Approx decomposition
     Approximate_RX(phi1, 0)
     Approximate_RX(phi2, 1)
 
-    qml.CNOT([0, 1])
+    qp.CNOT([0, 1])
 
     # Approx time evolution:
-    qml.TrotterProduct(H, t, order=2)
+    qp.TrotterProduct(H, t, order=2)
 
     # Measurement:
-    return qml.state()
+    return qp.state()
 
 
 ###############################################################################
@@ -214,7 +214,7 @@ phi1, phi2 = (0.12, 3.45)
 print("State:")
 print(circ(Hamiltonian, time, phi1, phi2), "\n")
 
-errors_dict = qml.resource.algo_error(circ)(Hamiltonian, time, phi1, phi2)
+errors_dict = qp.resource.algo_error(circ)(Hamiltonian, time, phi1, phi2)
 error = errors_dict["SpectralNormError"]
 print("Error:")
 print(error)

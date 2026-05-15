@@ -314,13 +314,17 @@ print(f"Physical qubits (n) of the HGP code: {n1*n2 + m1*m2} == {2*dist*(dist-1)
 # :math:`k = k_1k_2 + k_1^t k_2^t` logical qubits into :math:`n = n_1n_2 + m_1m_2`
 # physical qubits with distance :math:`d=\min(d_1,d_2,d_1^t,d_2^t)`. This means that
 # the HGP codes achieve a constant encoding rate :math:`R=\Theta(1)`, but their distance
-# grows only as :math:`d=\mathcal{O}(\sqrt{n})`, matching the surface code scaling. Note
-# that the distance computed here is the classical distance, which is not the same as
-# the quantum distance. The latter is more complex to compute as it requires finding
-# the minimum weight of an error that goes undetected by the checks but is not
-# a stabilizer. For HGP codes specifically, the classical distance serves as an
-# upper bound on the quantum distance and thus remains a reliable proxy in practice,
-# though the two can diverge significantly for other code families.
+# grows only as :math:`d=\mathcal{O}(\sqrt{n})`, matching the surface code scaling.
+# Note that the distance computed here is technically a classical distance, calculated
+# as the minimum of the classical distances of the seed codes and their transposes.
+# In general quantum code constructions, such a classical distance serves only as an
+# upper bound for the true quantum distance, which is inherently complex to compute as
+# it requires finding the minimum weight of an error that goes undetected by the checks
+# but is not a stabilizer. However, for HGP codes specifically, it has been rigorously
+# proven that this computed classical distance is exactly equal to the true quantum
+# distance [#HGP]_. This exact equivalence is a special feature of HGP codes; for other
+# code families, the two can diverge significantly, and numerical estimation is needed
+# to find the true value.
 #
 # Modern qLDPC Codes
 # -------------------
@@ -797,7 +801,7 @@ print(f"Result: The gate operation is transversal: {preserved and consistent}")
 # .. [#HGP]
 #
 #     J.-P. Tillich, G. Zémor,
-#     "Quantum LDPC Codes With Positive Rate and Minimum Distance Proportional to the Square Root of the Blocklength",
+#     "Quantum LDPC Codes With Positive Rate and Minimum Distance Proportional to the :math:`n^\frac{1}{2}`",
 #     `IEEE Transactions on Information Theory 60(1), 119–136 <https://ieeexplore.ieee.org/document/6671468>`__, 2014.
 #
 # .. [#LPCodes]

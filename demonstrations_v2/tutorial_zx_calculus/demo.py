@@ -513,19 +513,19 @@ Let's start with a very simple circuit consisting of three gates and show that y
 
 import matplotlib.pyplot as plt
 
-import pennylane as qml
+import pennylane as qp
 import pyzx
 
-dev = qml.device("default.qubit", wires=2)
+dev = qp.device("default.qubit", wires=2)
 
 
-@qml.transforms.to_zx
-@qml.qnode(device=dev)
+@qp.transforms.to_zx
+@qp.qnode(device=dev)
 def circuit():
-    qml.PauliX(wires=0),
-    qml.PauliY(wires=1),
-    qml.CNOT(wires=[0, 1]),
-    return qml.expval(qml.PauliZ(wires=0))
+    qp.PauliX(wires=0),
+    qp.PauliY(wires=1),
+    qp.CNOT(wires=[0, 1]),
+    return qp.expval(qp.PauliZ(wires=0))
 
 
 g = circuit()
@@ -572,7 +572,7 @@ print(random_circuit.stats())
 
 graph = random_circuit.to_graph()
 
-tape = qml.transforms.from_zx(graph)
+tape = qp.transforms.from_zx(graph)
 print(tape.operations)
 
 #############################################################################
@@ -629,76 +629,76 @@ print(tape.operations)
 #
 
 
-dev = qml.device("default.qubit", wires=5)
+dev = qp.device("default.qubit", wires=5)
 
 
-@qml.transforms.to_zx
-@qml.qnode(device=dev)
+@qp.transforms.to_zx
+@qp.qnode(device=dev)
 def mod_5_4():
-    qml.PauliX(wires=4),
-    qml.Hadamard(wires=4),
-    qml.CNOT(wires=[3, 4]),
-    qml.adjoint(qml.T(wires=[4])),
-    qml.CNOT(wires=[0, 4]),
-    qml.T(wires=[4]),
-    qml.CNOT(wires=[3, 4]),
-    qml.adjoint(qml.T(wires=[4])),
-    qml.CNOT(wires=[0, 4]),
-    qml.T(wires=[3]),
-    qml.T(wires=[4]),
-    qml.CNOT(wires=[0, 3]),
-    qml.T(wires=[0]),
-    qml.adjoint(qml.T(wires=[3]))
-    qml.CNOT(wires=[0, 3]),
-    qml.CNOT(wires=[3, 4]),
-    qml.adjoint(qml.T(wires=[4])),
-    qml.CNOT(wires=[2, 4]),
-    qml.T(wires=[4]),
-    qml.CNOT(wires=[3, 4]),
-    qml.adjoint(qml.T(wires=[4])),
-    qml.CNOT(wires=[2, 4]),
-    qml.T(wires=[3]),
-    qml.T(wires=[4]),
-    qml.CNOT(wires=[2, 3]),
-    qml.T(wires=[2]),
-    qml.adjoint(qml.T(wires=[3]))
-    qml.CNOT(wires=[2, 3]),
-    qml.Hadamard(wires=[4]),
-    qml.CNOT(wires=[3, 4]),
-    qml.Hadamard(wires=4),
-    qml.CNOT(wires=[2, 4]),
-    qml.adjoint(qml.T(wires=[4])),
-    qml.CNOT(wires=[1, 4]),
-    qml.T(wires=[4]),
-    qml.CNOT(wires=[2, 4]),
-    qml.adjoint(qml.T(wires=[4])),
-    qml.CNOT(wires=[1, 4]),
-    qml.T(wires=[4]),
-    qml.T(wires=[2]),
-    qml.CNOT(wires=[1, 2]),
-    qml.T(wires=[1]),
-    qml.adjoint(qml.T(wires=[2]))
-    qml.CNOT(wires=[1, 2]),
-    qml.Hadamard(wires=[4]),
-    qml.CNOT(wires=[2, 4]),
-    qml.Hadamard(wires=4),
-    qml.CNOT(wires=[1, 4]),
-    qml.adjoint(qml.T(wires=[4])),
-    qml.CNOT(wires=[0, 4]),
-    qml.T(wires=[4]),
-    qml.CNOT(wires=[1, 4]),
-    qml.adjoint(qml.T(wires=[4])),
-    qml.CNOT(wires=[0, 4]),
-    qml.T(wires=[4]),
-    qml.T(wires=[1]),
-    qml.CNOT(wires=[0, 1]),
-    qml.T(wires=[0]),
-    qml.adjoint(qml.T(wires=[1])),
-    qml.CNOT(wires=[0, 1]),
-    qml.Hadamard(wires=[4]),
-    qml.CNOT(wires=[1, 4]),
-    qml.CNOT(wires=[0, 4]),
-    return qml.expval(qml.PauliZ(wires=0))
+    qp.PauliX(wires=4),
+    qp.Hadamard(wires=4),
+    qp.CNOT(wires=[3, 4]),
+    qp.adjoint(qp.T(wires=[4])),
+    qp.CNOT(wires=[0, 4]),
+    qp.T(wires=[4]),
+    qp.CNOT(wires=[3, 4]),
+    qp.adjoint(qp.T(wires=[4])),
+    qp.CNOT(wires=[0, 4]),
+    qp.T(wires=[3]),
+    qp.T(wires=[4]),
+    qp.CNOT(wires=[0, 3]),
+    qp.T(wires=[0]),
+    qp.adjoint(qp.T(wires=[3]))
+    qp.CNOT(wires=[0, 3]),
+    qp.CNOT(wires=[3, 4]),
+    qp.adjoint(qp.T(wires=[4])),
+    qp.CNOT(wires=[2, 4]),
+    qp.T(wires=[4]),
+    qp.CNOT(wires=[3, 4]),
+    qp.adjoint(qp.T(wires=[4])),
+    qp.CNOT(wires=[2, 4]),
+    qp.T(wires=[3]),
+    qp.T(wires=[4]),
+    qp.CNOT(wires=[2, 3]),
+    qp.T(wires=[2]),
+    qp.adjoint(qp.T(wires=[3]))
+    qp.CNOT(wires=[2, 3]),
+    qp.Hadamard(wires=[4]),
+    qp.CNOT(wires=[3, 4]),
+    qp.Hadamard(wires=4),
+    qp.CNOT(wires=[2, 4]),
+    qp.adjoint(qp.T(wires=[4])),
+    qp.CNOT(wires=[1, 4]),
+    qp.T(wires=[4]),
+    qp.CNOT(wires=[2, 4]),
+    qp.adjoint(qp.T(wires=[4])),
+    qp.CNOT(wires=[1, 4]),
+    qp.T(wires=[4]),
+    qp.T(wires=[2]),
+    qp.CNOT(wires=[1, 2]),
+    qp.T(wires=[1]),
+    qp.adjoint(qp.T(wires=[2]))
+    qp.CNOT(wires=[1, 2]),
+    qp.Hadamard(wires=[4]),
+    qp.CNOT(wires=[2, 4]),
+    qp.Hadamard(wires=4),
+    qp.CNOT(wires=[1, 4]),
+    qp.adjoint(qp.T(wires=[4])),
+    qp.CNOT(wires=[0, 4]),
+    qp.T(wires=[4]),
+    qp.CNOT(wires=[1, 4]),
+    qp.adjoint(qp.T(wires=[4])),
+    qp.CNOT(wires=[0, 4]),
+    qp.T(wires=[4]),
+    qp.T(wires=[1]),
+    qp.CNOT(wires=[0, 1]),
+    qp.T(wires=[0]),
+    qp.adjoint(qp.T(wires=[1])),
+    qp.CNOT(wires=[0, 1]),
+    qp.Hadamard(wires=[4]),
+    qp.CNOT(wires=[1, 4]),
+    qp.CNOT(wires=[0, 4]),
+    return qp.expval(qp.PauliZ(wires=0))
 
 
 g = mod_5_4()
@@ -770,20 +770,20 @@ print("T count after optimization:", opt_t_count)
 # and which is made possible because we used `pyzx.teleport_reduce` and do not need to extract
 # the circuit.
 
-qscript_opt = qml.transforms.from_zx(g)
+qscript_opt = qp.transforms.from_zx(g)
 
-wires = qml.wires.Wires([4, 3, 0, 2, 1])
+wires = qp.wires.Wires([4, 3, 0, 2, 1])
 wires_map = dict(zip(qscript_opt.wires, wires))
-qscript_opt_reorder, processing = qml.map_wires(qscript_opt, wire_map=wires_map)
+qscript_opt_reorder, processing = qp.map_wires(qscript_opt, wire_map=wires_map)
 
-@qml.qnode(device=dev)
+@qp.qnode(device=dev)
 def mod_5_4():
     for o in processing(qscript_opt_reorder):
-        qml.apply(o)
-    return qml.expval(qml.PauliZ(wires=0))
+        qp.apply(o)
+    return qp.expval(qp.PauliZ(wires=0))
 
 
-specs = qml.specs(mod_5_4)()
+specs = qp.specs(mod_5_4)()
 
 print("Number of quantum gates:", specs["resources"].num_gates)
 print("Circuit gates:", specs["resources"].gate_types)

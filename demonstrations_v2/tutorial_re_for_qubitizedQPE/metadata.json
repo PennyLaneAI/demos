@@ -8,11 +8,12 @@
     "executable_stable": true,
     "executable_latest": true,
     "dateOfPublication": "2026-01-29T00:00:00+00:00",
-    "dateOfLastModification": "2026-02-24T15:48:14+00:00",
+    "dateOfLastModification": "2026-04-21T15:48:14+00:00",
     "categories": [
         "Algorithms",
         "Optimization",
-        "Quantum Chemistry"
+        "Quantum Chemistry",
+        "Resource Estimation"
     ],
     "tags": [],
     "previewImages": [
