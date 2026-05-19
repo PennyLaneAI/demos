@@ -343,7 +343,8 @@ def circuit(params, **kwargs):
     for i in range(n_wires):  # Prepare an equal superposition over all qubits
         qp.Hadamard(wires=i)
 
-    qp.layer(qaoa_layer, n_layers, params[0], params[1])
+    for i in range(n_layers):
+        qaoa_layer(params[0][i], params[1][i])
     return qp.expval(cost_h)
 
 
@@ -487,7 +488,8 @@ def qaoa_training(n_iterations, n_layers=2):
     def cost_function(params, **kwargs):
         for i in range(n_wires):  # Prepare an equal superposition over all qubits
             qp.Hadamard(wires=i)
-        qp.layer(qaoa_layer, n_layers, params[0], params[1])
+        for i in range(n_layers):
+            qaoa_layer(params[0][i], params[1][i])
         return qp.expval(cost_h)
 
     params = 0.01 * np.random.uniform(size=[2, n_layers])
