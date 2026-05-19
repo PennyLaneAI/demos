@@ -155,4 +155,4 @@ jobs:
           ${DEV_FLAG}
 
       - name: Sync objects.inv to HTML Bucket
-        run: aws s3 cp ./_build/objects.inv s3://$AWS_S3_HTML_BUCKET_ID/qml/objects.inv
+        run: aws s3 cp ./_build/objects.inv s3://$AWS_S3_HTML_BUCKET_ID/objects.inv
