@@ -245,7 +245,8 @@ def build_maxclique_ansatz(cost_h, driver_h, delta_t):
         layers = len(beta)
         for w in dev.wires:
             qp.Hadamard(wires=w)
-        qp.layer(falqon_layer, layers, beta, cost_h=cost_h, driver_h=driver_h, delta_t=delta_t)
+        for i in range(layers):
+            falqon_layer(beta[i], cost_h=cost_h, driver_h=driver_h, delta_t=delta_t)
 
     return ansatz
 
@@ -445,7 +446,8 @@ def qaoa_layer(gamma, beta):
 def qaoa_circuit(params, **kwargs):
     for w in dev.wires:
         qp.Hadamard(wires=w)
-    qp.layer(qaoa_layer, depth, params[0], params[1])
+    for i in range(depth):
+        qaoa_layer(params[0][i], params[1][i])
 
 
 @qp.qnode(dev)

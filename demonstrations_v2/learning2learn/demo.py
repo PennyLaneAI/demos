@@ -237,7 +237,8 @@ def qaoa_from_graph(graph, n_layers=1):
     def circuit(params, **kwargs):
         for w in wires:
             qp.Hadamard(wires=w)
-        qp.layer(qaoa_layer, n_layers, params[0], params[1])
+        for i in range(n_layers):
+            qaoa_layer(params[0][i], params[1][i])
         return qp.expval(cost_h)
 
     # Evaluates the cost Hamiltonian

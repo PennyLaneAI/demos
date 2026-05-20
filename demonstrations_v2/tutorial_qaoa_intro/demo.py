@@ -125,8 +125,8 @@ print(qp.draw(circuit, level="device")())
 #     :width: 100%
 #
 #
-# Circuit repetition is implemented in PennyLane using the :func:`~.pennylane.layer` function. This
-# method allows us to take a function containing either quantum operations, a template, or even a
+# Circuit repetition is implemented in PennyLane using a simple for loop. This
+# allows us to take a function containing either quantum operations, a template, or even a
 # single quantum gate, and repeatedly apply it to a set of wires.
 #
 # .. figure:: ../_static/demonstration_assets/qaoa_module/qml_layer.png
@@ -154,13 +154,14 @@ print(qp.draw(circuit)(0.5))
 
 ######################################################################
 #
-# We simply pass this function into the :func:`~.pennylane.layer` function:
+# We simply pass this function into a for loop:
 #
 
 
 @qp.qnode(dev)
 def circuit(params, **kwargs):
-    qp.layer(circ, 3, params)
+    for i in range(3):
+        circ(params[i])
     return [qp.expval(qp.PauliZ(i)) for i in range(2)]
 
 
@@ -309,12 +310,13 @@ depth = 2
 def circuit(params, **kwargs):
     for w in wires:
         qp.Hadamard(wires=w)
-    qp.layer(qaoa_layer, depth, params[0], params[1])
+    for i in range(depth):
+        qaoa_layer(params[0][i], params[1][i])
 
 
 ######################################################################
 #
-# Note that :func:`~.pennylane.layer` allows us to pass variational parameters
+# Note that the for loop allows us to pass variational parameters
 # ``params[0]`` and ``params[1]`` into each layer of the circuit. That's it! The last
 # step is PennyLane's specialty: optimizing the circuit parameters.
 #
@@ -452,7 +454,8 @@ def qaoa_layer(gamma, alpha):
 def circuit(params, **kwargs):
     for w in wires:
         qp.Hadamard(wires=w)
-    qp.layer(qaoa_layer, depth, params[0], params[1])
+    for i in range(depth):
+        qaoa_layer(params[0][i], params[1][i])
 
 
 @qp.qnode(dev)
