@@ -196,11 +196,11 @@ for i, h1 in enumerate(dla):
 
 for i, h1 in enumerate(dla):
     res = P @ h1 @ P_dagger
-    res.simplify()
+    res.prune()
 
     reconstruct = sum([P0[i, j] * dla[j] for j in range(dim_g)])
     reconstruct += sum([P1[i, j, l] * dla[j] @ dla[l] for j in range(dim_g) for l in range(dim_g)])
-    reconstruct.simplify()
+    reconstruct.prune()
 
     assert res == reconstruct
 
