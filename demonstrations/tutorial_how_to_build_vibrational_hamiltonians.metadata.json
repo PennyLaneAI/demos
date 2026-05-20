@@ -1,0 +1,67 @@
+{
+    "title": "How to build vibrational Hamiltonians",
+    "authors": [
+        {
+            "username": "ddhawan"
+        },
+        {
+            "username": "austingmhuang"
+        },
+        {
+            "username": "soran"
+        }
+    ],
+    "dateOfPublication": "2025-07-10T00:00:00+00:00",
+    "dateOfLastModification": "2025-07-10T00:00:00+00:00",
+    "categories": [
+        "Getting Started",
+        "How-to"
+    ],
+    "tags": [],
+    "previewImages": [
+        {
+            "type": "thumbnail",
+            "uri": "/_static/demo_thumbnails/regular_demo_thumbnails/thumbnail_how_to_build_spin_hamiltonians.png"
+        },
+        {
+            "type": "large_thumbnail",
+            "uri": "/_static/demo_thumbnails/large_demo_thumbnails/thumbnail_large_how_to_build_spin_hamiltonians.png"
+        }
+    ],
+    "seoDescription": "Learn how to build vibrational Hamiltonians with PennyLane.",
+    "doi": "",
+    "references": [
+        {
+            "id": "loaiza",
+            "type": "article",
+            "title": "Simulating near-infrared spectroscopy on a quantum computer for enhanced chemical detection",
+            "authors": "I. Loaiza *et al.*",
+            "journal": "arXiv:2504.10602",
+            "year": "2025",
+            "url": "https://arxiv.org/abs/2504.10602"
+        },
+        {
+            "id": "motlagh",
+            "type": "article",
+            "title": "Quantum Algorithm for Vibronic Dynamics: Case Study on Singlet Fission Solar Cell Design",
+            "authors": "D. Motlagh *et al.*",
+            "journal": "arXiv:2411.13669",
+            "year": "2024",
+            "url": "https://arxiv.org/abs/2411.13669"
+        }
+    ],
+    "basedOnPapers": [],
+    "referencedByPapers": [],
+    "relatedContent": [
+        {
+            "type": "demonstration",
+            "id": "tutorial_quantum_chemistry",
+            "weight": 1.0
+        },
+        {
+            "type": "demonstration",
+            "id": "tutorial_how_to_build_spin_hamiltonians",
+            "weight": 1.0
+        }
+    ]
+}
