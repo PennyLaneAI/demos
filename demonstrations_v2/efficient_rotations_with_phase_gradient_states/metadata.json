@@ -1,0 +1,26 @@
+{
+  "title": "Efficient Rotations With Phase Gradient States",
+  "authors": [
+    {
+      "username": "emgem"
+    }
+  ],
+  "executable_stable": true,
+  "executable_latest": true,
+  "dateOfPublication": "2026-05-21T00:00:00+00:00",
+  "dateOfLastModification": "2026-05-21T00:00:00+00:00",
+  "categories": [],
+  "tags": [],
+  "previewImages": [
+    {
+      "type": "thumbnail",
+      "uri": "/_static\\demo_thumbnails\\regular_demo_thumbnails\\thumbnail_placeholder.png"
+    }
+  ],
+  "seoDescription": "Arbitrary rotations are expensive, especially when considering the requirements of fault tolerant archetecture. This demo explores how the catalytic phase gradient state can be used to reduce the cost of rotation.",
+  "doi": "",
+  "references": [],
+  "basedOnPapers": [],
+  "referencedByPapers": [],
+  "relatedContent": []
+}
