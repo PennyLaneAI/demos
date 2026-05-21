@@ -245,7 +245,7 @@ def FindNextK(k_i,theta_min, theta_max, HalfPlane_bool):
 # There are several well-known statistical methods used to update confidence intervals. A simple, iterative approach is the Chernoff-Hoeffding method, shifts the interval bounds up and down, respectively, by :math:`\epsilon_{a_i}`. From [#Grinko2021]_, the Chernoff-Hoeffding algorithm is as follows
 #
 # .. math::
-#    \epsilon_{a_i}=\sqrt{\frac{1}{2N}\log{\frac{2T}{\alpha}}}
+#    \epsilon_{a_i}=\sqrt{\frac{1}{2N}\log{\frac{2T}{\alpha}}}.
 #
 # Where :math:`\epsilon_{a_i}` is change between the previous amplitude estimation and current amplitude estimation and :math:`T` defines the maximum number of iterations required to achieve a precision of :math:`\epsilon_{a_i}` and is given by:
 #
