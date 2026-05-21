@@ -14,7 +14,7 @@
   "previewImages": [
     {
       "type": "thumbnail",
-      "uri": "/_static\\demo_thumbnails\\regular_demo_thumbnails\\thumbnail_placeholder.png"
+      "uri": "/_static/demo_thumbnails/regular_demo_thumbnails/thumbnail_placeholder.png"
     }
   ],
   "seoDescription": "Arbitrary rotations are expensive, especially when considering the requirements of fault tolerant archetecture. This demo explores how the catalytic phase gradient state can be used to reduce the cost of rotation.",
