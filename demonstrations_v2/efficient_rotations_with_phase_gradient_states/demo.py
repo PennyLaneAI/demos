@@ -47,7 +47,7 @@ dev = qp.device("default.qubit")
 def circuit_baseline():
   for wire in control_wires:
     qp.Hadamard(wire)
-qp.SelectPauliRot(angles, control_wires, target_wire, rot_axis="Y")
+  qp.SelectPauliRot(angles, control_wires, target_wire, rot_axis="Y")
   return qp.probs(target_wire)
 
 print(qre.estimate(circuit_baseline)())
@@ -102,7 +102,9 @@ print(qre.estimate(circuit_phase_grad)())
 #    :align: center
 #    :width: 80%
 # 
-#
+# Comparing to Other Optimizations
+# --------------------------------
+# 
 # References
 # ----------
 # .. [#Gidney2018] C. Gidney, "Halving the cost of quantum addition," *Quantum*, vol. 2, p. 74, Jun. 2018. https://doi.org/10.22331/q-2018-06-18-74
