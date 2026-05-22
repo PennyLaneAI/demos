@@ -391,7 +391,7 @@ hamiltonian
 #
 # Conclusion
 # ----------
-# The :mod:`spin module <pennylane.qp_spin>` in PennyLane provides
+# The :doc:`qp.spin module <pennylane:code/qp_spin>` in PennyLane provides
 # a set of powerful tools for constructing spin Hamiltonians.
 # Here we learned how to use these tools to construct predefined Hamiltonian templates such as the
 # Fermi–Hubbard Hamiltonian. This can be done with our built-in functions that currently support

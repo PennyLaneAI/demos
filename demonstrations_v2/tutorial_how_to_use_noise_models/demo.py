@@ -9,7 +9,7 @@ r"""How to use noise models in PennyLane
 # state preparation routines, measurements, and more.
 #
 # Here, we show how to use the features provided in PennyLane's :mod:`~.pennylane.noise`
-# module to construct and manipulate noise models, enabling noisy simulation (see the :doc:`noise module documentation </code/qp_noise>` for more details). In PennyLane,
+# module to construct and manipulate noise models, enabling noisy simulation (see the :mod:`noise module documentation <pennylane.qp_noise>` for more details). In PennyLane,
 # noise models are constructed from two main components:
 #
 # 1. Boolean conditions (referred to as *conditionals*) that dictate whether noise is inserted into the circuit.
@@ -222,7 +222,7 @@ print(f"Ideal v/s Noisy: {ideal_res} and {noisy_res}")
 # can be constructed with utmost flexibility as we showed here.
 #
 # Should you have any questions about using noise models in PennyLane, you can consult the
-# :doc:`noise module documentation </code/qp_noise>`,
+# :mod:`noise module documentation <pennylane.qp_noise>`,
 # the PennyLane Codebook module on
 # `Noisy Quantum Theory <https://pennylane.ai/codebook/#06-noisy-quantum-theory>`__
 # on noise, or create a post on the `PennyLane Discussion Forum <https://discuss.pennylane.ai>`__.

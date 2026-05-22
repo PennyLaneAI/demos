@@ -10,7 +10,7 @@ The non-unique nature of these representations allows quantum computing librarie
 different approaches for storing and building Kraus operators to construct noise models. 
 In this how-to guide, we will first compare the construction of noise models in
 `Qiskit <https://docs.quantum.ibm.com/>`_ and
-:doc:`PennyLane </code/qp>`. Then, we will learn how to
+:mod:`PennyLane <pennylane>`. Then, we will learn how to
 convert a Qiskit noise model into an equivalent PennyLane one, allowing users to import any
 custom user-defined or fake backend-based noise models.
 """
@@ -208,7 +208,7 @@ print(pl_noise_model.meas_map)
 # to convert the Qiskit noise model automatically. 💪
 #
 # Should you have any questions about using noise models in PennyLane, you can consult the
-# :doc:`noise module documentation </code/qp_noise>`,
+# :doc:`noise module documentation <pennylane:code/qp_noise>`,
 # the `PennyLane Codebook module on Noisy Quantum Theory
 # <https://pennylane.ai/codebook/#06-noisy-quantum-theory>`_,
 # or create a post on the `PennyLane Discussion Forum <https://discuss.pennylane.ai>`_.
