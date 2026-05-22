@@ -21,7 +21,7 @@ import pennylane.estimator as qre
 # 
 # TGATE GRAPHIC HERE (ANIMATION?)
 #
-# The point? It takes **a lot** of T-gates to do this. Consider, as we will for the rest of this demo, an arbitrary rotation. To execute an 11.71° rotation, for example, a cascade of 45° rotations in the form of T-gates will need to be applied in tandem with Clifford gates to achieve the desired outcome. This can quickly grow to the scale of 100s of T-gates and beyond. This is resource intensive in itself, but when one remembers that the process of magic state distillation involves throwing away any T-gate that accumulates an error, the total cost can become astronomical. So, though it is common in classical algorithms to discuss efficiency in terms of time, quantum algorithms, as they stand, tend to have efficiency benchmarks expressed in terms of T-gate count. These quanities seem to not be completely divorced, however, since high distillation costs equate to a dominant bottleneck courtesy of :math:`|T\rangle` state production [#Gidney2018]. So, do we ensure our algorithms are as efficient as possible? For now, by striving to minimize the amount of T-gates used by (also known as the T-count of) an algorithm.
+# The point? It takes **a lot** of T-gates to do this. Consider, as we will for the rest of this demo, an arbitrary rotation. To execute an 11.71° rotation, for example, a cascade of 45° rotations in the form of T-gates will need to be applied in tandem with Clifford gates to achieve the desired outcome. This can quickly grow to the scale of 100s of T-gates and beyond. This is resource intensive in itself, but when one remembers that the process of magic state distillation involves throwing away any T-gate that accumulates an error, the total cost can become astronomical. So, though it is common in classical algorithms to discuss efficiency in terms of time, quantum algorithms, as they stand, tend to have efficiency benchmarks expressed in terms of T-gate count. These quanities seem to not be completely divorced, however, since high distillation costs equate to a dominant bottleneck courtesy of :math:`|T\rangle` state production [#Gidney2018]_. So, do we ensure our algorithms are as efficient as possible? For now, by striving to minimize the amount of T-gates used by (also known as the T-count of) an algorithm.
 #
 # Efficient Rotations?
 # --------------------
@@ -29,7 +29,7 @@ import pennylane.estimator as qre
 #
 # Let us take the example of binary state loading, which is typically carried out through some method of phase manipulation. For QROM, for example, an :math:`N`-bit binary string can be represented by :math:`n=log_2(N)` qubits in superposition that conditionally undergo a phase shift invoked by a set of gates. To ensure fault tolerange, these rotations should be carried out using distilled T-gates, causing the system to scale as :math:`\mathcal{O}(2Nlog_2(1/\epsilon))`, where :math:`\epsilon` is the desired precision. Yikes.
 #
-# A quick resource estimation in PennyLane for a single pass of this procedure can be carried out using PennyLane and the qre.estimate() tool. Note that, for a :math: n qubit system, SelectPauliRot (a multiplexer) will apply a total of :math`R=2^n` rotations to address each possible binary state. Thus, for a 3 qubit system, 8 rotations will be applied.
+# A quick resource estimation in PennyLane for a single pass of this procedure can be carried out using PennyLane and the qre.estimate() tool. Note that, for a :math: n qubit system, SelectPauliRot (a multiplexer) will apply a total of :math:`R=2^n` rotations to address each possible binary state. Thus, for a 3 qubit system, 8 rotations will be applied.
 # CIRCUIT DIAGRAM
 
 prec = 0.1 #Desired Accuracy
@@ -66,7 +66,7 @@ print(qre.estimate(circuit_baseline)())
 #
 # Here, :math:`b` is the total number of qubits stored in the gradient register and :math:`j` is the index of a specific qubit within the register. 
 #
-# The phase gradient state can basically acts as a conditional rotation operator in itself. What is special, however, is that this state can be prepared once, stored in a register, then *added* to a data register (like the control register we discuessed previously) to induce the desired phase shift via `phase kickback <https://pennylane.ai/codebook/quantum-phase-estimation/catch-the-phase>`_. One can take the term "gradient" literally here; the phase gradient state essentially stores spatially dependent phases that can be applied to input data as a function of qubit position. There are two main takeaways from this, the first being that the phase gradient states only needs to be generated once since its catalytic nature leaves it unchanged after it interacts with the data register, and the second being that the phase shifts are applied by an addition operation rather than multiplication. As a result, the phase gradient method's T-gate count scales by :math:`\mathcal{O}(4Nb))`. 
+# The phase gradient state can basically acts as a conditional rotation operator in itself. What is special, however, is that this state can be prepared once, stored in a register, then *added* to a data register (like the control register we discuessed previously) to induce the desired phase shift via `phase kickback <https://pennylane.ai/codebook/quantum-phase-estimation/catch-the-phase>`_. One can take the term "gradient" literally here; the phase gradient state essentially stores spatially dependent phases that can be applied to input data as a function of qubit position. There are two main takeaways from this, the first being that the phase gradient states only needs to be generated once since its catalytic nature leaves it unchanged after it interacts with the data register, and the second being that the phase shifts are applied by an addition operation rather than multiplication. As a result, the phase gradient method's T-gate count scales by :math:`\mathcal{O}(4(N+b))`. 
 #
 # ADDITION ANIMATION?
 #
@@ -102,9 +102,37 @@ print(qre.estimate(circuit_phase_grad)())
 #    :align: center
 #    :width: 80%
 # 
-# Comparing to Other Optimizations
+# Sizing Up Other Optimizations
 # --------------------------------
+# The importance of carrying out highly efficient rotations has been known to the industry for some time. As a result, the phase gradient approach is not the only gate-synthesis strategy available in the quantum mechanic's toolkit. There are certainly nuances between the applications and each implementation could be demostrated independently, but a full exploration will not be included here.  
+#
 # 
+#
+# Conclusion
+# ----------
+# Understanding of the theory behind phase gradient states and the role they can play in carrying out efficient rotations opens the door to several compilation tools in PennyLane. The `phase gradient page in the compilation hub <https://pennylane.ai/compilation/phase-gradient>`_ is the best place to go to learn more. The tools available can be applied to a plethora of applications, give them a try the next time you are experimenting with `quantum phase estimation <https://pennylane.ai/qml/demos/tutorial_qpe>`_, for example!
+#
+# +----------------------------+--------------------+-----------------------------------------------------+
+# | Algorithm                  | Setup Cost         | Gate Cost Per Rotation                              |
+# +============================+====================+=====================================================+
+# | GridSynth                  | 0                  | :math:`3\log_2(1/\epsilon)` [#Ross2016]_            | 
+# +----------------------------+--------------------+-----------------------------------------------------+
+# | Kliuchnikov                | 0                  | :math:`2\log(1/\epsilon)` [#Kliuchnikov2015]_       | 
+# +----------------------------+--------------------+-----------------------------------------------------+
+# | Phase Gradient             | :math:`4\log_2(1/\ | 4 [#Gidney2018]_                                    |
+# |                            | epsilon)`          |                                                     | 
+# +----------------------------+--------------------+-----------------------------------------------------+
+# | Repeat Until Success (RUS) | 0                  | :math:`2.4\log_2(1/\epsilon)-3.28` [#Paetznick2014]_| 
+# +----------------------------+--------------------+-----------------------------------------------------+
+# | Solovay-Kitaev             | 0                  | :math:`\log^{3.97}(1/\epsilon)` [#Dawson2006]_      | 
+# +----------------------------+--------------------+-----------------------------------------------------+
+#
+# .. _references:
+#
 # References
 # ----------
 # .. [#Gidney2018] C. Gidney, "Halving the cost of quantum addition," *Quantum*, vol. 2, p. 74, Jun. 2018. https://doi.org/10.22331/q-2018-06-18-74
+# .. [#Ross2016] Neil J. Ross and Peter Selinger. "Optimal ancilla-free Clifford+T approximation of z-rotations." *Quantum Information and Computation*, vol. 16, no. 11-12, 2016, pp. 901–953. arXiv:1403.2975 [quant-ph]
+# .. [#Paetznick2014] Adam Paetznick and Krysta M. Svore. "Repeat-Until-Success: Non-deterministic decomposition of single-qubit unitaries." *Quantum Information & Computation*, vol. 14, no. 15-16, 2014, pp. 1277–1301. arXiv:1311.1074 [quant-ph]
+# .. [#Dawson2006] Christopher M. Dawson and Michael A. Nielsen. "The Solovay-Kitaev algorithm." *Quantum Information and Computation*, vol. 6, no. 1, 2006, pp. 81–95. arXiv:quant-ph/0505030
+# .. [#Kliuchnikov2015] Vadym Kliuchnikov, Alex Bocharov, Martin Roetteler, and Jon Yard. "A Framework for Approximating Qubit Unitaries." *arXiv*, 2015. arXiv:1510.03888 [quant-ph]
