@@ -8,7 +8,7 @@ pennylane-catalyst==0.15.*
 
 # Install external packages
 matplotlib==3.10.0
-aiohttp==3.9.5
+aiohttp==3.13.4
 fastapi<1.0.0
 fsspec==2024.6.1
 h5py==3.11.0
