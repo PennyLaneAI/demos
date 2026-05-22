@@ -372,7 +372,7 @@ def qv_circuit_layer(num_qubits):
 ##############################################################################
 #
 # Let's take a look! We'll set up an ideal device with 5 qubits, and generate a
-# circuit with 3 qubits. In this demo, we'll work explicitly with :doc:`quantum tapes </code/qp_tape>` since they
+# circuit with 3 qubits. In this demo, we'll work explicitly with :doc:`quantum tapes <pennylane:code/qp_tape>` since they
 # are not immediately tied to a device. This will be convenient later when we
 # need to run the same random circuit on two devices independently.
 

@@ -107,7 +107,7 @@ print(resources_exec)
 # However, :mod:`estimator <pennylane.estimator>`
 # doesn't require detailed descriptions of Hamiltonians
 # for estimation; instead, we can define 
-# :doc:`resource Hamiltonians </code/qp_estimator>`
+# :mod:`resource Hamiltonians <pennylane.estimator>`
 # which capture the resources required for Hamiltonian simulation
 # without the need to compute costly Hamiltonians.
 #

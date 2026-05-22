@@ -17,7 +17,7 @@ Here we are concerned with kernels that can be evaluated on quantum computers,
 In this tutorial you will learn how to evaluate kernels, use them for classification
 and train them with gradient-based optimization, and all that using the
 functionality of PennyLane's
-:doc:`kernels module </code/qp_kernels>`.
+:doc:`kernels module <pennylane:code/qp_kernels>`.
 The demo is based on Ref. [#Training_QEKs]_, a project from Xanadu's own
 `QHack <https://qhack.ai/>`__ hackathon.
 
@@ -230,7 +230,7 @@ ax = plot_double_cake_data(X, Y, plt.gca(), num_sectors=num_sectors)
 ##############################################################################
 # Defining a Quantum Embedding Kernel
 # -----------------------------------
-# PennyLane's :doc:`kernels module </code/qp_kernels>`
+# PennyLane's :doc:`kernels module <pennylane:code/qp_kernels>`
 # allows for a particularly simple
 # implementation of Quantum Embedding Kernels. The first ingredient we
 # need for this is an *ansatz*, which we will construct by repeating a

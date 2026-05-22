@@ -386,7 +386,7 @@ hamiltonian
 
 ######################################################################
 # You can see that it is easy and intuitive to construct this anisotropic Hamiltonian with the tools
-# available in the :mod:`qp.spin <pennylane.qp_spin>` module. You can
+# available in the :doc:`qp.spin <pennylane:code/qp_spin>` module. You can
 # use these tools to construct custom Hamiltonians for other interesting systems.
 #
 # Conclusion
