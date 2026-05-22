@@ -149,8 +149,8 @@ kitaev_H = qre.PauliHamiltonian(
 
 ######################################################################
 # Similarly, we can then use existing resource
-# `operators <https://docs.pennylane.ai/en/stable/code/qml_estimator.html#id1>`__ and
-# `templates <https://docs.pennylane.ai/en/stable/code/qml_estimator.html#resource-templates>`__
+# `operators <https://docs.pennylane.ai/en/stable/code/qp_estimator.html#id1>`__ and
+# `templates <https://docs.pennylane.ai/en/stable/code/qp_estimator.html#resource-templates>`__
 # from the :mod:`estimator <pennylane.estimator>` module to express our circuit.
 # These
 # :class:`ResourceOperator <pennylane.estimator.resource_operator.ResourceOperator>`
