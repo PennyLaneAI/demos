@@ -21,7 +21,7 @@ and more. And you can also already explore some of these models in detail using 
 # Hamiltonian templates
 # ---------------------
 # PennyLane provides a set of built-in
-# :doc:`functions <pennylane:code/qp_spin>`
+# `functions <https://docs.pennylane.ai/en/latest/code/qp_spin.html#hamiltonian-functions>`__
 # in the :doc:`qp.spin <pennylane:code/qp_spin>` module for
 # constructing spin Hamiltonians with minimal input needed from the user: we only need to specify
 # the lattice that describes spin sites and the parameters that describe the interactions in our
