@@ -40,11 +40,11 @@ We will break the implementation into three steps:
 #
 # The first step is to specify the molecule we want to simulate. We can download the :math:`H_3^+`
 # Hamiltonian from the `PennyLane Datasets
-# service <https://pennylane.ai/datasets/qchem/h3-plus-molecule>`__:
+# service <https://pennylane.ai/datasets/h3-cation>`__:
 #
 
 import pennylane as qp
-import numpy as np
+from pennylane import numpy as np
 import warnings
 
 warnings.filterwarnings(action="ignore", category=UserWarning)
@@ -84,7 +84,7 @@ def cost(params):
 # :class:`~pennylane.GradientDescentOptimizer` to optimize the circuit.
 #
 
-init_params = np.array([0.0, 0.0])
+init_params = np.array([0.0, 0.0], requires_grad=True)
 opt = qp.GradientDescentOptimizer(stepsize=0.4)
 steps = 10
 
