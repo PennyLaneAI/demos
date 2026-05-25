@@ -40,7 +40,7 @@ We will break the implementation into three steps:
 #
 # The first step is to specify the molecule we want to simulate. We can download the :math:`H_3^+`
 # Hamiltonian from the `PennyLane Datasets
-# service <https://pennylane.ai/datasets/qchem/h3-plus-molecule>`__:
+# service <https://pennylane.ai/datasets/h3-cation>`__:
 #
 
 import pennylane as qp
