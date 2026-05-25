@@ -1,2 +1,2 @@
 pennylane-qrack
-pyqrack
+pyqrack==1.32.12
