@@ -138,6 +138,8 @@ plt.bar(counts.keys(), counts.values())
 plt.title(f"QFT on {qubits} Qubits with Random Eigenstate Init. (8 samples)")
 plt.xlabel("|x⟩")
 plt.ylabel("counts")
+plt.xticks(rotation=45, ha="right", fontsize=8)
+plt.tight_layout()
 plt.show()
 
 ##############################################################################
@@ -174,6 +176,8 @@ plt.bar(counts.keys(), counts.values())
 plt.title(f"QFT on {qubits} Qubits with Random U3 Init. (8 samples)")
 plt.xlabel("|x⟩")
 plt.ylabel("counts")
+plt.xticks(rotation=45, ha="right", fontsize=8)
+plt.tight_layout()
 plt.show()
 
 ##############################################################################
@@ -209,6 +213,8 @@ plt.bar(counts.keys(), counts.values())
 plt.title(f"{qubits}-Qubit GHZ preparation (8 samples)")
 plt.xlabel("|x⟩")
 plt.ylabel("counts")
+plt.xticks(rotation=45, ha="right", fontsize=8)
+plt.tight_layout()
 plt.show()
 
 ##############################################################################
@@ -243,6 +249,8 @@ plt.bar(counts.keys(), counts.values())
 plt.title(f"{qubits}-Qubit GHZ preparation (8 samples)")
 plt.xlabel("|x⟩")
 plt.ylabel("counts")
+plt.xticks(rotation=45, ha="right", fontsize=8)
+plt.tight_layout()
 plt.show()
 
 ##############################################################################
@@ -304,6 +312,8 @@ plt.bar(results.keys(), results.values(), color=bar_colors)
 plt.title("Performance comparison, QFT with U3 initialization (1 sample apiece)")
 plt.xlabel("|x⟩")
 plt.ylabel("Nanoseconds")
+plt.xticks(rotation=45, ha="right", fontsize=8)
+plt.tight_layout()
 plt.show()
 
 ##############################################################################
@@ -366,6 +376,8 @@ plt.bar(results.keys(), results.values(), color=bar_colors)
 plt.title("Performance comparison, QFT with U3 initialization (1 sample apiece)")
 plt.xlabel("|x⟩")
 plt.ylabel("Nanoseconds")
+plt.xticks(rotation=45, ha="right", fontsize=8)
+plt.tight_layout()
 plt.show()
 
 ##############################################################################
