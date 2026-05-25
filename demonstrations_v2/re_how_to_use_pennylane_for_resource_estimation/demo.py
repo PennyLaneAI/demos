@@ -107,7 +107,7 @@ print(resources_exec)
 # However, :mod:`estimator <pennylane.estimator>`
 # doesn't require detailed descriptions of Hamiltonians
 # for estimation; instead, we can define 
-# `resource Hamiltonians <https://docs.pennylane.ai/en/stable/code/qml_estimator.html#resource-hamiltonians>`__
+# :mod:`resource Hamiltonians <pennylane.estimator>`
 # which capture the resources required for Hamiltonian simulation
 # without the need to compute costly Hamiltonians.
 #
@@ -149,8 +149,8 @@ kitaev_H = qre.PauliHamiltonian(
 
 ######################################################################
 # Similarly, we can then use existing resource
-# `operators <https://docs.pennylane.ai/en/stable/code/qml_estimator.html#id1>`__ and
-# `templates <https://docs.pennylane.ai/en/stable/code/qml_estimator.html#resource-templates>`__
+# `operators <https://docs.pennylane.ai/en/stable/code/qp_estimator.html#id1>`__ and
+# `templates <https://docs.pennylane.ai/en/stable/code/qp_estimator.html#resource-templates>`__
 # from the :mod:`estimator <pennylane.estimator>` module to express our circuit.
 # These
 # :class:`ResourceOperator <pennylane.estimator.resource_operator.ResourceOperator>`
