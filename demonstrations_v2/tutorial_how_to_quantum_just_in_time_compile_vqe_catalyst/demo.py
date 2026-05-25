@@ -44,7 +44,7 @@ We will break the implementation into three steps:
 #
 
 import pennylane as qp
-import numpy as np
+from pennylane import numpy as np
 import warnings
 
 warnings.filterwarnings(action="ignore", category=UserWarning)
@@ -84,7 +84,7 @@ def cost(params):
 # :class:`~pennylane.GradientDescentOptimizer` to optimize the circuit.
 #
 
-init_params = np.array([0.0, 0.0])
+init_params = np.array([0.0, 0.0], requires_grad=True)
 opt = qp.GradientDescentOptimizer(stepsize=0.4)
 steps = 10
 
