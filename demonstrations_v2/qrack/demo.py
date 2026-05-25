@@ -141,12 +141,6 @@ plt.ylabel("counts")
 plt.show()
 
 ##############################################################################
-# .. figure:: ../_static/demonstration_assets/qrack/fig1.png
-#     :align: center
-#     :width: 90%
-#     :target: javascript:void(0);
-
-##############################################################################
 # In this image we have represented only 8 measurement samples so we can visualize the result more easily.
 #
 # This becomes harder if we request a non-trivial initialization. In general, Qrack will use
@@ -181,12 +175,6 @@ plt.title(f"QFT on {qubits} Qubits with Random U3 Init. (8 samples)")
 plt.xlabel("|x⟩")
 plt.ylabel("counts")
 plt.show()
-
-##############################################################################
-# .. figure:: ../_static/demonstration_assets/qrack/fig2.png
-#     :align: center
-#     :width: 90%
-#     :target: javascript:void(0);
 
 ##############################################################################
 # Alternate simulation algorithms (QBDD and near-Clifford)
@@ -224,12 +212,6 @@ plt.ylabel("counts")
 plt.show()
 
 ##############################################################################
-# .. figure:: ../_static/demonstration_assets/qrack/fig3.png
-#     :align: center
-#     :width: 90%
-#     :target: javascript:void(0);
-
-##############################################################################
 # As you can see, Qrack was able to construct the 60-qubit GHZ state (without
 # exceeding memory limitations), and the probability is peaked at bit strings of all 0 and all 1.
 #
@@ -262,12 +244,6 @@ plt.title(f"{qubits}-Qubit GHZ preparation (8 samples)")
 plt.xlabel("|x⟩")
 plt.ylabel("counts")
 plt.show()
-
-##############################################################################
-# .. figure:: ../_static/demonstration_assets/qrack/fig4.png
-#     :align: center
-#     :width: 90%
-#     :target: javascript:void(0);
 
 ##############################################################################
 # If your gate set is restricted to Clifford with general :class:`~pennylane.RZ` gates
@@ -331,12 +307,6 @@ plt.ylabel("Nanoseconds")
 plt.show()
 
 ##############################################################################
-# .. figure:: ../_static/demonstration_assets/qrack/fig5.png
-#     :align: center
-#     :width: 90%
-#     :target: javascript:void(0);
-
-##############################################################################
 # Benchmarks will differ somewhat when running this code on your local machine, for example,
 # but we tend to see that Qrack manages to demonstrate good performance compared to the
 # `Lightning simulators <https://docs.pennylane.ai/projects/lightning>`__ on this task case.
@@ -397,12 +367,6 @@ plt.title("Performance comparison, QFT with U3 initialization (1 sample apiece)"
 plt.xlabel("|x⟩")
 plt.ylabel("Nanoseconds")
 plt.show()
-
-##############################################################################
-# .. figure:: ../_static/demonstration_assets/qrack/fig6.png
-#     :align: center
-#     :width: 90%
-#     :target: javascript:void(0);
 
 ##############################################################################
 # Again, your mileage may vary somewhat, depending on your local system, but Qrack tends
