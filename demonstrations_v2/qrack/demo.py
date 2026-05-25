@@ -99,6 +99,7 @@ from pennylane import numpy as np
 from catalyst import qjit
 
 import matplotlib.pyplot as plt
+plt.rcParams["figure.dpi"] = 150
 
 import random
 
