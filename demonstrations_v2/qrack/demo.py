@@ -410,13 +410,6 @@ def validate(n):
 print("Qrack cross entropy with Lightning:", validate(12), "out of 1.0")
 
 ##############################################################################
-# .. rst-class:: sphx-glr-script-out
-#
-#  .. code-block:: none
-#
-#       Qrack cross entropy with Lightning: 0.9999997797266185 out of 1.0
-
-##############################################################################
 # Conclusion
 # ----------
 # In this tutorial, we've demonstrated the basics of using the `Qrack <https://github.com/unitaryfund/qrack>`__
