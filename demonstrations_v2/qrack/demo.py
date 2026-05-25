@@ -194,7 +194,9 @@ qubits = 60
 dev = qp.device(
     "qrack.simulator",
     qubits,
-    is_near_clifford_tableau_writer=True
+    isBinaryDecisionTree=False,
+    isStabilizerHybrid=True,
+    isSchmidtDecompose=False,
 )
 
 @qjit
@@ -230,7 +232,7 @@ plt.show()
 
 qubits = 24
 dev = qp.device(
-    "qrack.simulator", qubits, is_binary_decision_tree=True
+    "qrack.simulator", qubits, isBinaryDecisionTree=True, isStabilizerHybrid=False
 )
 
 @qjit
