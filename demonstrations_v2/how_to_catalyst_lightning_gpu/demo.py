@@ -72,7 +72,7 @@ to highlight Catalyst with Lightning-GPU features.
 #
 # .. code-block:: python
 #
-#     import pennylane as qml
+#     import pennylane as qp
 #     import jax.numpy as jnp
 #
 #     import jax
@@ -83,19 +83,19 @@ to highlight Catalyst with Lightning-GPU features.
 #     # Set a random seed
 #     key = jax.random.PRNGKey(0)
 #
-#     dev = qml.device("lightning.gpu", wires=num_wires)
+#     dev = qp.device("lightning.gpu", wires=num_wires)
 #
-#     @qml.qjit(autograph=True)
-#     @qml.qnode(dev)
+#     @qp.qjit(autograph=True)
+#     @qp.qnode(dev)
 #     def circuit(params):
 #
 #         # Apply layers of RZ and RY rotations
 #         for i in range(num_wires):
-#             qml.RZ(params[3*i], wires=[i])
-#             qml.RY(params[3*i+1], wires=[i])
-#             qml.RZ(params[3*i+2], wires=[i])
+#             qp.RZ(params[3*i], wires=[i])
+#             qp.RY(params[3*i+1], wires=[i])
+#             qp.RZ(params[3*i+2], wires=[i])
 #
-#         return qml.expval(qml.PauliZ(0) + qml.PauliZ(num_wires-1))
+#         return qp.expval(qp.PauliZ(0) + qp.PauliZ(num_wires-1))
 #
 #     # Initialize the weights
 #     weights = jax.random.uniform(key, shape=(3 * num_wires,), dtype=jnp.float32)
@@ -129,9 +129,9 @@ to highlight Catalyst with Lightning-GPU features.
 #
 # .. code-block:: python
 #
-#     @qml.qjit(autograph=True)
+#     @qp.qjit(autograph=True)
 #     def workflow(params):
-#         g = qml.grad(circuit)
+#         g = qp.grad(circuit)
 #         return g(params)
 #
 #     >>> workflow(weights)
@@ -171,10 +171,10 @@ to highlight Catalyst with Lightning-GPU features.
 #         catalyst.debug.print("Step = {i}", i=i)
 #         return (params, opt_state)
 #
-#     @qml.qjit
+#     @qp.qjit
 #     def optimization(params):
 #         opt_state = opt.init(params)
-#         (params, opt_state) = qml.for_loop(0, 10, 1)(update_step)(params, opt_state)
+#         (params, opt_state) = qp.for_loop(0, 10, 1)(update_step)(params, opt_state)
 #         return params
 #
 #     >>> optimization(weights)

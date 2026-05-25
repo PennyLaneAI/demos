@@ -25,7 +25,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Get changed demos
         id: get-changed-demos
@@ -73,38 +73,8 @@ jobs:
           EOL
 
       - name: Upload Pull Request Event Context as Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: deployment_build_context
           path: /tmp/merge
           retention-days: 30
-
-  # Step 4: Build and upload the updated objects.inv files
-  build-objects-inv-file-dev:
-    if: ${{ needs.identify-changed-demos.outputs.updated != '' && github.ref_name == 'dev' }}
-    uses: ./.github/workflows/v2-sync-objects-dot-inv.yml
-    needs:
-      - identify-changed-demos
-    with:
-      branch: ${{ github.ref }}
-      dev: true
-
-    secrets:
-      aws_region: ${{ secrets.AWS_REGION }}
-      aws_access_key_id: ${{ secrets.PL_SITE_DEV_NON_REACT_ACCESS_KEY_ID }}
-      aws_secret_access_key: ${{ secrets.PL_SITE_DEV_NON_REACT_SECRET_ACCESS_KEY }}
-      aws_html_s3_bucket_id: ${{ secrets.PL_SITE_DEV_S3_BUCKET_NAME }}
-
-  build-objects-inv-file-master:
-    if: ${{ needs.identify-changed-demos.outputs.updated != '' && github.ref_name == 'master' }}
-    uses: ./.github/workflows/v2-sync-objects-dot-inv.yml
-    needs:
-      - identify-changed-demos
-    with:
-      branch: ${{ github.ref }}
-
-    secrets:
-      aws_region: ${{ secrets.AWS_REGION }}
-      aws_access_key_id: ${{ secrets.PL_SITE_PROD_NON_REACT_ACCESS_KEY_ID }}
-      aws_secret_access_key: ${{ secrets.PL_SITE_PROD_NON_REACT_SECRET_ACCESS_KEY }}
-      aws_html_s3_bucket_id: ${{ secrets.PL_SITE_PROD_S3_BUCKET_NAME }}

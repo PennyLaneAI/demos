@@ -571,24 +571,24 @@ for i in range(len(Ms)):
 # Let us run a VQE example from using the `PennyLane Datasets <https://pennylane.ai/datasets/>`__ data for the :math:`H_6` molecule. What you will see here is mostly boilerplate code in PennyLane for using ``default.tensor`,` and you can
 # see our :doc:`demo on how to use default.tensor <demos/tutorial_How_to_simulate_quantum_circuits_with_tensor_networks/>` for more details.
 
-import pennylane as qml
+import pennylane as qp
 
-[dataset] = qml.data.load("qchem", molname="H6", bondlength=1.3, basis="STO-3G")
+[dataset] = qp.data.load("qchem", molname="H6", bondlength=1.3, basis="STO-3G")
 
 H = dataset.hamiltonian # molecular Hamiltonian in qubit basis
 n_wires = len(H.wires)  # number of qubits
 
 def circuit():
-    qml.BasisState(dataset.hf_state, wires=H.wires) # Hartree–Fock initial state
+    qp.BasisState(dataset.hf_state, wires=H.wires) # Hartree–Fock initial state
     for op in dataset.vqe_gates:                    # Applying all pre-optimized VQE gates
-        qml.apply(op)               
-    return qml.expval(H)                            # expectation value of molecular Hamiltonian
+        qp.apply(op)               
+    return qp.expval(H)                            # expectation value of molecular Hamiltonian
 
 # set up device with hyper-parameters and kwargs
-mps = qml.device("default.tensor", wires=n_wires, method="mps", max_bond_dim=30, contract="auto-mps")
+mps = qp.device("default.tensor", wires=n_wires, method="mps", max_bond_dim=30, contract="auto-mps")
 
 # Create the QNode to execute the circuit on the device, and call it (w/o arguments)
-res = qml.QNode(circuit, mps)()
+res = qp.QNode(circuit, mps)()
 
 # Compare MPS simulation result with pre-optimized state-vector result
 res, dataset.vqe_energy
@@ -611,8 +611,8 @@ bond_dims = 2**np.arange(2, (n_wires//2)+1) # maximum required bond dimension is
 ress = []
 
 for bond_dim in bond_dims:
-    mps = qml.device("default.tensor", wires=n_wires, method="mps", max_bond_dim=bond_dim, contract="auto-mps")
-    res = qml.QNode(circuit, mps)()
+    mps = qp.device("default.tensor", wires=n_wires, method="mps", max_bond_dim=bond_dim, contract="auto-mps")
+    res = qp.QNode(circuit, mps)()
     ress.append(res)
 
 

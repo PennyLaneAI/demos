@@ -172,7 +172,7 @@ equally likely to be sampled).
 
 """
 
-import pennylane as qml
+import pennylane as qp
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -180,14 +180,14 @@ import matplotlib.pyplot as plt
 np.random.seed(42)
 
 # Use the mixed state simulator to save some steps in plotting later
-dev = qml.device('default.mixed', wires=1)
+dev = qp.device('default.mixed', wires=1)
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def not_a_haar_random_unitary():
     # Sample all parameters from their flat uniform distribution
     phi, theta, omega = 2 * np.pi * np.random.uniform(size=3)
-    qml.Rot(phi, theta, omega, wires=0)
-    return qml.state()
+    qp.Rot(phi, theta, omega, wires=0)
+    return qp.state()
 
 num_samples = 2021
 
@@ -275,12 +275,12 @@ class sin_prob_dist(rv_continuous):
 # Samples of theta should be drawn from between 0 and pi
 sin_sampler = sin_prob_dist(a=0, b=np.pi)
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def haar_random_unitary():
     phi, omega = 2 * np.pi * np.random.uniform(size=2) # Sample phi and omega as normal
     theta = sin_sampler.rvs(size=1)[0]  # Sample theta from our new distribution
-    qml.Rot(phi, theta, omega, wires=0)
-    return qml.state()
+    qp.Rot(phi, theta, omega, wires=0)
+    return qp.state()
 
 haar_samples = [haar_random_unitary() for _ in range(num_samples)]
 haar_bloch_vectors = np.array([convert_to_bloch_vector(s) for s in haar_samples])
@@ -524,10 +524,10 @@ def qr_haar(N):
 # by trying it out for :math:`N=2` and plotting on the Bloch sphere.
 #
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def qr_haar_random_unitary():
-    qml.QubitUnitary(qr_haar(2), wires=0)
-    return qml.state()
+    qp.QubitUnitary(qr_haar(2), wires=0)
+    return qp.state()
 
 qr_haar_samples = [qr_haar_random_unitary() for _ in range(num_samples)]
 qr_haar_bloch_vectors = np.array([convert_to_bloch_vector(s) for s in qr_haar_samples])

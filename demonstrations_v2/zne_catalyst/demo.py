@@ -96,7 +96,7 @@ the noise scaling method, and the extrapolation method. The rest is taken care o
 # equal to 1.
 
 import numpy as np
-import pennylane as qml
+import pennylane as qp
 from catalyst import mitigate_with_zne
 
 import warnings
@@ -108,21 +108,21 @@ n_wires = 3
 np.random.seed(42)
 
 n_layers = 5
-template = qml.SimplifiedTwoDesign
+template = qp.SimplifiedTwoDesign
 weights_shape = template.shape(n_layers, n_wires)
 w1, w2 = [2 * np.pi * np.random.random(s) for s in weights_shape]
 
 def circuit(w1, w2):
     template(w1, w2, wires=range(n_wires))
-    qml.adjoint(template)(w1, w2, wires=range(n_wires))
-    return qml.expval(qml.PauliZ(0))
+    qp.adjoint(template)(w1, w2, wires=range(n_wires))
+    return qp.expval(qp.PauliZ(0))
 
 ##############################################################################
 # As a sanity check, we first execute the circuit on the Qrack simulator without any noise.
 
-noiseless_device = qml.device("qrack.simulator", n_wires, noise=0)
+noiseless_device = qp.device("qrack.simulator", n_wires, noise=0)
 
-ideal_value = qml.QNode(circuit, device=noiseless_device)(w1, w2)
+ideal_value = qp.QNode(circuit, device=noiseless_device)(w1, w2)
 print(f"Ideal value: {ideal_value}")
 
 ##############################################################################
@@ -136,9 +136,9 @@ print(f"Ideal value: {ideal_value}")
 # The probability of error is specified by the value of the ``noise`` constructor argument.
 
 NOISE_LEVEL = 0.01
-noisy_device = qml.device("qrack.simulator", n_wires, shots=1000, noise=NOISE_LEVEL)
+noisy_device = qp.device("qrack.simulator", n_wires, shots=1000, noise=NOISE_LEVEL)
 
-noisy_qnode = qml.QNode(circuit, device=noisy_device, mcm_method="one-shot")
+noisy_qnode = qp.QNode(circuit, device=noisy_device, mcm_method="one-shot")
 noisy_value = noisy_qnode(w1, w2)
 print(f"Error without mitigation: {abs(ideal_value - noisy_value):.3f}")
 
@@ -166,7 +166,7 @@ scale_factors = [1, 3, 5]
 
 ##############################################################################
 # Finally, we'll choose the extrapolation technique. Both exponential and polynomial extrapolation
-# is available in the :mod:`qml.noise <pennylane.noise>` module, and both of these functions can be passed directly
+# is available in the :mod:`qp.noise <pennylane.noise>` module, and both of these functions can be passed directly
 # into Catalyst's :func:`catalyst.mitigate_with_zne` function. In this tutorial we use polynomial extrapolation,
 # which we hypothesize best models the behavior of the noise scenario we are considering.
 
@@ -180,7 +180,7 @@ extrapolation_method = partial(poly_extrapolate, order=2)
 # to define a very simple :func:`~.QNode`, which represents the mitigated version of the original circuit.
 
 
-@qml.qjit
+@qp.qjit
 def mitigated_circuit_qjit(w1, w2):
     return mitigate_with_zne(
         noisy_qnode,
@@ -209,11 +209,11 @@ print(f"Error with ZNE in Catalyst: {abs(ideal_value - zne_value):.3f}")
 
 
 def mitigated_circuit(w1, w2):
-    return qml.noise.mitigate_with_zne(
+    return qp.noise.mitigate_with_zne(
         noisy_qnode,
         scale_factors=scale_factors,
         extrapolate=extrapolation_method,
-        folding=qml.noise.fold_global,
+        folding=qp.noise.fold_global,
     )(w1, w2)
 
 
@@ -230,10 +230,10 @@ print(f"Error with ZNE in PennyLane: {abs(ideal_value - zne_value):.3f}")
 # reduce the running time of this tutorial, while still showcasing the performance differences.  
 import timeit
 
-noisy_device = qml.device("qrack.simulator", n_wires, shots=100, noise=NOISE_LEVEL)
-noisy_qnode = qml.QNode(circuit, device=noisy_device, mcm_method="one-shot")
+noisy_device = qp.device("qrack.simulator", n_wires, shots=100, noise=NOISE_LEVEL)
+noisy_qnode = qp.QNode(circuit, device=noisy_device, mcm_method="one-shot")
 
-@qml.qjit
+@qp.qjit
 def mitigated_circuit_qjit(w1, w2):
     return mitigate_with_zne(
         noisy_qnode,

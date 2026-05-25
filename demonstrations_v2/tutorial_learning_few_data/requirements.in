@@ -1,6 +1,3 @@
-jax
-jaxlib
-optax
 pandas
 seaborn==0.13.2
 scikit-learn

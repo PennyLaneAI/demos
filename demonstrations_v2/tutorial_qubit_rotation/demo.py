@@ -86,7 +86,7 @@ and :math:`-1` (if :math:`\left|\psi\right\rangle = \left|1\right\rangle`).
 # The first thing we need to do is import PennyLane, as well as the wrapped version
 # of NumPy provided by Jax.
 
-import pennylane as qml
+import pennylane as qp
 from jax import numpy as np
 import jax
 
@@ -118,7 +118,7 @@ import jax
 # For this tutorial, we are using the qubit model, so let's initialize the ``'lightning.qubit'`` device
 # provided by PennyLane.
 
-dev1 = qml.device("lightning.qubit", wires=1)
+dev1 = qp.device("lightning.qubit", wires=1)
 
 ##############################################################################
 # For all devices, :func:`~.pennylane.device` accepts the following arguments:
@@ -152,9 +152,9 @@ dev1 = qml.device("lightning.qubit", wires=1)
 
 
 def circuit(params):
-    qml.RX(params[0], wires=0)
-    qml.RY(params[1], wires=0)
-    return qml.expval(qml.PauliZ(0))
+    qp.RX(params[0], wires=0)
+    qp.RY(params[1], wires=0)
+    return qp.expval(qp.PauliZ(0))
 
 
 ##############################################################################
@@ -195,11 +195,11 @@ def circuit(params):
 # **directly above** the function definition:
 
 
-@qml.qnode(dev1)
+@qp.qnode(dev1)
 def circuit(params):
-    qml.RX(params[0], wires=0)
-    qml.RY(params[1], wires=0)
-    return qml.expval(qml.PauliZ(0))
+    qp.RX(params[0], wires=0)
+    qp.RY(params[1], wires=0)
+    return qp.expval(qp.PauliZ(0))
 
 
 ##############################################################################
@@ -248,11 +248,11 @@ print(dcircuit(params))
 # two positional arguments, instead of one array argument:
 
 
-@qml.qnode(dev1)
+@qp.qnode(dev1)
 def circuit2(phi1, phi2):
-    qml.RX(phi1, wires=0)
-    qml.RY(phi2, wires=0)
-    return qml.expval(qml.PauliZ(0))
+    qp.RX(phi1, wires=0)
+    qp.RY(phi2, wires=0)
+    return qp.expval(qp.PauliZ(0))
 
 
 ################################################################################
@@ -281,16 +281,17 @@ print(dcircuit(phi1, phi2))
 # .. admonition:: Definition
 #     :class: defn
 #
-#     If using the default NumPy/Autograd interface, PennyLane provides a collection
-#     of optimizers based on gradient descent. These optimizers accept a cost function
-#     and initial parameters, and utilize PennyLane's automatic differentiation
-#     to perform gradient descent.
+#     PennyLane offers a powerful and flexible interface for gradient-based optimization.
+#     When using the JAX interface, we can leverage any JAX-compatible optimizer,
+#     such as those provided by `Optax <https://optax.readthedocs.io/en/latest/>`_ or
+#     `JAXopt <https://jaxopt.github.io/stable/>`_, to optimize our hybrid quantum-classical
+#     cost functions.
 #
 # .. tip::
 #
 #    *See* :doc:`introduction/interfaces` *for details and documentation of available optimizers*
 #
-# Next, let's make use of PennyLane's built-in optimizers to optimize the two circuit
+# Next, let's make use of a JAX-compatible optimizer to optimize the two circuit
 # parameters :math:`\phi_1` and :math:`\phi_2` such that the qubit, originally in state
 # :math:`\left|0\right\rangle,` is rotated to be in state :math:`\left|1\right\rangle.` This is equivalent to measuring a
 # Pauli-Z expectation value of :math:`-1,` since the state :math:`\left|1\right\rangle` is an eigenvector
@@ -326,7 +327,7 @@ print(cost(init_params))
 # We can see that, for these initial parameter values, the cost function is close to :math:`1.`
 #
 # Finally, we use an optimizer to update the circuit parameters for 100 steps. We can use the
-# gradient descent optimizer:
+# gradient descent optimizer provided by `JAXopt <https://jaxopt.github.io/stable/>`_:
 
 import jaxopt
 
@@ -356,11 +357,7 @@ print("Optimized rotation angles: {}".format(params))
 # produces :math:`\langle \psi \mid \sigma_z \mid \psi \rangle=-1,` resulting in the qubit being rotated
 # to the state :math:`\left|1\right\rangle.`
 #
-# .. note::
-#
-#     Some optimizers, such as :class:`~.pennylane.AdagradOptimizer`, have
-#     internal hyperparameters that are stored in the optimizer instance. These can
-#     be reset using the :meth:`reset` method.
+
 #
 # Continue on to the next tutorial, :doc:`gaussian transformation <demos/tutorial_gaussian_transformation>`, to see a similar example using
 # continuous-variable (CV) quantum nodes.

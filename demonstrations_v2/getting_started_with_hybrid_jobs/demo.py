@@ -52,7 +52,8 @@ Let’s setup an algorithm that makes use of both classical and quantum resource
 
 .. warning::
 
-    The following demo is only compatible with Python version 3.10.
+    The following demo is only compatible with Python version 3.10. Consequently, the latest supported PennyLane
+    version is ``pennylane==0.42``.
 
 """
 
@@ -61,20 +62,10 @@ Let’s setup an algorithm that makes use of both classical and quantum resource
 # local simulator before moving onto a QPU.
 #
 
-import pennylane as qml
+import pennylane as qp
 from pennylane import numpy as np
 
-
-device = qml.device("braket.local.qubit", wires=1)
-
-##############################################################################
-# .. rst-class:: sphx-glr-script-out
-#
-#  .. code-block:: none
-#
-#       pennylane/__init__.py:200: PennyLaneDeprecationWarning: pennylane.QuantumFunctionError is no longer accessible at top-level
-#       and must be imported as pennylane.exceptions.QuantumFunctionError. Support for top-level access will be removed in v0.43.
-#         warnings.warn(
+device = qp.device("braket.local.qubit", wires=1)
 
 ######################################################################
 # Now we define a circuit with two rotation gates and measure the expectation value in the
@@ -82,11 +73,11 @@ device = qml.device("braket.local.qubit", wires=1)
 #
 
 
-@qml.qnode(device)
+@qp.qnode(device)
 def circuit(params):
-    qml.RX(params[0], wires=0)
-    qml.RY(params[1], wires=0)
-    return qml.expval(qml.PauliZ(0))
+    qp.RX(params[0], wires=0)
+    qp.RY(params[1], wires=0)
+    return qp.expval(qp.PauliZ(0))
 
 
 ######################################################################
@@ -103,7 +94,7 @@ from braket.jobs.metrics import log_metric
 
 
 def qubit_rotation(num_steps=10, stepsize=0.5):
-    opt = qml.GradientDescentOptimizer(stepsize=stepsize)
+    opt = qp.GradientDescentOptimizer(stepsize=stepsize)
     params = np.array([0.5, 0.75])
 
     for i in range(num_steps):
@@ -178,15 +169,15 @@ from braket.jobs import hybrid_job
 
 @hybrid_job(device="local:pennylane/lightning.qubit")
 def qubit_rotation_hybrid_job(num_steps=1, stepsize=0.5):
-    device = qml.device("lightning.qubit", wires=1)
+    device = qp.device("lightning.qubit", wires=1)
 
-    @qml.qnode(device)
+    @qp.qnode(device)
     def circuit(params):
-        qml.RX(params[0], wires=0)
-        qml.RY(params[1], wires=0)
-        return qml.expval(qml.PauliZ(0))
+        qp.RX(params[0], wires=0)
+        qp.RY(params[1], wires=0)
+        return qp.expval(qp.PauliZ(0))
 
-    opt = qml.GradientDescentOptimizer(stepsize=stepsize)
+    opt = qp.GradientDescentOptimizer(stepsize=stepsize)
     params = np.array([0.5, 0.75])
 
     for i in range(num_steps):
@@ -272,8 +263,8 @@ while len(job.metrics()) == 0:
     pass
 
 
-import pandas as pd
 import matplotlib.pyplot as plt
+import pandas as pd
 from braket.jobs.metrics_data.definitions import MetricType
 
 df = pd.DataFrame(job.metrics(metric_type=MetricType.ITERATION_NUMBER))
@@ -342,19 +333,20 @@ device_arn = Devices.Rigetti.AspenM3
 @hybrid_job(device=device_arn)  # set priority QPU
 def qpu_qubit_rotation_hybrid_job(num_steps=10, stepsize=0.5):
     # AWS devices must be declared within the decorated function.
-    device = qml.device(
+    device = qp.device(
         "braket.aws.qubit",
         device_arn=device_arn.value,  # Make sure the device ARN matches the hybrid job device ARN
-        wires=2)
+        wires=2,
+    )
 
-    @qml.set_shots(1_000)
-    @qml.qnode(device)
+    @qp.set_shots(1_000)
+    @qp.qnode(device)
     def circuit(params):
-        qml.RX(params[0], wires=0)
-        qml.RY(params[1], wires=0)
-        return qml.expval(qml.PauliZ(0))
+        qp.RX(params[0], wires=0)
+        qp.RY(params[1], wires=0)
+        return qp.expval(qp.PauliZ(0))
 
-    opt = qml.GradientDescentOptimizer(stepsize=stepsize)
+    opt = qp.GradientDescentOptimizer(stepsize=stepsize)
     params = np.array([0.5, 0.75])
 
     for i in range(num_steps):

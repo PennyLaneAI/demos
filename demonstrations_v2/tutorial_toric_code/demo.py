@@ -112,7 +112,7 @@ the same as a site at ``(x+width, y+height)``.
 On to some practical coding! First, let's define the sites on a :math:`4\times 6` lattice.
 """
 
-import pennylane as qml
+import pennylane as qp
 import matplotlib.pyplot as plt
 from matplotlib.patches import Polygon, Patch
 from itertools import product
@@ -170,7 +170,7 @@ for x, y in product(range(width // 2), range(height)):
 
     sites = [(x0, y), (x0 + 1, y), (x0 + 1, y + 1), (x0, y + 1)]
 
-    op = qml.prod(*(qml.PauliZ(mod(s)) for s in sites))
+    op = qp.prod(*(qp.PauliZ(mod(s)) for s in sites))
 
     zgroup_sites.append(sites)
     zgroup_ops.append(op)
@@ -196,7 +196,7 @@ for x, y in product(range(width // 2), range(height)):
     if x == 2 and y == 1:  # change order for state prep later
         sites = sites[1:] + sites[0:1]
 
-    op = qml.prod(*(qml.PauliX(mod(s)) for s in sites))
+    op = qp.prod(*(qp.PauliX(mod(s)) for s in sites))
 
     xgroup_sites.append(sites)
     xgroup_ops.append(op)
@@ -306,18 +306,18 @@ plt.show()
 # Now let’s actually put these together into a circuit!
 #
 
-dev = qml.device("lightning.qubit", wires=[Wire(*s) for s in all_sites])
+dev = qp.device("lightning.qubit", wires=[Wire(*s) for s in all_sites])
 
 def state_prep():
     for op in xgroup_ops[0:-1]:
-        qml.Hadamard(op.wires[0])
+        qp.Hadamard(op.wires[0])
         for w in op.wires[1:]:
-            qml.CNOT(wires=[op.wires[0], w])
+            qp.CNOT(wires=[op.wires[0], w])
 
-@qml.qnode(dev, diff_method=None)
+@qp.qnode(dev, diff_method=None)
 def circuit():
     state_prep()
-    return [qml.expval(op) for op in xgroup_ops + zgroup_ops]
+    return [qp.expval(op) for op in xgroup_ops + zgroup_ops]
 
 
 ######################################################################
@@ -413,17 +413,17 @@ print("Total energy: ", E0)
 # Let’s create a QNode where we can apply these perturbations:
 
 
-@qml.qnode(dev, diff_method=None)
+@qp.qnode(dev, diff_method=None)
 def excitations(x_sites, z_sites):
     state_prep()
 
     for s in x_sites:
-        qml.PauliX(Wire(*s))
+        qp.PauliX(Wire(*s))
 
     for s in z_sites:
-        qml.PauliZ(Wire(*s))
+        qp.PauliZ(Wire(*s))
 
-    return [qml.expval(op) for op in xgroup_ops + zgroup_ops]
+    return [qp.expval(op) for op in xgroup_ops + zgroup_ops]
 
 
 ######################################################################
@@ -686,17 +686,17 @@ plt.show()
 #
 
 
-@qml.qnode(dev, diff_method=None)
+@qp.qnode(dev, diff_method=None)
 def probs(x_sites, z_sites):
     state_prep()
 
     for s in x_sites:
-        qml.PauliX(Wire(*s))
+        qp.PauliX(Wire(*s))
 
     for s in z_sites:
-        qml.PauliZ(Wire(*s))
+        qp.PauliZ(Wire(*s))
 
-    return qml.probs(wires=[Wire(*s) for s in all_sites])
+    return qp.probs(wires=[Wire(*s) for s in all_sites])
 
 
 null_probs = probs([], [])
@@ -772,7 +772,7 @@ combo_probs = probs(horizontal_loop + vertical_loop, [])
 # if the probability distributions are different:
 #
 
-print("Are the probabilities equal? ", qml.math.allclose(null_probs, horizontal_probs))
+print("Are the probabilities equal? ", qp.math.allclose(null_probs, horizontal_probs))
 print("Is this significant?")
 print("Maximum difference in probabilities: ", max(abs(null_probs - horizontal_probs)))
 print("Maximum probability: ", max(null_probs))
@@ -918,28 +918,28 @@ plt.show()
 # Below we implement this algorithm in PennyLane and measure the mutual exchange statistics
 # of an X Group excitation and a Z Group excitation.
 
-dev_aux = qml.device("lightning.qubit", wires=[Wire(*s) for s in all_sites] + ["aux"])
+dev_aux = qp.device("lightning.qubit", wires=[Wire(*s) for s in all_sites] + ["aux"])
 
 def loop(x_loop, z_loop):
     for s in x_loop:
-        qml.PauliX(Wire(*s))
+        qp.PauliX(Wire(*s))
     for s in z_loop:
-        qml.PauliZ(Wire(*s))
+        qp.PauliZ(Wire(*s))
 
-@qml.qnode(dev_aux, diff_method=None)
+@qp.qnode(dev_aux, diff_method=None)
 def hadamard_test(x_prep, z_prep, x_loop, z_loop):
     state_prep()
 
     for s in x_prep:
-        qml.PauliX(Wire(*s))
+        qp.PauliX(Wire(*s))
 
     for s in z_prep:
-        qml.PauliZ(Wire(*s))
+        qp.PauliZ(Wire(*s))
 
-    qml.Hadamard("aux")
-    qml.ctrl(loop, control="aux")(x_loop, z_loop)
-    qml.Hadamard("aux")
-    return qml.expval(qml.PauliZ("aux"))
+    qp.Hadamard("aux")
+    qp.ctrl(loop, control="aux")(x_loop, z_loop)
+    qp.Hadamard("aux")
+    return qp.expval(qp.PauliZ("aux"))
 
 x_around_z = hadamard_test(prep1, prep2, [], loop1)
 print("Move x excitation around z excitation: ", x_around_z)

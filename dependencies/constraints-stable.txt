@@ -1,32 +1,27 @@
 # Specifies global constraints for the stable build
 --extra-index-url https://download.pytorch.org/whl/cpu
-pennylane==0.43.*
-pennylane-cirq==0.43.*
-pennylane-qiskit==0.43.*
-pennylane-qulacs==0.43.*
-pennylane-catalyst==0.13.*
-pennylane-qrack==0.11.*
+pennylane==0.45.*
+pennylane-cirq==0.44.*
+pennylane-qiskit==0.45.*
+pennylane-qulacs==0.44.*
+pennylane-catalyst==0.15.*
 
-chex<1.0.0
-pyqrack==1.32.12
-numpy~=1.24
-matplotlib==3.8.0
-jax==0.6.2
-jaxlib==0.6.2
-jaxopt==0.8.5
-aiohttp==3.9.5
+# Install external packages
+matplotlib==3.10.0
+aiohttp==3.13.4
+fastapi<1.0.0
 fsspec==2024.6.1
 h5py==3.11.0
-openfermionpyscf==0.5
-openqaoa-core==0.2.5
-qiskit>=2.0
-qiskit-aer>=0.17
-qiskit_ibm_runtime==0.41.1
-torch==2.1.2+cpu ; sys_platform != 'darwin'
-torch==2.1.2 ; sys_platform == 'darwin'
-torchvision==0.16.2+cpu ; sys_platform != 'darwin'
-torchvision==0.16.2 ; sys_platform == 'darwin'
-tensorflow==2.19
+ipython==8.16.1
+
+chex<1.0.0
+jax==0.7.1
+jaxlib==0.7.1
+jaxopt==0.8.5
+
+torch==2.9.0+cpu ; sys_platform != 'darwin'
+torch==2.9.0 ; sys_platform == 'darwin'
+torchvision==0.24.0+cpu ; sys_platform != 'darwin'
+torchvision==0.24.0 ; sys_platform == 'darwin'
+
 optax==0.2.4
-quimb==1.11.0
-kahypar==1.3.5

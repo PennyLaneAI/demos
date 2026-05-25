@@ -14,9 +14,9 @@ in PennyLane.
 # wires in each register:
 # 
 
-import pennylane as qml
+import pennylane as qp
 
-register = qml.registers({"alice": 1, "bob": 2, "charlie": 3})
+register = qp.registers({"alice": 1, "bob": 2, "charlie": 3})
 print(register)
 
 ######################################################################
@@ -25,7 +25,7 @@ print(register)
 #
 # You can also pass in a dictionary that has nested dictionaries as its values.
 
-nested_register = qml.registers(
+nested_register = qp.registers(
     {
         "all_registers": {
             "alice": 1,
@@ -75,25 +75,25 @@ print(new_register)
 
 import numpy as np
 
-swap_register = qml.registers({"auxiliary": 1, "psi": 3, "phi": 3})
+swap_register = qp.registers({"auxiliary": 1, "psi": 3, "phi": 3})
 
-dev = qml.device("default.qubit")
+dev = qp.device("default.qubit")
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def swap_test():
     # Make "psi" and "phi" state orthogonal to each other
-    qml.RX(np.pi/2, swap_register["phi"][0])
+    qp.RX(np.pi/2, swap_register["phi"][0])
 
-    qml.Hadamard(swap_register["auxiliary"])
+    qp.Hadamard(swap_register["auxiliary"])
     for i in range(len(swap_register["psi"])):
         # We can use the union operation to assemble our registers on the fly
-        qml.CSWAP(
+        qp.CSWAP(
             swap_register["auxiliary"]
             | swap_register["psi"][i]
             | swap_register["phi"][i]
         )
-    qml.Hadamard(swap_register["auxiliary"])
-    return qml.expval(qml.Z(wires=swap_register["auxiliary"]))
+    qp.Hadamard(swap_register["auxiliary"])
+    return qp.expval(qp.Z(wires=swap_register["auxiliary"]))
 
 
 print(swap_test())
@@ -109,7 +109,7 @@ print(swap_test())
 # "estimation" or "measurement" register, and the other is the state register where we apply our
 # unitary operators :math:`U.` We can define these registers in PennyLane code:
 
-register = qml.registers({"state": 4, "estimation": 6})
+register = qp.registers({"state": 4, "estimation": 6})
 
 ######################################################################
 # To build our unitary operator :math:`U,` there are a variety of options. We can opt to use a
@@ -117,7 +117,7 @@ register = qml.registers({"state": 4, "estimation": 6})
 # :class:`~.pennylane.Qubitization`, which means we have to define another preparation register.
 # Our registers now look like this:
 
-register = qml.registers({"state": 4, "estimation": 6, "prep": 4})
+register = qp.registers({"state": 4, "estimation": 6, "prep": 4})
 
 ######################################################################
 # Finally, let's define our Hamiltonian. We'll use the `transverse-field Ising model <https://pennylane.ai/datasets/qspin/transverse-field-ising-model>`_ from
@@ -125,7 +125,7 @@ register = qml.registers({"state": 4, "estimation": 6, "prep": 4})
 # but feel free to try this with any other Hamiltonian.
 
 
-[dataset] = qml.data.load(
+[dataset] = qp.data.load(
     "qspin", sysname="Ising", periodicity="open", lattice="chain", layout="1x4"
 )
 H = dataset.hamiltonians[0]
@@ -140,25 +140,25 @@ initial_state = dataset.ground_states[0]
 ######################################################################
 # With this, we can now define our QPE circuit:
 
-dev = qml.device("lightning.qubit", wires=14)
+dev = qp.device("lightning.qubit", wires=14)
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def circuit():
     # Initialize state register to initial state
-    qml.StatePrep(initial_state, wires=register["state"])
+    qp.StatePrep(initial_state, wires=register["state"])
 
     # Apply Hadamard gate to all wires in estimation register
     for wire in register["estimation"]:
-        qml.Hadamard(wires=wire)
+        qp.Hadamard(wires=wire)
 
-    qml.ControlledSequence(
-        qml.Qubitization(H, register["prep"]),
+    qp.ControlledSequence(
+        qp.Qubitization(H, register["prep"]),
         control=register["estimation"],
     )
 
-    qml.adjoint(qml.QFT)(wires=register["estimation"])
+    qp.adjoint(qp.QFT)(wires=register["estimation"])
 
-    return qml.probs(wires=register["estimation"])
+    return qp.probs(wires=register["estimation"])
 
 ######################################################################
 # We'll run our circuit and do some post-processing to get the energy eigenvalue:

@@ -1,2 +1,2 @@
-galois
-numpy<2.0
+# 0.4 added NumPy 2.0 support
+galois>=0.4

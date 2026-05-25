@@ -1,0 +1,70 @@
+{
+    "title": "Resource estimation for Hamiltonian simulation with GQSP",
+    "authors": [
+        {
+            "username": "ixfoduap"
+        }
+    ],
+    "executable_stable": true,
+    "executable_latest": true,
+    "dateOfPublication": "2026-02-03T00:00:00+00:00",
+    "dateOfLastModification": "2026-04-21T00:00:00+00:00",
+    "categories": [
+        "Algorithms",
+        "Quantum Chemistry",
+        "Optimization",
+        "Resource Estimation"
+    ],
+    "tags": [],
+    "previewImages": [
+        {
+            "type": "thumbnail",
+            "uri": "/_static/demo_thumbnails/regular_demo_thumbnails/pennylane-demo-resource-estimation-gqsp-thumbnail.png"
+        },
+        {
+            "type": "large_thumbnail",
+            "uri": "/_static/demo_thumbnails/large_demo_thumbnails/pennylane-demo-resource-estimation-gqsp-large-thumbnail.png"
+        }
+    ],
+    "seoDescription": "Learn how to use PennyLane's resource estimation module to compute the cost of Hamiltonian simulation with Generalized quantum signal processing (GQSP)",
+    "doi": "",
+    "references": [
+        {
+            "id": "paper",
+            "type": "article",
+            "title": "Generative quantum advantage for classical and quantum problems.",
+            "authors": "H. Huang, M. Broughton, N. Eassa, H. Neven, R. Babbush, J. R. McClean",
+            "year": "2025",
+            "journal": "",
+            "url": "https://arxiv.org/abs/2509.09033"
+        },
+        {
+            "id": "paper",
+            "type": "article",
+            "title": "Quantum Computational Advantage with Constant-Temperature Gibbs Sampling.",
+            "authors": "T. Bergamaschi; C. Chen; Y. Liu",
+            "year": "2024",
+            "journal": "",
+            "url": "https://ieeexplore.ieee.org/document/10756075"
+        }
+    ],
+    "basedOnPapers": [],
+    "referencedByPapers": [],
+    "relatedContent": [
+        {
+            "type": "demonstration",
+            "id": "re_how_to_use_pennylane_for_resource_estimation",
+            "weight": 1.0
+        },
+        {
+            "type": "demonstration",
+            "id": "tutorial_re_for_qubitizedQPE",
+            "weight": 1.0
+        },
+        {
+            "type": "demonstration",
+            "id": "tutorial_intro_qsvt",
+            "weight": 1.0
+        }
+    ]
+}

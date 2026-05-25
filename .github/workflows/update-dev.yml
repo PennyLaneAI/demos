@@ -8,7 +8,7 @@ on:
     branches:
       - master
   schedule:
-    - cron: '0 0 * * 0'
+    - cron: '0 5 * * *' # Run at 05:00 UTC daily
   workflow_dispatch:
 
 jobs:
@@ -26,7 +26,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           token: ${{ secrets.NIGHTLY_TOKEN }}
           fetch-depth: 0  # We want entire git-history to avoid any merge conflicts

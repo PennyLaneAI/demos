@@ -88,14 +88,19 @@ methods is an active area of research. The :class:`~pennylane.qsvt` function in 
 
 Let's look at a simple example of how quantum signal processing can be implemented using
 PennyLane. We aim to perform a transformation by the Legendre polynomial
-:math:`(5 x^3 - 3x)/2`.
+:math:`P(a) = (5 a^3 - 3a)/2`.
 As you will soon learn, QSP can be viewed as a special case of QSVT. We thus use the :func:`~.pennylane.qsvt`
-operation to construct the output matrix and compare the resulting transformation to
-the target polynomial.
+operation to construct the matrix representation of the QSP transformation. In the code below, we build one matrix
+for each value of :math:`a` that we test. If the top-left entry of the matrix matches :math:`P(a)` for all
+input values, then our QSP transformation successfully implements the desired matrix,
 
+.. math:: \begin{pmatrix}
+    P(a) & *\\
+    * & *
+    \end{pmatrix}.
 """
 
-import pennylane as qml
+import pennylane as qp
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -105,7 +110,7 @@ target_poly = [0, -3 * 0.5, 0, 5 * 0.5]
 
 def qsvt_output(a):
     # output matrix
-    out = qml.matrix(qml.qsvt(a,  target_poly, encoding_wires=[0], block_encoding="embedding"))
+    out = qp.matrix(qp.qsvt(a,  target_poly, encoding_wires=[0], block_encoding="embedding"))
     return out[0, 0]  # top-left entry
 
 
@@ -113,8 +118,9 @@ a_vals = np.linspace(-1, 1, 50)
 qsvt = [np.real(qsvt_output(a)) for a in a_vals]  # neglect small imaginary part
 target = [np.polyval(target_poly[::-1], a) for a in a_vals]  # evaluate polynomial
 
-plt.plot(a_vals, target, label="target")
-plt.plot(a_vals, qsvt, "*", label="qsvt")
+plt.plot(a_vals, target, label="target polynomial: (5a^3 - 3a)/2")
+plt.plot(a_vals, qsvt, "*", label="QSP: top left entry of matrix")
+plt.xlabel('a')
 
 plt.legend()
 plt.show()
@@ -143,21 +149,22 @@ plt.show()
 #
 # Any such method of encoding a matrix inside a larger unitary is known as a **block encoding**. In our construction,
 # the matrix :math:`A` is encoded in the top-left block, hence the name. PennyLane supports
-# the :class:`~pennylane.BlockEncode` operation that follows the construction above. Let's test
+# the :class:`~pennylane.BlockEncode` operation that follows the construction above. This operation serves to block-encode
+# both scalars and matrices. Let's test
 # it out with an example encoding first a square matrix:
 
 # square matrix
 A = [[0.1, 0.2], [0.3, 0.4]]
-U1 = qml.BlockEncode(A, wires=range(2))
+U1 = qp.BlockEncode(A, wires=range(2))
 print("U(A):")
-print(np.round(qml.matrix(U1), 2))
+print(np.round(qp.matrix(U1), 2))
 
 ##############################################################################
 # And also a rectangular matrix
 B = [[0.5, -0.5, 0.5]]
-U2 = qml.BlockEncode(B, wires=range(2))
+U2 = qp.BlockEncode(B, wires=range(2))
 print("U(B):")
-print(np.round(qml.matrix(U2), 2))
+print(np.round(qp.matrix(U2), 2))
 
 
 ##############################################################################
@@ -199,9 +206,9 @@ print(np.round(qml.matrix(U2), 2))
 
 dim = 2
 phi = np.pi / 2
-pcp = qml.PCPhase(phi, dim, wires=range(2))
+pcp = qp.PCPhase(phi, dim, wires=range(2))
 print("Pi:")
-print(np.round(qml.matrix(pcp), 2))
+print(np.round(qp.matrix(pcp), 2))
 
 
 ##############################################################################
@@ -225,7 +232,7 @@ print(np.round(qml.matrix(pcp), 2))
 # where we use braket notation to denote the left and right singular vectors.
 # For technical reasons, the sequence looks slightly different when the polynomial degree is odd:
 #
-# .. math:: \tilde{\Pi}_{\phi_1}\left[\prod_{k=1}^{(d-1)/2}\Pi_{\phi_{2k}}U(A)^\dagger \tilde{\Pi}_{\phi_{2k+1}} U(A)\right]\Pi_{\phi_{d+1}}=
+# .. math:: \tilde{\Pi}_{\phi_1}U(A)\left[\prod_{k=1}^{(d-1)/2}\Pi_{\phi_{2k}}U(A)^\dagger \tilde{\Pi}_{\phi_{2k+1}} U(A)\right]\Pi_{\phi_{d+1}}=
 #    \begin{pmatrix}
 #    P(A) & *\\
 #    * & *
@@ -241,22 +248,32 @@ print(np.round(qml.matrix(pcp), 2))
 # implemented in polynomial time in the number of qubits, the resulting
 # quantum algorithm will also run in polynomial time. This is very powerful.
 #
-# In PennyLane, implementing the QSVT transformation is as simple as using :func:`~.pennylane.qsvt`. Let's revisit
+# In PennyLane, implementing a quantum circuit for the QSVT transformation is as simple as using :func:`~.pennylane.qsvt`.
+# Under the hood, it uses :class:`~pennylane.BlockEncode` and :class:`~pennylane.PCPhase` operations to implement QSVT as described
+# in the equations above. Now let's revisit
 # our previous example and transform a matrix according to the same Legendre polynomial. We'll use a diagonal matrix
 # with eigenvalues evenly distributed between -1 and 1, allowing us to easily check the transformation.
-
 
 eigvals = np.linspace(-1, 1, 16)
 A = np.diag(eigvals)  # 16-dim matrix
 wire_order = list(range(5))
-U_A = qml.matrix(qml.qsvt, wire_order=wire_order)(
+
+qp.draw_mpl(qp.transforms.decompose(qp.qsvt))(A,  target_poly, encoding_wires=wire_order, block_encoding="embedding")
+plt.show()
+
+###############################################################################
+# Now, let's see how each eigenvalue of :math:`A` is transformed by QSVT. We will plot the original eigenvalues
+# and the corresponding eigenvalues of the top-left block of the QSVT matrix. 
+
+U_A = qp.matrix(qp.qsvt, wire_order=wire_order)(
     A, target_poly, encoding_wires=wire_order, block_encoding="embedding"
 )  # block-encoded in 5-qubit system
 
 qsvt_A = np.real(np.diagonal(U_A))[:16]  # retrieve transformed eigenvalues
 
-plt.plot(a_vals, target, label="target")
-plt.plot(eigvals, qsvt_A, "*", label="qsvt")
+plt.plot(a_vals, target, label="target polynomial: (5a^3 - 3a)/2")
+plt.plot(eigvals, qsvt_A, "*", label="eigenvalue after QSVT")
+plt.xlabel('a, eigenvalue before transformation')
 
 plt.legend()
 plt.show()

@@ -1,5 +1,7 @@
 qualtran
-openfermion
+# 1.7.1 added NumPy 2.x support
+openfermion>=1.7.1
 openfermionpyscf
-scipy
-numpy<2.0
+# Conflicts between numba and numpy.
+# Revisit this constraint once numba supports numpy 2.4.
+numba>0.55 

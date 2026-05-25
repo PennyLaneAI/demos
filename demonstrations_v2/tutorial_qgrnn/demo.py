@@ -192,7 +192,7 @@ The Quantum Graph Recurrent Neural Network
 #
 
 
-import pennylane as qml
+import pennylane as qp
 from matplotlib import pyplot as plt
 from pennylane import numpy as np
 import scipy
@@ -275,7 +275,7 @@ def create_hamiltonian_matrix(n_qubits, graph, weights, bias):
         interaction_term = 1
         for qubit in range(0, n_qubits):
             if qubit in edge:
-                interaction_term = np.kron(interaction_term, qml.matrix(qml.PauliZ(0)))
+                interaction_term = np.kron(interaction_term, qp.matrix(qp.PauliZ(0)))
             else:
                 interaction_term = np.kron(interaction_term, np.identity(2))
         full_matrix += weights[i] * interaction_term
@@ -285,8 +285,8 @@ def create_hamiltonian_matrix(n_qubits, graph, weights, bias):
         z_term = x_term = 1
         for j in range(0, n_qubits):
             if j == i:
-                z_term = np.kron(z_term, qml.matrix(qml.PauliZ(0)))
-                x_term = np.kron(x_term, qml.matrix(qml.PauliX(0)))
+                z_term = np.kron(z_term, qp.matrix(qp.PauliZ(0)))
+                x_term = np.kron(x_term, qp.matrix(qp.PauliX(0)))
             else:
                 z_term = np.kron(z_term, np.identity(2))
                 x_term = np.kron(x_term, np.identity(2))
@@ -374,7 +374,7 @@ print(f"Ground State Energy: {ground_state_energy}")
 def state_evolve(hamiltonian, qubits, time):
 
     U = scipy.linalg.expm(-1j * hamiltonian * time)
-    qml.QubitUnitary(U, wires=qubits)
+    qp.QubitUnitary(U, wires=qubits)
 
 
 ######################################################################
@@ -404,15 +404,15 @@ def qgrnn_layer(weights, bias, qubits, graph, trotter_step):
 
     # Applies a layer of RZZ gates (based on a graph)
     for i, edge in enumerate(graph.edges):
-        qml.MultiRZ(2 * weights[i] * trotter_step, wires=(edge[0], edge[1]))
+        qp.MultiRZ(2 * weights[i] * trotter_step, wires=(edge[0], edge[1]))
 
     # Applies a layer of RZ gates
     for i, qubit in enumerate(qubits):
-        qml.RZ(2 * bias[i] * trotter_step, wires=qubit)
+        qp.RZ(2 * bias[i] * trotter_step, wires=qubit)
 
     # Applies a layer of RX gates
     for qubit in qubits:
-        qml.RX(2 * trotter_step, wires=qubit)
+        qp.RX(2 * trotter_step, wires=qubit)
 
 
 ######################################################################
@@ -431,10 +431,10 @@ def qgrnn_layer(weights, bias, qubits, graph, trotter_step):
 
 def swap_test(control, register1, register2):
 
-    qml.Hadamard(wires=control)
+    qp.Hadamard(wires=control)
     for reg1_qubit, reg2_qubit in zip(register1, register2):
-        qml.CSWAP(wires=(control, reg1_qubit, reg2_qubit))
-    qml.Hadamard(wires=control)
+        qp.CSWAP(wires=(control, reg1_qubit, reg2_qubit))
+    qp.Hadamard(wires=control)
 
 
 ######################################################################
@@ -482,7 +482,7 @@ nx.draw(new_ising_graph, pos=positions)
 def qgrnn(weights, bias, time=None):
 
     # Prepares the low energy state in the two registers
-    qml.StatePrep(np.kron(low_energy_state, low_energy_state), wires=reg1 + reg2)
+    qp.StatePrep(np.kron(low_energy_state, low_energy_state), wires=reg1 + reg2)
 
     # Evolves the first qubit register with the time-evolution circuit to
     # prepare a piece of quantum data
@@ -497,7 +497,7 @@ def qgrnn(weights, bias, time=None):
     swap_test(control, reg1, reg2)
 
     # Returns the results of the SWAP test
-    return qml.expval(qml.PauliZ(control))
+    return qp.expval(qp.PauliZ(control))
 
 
 ######################################################################
@@ -551,14 +551,14 @@ def cost_function(weight_params, bias_params):
 #
 
 # Defines the new device
-qgrnn_dev = qml.device("default.qubit", wires=2 * qubit_number + 1)
+qgrnn_dev = qp.device("default.qubit", wires=2 * qubit_number + 1)
 
 # Defines the new QNode
-qgrnn_qnode = qml.QNode(qgrnn, qgrnn_dev)
+qgrnn_qnode = qp.QNode(qgrnn, qgrnn_dev)
 
 steps = 300
 
-optimizer = qml.AdamOptimizer(stepsize=0.5)
+optimizer = qp.AdamOptimizer(stepsize=0.5)
 
 weights = rng.random(size=len(new_ising_graph.edges), requires_grad=True) - 0.5
 bias = rng.random(size=qubit_number, requires_grad=True) - 0.5

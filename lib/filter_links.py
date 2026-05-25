@@ -3,25 +3,19 @@
 """
 Pandoc filter to process intersphinx links.
 """
-from typing import Any, Dict
-import sphobjinv as soi
+from inventories import IntersphinxInventories
 from pandocfilters import toJSONFilter, Link, RawInline
 
 DEMOS_URL = "https://pennylane.ai/qml/demos/"
-PL_OBJ_INV_URL = "https://docs.pennylane.ai/en/stable/"
-CAT_OBJ_INV_URL = "https://docs.pennylane.ai/projects/catalyst/en/stable/"
-
-def make_named_inventory(inv: soi.Inventory) -> Dict[str, Any]:
-    """Make a dictionary of objects from an inventory."""
-    return {item.name: item for item in inv.objects}
+inventories = IntersphinxInventories()
 
 def process_link(text: str, key: str) -> tuple[str, str]:
     """Process a link to a PennyLane or Catalyst object."""
     # Check if it's a PennyLane object. These are more popular, so check first.
-    if key in pl_obj_inv.keys():
-        return text if text else pl_obj_inv[key].dispname, PL_OBJ_INV_URL + pl_obj_inv[key].uri
-    if key in cat_obj_inv.keys():
-        return text if text else cat_obj_inv[key].dispname, CAT_OBJ_INV_URL + cat_obj_inv[key].uri
+    if key in inventories.pennylane.keys():
+        return text if text else inventories.pennylane[key].dispname, inventories.pennylane_base_url + inventories.pennylane[key].uri
+    if key in inventories.catalyst.keys():
+        return text if text else inventories.catalyst[key].dispname, inventories.catalyst_base_url + inventories.catalyst[key].uri
     return text, key
 
 def process_doc_link(text: str, key: str) -> tuple[str, str]:
@@ -77,9 +71,9 @@ def filter_links(key, value, format, _):
                 else:
                     name, link = process_link(text, key)
 
-                return Link(["",[],[]], pandocify_string(name), [link,""])
+                # Some links end with a dollar sign for some reason, but this is interpreted as math. 
+                # Remove it to avoid this.
+                return Link(["",[],[]], pandocify_string(name), [link.removesuffix("$"),""])
 
 if __name__ == '__main__':
-    pl_obj_inv = make_named_inventory(soi.Inventory(url=PL_OBJ_INV_URL+"objects.inv"))
-    cat_obj_inv = make_named_inventory(soi.Inventory(url=CAT_OBJ_INV_URL+"objects.inv"))
     toJSONFilter(filter_links)

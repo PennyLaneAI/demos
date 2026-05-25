@@ -1,0 +1,112 @@
+{
+    "title": "Introducing lattice surgery",
+    "authors": [
+        {
+            "username": "Qottmann"
+        }
+    ],
+    "executable_stable": true,
+    "executable_latest": true,
+    "dateOfPublication": "2025-12-17T00:00:00+00:00",
+    "dateOfLastModification": "2026-01-22T00:00:00+00:00",
+    "categories": [
+        "Quantum Computing"
+    ],
+    "tags": [],
+    "previewImages": [
+        {
+            "type": "thumbnail",
+            "uri": "/_static/demo_thumbnails/regular_demo_thumbnails/pennylane-demo-lattice-surgery-thumbnail.png"
+        },
+        {
+            "type": "large_thumbnail",
+            "uri": "/_static/demo_thumbnails/large_demo_thumbnails/pennylane-demo-lattice-surgery-large-thumbnail.png"
+        }
+    ],
+    "seoDescription": "Learn about lattice surgery for fault tolerant quantum computing with topological codes such as the surface code.",
+    "doi": "",
+    "references": [
+    {
+        "id": "surfacecode",
+        "type": "article",
+        "title": "Surface codes: Towards practical large-scale quantum computation",
+        "authors": "Austin G. Fowler, Matteo Mariantoni, John M. Martinis, Andrew N. Cleland",
+        "year": "2012",
+        "journal": "Preprint",
+        "url": "https://arxiv.org/abs/1208.0928"
+    },
+    {
+        "id": "braiding",
+        "type": "article",
+        "title": "Topological fault-tolerance in cluster state quantum computation",
+        "authors": "Robert Raussendorf, Jim Harrington, Kovid Goyal",
+        "year": "2007",
+        "journal": "Preprint",
+        "url": "https://arxiv.org/abs/quant-ph/0703143"
+    },
+    {
+        "id": "latticesurgery",
+        "type": "article",
+        "title": "Surface code quantum computing by lattice surgery",
+        "authors": "Dominic Horsman, Austin G. Fowler, Simon Devitt, Rodney Van Meter",
+        "year": "2011",
+        "journal": "Preprint",
+        "url": "https://arxiv.org/abs/1111.4022"
+    },
+    {
+        "id": "Fowler",
+        "type": "article",
+        "title": "Low overhead quantum computation using lattice surgery",
+        "authors": "Austin G. Fowler, Craig Gidney",
+        "year": "2018",
+        "journal": "Preprint",
+        "url": "https://arxiv.org/abs/1808.06709"
+    },
+    {
+        "id": "Litinski",
+        "type": "article",
+        "title": "A Game of Surface Codes: Large-Scale Quantum Computing with Lattice Surgery",
+        "authors": "Daniel Litinski",
+        "year": "2018",
+        "journal": "Preprint",
+        "url": "https://arxiv.org/abs/1808.02892v3"
+    },
+    {
+        "id": "Chamberland",
+        "type": "article",
+        "title": "Universal quantum computing with twist-free and temporally encoded lattice surgery",
+        "authors": "Christopher Chamberland, Earl T. Campbell",
+        "year": "2021",
+        "journal": "Preprint",
+        "url": "https://arxiv.org/abs/2109.02746"
+    },
+    {
+        "id": "Litinski2",
+        "type": "article",
+        "title": "Lattice Surgery with a Twist: Simplifying Clifford Gates of Surface Codes",
+        "authors": "Daniel Litinski, Felix von Oppen",
+        "year": "2017",
+        "journal": "Preprint",
+        "url": "https://arxiv.org/abs/1709.02318"
+    }
+    ],
+    "basedOnPapers": [],
+    "referencedByPapers": [],
+    "relatedContent": [
+        {
+            "type": "demonstration",
+            "id": "tutorial_game_of_surface_codes",
+            "weight": 1.0
+        },
+        {
+            "type": "demonstration",
+            "id": "tutorial_toric_code",
+            "weight": 1.0
+        },
+        {
+            "type": "demonstration",
+            "id": "tutorial_stabilizer_codes",
+            "weight": 1.0
+        }
+    ]
+}

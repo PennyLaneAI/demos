@@ -14,7 +14,7 @@ jobs:
       demonstrations-v1-changes-detected: ${{ steps.determine-changes.outputs.demonstrations-v1-changes-detected }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
 

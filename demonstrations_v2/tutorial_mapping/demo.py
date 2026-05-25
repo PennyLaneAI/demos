@@ -84,7 +84,7 @@ way to do this in PennyLane is to use :func:`~.pennylane.fermi.from_string`. We
 then map the operator using :func:`~.pennylane.fermi.jordan_wigner`.
 """
 
-import pennylane as qml
+import pennylane as qp
 from pennylane.fermi import from_string, jordan_wigner
 
 qubits = 10
@@ -109,8 +109,8 @@ pauli_jw
 
 orbitals = 10
 electrons = 5
-state_number = qml.qchem.hf_state(electrons, orbitals)
-state_parity = qml.qchem.hf_state(electrons, orbitals, basis="parity")
+state_number = qp.qchem.hf_state(electrons, orbitals)
+state_parity = qp.qchem.hf_state(electrons, orbitals, basis="parity")
 
 print("State in occupation number basis:\n", state_number)
 print("State in parity basis:\n", state_parity)
@@ -143,7 +143,7 @@ print("State in parity basis:\n", state_parity)
 # Parity mapping using :func:`~.pennylane.fermi.parity_transform` in PennyLane.
 
 qubits = 10
-pauli_pr = qml.parity_transform(fermi_op, qubits, ps=True)
+pauli_pr = qp.parity_transform(fermi_op, qubits, ps=True)
 pauli_pr
 
 ##############################################################################
@@ -155,11 +155,11 @@ pauli_pr
 # `qubit tapering <https://pennylane.ai/qml/demos/tutorial_qubit_tapering>`__ demo.
 # Let's look at an example.
 
-generators = [qml.prod(*[qml.Z(i) for i in range(qubits-1)]), qml.Z(qubits-1)]
-paulixops = qml.paulix_ops(generators, qubits)
+generators = [qp.prod(*[qp.Z(i) for i in range(qubits-1)]), qp.Z(qubits-1)]
+paulixops = qp.paulix_ops(generators, qubits)
 paulix_sector = [1, 1]
-taper_op = qml.taper(pauli_pr, generators, paulixops, paulix_sector)
-qml.simplify(taper_op)
+taper_op = qp.taper(pauli_pr, generators, paulixops, paulix_sector)
+qp.simplify(taper_op)
 
 ###############################################################################
 # Note that the tapered operator doesn't include qubit :math:`8` and :math:`9.`
@@ -175,7 +175,7 @@ qml.simplify(taper_op)
 # Let's use the :func:`~.pennylane.fermi.bravyi_kitaev` function to map our :math:`a_{5}^{\dagger}`
 # operator.
 
-pauli_bk = qml.bravyi_kitaev(fermi_op, qubits, ps=True)
+pauli_bk = qp.bravyi_kitaev(fermi_op, qubits, ps=True)
 pauli_bk
 
 ##############################################################################
@@ -225,7 +225,7 @@ h_fermi = qchem.fermionic_hamiltonian(mol)()
 
 electrons = 2
 qubits = len(h_fermi.wires)
-h_pauli = qml.bravyi_kitaev(h_fermi, qubits, tol=1e-16)
+h_pauli = qp.bravyi_kitaev(h_fermi, qubits, tol=1e-16)
 
 ##############################################################################
 # Initial state
@@ -282,11 +282,11 @@ for ex in doubles:
 
 singles_pauli = []
 for op in singles_fermi:
-    singles_pauli.append(qml.bravyi_kitaev(op, qubits, ps=True))
+    singles_pauli.append(qp.bravyi_kitaev(op, qubits, ps=True))
 
 doubles_pauli = []
 for op in doubles_fermi:
-    doubles_pauli.append(qml.bravyi_kitaev(op, qubits, ps=True))
+    doubles_pauli.append(qp.bravyi_kitaev(op, qubits, ps=True))
 
 ##############################################################################
 # Note that we need to exponentiate these operators to be able to use them in the circuit
@@ -294,19 +294,19 @@ for op in doubles_fermi:
 
 params = jnp.array([0.22347661, 0.0, 0.0])
 
-dev = qml.device("default.qubit", wires=qubits)
+dev = qp.device("default.qubit", wires=qubits)
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def circuit(params):
-    qml.BasisState(hf_state, wires=range(qubits))
+    qp.BasisState(hf_state, wires=range(qubits))
 
     for i, excitation in enumerate(doubles_pauli):
-        qml.exp((excitation * params[i] / 2).operation()), range(qubits)
+        qp.exp((excitation * params[i] / 2).operation()), range(qubits)
 
     for j, excitation in enumerate(singles_pauli):
-        qml.exp((excitation * params[i + j + 1] / 2).operation()), range(qubits)
+        qp.exp((excitation * params[i + j + 1] / 2).operation()), range(qubits)
 
-    return qml.expval(h_pauli)
+    return qp.expval(h_pauli)
 
 print('Energy =', circuit(params))
 

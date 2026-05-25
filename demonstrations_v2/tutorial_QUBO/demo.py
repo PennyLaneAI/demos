@@ -210,12 +210,12 @@ print(f"The minimum cost is  {min_cost}")
 # where :math:`0 \le S \le 26.` But let’s take this slowly because we can get lost here, so let’s see
 # this with some examples:
 #
-# -  Imagine this case. No item is selected {:math:`x_0`: :math:`0`, :math:`x_1`: :math:`0`, :math:`x_2:` :math:`0,`
-#    :math:`x_3`: :math:`0,` :math:`x_4:` :math:`0`}, so the overall weight is zero (a valid solution) and the equality
+# -  Imagine this case. No item is selected {:math:`x_0`: :math:`0`, :math:`x_1`: :math:`0`, :math:`x_2`: :math:`0,`
+#    :math:`x_3`: :math:`0,` :math:`x_4`: :math:`0`}, so the overall weight is zero (a valid solution) and the equality
 #    constraint Eq.(4) must be fulfilled. So we select our slack variable to be 26.
 #
-# -  Now, what if we bring ⚽️ and 📚 {:math:`x_0`: :math:`1`, :math:`x_1`: :math:`0`, :math:`x_2`: :math:`0`, :math:`x_3:` :math:`1,`
-#    :math:`x_4:`0}. In this case, the overall weight is :math:`3 + 19 = 22` (a valid solution) and the equality
+# -  Now, what if we bring ⚽️ and 📚 {:math:`x_0`: :math:`1`, :math:`x_1`: :math:`0`, :math:`x_2`: :math:`0`, :math:`x_3`: :math:`1,`
+#    :math:`x_4`: :math:`0`}. In this case, the overall weight is :math:`3+19=22` (a valid solution) and the equality
 #    constraint is fulfilled if :math:`22 + S = 26 \rightarrow S = 4.`
 #
 # -  Finally, what if we try to bring all the items {:math:`x_0`: :math:`1`, :math:`x_1`: :math:`1`, :math:`x_2:` :math:`1,`
@@ -349,14 +349,14 @@ print(f"Cost:{cost}")
 
 # -----------------------------   QAOA circuit ------------------------------------
 from collections import defaultdict
-import pennylane as qml
+import pennylane as qp
 
 shots = 5000  # Number of samples used
-dev = qml.device("default.qubit")
+dev = qp.device("default.qubit")
 
 
-@qml.set_shots(shots)
-@qml.qnode(dev)
+@qp.set_shots(shots)
+@qp.qnode(dev)
 def qaoa_circuit(gammas, betas, h, J, num_qubits):
     wmax = max(
         np.max(np.abs(list(h.values()))), np.max(np.abs(list(h.values())))
@@ -364,20 +364,20 @@ def qaoa_circuit(gammas, betas, h, J, num_qubits):
     p = len(gammas)
     # Apply the initial layer of Hadamard gates to all qubits
     for i in range(num_qubits):
-        qml.Hadamard(wires=i)
+        qp.Hadamard(wires=i)
     # repeat p layers the circuit shown in Fig. 1
     for layer in range(p):
         # ---------- COST HAMILTONIAN ----------
         for ki, v in h.items():  # single-qubit terms
-            qml.RZ(2 * gammas[layer] * v / wmax, wires=ki[0])
+            qp.RZ(2 * gammas[layer] * v / wmax, wires=ki[0])
         for kij, vij in J.items():  # two-qubit terms
-            qml.CNOT(wires=[kij[0], kij[1]])
-            qml.RZ(2 * gammas[layer] * vij / wmax, wires=kij[1])
-            qml.CNOT(wires=[kij[0], kij[1]])
+            qp.CNOT(wires=[kij[0], kij[1]])
+            qp.RZ(2 * gammas[layer] * vij / wmax, wires=kij[1])
+            qp.CNOT(wires=[kij[0], kij[1]])
         # ---------- MIXER HAMILTONIAN ----------
         for i in range(num_qubits):
-            qml.RX(-2 * betas[layer], wires=i)
-    return qml.sample()
+            qp.RX(-2 * betas[layer], wires=i)
+    return qp.sample()
 
 
 def samples_dict(samples, n_items):

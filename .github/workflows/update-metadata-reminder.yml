@@ -1,9 +1,7 @@
 name: Reminder to update demo metadata
 on:
-  pull_request:
+  pull_request_target:
     types: [opened, reopened]
-    paths:
-      - demonstrations_v2/**
 
 jobs:
   reminder:
@@ -12,6 +10,13 @@ jobs:
     - uses: actions/github-script@v7
       with:
         script: |
+          const files = await github.paginate(
+            github.rest.pulls.listFiles,
+            { owner: context.repo.owner, repo: context.repo.repo, pull_number: context.issue.number }
+          );
+          const touchesDemos = files.some(f => f.filename.startsWith('demonstrations_v2/'));
+          if (!touchesDemos) return;
+
           github.rest.issues.createComment({
             issue_number: context.issue.number,
             owner: context.repo.owner,

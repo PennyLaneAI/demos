@@ -1,0 +1,100 @@
+{
+    "title": "Qubit and gate trade-offs in qubitized Quantum Phase Estimation",
+    "authors": [
+        {
+            "username": "ddhawan"
+        }
+    ],
+    "executable_stable": true,
+    "executable_latest": true,
+    "dateOfPublication": "2026-01-29T00:00:00+00:00",
+    "dateOfLastModification": "2026-04-21T15:48:14+00:00",
+    "categories": [
+        "Algorithms",
+        "Optimization",
+        "Quantum Chemistry",
+        "Resource Estimation"
+    ],
+    "tags": [],
+    "previewImages": [
+        {
+            "type": "thumbnail",
+            "uri": "/_static/demo_thumbnails/regular_demo_thumbnails/pennylane-demo-resource-estimation-qpe-thumbnail.png"
+        },
+        {
+            "type": "large_thumbnail",
+            "uri": "/_static/demo_thumbnails/large_demo_thumbnails/pennylane-demo-resource-estimation-qpe-large-thumbnail.png"
+        }
+    ],
+    "seoDescription": "Exploring Qubit and T-gate Trade-offs in Qubitized Quantum Phase Estimation",
+    "doi": "",
+    "references": [
+        {
+            "id": "Caesura",
+            "type": "article",
+            "title": "Faster quantum chemistry simulations on a quantum computer with improved tensor factorization and active volume compilation",
+            "authors": "Athena Caesura, Cristian L. Cortes, William Pol, Sukin Sim, Mark Steudtner, Gian-Luca R. Anselmetti, Matthias Degroote, Nikolaj Moll, Raffaele Santagati, Michael Streif, Christofer S. Tautermann",
+            "journal": "arXiv",
+            "year": "2025",
+            "url": "https://arxiv.org/abs/2501.06165"
+        },
+        {
+            "id": "SOSSA",
+            "type": "article",
+            "title": "Quantum simulation with sum-of-squares spectral amplification",
+            "authors": "Robbie King, Guang Hao Low, Ryan Babbush, Rolando D. Somma, Nicholas C. Rubin",
+            "journal": "arXiv",
+            "year": "2025",
+            "url": "https://arxiv.org/abs/2505.01528"
+        },
+        {
+            "id": "lee2021",
+            "type": "article",
+            "title": "Even More Efficient Quantum Computations of Chemistry Through Tensor Hypercontraction.",
+            "authors": "Joonhoo Lee",
+            "journal": "PRX Quantum",
+            "volume": "2",
+            "pages": "030305",
+            "year": "2021",
+            "url": "https://journals.aps.org/prxquantum/abstract/10.1103/PRXQuantum.2.030305"
+        },
+        {
+            "id": "vonburg",
+            "type": "article",
+            "title": "Quantum computing enhanced computational catalysis",
+            "authors": "Vera von Burg, Guang Hao Low, Thomas Häner, Damien S. Steiger, Markus Reiher, Martin Roetteler, and Matthias Troyer",
+            "journal": "arXiv",
+            "year": "2020",
+            "url": "https://arxiv.org/abs/2007.14460"
+        }
+    ],
+    "basedOnPapers": [],
+    "referencedByPapers": [],
+    "relatedContent": [
+        {
+            "type": "demonstration",
+            "id": "re_how_to_use_pennylane_for_resource_estimation",
+            "weight": 1.0
+        },
+        {
+            "type": "demonstration",
+            "id": "tutorial_estimator_hamiltonian_simulation_gqsp",
+            "weight": 1.0
+        },
+        {
+            "type": "demonstration",
+            "id": "tutorial_qubitization",
+            "weight": 1.0
+        },
+        {
+            "type": "demonstration",
+            "id": "tutorial_qpe",
+            "weight": 1.0
+        },
+        {
+            "type": "demonstration",
+            "id": "tutorial_qrom",
+            "weight":1.0
+        }
+    ]
+}

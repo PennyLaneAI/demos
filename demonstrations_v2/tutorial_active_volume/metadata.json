@@ -1,0 +1,91 @@
+{
+    "title": "Active volume",
+    "authors": [
+        {
+            "username": "david"
+        },
+        {
+            "username": "dwierichs"
+        }
+    ],
+    "executable_stable": true,
+    "executable_latest": true,
+    "dateOfPublication": "2026-01-21T10:00:00+00:00",
+    "dateOfLastModification": "2026-03-24T12:00:00+00:00",
+    "categories": [
+        "Quantum Computing",
+        "Compilation"
+    ],
+    "tags": [],
+    "previewImages": [
+        {
+            "type": "thumbnail",
+            "uri": "/_static/demo_thumbnails/regular_demo_thumbnails/pennylane-demo-active-volume-thumbnail.png"
+        },
+        {
+            "type": "large_thumbnail",
+            "uri": "/_static/demo_thumbnails/large_demo_thumbnails/pennylane-demo-active-volume-large-thumbnail.png"
+        }
+    ],
+    "seoDescription": "Learn about active volume and how to compile for an active volume quantum computer.",
+    "doi": "",
+    "references": [
+        {
+            "id": "Litinski2022",
+            "type": "article",
+            "title": "Active volume: An architecture for efficient fault-tolerant quantum computers with limited non-local connections",
+            "authors": "Daniel Litinski, Naomi Nickerson",
+            "year": "2022",
+            "journal": "arXiv",
+            "url": "https://arxiv.org/abs/2211.15465"
+        },
+        {
+        "id": "Litinski2018",
+        "type": "article",
+        "title": "A Game of Surface Codes: Large-Scale Quantum Computing with Lattice Surgery",
+        "authors": "Daniel Litinski",
+        "year": "2018",
+        "journal": "arXiv",
+        "url": "https://arxiv.org/abs/1808.02892v3"
+    },
+    {
+        "id": "Gidney2018",
+        "type": "article",
+        "title": "Halving the cost of quantum addition",
+        "authors": "Craig Gidney",
+        "year": "2018",
+        "journal": "Quantum",
+        "url": "https://quantum-journal.org/papers/q-2018-06-18-74/"
+    },
+    {
+        "id": "PauliFrame",
+        "type": "article",
+        "title": "Pauli Frames for Quantum Computer Architectures",
+        "authors": "L. Riesebos, X. Fu, S. Varsamopoulos, C. G. Almudever, K. Bertels",
+        "year": "2017",
+        "journal": "Proceedings of the 54th Annual Design Automation Conference (DAC '17)",
+        "url": "https://doi.org/10.1145/3061639.3062300"
+    }
+    ],
+    "basedOnPapers": [
+        "10.48550/arXiv.2211.15465"
+    ],
+    "referencedByPapers": [],
+    "relatedContent": [
+        {
+            "type": "demonstration",
+            "id": "tutorial_lattice_surgery",
+            "weight": 1.0
+        },
+        {
+            "type": "demonstration",
+            "id": "tutorial_game_of_surface_codes",
+            "weight": 1.0
+        },
+        {
+            "type": "demonstration",
+            "id": "tutorial_zx_calculus",
+            "weight": 1.0
+        }
+    ]
+}

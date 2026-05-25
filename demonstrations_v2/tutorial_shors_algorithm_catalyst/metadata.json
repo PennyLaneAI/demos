@@ -8,10 +8,11 @@
     "executable_stable": true,
     "executable_latest": true,
     "dateOfPublication": "2025-04-04T09:00:00+00:00",
-    "dateOfLastModification": "2025-10-15T00:00:00+00:00",
+    "dateOfLastModification": "2026-04-17T00:00:00+00:00",
     "categories": [
         "Algorithms",
         "Quantum Computing",
+        "Compilation",
         "Devices and Performance"
     ],
     "tags": [],

@@ -1,0 +1,137 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "demo.metadata.schema.0.1.8.json",
+    "title": "Demo Metadata",
+    "description": "A QML demo's metadata",
+    "type": "object",
+    "properties": {
+      "title": {
+        "description": "The title of the demo.",
+        "type": "string",
+        "minLength": 2
+      },
+      "slug": {
+        "description": "The slug of the demo. This should match the base name of the metadata file.",
+        "type": "string",
+        "minLength": 1
+      },
+      "executable_stable":{
+        "description": "Whether or not the master branch version of this demo is executable.",
+        "type": "boolean"
+      },
+      "executable_latest":{
+        "description": "Whether or not the dev branch version of this demo is executable.",
+        "type": "boolean"
+      },
+      "authors": {
+        "description": "The author(s) of the demo. This array must contain at least one item.",
+        "type": "array",
+        "items": {
+          "$ref": "file:./objects/author.schema.0.2.0.json"
+        },
+        "minItems": 1
+      },
+      "dateOfPublication": {
+        "description": "The date on which the demo was first published, in the form YYYY-MM-DDTHH:MM:SS+00:00.",
+        "type": "string",
+        "format": "date-time",
+        "minLength": 25,
+        "maxLength": 25
+      },
+      "dateOfLastModification": {
+        "description": "The date on which the demo was last modified, in the form YYYY-MM-DDTHH:MM:SS+00:00.",
+        "type": "string",
+        "format": "date-time",
+        "minLength": 25,
+        "maxLength": 25
+      },
+      "categories": {
+        "description": "An array of the categories that this demo is in.",
+        "type": "array",
+        "items": {
+          "enum": [
+            "Algorithms",
+            "Getting Started",
+            "Optimization",
+            "Quantum Machine Learning",
+            "Quantum Chemistry",
+            "Devices and Performance",
+            "Quantum Computing",
+            "Quantum Hardware",
+            "How-to",
+            "Compilation"
+          ]
+        },
+        "minItems": 1
+      },
+      "tags": {
+        "description": "An array of the tags that the demo has. An empty array is allowed.",
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "previewImages": {
+        "description": "An array of the different images that can be used as previews for this demo - e.g., thumbnails, social media cards (perhaps of different aspect ratios).",
+        "type": "array",
+        "items": {
+          "$ref": "file:./objects/preview.image.schema.0.1.0.json"
+        },
+        "minItems": 1
+      },
+      "seoDescription": {
+        "description": "A description of the demo suitable for SEO purposes. Ideally this should be less than 150 characters, but this is not a strict limit. It should be a full, grammatically-correct sentence ending in a full stop.",
+        "type": "string",
+        "minLength": 2
+      },
+      "doi": {
+        "description": "The DOI for the demo.",
+        "type": "string",
+        "pattern": "^$|^10[.]"
+      },
+      "references": {
+        "description": "An array of the references used for the demo.",
+        "type": "array",
+        "items": {
+          "$ref": "file:./objects/reference.schema.0.1.0.json"
+        }
+      },
+      "basedOnPapers": {
+        "description": "An array of the DOIs for the papers the demo is based on. An empty array is allowed.",
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "referencedByPapers": {
+        "description": "An array of the DOIs of any papers that reference the demo. An empty array is allowed.",
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "relatedContent": {
+        "description": "An array of objects describing the content related to the demo. An empty array is allowed.",
+        "type": "array",
+        "items": {
+          "$ref": "file:./objects/related.content.schema.0.1.0.json"
+        }
+      },
+      "hardware": {
+        "description": "An array of objects representing third-party vendors who can run the demo on their hardware. An empty array is allowed.",
+        "type": "array",
+        "items": {
+          "$ref": "file:./objects/hardware.schema.0.1.0.json"
+        }
+      },
+      "discussionForumUrl": {
+        "description": "Link to dedicated discussion forum thread on https://discuss.pennylane.ai/ for this demo",
+        "type": "string",
+        "format": "uri",
+        "pattern": "(^https?:\/\/(www.)?discuss.pennylane.ai(?:\/.*)?$)"
+      }
+    },
+    "required": [
+      "title", "authors", "dateOfPublication", "dateOfLastModification", "categories", "tags", "previewImages", "seoDescription", "doi", "references", "basedOnPapers", "referencedByPapers", "relatedContent"
+    ]
+  }

@@ -10,7 +10,7 @@ assignees: ''
 #### Before posting an issue
 
 Search existing GitHub issues to make sure the issue does not already exist:
-https://github.com/XanaduAI/qml/issues
+https://github.com/PennyLaneAI/demos/issues
 
 Delete everything above the dashed line, and fill in the template.
 

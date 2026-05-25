@@ -123,10 +123,10 @@ state. And lastly, we discuss the results, potential ways optimizing the code, a
 # 
 
 import numpy as np
-import pennylane as qml
+import pennylane as qp
 
 def generate_molecule_data(molecules="H2"):
-    datasets = qml.data.load("qchem", molname=molecules)
+    datasets = qp.data.load("qchem", molname=molecules)
 
     # Get the time set T
     op_times = np.sort(np.array([-2**k for k in range(1, 5)] + [2**k for k in range(1, 5)]) / 160)
@@ -136,10 +136,10 @@ def generate_molecule_data(molecules="H2"):
     for dataset in datasets:
         molecule = dataset.molecule
         num_electrons, num_qubits = molecule.n_electrons, 2 * molecule.n_orbitals
-        singles, doubles = qml.qchem.excitations(num_electrons, num_qubits)
-        double_excs = [qml.DoubleExcitation(time, wires=double) for double in doubles for time in op_times]
-        single_excs = [qml.SingleExcitation(time, wires=single) for single in singles for time in op_times]
-        identity_ops = [qml.exp(qml.I(range(num_qubits)), 1j*time) for time in op_times] # For Identity
+        singles, doubles = qp.qchem.excitations(num_electrons, num_qubits)
+        double_excs = [qp.DoubleExcitation(time, wires=double) for double in doubles for time in op_times]
+        single_excs = [qp.SingleExcitation(time, wires=single) for single in singles for time in op_times]
+        identity_ops = [qp.exp(qp.I(range(num_qubits)), 1j*time) for time in op_times] # For Identity
         operator_pool = double_excs + single_excs + identity_ops
         molecule_data[dataset.molname] = {
             "op_pool": np.array(operator_pool), 
@@ -174,18 +174,18 @@ op_pool_size = len(op_pool)
 # :class:`~.pennylane.Snapshot` as shown below.
 # 
 
-dev = qml.device("default.qubit", wires=num_qubits)
+dev = qp.device("default.qubit", wires=num_qubits)
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 def energy_circuit(gqe_ops):
     # Computes Eq. 1 from Nakaji et al. based on the selected unitary operators
-    qml.BasisState(init_state, wires=range(num_qubits)) # Initial state <-- Hartree Fock state
+    qp.BasisState(init_state, wires=range(num_qubits)) # Initial state <-- Hartree Fock state
     for op in gqe_ops:
-        qml.Snapshot(measurement=qml.expval(hamiltonian))
-        qml.apply(op) # Applies each of the unitary operators
-    return qml.expval(hamiltonian)
+        qp.Snapshot(measurement=qp.expval(hamiltonian))
+        qp.apply(op) # Applies each of the unitary operators
+    return qp.expval(hamiltonian)
 
-energy_circuit = qml.snapshots(energy_circuit)
+energy_circuit = qp.snapshots(energy_circuit)
 
 def get_subsequence_energies(op_seq):
     # Collates the energies of each subsequence for a batch of sequences

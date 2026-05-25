@@ -1,18 +1,21 @@
 <h1 align="center">PennyLane Demonstrations</h1>
 
 <p align="center">
-  <a href="https://github.com/PennyLaneAI/qml/actions?query=workflow%3Abuild-master" title="Master Branch Build Status">
-    <img src="https://img.shields.io/github/actions/workflow/status/PennyLaneAI/qml/v2-build-branch-master.yml?label=master&logo=github&style=flat-square" alt="Master Branch Build Status" />
+  <a href="https://github.com/PennyLaneAI/demos/actions?query=workflow%3Abuild-master" title="Master Branch Build Status">
+    <img src="https://img.shields.io/github/actions/workflow/status/PennyLaneAI/demos/v2-build-branch-master.yml?label=master&logo=github&style=flat-square" alt="Master Branch Build Status" />
   </a>
-  <a href="https://github.com/PennyLaneAI/qml/actions?query=workflow%3Abuild-dev" title="Dev Branch Build Status">
-    <img src="https://img.shields.io/github/actions/workflow/status/PennyLaneAI/qml/v2-build-branch-dev.yml?label=dev&logo=github&style=flat-square" alt="Dev Branch Build Status" />
+  <a href="https://github.com/PennyLaneAI/demos/actions?query=workflow%3Abuild-dev" title="Dev Branch Build Status">
+    <img src="https://img.shields.io/github/actions/workflow/status/PennyLaneAI/demos/v2-build-branch-dev.yml?label=dev&logo=github&style=flat-square" alt="Dev Branch Build Status" />
+  </a>
+  <a href="https://github.com/PennyLaneAI/demos/actions/workflows/v2-sync-objects-dot-inv.yml" title="objects.inv Sync Status">
+    <img src="https://img.shields.io/github/actions/workflow/status/PennyLaneAI/demos/v2-sync-objects-dot-inv.yml?label=objects.inv%20sync&logo=github&style=flat-square" alt="objects.inv Sync Status" />
   </a>
   <img src="https://img.shields.io/badge/contributions-welcome-orange?style=flat-square" alt="Contributions Welcome"/>
 </p>
 
 <center>
-  <a href="https://pennylane.ai/qml/demonstrations/" title="View QML Demonstrations Online">
-    <img src="/documentation/images/documentation-hero.png" width="100%" alt="QML Demonstrations Hero Image">
+  <a href="https://pennylane.ai/qml/demonstrations/" title="View PennyLane Demonstrations Online">
+    <img src="/documentation/images/documentation-hero.png" width="100%" alt="PennyLane Demonstrations Hero Image">
   </a>
 </center>
 
@@ -25,7 +28,7 @@ Explore the full collection of [PennyLane demos](https://pennylane.ai/qml/demons
 ## Table of Contents
 
 - [Contributing to Demos](CONTRIBUTING.md)
-- [QML CLI Tool](/documentation/qml-cli.md)
+- [CLI Tool](/documentation/demo-cli.md)
 - [Dependency Management](/dependencies/README.md)
 - [Support](#support)
 - [License](#license)
@@ -33,8 +36,8 @@ Explore the full collection of [PennyLane demos](https://pennylane.ai/qml/demons
 
 ## Support
 
-- **Source Code:** https://github.com/PennyLaneAI/QML
-- **Issue Tracker:** https://github.com/PennyLaneAI/QML/issues
+- **Source Code:** https://github.com/PennyLaneAI/demos
+- **Issue Tracker:** https://github.com/PennyLaneAI/demos/issues
 
 If you encounter any issues, have questions, or wish to suggest improvements, please report them on our GitHub issue tracker.
 

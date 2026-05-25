@@ -3,21 +3,19 @@ from pandocfilters import stringify, walk
 
 ASSETS_DIR = "https://blog-assets.cloud.pennylane.ai/demos/"
 
+def make_html_figure(src: str, width: int = 50) -> str:
+    """Make an HTML figure from a source string.
+    Returns an HTML string for the figure.
+    """
+    cleaned_url = parse_img_source(src)
+    return f"<img src='{cleaned_url}' alt='' style='display:block; margin:auto; width:{width}%;'/>"
+
 def parse_img_source(src: str) -> str:
-    if "/_static/demonstration_assets/" in src:
+    if "/_static/demonstration_assets/" in src or "/_static/demo_thumbnails/" in src:
         img = src.split("/")[-1]
         return ASSETS_DIR + os.getenv("CURRENT_DEMO") + "/main/_assets/images/" + img
     else:
         return src
-
-def make_markdown_figure(figure: list) -> str:
-    """Make a markdown figure from a figure block.
-    Returns a markdown text string for the figure.
-    The format for the figure block is a list containing three elements:
-    [metadata, [url_dict], [url, alt_text]]
-    """
-    [_, [url_dict], _] = figure
-    return f"![]({url_dict.get('c', '')})"
 
 def make_markdown_link(link: list) -> str:
     """Make a markdown link from a link block.
@@ -49,7 +47,8 @@ def process_text(text):
         elif key == 'Space':
             result.append(" ")
         elif key == 'Image':
-            result.append(make_markdown_figure(val))
+            _, _, [url, _] = val
+            result.append(make_html_figure(url, width=25))
             # Don't process the rest of the block
             return []
         elif key == 'Link':

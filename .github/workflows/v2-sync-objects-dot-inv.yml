@@ -1,9 +1,15 @@
 name: V2 Sync objects.inv
+
+concurrency:
+  group: v2-sync-objects-inv-${{ inputs.branch || github.event.workflow_run.head_branch || github.ref }}
+  cancel-in-progress: true
+
 on:
+  # Allow existing reusable use.
   workflow_call:
     inputs:
       branch:
-        description: The QML branch that is being built.
+        description: The branch that is being built.
         type: string
         required: true
       dev:
@@ -11,7 +17,6 @@ on:
         required: false
         type: boolean
         default: false
-    
     secrets:
       aws_region:
         description: The AWS Region the infrastructure resides in
@@ -26,21 +31,98 @@ on:
         description: The S3 bucket ID where the objects.inv file will be pushed
         required: true
 
+  # Auto-trigger after the build workflow completes successfully.
+  workflow_run:
+    workflows:
+      - "V2 Build Demos for SWC Environment"
+    types:
+      - completed
+
 
 jobs:
+  changed-demos:
+    # For workflow_run, only run when the triggering workflow succeeded.
+    if: |
+      github.event_name != 'workflow_run' ||
+      github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    outputs:
+      updated: ${{ steps.get-changed-demos.outputs.updated }}
+      deleted: ${{ steps.get-changed-demos.outputs.deleted }}
+      # workflow_call: always proceed to build; workflow_run: only if there are changed demos
+      any_changed: ${{ github.event_name == 'workflow_call' || steps.get-changed-demos.outputs.updated != '' || steps.get-changed-demos.outputs.deleted != '' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ inputs.branch || github.event.workflow_run.head_sha }}
+          fetch-depth: ${{ github.event_name == 'workflow_run' && 2 || 1 }}
+
+      - name: Get base SHA
+        if: github.event_name == 'workflow_run'
+        id: base-sha
+        run: echo "base_sha=$(git rev-parse ${{ github.event.workflow_run.head_sha }}^)" >> "$GITHUB_OUTPUT"
+
+      - name: Get changed demos
+        id: get-changed-demos
+        if: github.event_name == 'workflow_run'
+        uses: ./.github/actions/get-changed-demos
+        with:
+          base_sha: ${{ steps.base-sha.outputs.base_sha }}
+          sha: ${{ github.event.workflow_run.head_sha }}
+
+      # For workflow_run, output the changed demos for debugging purposes.
+      - name: Output changed demos
+        if: github.event_name == 'workflow_run'
+        run: |
+          echo "Updated: ${{ steps.get-changed-demos.outputs.updated }}"
+          echo "Deleted: ${{ steps.get-changed-demos.outputs.deleted }}"
+
   build-and-upload:
+    # Run when changed-demos says there are changes (or we were invoked via workflow_call).
+    if: needs.changed-demos.outputs.any_changed == 'true'
+    needs: [changed-demos]
     runs-on: ubuntu-latest
     env:
+      # Defaults for workflow_call usage
       AWS_REGION: ${{ secrets.aws_region }}
       AWS_ACCESS_KEY_ID: ${{ secrets.aws_access_key_id }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.aws_secret_access_key }}
       AWS_S3_HTML_BUCKET_ID: ${{ secrets.aws_html_s3_bucket_id }}
 
+      # Derived from triggering workflow_run
+      TARGET_REF: ${{ inputs.branch || github.event.workflow_run.head_sha }}
+      TARGET_BRANCH: ${{ inputs.branch && '' || github.event.workflow_run.head_branch }}
+      DEV_MODE: ${{ inputs.dev || (github.event_name == 'workflow_run' && github.event.workflow_run.head_branch == 'dev') }}
+
     steps:
+      - name: Configure AWS credentials from build branch
+        if: github.event_name == 'workflow_run'
+        env:
+          HEAD_BRANCH: ${{ github.event.workflow_run.head_branch }}
+        run: |
+          branch="$HEAD_BRANCH"
+          if [ "$branch" = "dev" ]; then
+            echo "AWS_ACCESS_KEY_ID=${{ secrets.PL_SITE_DEV_NON_REACT_ACCESS_KEY_ID }}" >> "$GITHUB_ENV"
+            echo "AWS_SECRET_ACCESS_KEY=${{ secrets.PL_SITE_DEV_NON_REACT_SECRET_ACCESS_KEY }}" >> "$GITHUB_ENV"
+            echo "AWS_S3_HTML_BUCKET_ID=${{ secrets.PL_SITE_DEV_S3_BUCKET_NAME }}" >> "$GITHUB_ENV"
+          elif [ "$branch" = "master" ]; then
+            echo "AWS_ACCESS_KEY_ID=${{ secrets.PL_SITE_PROD_NON_REACT_ACCESS_KEY_ID }}" >> "$GITHUB_ENV"
+            echo "AWS_SECRET_ACCESS_KEY=${{ secrets.PL_SITE_PROD_NON_REACT_SECRET_ACCESS_KEY }}" >> "$GITHUB_ENV"
+            echo "AWS_S3_HTML_BUCKET_ID=${{ secrets.PL_SITE_PROD_S3_BUCKET_NAME }}" >> "$GITHUB_ENV"
+          else
+            echo "Unsupported branch: $branch"
+            exit 1
+          fi
+          # Region fallback for workflow_run if not provided via workflow_call secrets.
+          if [ -z "${AWS_REGION:-}" ]; then
+            echo "AWS_REGION=${{ secrets.AWS_REGION }}" >> "$GITHUB_ENV"
+          fi
+
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
-          ref: ${{ inputs.branch }}
+          ref: ${{ env.TARGET_REF }}
           fetch-depth: 1
 
       - name: Install pandoc and opencl
@@ -50,7 +132,7 @@ jobs:
             pandoc 
 
       - name: Setup Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v6
         with:
           python-version: '3.11'
 
@@ -59,11 +141,18 @@ jobs:
 
       - name: Build all demos in HTML format
         run: |
-          qml build \
+          # Resolve dev flag from workflow_call input or workflow_run branch.
+          if [ "${DEV_MODE}" = "true" ]; then
+            DEV_FLAG="--dev"
+          else
+            DEV_FLAG="--no-dev"
+          fi
+          demo build \
+          --no-execute \
           --format html \
           --keep-going \
           --no-quiet \
-          ${{ inputs.dev && '--dev' || '--no-dev' }}
+          ${DEV_FLAG}
 
       - name: Sync objects.inv to HTML Bucket
         run: aws s3 cp ./_build/objects.inv s3://$AWS_S3_HTML_BUCKET_ID/qml/objects.inv

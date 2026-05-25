@@ -2,3 +2,5 @@ covalent==0.227.0rc0
 networkx<3.6
 torch
 dask[delayed]
+# Pin setuptools: Covalent needs pkg_resources (removed in newer setuptools).
+setuptools==69.5.1

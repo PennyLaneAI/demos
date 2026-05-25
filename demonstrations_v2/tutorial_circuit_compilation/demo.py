@@ -16,10 +16,10 @@ quantum circuits, which relies on the fact that there are many equivalent repres
 circuits that use different sets of gates but provide the same output.
 
 Out of those representations, we are typically interested in finding the most suitable one for our
-purposes. For example, we usually look for the one that will incur the least amount of errors in the 
+purposes. For example, we usually look for the one that will incur the least amount of errors in the
 specific hardware on which we are compiling the circuit. This usually implies decomposing the
 quantum gates in terms of the native ones of the quantum device, adapting the operations to the
-hardrware's topology, combining them to reduce the circuit depth, etc.
+hardware's topology, combining them to reduce the circuit depth, etc.
 
 A crucial part of the compilation process consists of repeatedly performing minor circuit modifications.
 In PennyLane, we can apply :mod:`~pennylane.transforms` to our quantum functions in order to obtain
@@ -43,33 +43,33 @@ simpler quantum circuits. The transforms are based on very basic circuit equival
 To illustrate their combined effect, let us consider the following circuit.
 """
 
-from functools import partial
-import pennylane as qml
+import pennylane as qp
 import matplotlib.pyplot as plt
 
-dev = qml.device("default.qubit", wires=3)
+dev = qp.device("default.qubit", wires=3)
 
-
+@qp.qnode(dev)
 def circuit(angles):
-    qml.Hadamard(wires=1)
-    qml.Hadamard(wires=2)
-    qml.RX(angles[0], 0)
-    qml.CNOT(wires=[1, 0])
-    qml.CNOT(wires=[2, 1])
-    qml.RX(angles[2], wires=0)
-    qml.RZ(angles[1], wires=2)
-    qml.CNOT(wires=[2, 1])
-    qml.RZ(-angles[1], wires=2)
-    qml.CNOT(wires=[1, 0])
-    qml.Hadamard(wires=1)
-    qml.CY(wires=[1, 2])
-    qml.CNOT(wires=[1, 0])
-    return qml.expval(qml.PauliZ(wires=0))
+    qp.Hadamard(wires=2)
+    qp.Hadamard(wires=1)
+    qp.CNOT(wires=[1, 0])
+    qp.CNOT(wires=[2, 1])
+    qp.RZ(angles[1], wires=2)
+    qp.RY(angles[0], wires=0)
+    qp.CNOT(wires=[2, 1])
+    qp.RY(-angles[0], wires=0)
+    qp.RX(angles[0], wires=0)
+    qp.RZ(-angles[1], wires=2)
+    qp.CNOT(wires=[1, 0])
+    qp.RX(angles[0], 0)
+    qp.Hadamard(wires=1)
+    qp.CY(wires=[1, 2])
+    qp.CNOT(wires=[1, 0])
+    return qp.expval(qp.PauliZ(wires=0))
 
 
 angles = [0.1, 0.3, 0.5]
-qnode = qml.QNode(circuit, dev)
-qml.draw_mpl(qnode, decimals=1, style="sketch")(angles)
+qp.draw_mpl(circuit, decimals=1, style="sketch")(angles)
 plt.show()
 
 ######################################################################
@@ -80,146 +80,119 @@ plt.show()
 # towards a ``direction`` (defaults to the right).
 #
 
-commuted_circuit = qml.transforms.commute_controlled(circuit, direction="right")
+new_circuit = qp.transforms.commute_controlled(circuit, direction="right")
 
-qnode = qml.QNode(commuted_circuit, dev)
-qml.draw_mpl(qnode, decimals=1, style="sketch")(angles)
+qp.draw_mpl(new_circuit, decimals=1, style="sketch")(angles)
 plt.show()
 
 ######################################################################
-# With this rearrangement, we can clearly identify a few operations that can be merged together.
-# For instance, the two consecutive CNOT gates from the third to the second qubits will cancel each other
-# out. We can remove these with the :func:`~pennylane.transforms.cancel_inverses`
+# With this rearrangement, we can clearly identify a few operations that cancel
+# out. For instance, the two consecutive CNOT gates on the last two wires can
+# both be removed. This can be achieved with the :func:`~pennylane.transforms.cancel_inverses`
 # transform, which removes consecutive inverse operations.
 #
 
-cancelled_circuit = qml.transforms.cancel_inverses(commuted_circuit)
+new_circuit = qp.transforms.cancel_inverses(new_circuit)
 
-
-qnode = qml.QNode(cancelled_circuit, dev)
-qml.draw_mpl(qnode, decimals=1, style="sketch")(angles)
+qp.draw_mpl(new_circuit, decimals=1, style="sketch")(angles)
 plt.show()
 
 ######################################################################
 # Consecutive rotations along the same axis can also be merged. For example, we can combine the two
 # :class:`~pennylane.RX` rotations on the first qubit into a single one with the sum of the angles.
-# Additionally, the two :class:`~pennylane.RZ` rotations on the third qubit will cancel each other.
-# We can combine these rotations with the :func:`~pennylane.transforms.merge_rotations` transform.
-# We can choose which rotations to merge with ``include_gates`` (defaults to ``None``, meaning all).
-# Furthermore, the merged rotations with a resulting angle lower than ``atol`` are directly removed.
+# Additionally, the two :class:`~pennylane.RY` rotations on the first qubit and the two :class:`~pennylane.RZ`
+# rotations on the third qubit will cancel each other. We can combine these rotations with the
+# :func:`~pennylane.transforms.merge_rotations` transform. We can choose which rotations to merge
+# with ``include_gates`` (defaults to ``None``, meaning all). Furthermore, the merged rotations
+# with a resulting angle lower than ``atol`` are directly removed.
 #
 
-merged_circuit = qml.transforms.merge_rotations(cancelled_circuit, atol=1e-8, include_gates=None)
+new_circuit = qp.transforms.merge_rotations(new_circuit, atol=1e-8)
 
-
-qnode = qml.QNode(merged_circuit, dev)
-qml.draw_mpl(qnode, decimals=1, style="sketch")(angles)
+qp.draw_mpl(new_circuit, decimals=1, style="sketch")(angles)
 plt.show()
 
 ######################################################################
 # Combining these simple circuit transforms, we have reduced the complexity of our original circuit.
-# This will make it faster to execute and less prone to errors. However, there is still room for
+# This will make it cheaper to execute and less prone to errors. However, there is still room for
 # improvement. Let's take it a step further in the following section!
 #
-# As a final remark, we can directly apply the transforms to our quantum function when we define it
+# As a final remark, we can directly apply the transforms to our circuit when we define it
 # using their decorator forms (beware the reverse order!).
 #
 
+@qp.transforms.merge_rotations(atol=1e-8)
+@qp.transforms.cancel_inverses
+@qp.transforms.commute_controlled(direction="right")
+@qp.qnode(dev)
+def qfunc(angles):
+    qp.Hadamard(wires=2)
+    qp.Hadamard(wires=1)
+    qp.CNOT(wires=[1, 0])
+    qp.CNOT(wires=[2, 1])
+    qp.RZ(angles[1], wires=2)
+    qp.RY(angles[0], wires=0)
+    qp.CNOT(wires=[2, 1])
+    qp.RY(-angles[0], wires=0)
+    qp.RX(angles[0], wires=0)
+    qp.RZ(-angles[1], wires=2)
+    qp.CNOT(wires=[1, 0])
+    qp.RX(angles[0], 0)
+    qp.Hadamard(wires=1)
+    qp.CY(wires=[1, 2])
+    qp.CNOT(wires=[1, 0])
+    return qp.expval(qp.PauliZ(wires=0))
 
-@qml.qnode(dev)
-@partial(qml.transforms.merge_rotations, atol=1e-8, include_gates=None)
-@qml.transforms.cancel_inverses
-@partial(qml.transforms.commute_controlled, direction="right")
-def q_fun(angles):
-    qml.Hadamard(wires=1)
-    qml.Hadamard(wires=2)
-    qml.RX(angles[0], 0)
-    qml.CNOT(wires=[1, 0])
-    qml.CNOT(wires=[2, 1])
-    qml.RX(angles[2], wires=0)
-    qml.RZ(angles[1], wires=2)
-    qml.CNOT(wires=[2, 1])
-    qml.RZ(-angles[1], wires=2)
-    qml.CNOT(wires=[1, 0])
-    qml.Hadamard(wires=1)
-    qml.CY(wires=[1, 2])
-    qml.CNOT(wires=[1, 0])
-    return qml.expval(qml.PauliZ(wires=0))
 
-
-qml.draw_mpl(q_fun, decimals=1, style="sketch")(angles)
+qp.draw_mpl(qfunc, decimals=1, style="sketch")(angles)
 plt.show()
 
 ######################################################################
 # Circuit compilation
 # -------------------
 #
-# Rearranging and combining operations is an essential part of circuit compilation. Indeed, it is
-# usually performed repeatedly as the compiler does multiple *passes* over the circuit. During every
-# pass, the compiler applies a series of circuit transforms to obtain better and better circuit
-# representations.
-#
-# We can apply all the transforms introduced above with the
-# :func:`~pennylane.compile` function, which yields the same final circuit.
+# A sequence of transforms is also called a compile pipeline. We can chain
+# multiple transforms into a :class:`~pennylane.CompilePipeline` that can
+# be easily reused to transform a circuit:
 #
 
-compiled_circuit = qml.compile(circuit)
+pipeline = qp.CompilePipeline(
+    qp.transforms.commute_controlled(direction="right"),
+    qp.transforms.cancel_inverses,
+    qp.transforms.merge_rotations(atol=1e-8)
+)
 
-qnode = qml.QNode(compiled_circuit, dev)
-qml.draw_mpl(qnode, decimals=1, style="sketch")(angles)
+compiled_circuit = pipeline(circuit)
+
+qp.draw_mpl(compiled_circuit, decimals=1, style="sketch")(angles)
 plt.show()
 
 ######################################################################
-# In the resulting circuit, we can identify further operations that can be combined, such as the
-# consecutive CNOT gates applied from the second to the first qubit. To do so, we would simply need to
-# apply the same transforms again in a second pass of the compiler. We can adjust the desired number
-# of passes with ``num_passes``.
+# In the resulting circuit, we can identify further operations that can be
+# combined, such as the consecutive :class:`~pennylane.CNOT` gates on the first
+# two qubits, and then recursively the two :class:`~pennylane.Hadamard` gates
+# on the second qubit. Therefore, we could apply the pipeline a second time.
 #
 # Let us see the resulting circuit with two passes.
 #
 
-compiled_circuit = qml.compile(circuit, num_passes=2)
+compiled_circuit = pipeline(compiled_circuit)
 
-qnode = qml.QNode(compiled_circuit, dev)
-qml.draw_mpl(qnode, decimals=1, style="sketch")(angles)
+qp.draw_mpl(compiled_circuit, decimals=1, style="sketch")(angles)
 plt.show()
 
 ######################################################################
-# This can be further simplified with an additional pass of the compiler. In this case, we also define
-# explicitly the transforms to be applied by the compiler with the ``pipeline`` argument. This allows
-# us to control the transforms, their parameters, and the order in which they are applied. For example,
-# let's apply the same transforms in a different order, shift the single-qubit gates towards the
-# opposite direction, and only merge :class:`~pennylane.RZ` rotations.
+# Compile pipelines can be easily composed and modified. Now let's create a new
+# pipeline from the original by repeating the same sequence of transforms twice
+# and then decomposing the optimized circuit into a gate set so that it could
+# be executed on a device that can only execute single-qubit rotations and the
+# :class:`~pennylane.CNOT` gate.
 #
 
-compiled_circuit = qml.compile(
-    circuit,
-    pipeline=[
-        partial(qml.transforms.commute_controlled, direction="left"),  # Opposite direction
-        partial(qml.transforms.merge_rotations, include_gates=["RZ"]),  # Different threshold
-        qml.transforms.cancel_inverses,  # Cancel inverses after rotations
-    ],
-    num_passes=3,
-)
+new_pipeline = pipeline * 2 + qp.transforms.decompose(gate_set={"CNOT", "RX", "RY", "RZ"})
+compiled_circuit = new_pipeline(circuit)
 
-qnode = qml.QNode(compiled_circuit, dev)
-qml.draw_mpl(qnode, decimals=1, style="sketch")(angles)
-plt.show()
-
-######################################################################
-# Notice how the :class:`~pennylane.RX` gates on the first qubit have been pushed towards the left
-# and they have not been merged, unlike in the previous cases.
-#
-# Finally, we can specify a finite basis of gates to describe the circuit by providing a ``basis_set``.
-# For example, suppose we wish to run our circuit on a device that can only implement single-qubit
-# rotations and CNOT operations. In this case, the compiler will need to decompose the gates
-# in terms of our basis, then apply the transforms.
-#
-
-compiled_circuit = qml.compile(circuit, basis_set=["CNOT", "RX", "RY", "RZ"], num_passes=2)
-
-qnode = qml.QNode(compiled_circuit, dev)
-qml.draw_mpl(qnode, decimals=1, style="sketch")(angles)
+qp.draw_mpl(compiled_circuit, decimals=1, style="sketch")(angles)
 plt.show()
 
 ######################################################################
@@ -233,7 +206,6 @@ plt.show()
 # Combining simple circuit transforms that are applied repeatedly during each pass of the compiler, we can
 # significantly reduce the complexity of our quantum circuits.
 #
-# To continue learning, you can explore other circuit transformations present in the PennyLane
-# :mod:`~pennylane.transforms` module. Furthermore, you can even learn how to create your own in
-# `this blogpost <https://pennylane.ai/blog/2021/08/how-to-write-quantum-function-transforms-in-pennylane/>`__.
+# To continue learning, you can explore the documentation for the :mod:`~pennylane.transforms` module, which
+# contains other circuit transformations present in the PennyLane. You can even learn how to create your own transform!
 #

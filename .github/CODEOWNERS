@@ -2,7 +2,7 @@
 /demonstrations_v2/*/requirements.in @PennyLaneAI/cloud-software @PennyLaneAI/content @PennyLaneAI/core-release-managers
 /pyproject.toml @PennyLaneAI/cloud-software @PennyLaneAI/core-release-managers
 /poetry.lock @PennyLaneAI/cloud-software @PennyLaneAI/core-release-managers
-/lib/qml/** @PennyLaneAI/cloud-software @PennyLaneAI/core-release-managers
+/lib/demo/** @PennyLaneAI/cloud-software @PennyLaneAI/core-release-managers
 /dependencies/** @PennyLaneAI/cloud-software @PennyLaneAI/core-release-managers
 /.github/** @PennyLaneAI/cloud-software @PennyLaneAI/core-release-managers
 /demonstrations_v2/** @PennyLaneAI/content @PennyLaneAI/core-release-managers

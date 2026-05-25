@@ -122,14 +122,14 @@ Quantum circuit structure learning
 # in order to obtain exact values for any expectation values calculated. In contrast to real
 # devices, simulators have the capability of doing these calculations without sampling.
 
-import pennylane as qml
+import pennylane as qp
 from pennylane import numpy as np
 
 np.random.seed(9432092)
 
 n_wires = 2
 
-dev = qml.device("lightning.qubit", wires=2)
+dev = qp.device("lightning.qubit", wires=2)
 
 ##############################################################################
 # Creating a fixed quantum circuit
@@ -147,23 +147,23 @@ dev = qml.device("lightning.qubit", wires=2)
 
 
 def ansatz(params):
-    qml.RX(params[0], wires=0)
-    qml.RY(params[1], wires=1)
-    qml.CNOT(wires=[0, 1])
+    qp.RX(params[0], wires=0)
+    qp.RY(params[1], wires=1)
+    qp.CNOT(wires=[0, 1])
 
 
-@qml.set_shots(1000)
-@qml.qnode(dev)
+@qp.set_shots(1000)
+@qp.qnode(dev)
 def circuit(params):
     ansatz(params)
-    return qml.expval(qml.PauliZ(0)), qml.expval(qml.PauliY(1))
+    return qp.expval(qp.PauliZ(0)), qp.expval(qp.PauliY(1))
 
 
-@qml.set_shots(1000)
-@qml.qnode(dev)
+@qp.set_shots(1000)
+@qp.qnode(dev)
 def circuit2(params):
     ansatz(params)
-    return qml.expval(qml.PauliX(0))
+    return qp.expval(qp.PauliX(0))
 
 
 def cost(params):
@@ -231,7 +231,7 @@ for i in range(n_steps):
 # converges on the minimum after the first cycle for this simple circuit.
 
 params_gd = init_params.copy()
-opt = qml.GradientDescentOptimizer(stepsize=0.5)
+opt = qp.GradientDescentOptimizer(stepsize=0.5)
 costs_gd = []
 for i in range(n_steps):
     costs_gd.append(cost(params_gd))
@@ -316,31 +316,31 @@ plt.show()
 
 def RGen(param, generator, wires):
     if generator == "X":
-        qml.RX(param, wires=wires)
+        qp.RX(param, wires=wires)
     elif generator == "Y":
-        qml.RY(param, wires=wires)
+        qp.RY(param, wires=wires)
     elif generator == "Z":
-        qml.RZ(param, wires=wires)
+        qp.RZ(param, wires=wires)
 
 
 def ansatz_rsel(params, generators):
     RGen(params[0], generators[0], wires=0)
     RGen(params[1], generators[1], wires=1)
-    qml.CNOT(wires=[0, 1])
+    qp.CNOT(wires=[0, 1])
 
 
-@qml.set_shots(1000)
-@qml.qnode(dev)
+@qp.set_shots(1000)
+@qp.qnode(dev)
 def circuit_rsel(params, generators):
     ansatz_rsel(params, generators)
-    return qml.expval(qml.PauliZ(0)), qml.expval(qml.PauliY(1))
+    return qp.expval(qp.PauliZ(0)), qp.expval(qp.PauliY(1))
 
 
-@qml.set_shots(1000)
-@qml.qnode(dev)
+@qp.set_shots(1000)
+@qp.qnode(dev)
 def circuit_rsel2(params, generators):
     ansatz_rsel(params, generators)
-    return qml.expval(qml.PauliX(0))
+    return qp.expval(qp.PauliX(0))
 
 
 def cost_rsel(params, generators):

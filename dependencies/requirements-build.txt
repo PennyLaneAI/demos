@@ -6,6 +6,5 @@ markupsafe==2.1.1
 pyyaml~=6.0.1
 pypandoc==1.5
 pennylane-sphinx-theme 
-uv~=0.7.18
-numpy
+uv
 pennylane

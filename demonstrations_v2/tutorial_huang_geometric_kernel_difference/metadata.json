@@ -1,0 +1,61 @@
+{
+  "title": "Before you train: Pre-screening quantum kernels with geometric difference",
+  "authors": [
+    {
+      "username": "andynader"
+    }
+  ],
+  "executable_stable": true,
+  "executable_latest": false,
+  "dateOfPublication": "2026-01-20T10:00:00+00:00",
+  "dateOfLastModification": "2026-04-17T10:00:00+00:01",
+  "categories": [
+    "Quantum Machine Learning"
+  ],
+  "tags": [],
+  "previewImages": [
+        {
+            "type": "thumbnail",
+            "uri": "/_static/demo_thumbnails/regular_demo_thumbnails/pennylane-demo-geometric-kernel-difference-thumbnail.png"
+        },
+        {
+            "type": "large_thumbnail",
+            "uri": "/_static/demo_thumbnails/large_demo_thumbnails/pennylane-demo-geometric-kernel-difference-large-thumbnail.png"
+        }
+  ],
+  "seoDescription": "Learn how to pre-screen quantum kernels using the geometric difference metric (g) before training. This tutorial implements the approach from Huang et al. (2021) to assess whether a quantum kernel offers any geometric advantage over classical kernels. Using synthetic data and multiple quantum embeddings, we demonstrate how to calculate g values and interpret them to identify promising quantum kernels worth pursuing. This saves valuable research time by ruling out fundamentally limited approaches early.",
+  "doi": "",
+  "references": [
+    {
+      "id": "Huang2021",
+      "type": "preprint",
+      "title": "Power of data in quantum machine learning",
+      "authors": "Hsin-Yuan Huang, Michael Broughton, Masoud Mohseni, Ryan Babbush, Sergio Boixo, Hartmut Neven, Jarrod R. McClean",
+      "year": "2021",
+      "journal": "arXiv",
+      "url": "https://arxiv.org/abs/2011.01938"
+    }
+  ],
+  "basedOnPapers": [
+    "10.48550/arXiv.2011.01938"
+  ],
+  "referencedByPapers": [],
+  "relatedContent": [
+    {
+            "type": "demonstration",
+            "id": "tutorial_kernel_based_training",
+            "weight": 1.0
+        },
+            {
+            "type": "demonstration",
+            "id": "tutorial_kernels_module",
+            "weight": 1.0
+        },
+            {
+            "type": "demonstration",
+            "id": "tutorial_classical_kernels",
+            "weight": 1.0
+        }
+
+  ]
+}

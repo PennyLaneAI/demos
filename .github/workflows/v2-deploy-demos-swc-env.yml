@@ -100,3 +100,19 @@ jobs:
       workflow-run-id: ${{ github.event.workflow_run.id }}
       pr_number: 0
     secrets: inherit
+
+  # Step 3: Also deploy master builds to SWC staging
+  deploy-staging-demos:
+    if: |
+      needs.deploy-production-demos.result == 'success' &&
+      needs.prepare-build-context.outputs.merge_ref_name == 'master'
+    uses: ./.github/workflows/v2-deploy-demos.yml
+    needs:
+      - prepare-build-context
+      - deploy-production-demos
+    with:
+      environment: swc-staging
+      artifact-name: demo-deployment-build-${{ needs.prepare-build-context.outputs.merge_ref }}
+      workflow-run-id: ${{ github.event.workflow_run.id }}
+      pr_number: 0
+    secrets: inherit

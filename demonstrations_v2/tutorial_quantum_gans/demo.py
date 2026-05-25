@@ -132,7 +132,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
-import pennylane as qml
+import pennylane as qp
 
 # Pytorch imports
 import torch
@@ -366,32 +366,32 @@ n_generators = 4  # Number of subgenerators for the patch method / N_G
 #
 
 # Quantum simulator
-dev = qml.device("lightning.qubit", wires=n_qubits)
+dev = qp.device("lightning.qubit", wires=n_qubits)
 # Enable CUDA device if available
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 ######################################################################
 # Next, we define the quantum circuit and measurement process described above.
-@qml.qnode(dev, diff_method="parameter-shift")
+@qp.qnode(dev, diff_method="parameter-shift")
 def quantum_circuit(noise, weights):
 
     weights = weights.reshape(q_depth, n_qubits)
 
     # Initialise latent vectors
     for i in range(n_qubits):
-        qml.RY(noise[i], wires=i)
+        qp.RY(noise[i], wires=i)
 
     # Repeated layer
     for i in range(q_depth):
         # Parameterised layer
         for y in range(n_qubits):
-            qml.RY(weights[i][y], wires=y)
+            qp.RY(weights[i][y], wires=y)
 
         # Control Z gates
         for y in range(n_qubits - 1):
-            qml.CZ(wires=[y, y + 1])
+            qp.CZ(wires=[y, y + 1])
 
-    return qml.probs(wires=list(range(n_qubits)))
+    return qp.probs(wires=list(range(n_qubits)))
 
 
 # For further info on how the non-linear transform is implemented in Pennylane

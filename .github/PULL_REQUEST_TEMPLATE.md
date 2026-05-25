@@ -3,7 +3,7 @@
 Please complete the following checklist when submitting a PR:
 
 - [ ] Ensure that your tutorial executes correctly, and conforms to the
-      guidelines specified in the [README](https://github.com/PennyLaneAI/qml/blob/master/README.md).
+      guidelines specified in the [README](https://github.com/PennyLaneAI/demos/blob/master/README.md).
 
 - [ ] Remember to do a grammar check of the content you include.
 - [ ] All tutorials conform to

@@ -11,11 +11,12 @@
     "executable_stable": true,
     "executable_latest": true,
     "dateOfPublication": "2024-04-26T00:00:00+00:00",
-    "dateOfLastModification": "2025-10-16T04:00:00+00:00",
+    "dateOfLastModification": "2026-05-05T00:00:00+00:00",
     "categories": [
         "Quantum Machine Learning",
         "Optimization",
         "Quantum Chemistry",
+        "Compilation",
         "How-to"
     ],
     "tags": [

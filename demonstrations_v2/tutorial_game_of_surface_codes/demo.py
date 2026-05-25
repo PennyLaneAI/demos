@@ -28,7 +28,7 @@ where the equivalent game would be about how to arrange the transistors of a chi
 The game can be understood entirely from the rules described in the next section. 
 However, it still helps to understand the correspondences in physical fault tolerant quantum computing (FTQC) architectures.
 First of all it is important to note that we consider surface codes that implement `(Clifford + T) <https://pennylane.ai/compilation/clifford-t-gate-set>`__ circuits.
-In particular, these circuits can be compiled to circuits that just perform `Pauli product measurements <https://pennylane.ai/compilation/pauli-product-measurement>`__.
+In particular, these circuits can be compiled to circuits that just perform `Pauli product measurements <https://pennylane.ai/compilation/pauli-based-computation>`__.
 This is because all Clifford operations can be moved to the end of the circuit and merged with measurements. 
 The remaining non-Clifford gates are realized by `magic state injection <https://pennylane.ai/qml/glossary/what-are-magic-states>`__ and more Clifford operations, which can be merged with measurements again.
 Hence, we mainly care about performing measurements on qubits in arbitrary bases and efficiently distilling and injecting magic states.
@@ -100,7 +100,7 @@ The entire protocol costs 2🕒 and is shown below:
     Image source: Daniel Litinski [1].
 
 Auxiliary qubits play an important role as they allow measuring products of Pauli operators on different qubits, 
-which is the most crucial operation in this framework, since everything is mapped to `Pauli product measurements <https://pennylane.ai/compilation/pauli-product-measurement>`__.
+which is the most crucial operation in this framework, since everything is mapped to `Pauli product measurements <https://pennylane.ai/compilation/pauli-based-computation>`__.
 
 .. figure:: ../_static/demonstration_assets/game_of_surface_codes/PPM.png
     :align: center

@@ -1,2 +1,3 @@
 openfermion
 pyscf
+numpy<2.4

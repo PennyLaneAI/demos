@@ -1,9 +1,17 @@
 name: 'Get Changed Demos'
 description: 'Get demos that have changed'
 inputs:
+  base_sha:
+    description: Base commit SHA or branch to compare against (e.g. merge parent). Omit to use event default.
+    required: false
+    default: ''
   json:
     description: Output as a JSON list
     default: false
+  sha:
+    description: Head commit SHA or branch to compare (e.g. merge commit). Omit to use event default.
+    required: false
+    default: ''
 outputs:
   updated:
     description: 'Names of new or updated demos'
@@ -17,6 +25,11 @@ runs:
     - id: changed-files
       uses: tj-actions/changed-files@v46
       with:
+        # Specify a different base commit 
+        # SHA or branch used for 
+        # comparing changes 
+        # Type: string
+        base_sha: ${{ inputs.base_sha }}
         # Exclude changes outside the current 
         # directory and show path names 
         # relative to it. NOTE: This 
@@ -61,3 +74,8 @@ runs:
         # Specify a relative path under 
         # `$GITHUB_WORKSPACE` to locate the repository. 
         path: 'demonstrations_v2'
+        # Specify a different commit SHA 
+        # or branch used for comparing 
+        # changes 
+        # Type: string        
+        sha: ${{ inputs.sha }}

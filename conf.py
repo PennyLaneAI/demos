@@ -11,11 +11,10 @@
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-#
+
 import os
 import sys
 import warnings
-import numpy as np
 
 sys.path.insert(0, os.path.abspath("."))
 sys.path.insert(0, os.path.join(os.path.dirname(__file__)))
@@ -27,7 +26,7 @@ from pennylane.exceptions import PennyLaneDeprecationWarning
 
 project = "PennyLane"
 
-copyright = "2025, Xanadu Quantum Technologies, Inc."
+copyright = "2026, Xanadu Quantum Technologies, Inc."
 
 author = "Xanadu Inc."
 
@@ -76,17 +75,15 @@ sphinx_gallery_conf = {
     # all example scripts in the 'examples_dirs' folder will be skiped.
     "filename_pattern": r"\.py$",
     "pypandoc": {
-        "filters": [
+        "filters": [ # These are applied in order
             "./lib/filter_directives.py", 
-            "./lib/filter_figures.py",
             "./lib/filter_links.py",
-            "./lib/filter_tables.py"
+            "./lib/filter_tables.py",
+            "./lib/filter_figures.py",
         ]
     },
     # first notebook cell in generated Jupyter notebooks
     "first_notebook_cell": (
-        "# This cell is added by sphinx-gallery\n"
-        "# It can be customized to whatever you like\n"
         "%matplotlib inline"
     ),
     # thumbnail size
@@ -176,7 +173,7 @@ html_theme_options = {
     "toc_subset": False,
     "toc_hover": False,
     "relations": False,
-    "github_repo": "PennyLaneAI/qml"
+    "github_repo": "PennyLaneAI/demos"
 }
 
 # Add any paths that contain custom static files (such as style sheets) here,

@@ -19,6 +19,7 @@ sg_execution_times.rst
 *.deb
 .test_figures/*
 *.pdf
+.intersphinx_cache/
 
 # Generated after installation
 .github/workflows/qml_pipeline_utils/build/

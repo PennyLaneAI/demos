@@ -14,6 +14,10 @@ estimating expectation values of certain observables is easy.
     :target: javascript:void(0)
     :alt: IQP circuit optimization
 
+.. note::
+    The IQP circuit and expectation values estimator are now directly implemented and
+    available in PennyLane v0.44 via the :class:`IQP <pennylane.IQP> template
+    and :func:`~pennylane.qnn.iqp_expval` function, respectively.
 
 Parameterized IQP circuits
 --------------------------
@@ -103,16 +107,13 @@ gates = [[[0]], [[1]], [[2]], [[0,1]], [[0,2]], [[1,2]]]
 # Creating an IQP circuit with PennyLane
 # --------------------------------------
 #
-# To build a parameterized IQP circuit in PennyLane, we can use the :class:`~pennylane.MultiRZ` function, making use of
-# the identity
+# To build a parameterized IQP circuit in PennyLane (with input state
+# :math:`\vert 0 \rangle`), we can use the :class:`~pennylane.IQP` template, which
+# takes the gate parameters, the number of qubits in the circuit and the generators of the gates.
+# Additionally, we can evaluate expectation values of tensor products of Pauli Z operators
+# specified by lists of the form ``op`` above with the following
 #
-# .. math:: \text{exp}(i\theta_j X_j) = H^{\otimes n} \text{exp}(i\theta_j Z_j) H^{\otimes n},
-#
-# where :math:`H` is the Hadamard matrix and :math:`Z_j` is the operator obtained by replacing the
-# Pauli X operators by Pauli Z operators in :math:`X_j`. Our PennyLane circuit (with input state
-# :math:`\vert 0 \rangle`) is therefore the following.
-#
-import pennylane as qml
+import pennylane as qp
 import numpy as np
 
 # Suppress the warning caused by iqpopt
@@ -120,53 +121,30 @@ import warnings
 from pennylane.exceptions import PennyLaneDeprecationWarning
 warnings.filterwarnings("ignore", category=PennyLaneDeprecationWarning)
 
-
-def penn_iqp_gates(params: np.ndarray, gates: list, n_qubits: int):
-    """IQP circuit in PennyLane form.
-
-    Args:
-        params (np.ndarray): The parameters of the IQP gates.
-        gates (list): The gates representation of the IQP circuit.
-        n_qubits (int): The total number of qubits in the circuit.
-    """
-
-    for i in range(n_qubits):
-        qml.Hadamard(i)
-
-    for par, gate in zip(params, gates):
-        for gen in gate:
-            qml.MultiRZ(2*par, wires=gen)
-
-    for i in range(n_qubits):
-        qml.Hadamard(i)
-
-
-######################################################################
-# Now we have our circuit, we can evaluate expectation values of tensor products of Pauli Z operators
-# specified by lists of the form ``op`` above.
-#
-def penn_obs(op: np.ndarray) -> qml.operation.Operator:
+def penn_obs(op: np.ndarray) -> qp.operation.Operator:
     """Returns a PennyLane observable from a bitstring representation.
 
     Args:
         op (np.ndarray): Bitstring representation of the Z operator.
 
     Returns:
-        qml.Observable: PennyLane observable.
+        qp.Observable: PennyLane observable.
     """
     for i, z in enumerate(op):
         if i==0:
             if z:
-                obs = qml.Z(i)
+                obs = qp.Z(i)
             else:
-                obs = qml.I(i)
+                obs = qp.I(i)
         else:
             if z:
-                obs @= qml.Z(i)
+                obs @= qp.Z(i)
     return obs
 
-
-def penn_iqp_circuit(params: np.ndarray, gates: list, op: np.ndarray, n_qubits: int) -> qml.measurements.ExpectationMP:
+######################################################################
+# Now we have our circuit as
+#
+def penn_iqp_circuit(params: np.ndarray, gates: list, op: np.ndarray, n_qubits: int) -> qp.measurements.ExpectationMP:
     """Defines the circuit that calculates the expectation value of the operator with the IQP circuit with PennyLane tools.
 
     Args:
@@ -176,11 +154,11 @@ def penn_iqp_circuit(params: np.ndarray, gates: list, op: np.ndarray, n_qubits: 
         n_qubits (int): The total number of qubits in the circuit.
 
     Returns:
-        qml.measurements.ExpectationMP: PennyLane circuit with an expectation value.
+        qp.measurements.ExpectationMP: PennyLane circuit with an expectation value.
     """
-    penn_iqp_gates(params, gates, n_qubits)
+    qp.IQP(weights=params, num_wires=n_qubits, pattern=gates)
     obs = penn_obs(op)
-    return qml.expval(obs)
+    return qp.expval(obs)
 
 def penn_iqp_op_expval(params: np.ndarray, gates: list, op: np.ndarray, n_qubits: int) -> float:
     """Calculates the expectation value of the operator with the IQP circuit with PennyLane tools.
@@ -194,8 +172,8 @@ def penn_iqp_op_expval(params: np.ndarray, gates: list, op: np.ndarray, n_qubits
     Returns:
         float: Expectation value.
     """
-    dev = qml.device("lightning.qubit", wires=n_qubits)
-    penn_iqp_circuit_exe = qml.QNode(penn_iqp_circuit, dev)
+    dev = qp.device("lightning.qubit", wires=n_qubits)
+    penn_iqp_circuit_exe = qp.QNode(penn_iqp_circuit, dev)
     return penn_iqp_circuit_exe(params, gates, op, n_qubits)
 
 ######################################################################
@@ -214,7 +192,7 @@ print("Expectation value: ", penn_op_expval)
 # Estimating expectation values with IQPopt
 # -----------------------------------------
 #
-# IQPopt can perform the same operations our PennyLane circuit above, although using approximations instead of exact values. The benefit is that we can work with very
+# We can perform the same operations as our PennyLane circuit above, although using approximations instead of exact values. The benefit is that we can work with very
 # large circuits.
 #
 # Starting from a paper on simulating quantum computers with probabilistic methods [#nest]_ from Van den Nest (Theorem 3), one can arrive at the following expression
@@ -229,7 +207,7 @@ print("Expectation value: ", penn_op_expval)
 # - :math:`\theta_{j}` are the trainable parameters.
 # - :math:`\boldsymbol{g}_{j}` are the different generators, also represented as bitstrings.
 #
-# Although this expression is exact, computing the expectation exactly requires an infinite number of samples :math:`\boldsymbol{z}`. Instead, we can
+# Although this expression is exact, computing the expectation exactly requires an exponential number of samples :math:`\boldsymbol{z}`. Instead, we can
 # replace the expectation with an empirical mean and compute an unbiased estimate of
 # :math:`\langle Z_{\boldsymbol{a}} \rangle` efficiently. That is, if we sample a batch of :math:`s`
 # bitstrings :math:`\{\boldsymbol{z}_i\}` from the uniform distribution and compute the sample mean
@@ -248,50 +226,55 @@ print("Expectation value: ", penn_op_expval)
 #
 # where :math:`s` is the number of samples.
 #
-# Let's see now how to use the IQPopt package to calculate expectation values, based on the same
+# Let's see now how to use the :func:`~pennylane.qnn.iqp_expval` function to calculate expectation values, based on the same
 # arguments in the previous example. First, we create the circuit object with ``IqpSimulator``,
 # which takes in the number of qubits ``n_qubits`` and the ``gates`` in our usual format:
+#
+# .. note:: 
+#   Here we are using the estimator method added in PennyLane v0.44 but note that this functionality is also available in
+#   IQPopt via the class method ``IqpSimulator.op_expval``)
 #
 import iqpopt as iqp
 
 small_circuit = iqp.IqpSimulator(n_qubits, gates)
 
 ######################################################################
-# To obtain estimates of expectation values we use the class method ``IqpSimulator.op_expval()``. This
-# function requires a parameter array ``params``, a PauliZ operator specified by its binary
-# representation ``op``, a new parameter ``n_samples`` (the number of samples :math:`s`) that controls
+# The :func:`~pennylane.qnn.iqp_expval` function requires a PauliZ operator specified by its binary
+# representation ``op``, a parameter array ``params``, the circuit ``gates``, the number of qubits ``n_qubits``,
+# a new parameter ``n_samples`` (the number of samples :math:`s`) that controls
 # the precision of the approximation (the more the better), and a JAX pseudo random number generator
 # key to seed the randomness of the sampling. It returns the expectation value estimate as well as its
 # standard error.
 #
 # Using the same ``params`` and ``op`` as before:
 #
+from pennylane.qnn import iqp_expval as op_expval
 import jax
 
 n_samples = 2000
 key = jax.random.PRNGKey(66)
 
-expval, std = small_circuit.op_expval(params, op, n_samples, key)
+expval, std = op_expval(op, params, small_circuit.gates, small_circuit.n_qubits, n_samples, key)
 
 print("Expectation value:  ", expval)
 print("Standard error: ", std)
 
 ######################################################################
-# Since the calculation in IQPopt is stochastic, the result is not exactly the same as
-# the one obtained with PennyLane. However, as we can see, they are within the standard error `std`. You can try
+# Since the calculation is stochastic, the result is not exactly the same as
+# the one obtained with PennyLane's ``qp.expval`` method. However, as we can see, they are within the standard error `std`. You can try
 # increasing ``n_samples`` in order to obtain a more accurate approximation.
 #
 # Additionally, this function supports fast batch evaluation of expectation values. By specifying a batch of operators ``ops`` as an array, we can compute expectation values and errors in parallel using the same syntax.
 #
 ops = np.array([[1,0,0],[0,1,0],[0,0,1]]) # batch of single qubit Pauli Zs
 
-expvals, stds = small_circuit.op_expval(params, ops, n_samples, key)
+expvals, stds = op_expval(ops, params, small_circuit.gates, small_circuit.n_qubits, n_samples, key)
 
 print("Expectation values: ", expvals)
 print("Standard errors: ", stds)
 
 ######################################################################
-# With PennyLane, surpassing 30 qubits would be extremely time-consuming. However, with IQPopt, we can scale far beyond that with ease.
+# With PennyLane's simulator method, surpassing 30 qubits would be extremely time-consuming. However, with :func:`~pennylane.qnn.iqp_expval`, we can scale far beyond that with ease.
 #
 n_qubits = 1000
 n_gates = 1000
@@ -310,7 +293,7 @@ op = np.random.randint(0, 2, n_qubits)
 n_samples = 1000
 key = jax.random.PRNGKey(42)
 
-expval, std = large_circuit.op_expval(params, op, n_samples, key)
+expval, std = op_expval(op, params, large_circuit.gates, large_circuit.n_qubits, n_samples, key)
 
 print("Expectation value: ", expval)
 print("Standard error: ", std)
@@ -378,7 +361,7 @@ for n_qubits in range_qubits:
 
     # Timing op_expval
     start = time.perf_counter()
-    circuit.op_expval(params_init, op, n_samples, key)
+    op_expval(op, params_init, circuit.gates, circuit.n_qubits, n_samples, key)
     times_op.append(time.perf_counter() - start)
 
     # Timing sample
@@ -418,7 +401,7 @@ plt.show()
 import jax.numpy as jnp
 
 def loss_fn(params, circuit, ops, n_samples, key):
-    expvals = circuit.op_expval(params, ops, n_samples, key)[0]
+    expvals = op_expval(ops, params, circuit.gates, circuit.n_qubits, n_samples, key)[0]
     return jnp.sum(expvals)
 
 optimizer = "Adam"
@@ -460,7 +443,7 @@ plt.show()
 # Generative machine learning tools
 # ---------------------------------
 #
-# The package contains a dedicated module ``gen_qml`` with functionality to train and evaluate
+# The IQPopt package contains a dedicated module ``gen_qml`` with functionality to train and evaluate
 # generative models expressed as ``IqpSimulator`` circuits. Note that, since sampling from IQP circuits
 # is hard, these circuits may lead to advantages for generative machine learning tasks relative to
 # classical models!

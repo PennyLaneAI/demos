@@ -1,2 +1,3 @@
-optax
+# 1.7.1 added NumPy 2.X support
+openfermion>=1.7.1
 openfermionpyscf
