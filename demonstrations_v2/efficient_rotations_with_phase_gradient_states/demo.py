@@ -69,6 +69,7 @@ print(qre.estimate(circuit_baseline)())
 #    |\nabla_b\rangle=\frac{1}{\sqrt{B}}\sum_{k=0}^{B-1}e^{-2\pi i \frac{k}{B}}|k\rangle
 #
 # or, in product state form,
+#
 # .. math::
 #    |\nabla_b\rangle=\otimes_{j=1}^b\frac{1}{\sqrt{2}}(|0\rangle+e^{-i\frac{2\pi}{2^j}}|1\rangle).
 #
