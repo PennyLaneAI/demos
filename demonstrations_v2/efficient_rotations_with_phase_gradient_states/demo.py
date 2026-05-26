@@ -77,7 +77,7 @@ print(qre.estimate(circuit_baseline)())
 # .. math::
 #    |\nabla_b\rangle=\otimes_{j=1}^b\frac{1}{\sqrt{2}}(|0\rangle+e^{-i\frac{2\pi}{2^j}}|1\rangle).
 #
-# Here, :math:`B=2^b` is the total number of possible states in the superposition, :math:`b=\log_2(1/\epsilon)` is the total number of qubits stored in the gradient register and :math:`j` is the index of a specific qubit within the register. 
+# Here, :math:`B=2^b` is the total number of possible states in the superposition, :math:`b=\log_2(1/\epsilon)` is the total number of qubits stored in the gradient register, and :math:`j` is the index of a specific qubit within the register. 
 #
 # The phase gradient state basically acts as a conditional rotation operator in itself. What is special, however, is that this state can be prepared once, stored in an auxiliary register, and reused catalytically. To induce a phase shift, the data register (storing an integer value) can be *added* to the gradient register and, via `phase kickback <https://pennylane.ai/qml/demos/tutorial_phase_kickback>`_, the data register accumulates a phase shift proportional to its integer value. One can take the term "gradient" literally here; the phase gradient state essentially stores spatially dependent phases that can be applied to encode data as a function of qubit position. 
 #
