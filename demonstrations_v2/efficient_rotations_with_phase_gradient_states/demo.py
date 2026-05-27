@@ -2,43 +2,41 @@ r"""
 Efficient Rotations with Phase Gradient States
 ==============================================
 
-Efficiency, efficiency, efficiency. Could this become more than just words, words, words? 
+Efficiency, efficiency, efficiency. Is it possible for this become more than just words, words, words? 
 
 The field of quantum algorithms has long been focused on ensuring operations can be executed on quantum hardware as efficiently as possible. Telling the story of efficiency in terms of speed is compelling, but this metric holds a lot of nuance that needs to be accounted for in optimization processes. In terms of quantum gate construction, the idea of resource optimization is front and center. How can we carry out the processes we want to execute as effectively as possible using as few resources as possible? The answer is likely not universal; different operations will require different optimization strategies. This demo will explore the idea of the **phase gradient state**, a resource optimization strategy that can be applied to carry out highly efficient arbitrary rotations, a dominant expense in applications that employ them. If you care about efficient rotations, you should care about this!
 
+Quantifying Efficiency
+----------------------
+As we work toward practical quantum computation, we simultaneously (and necessarily) strive to ensure each building block can operate as efficiently as possible. This principle is embedded in the goals of algorithm advancement, especially as the field works toward achieving `fault tolerance <https://pennylane.ai/topics/fault-tolerant-quantum-computing>`_. Fault-tolerant quantum devices will inevitably need to integrate some kind of `quantum error correction (QEC) <https://pennylane.ai/codebook/quantum-error-correction>`_ strategy into their architecture. In the pursuit of effective QEC strategies, it has become clear that we can divide established gates into two categories: fault-tolerant and not-fault-tolerant. 
+
+Those that fall into the fault-tolerant category encourage good neighbourly qualities, since, if a single qubit in a set of qubits that interact with the gate accumulates an error, it will not induce subsequent errors on the other qubits in the set. Since the error is therefore contained, it is much easier to identify the impacted qubit and correct the issue (ex. apply an X gate to reverse an unwanted bit flip). Members of the `Clifford gates <https://pennylane.ai/qml/demos/tutorial_clifford_circuit_simulations>`_ category are prominent examples of fault-tolerant gates. 
+
+Non-fault-tolerant gates, however, do not have the same courtesy. When a qubit incurs an error as a result of an interaction with one of these gates, it is likely to cascade through the entire set. As a result, errors become much more difficult (if not impossible) to correct. Though it is tempting to say that the use of these gates should just be avoided in favour of fault tolerance, doing so would eliminate the possibility of achieving `universality <https://pennylane.ai/compilation/clifford-t-gate-set>`_ in a gate set. 
+
+To work around this issue, non-Clifford gates can be broken down into an equivalent series of `T-gates <https://pennylane.ai/qml/demos/tutorial_achieving_universality_with_the_clifford_hierarchy>`_, which represent a fixed :math:`\frac{\pi}{4}` rotation, and auxiliary Clifford gates. While these (like arbitrary rotations) are not fault tolerant, they can be "protected" via a process called `magic state distillation <https://pennylane.ai/qml/demos/tutorial_magic_state_distillation>`_. Perhaps this all sounds a bit far fetched now that `magic <https://pennylane.ai/qml/demos/tutorial_magic_states>`_ has come into play, but the idea can be summarized as follows: non-Clifford gates tend to not have inherent fault tolerance, so the operations they represent should ideally be built out of components on which errors can be easily detected such that any error ridden qubits can be thrown away before the entire system is impacted. 
+ 
+.. figure:: ../demonstrations_v2/efficient_rotations_with_phase_gradient_states/GateDecompBig.gif
+     :align: center
+     :width: 500px
+
+The point? It takes **a lot** of T-gates to do this. Consider, as we will for the rest of this demo, an arbitrary rotation. To execute an 11.71° rotation, for example, a cascade of 45° rotations in the form of T-gates will need to be applied in tandem with Clifford gates to achieve the desired outcome. This can quickly grow to the scale of 100s of T-gates and beyond. This is resource intensive in itself, but when one remembers that the process of magic state distillation involves throwing away any T-gate that accumulates an error, the total cost can become astronomical. So, though it is common in classical algorithms to discuss efficiency in terms of time, quantum algorithms, as they stand, tend to have efficiency benchmarks expressed in terms of T-gate count. These quantities seem to not be completely divorced, however, since high distillation costs equate to a dominant bottleneck courtesy of :math:`|T\rangle` state production [#Gidney2018]_. So, how do we ensure our algorithms are as efficient as possible? For now, by striving to minimize the amount of T-gates used by (also known as the T-count of) an algorithm.
+
+Efficient Rotations?
+--------------------
+As established, arbitrary rotations are expensive. Unfortunately, they are also foundational to some of the most important tools we have in quantum algorithms and computing, such as the `quantum fourier transform (QFT) <https://pennylane.ai/qml/demos/tutorial_qft>`_, `quantum phase estimation <https://pennylane.ai/demos/tutorial_qpe/>`_, and the `trotterization algorithm <https://pennylane.ai/challenges/a_simple_trotterization>`_. As a result, optimizing these operations in the fault-tolerant picture is very important. There have been a diverse array of optimization strategies proposed that all boil down to reducing the number of T-gates required to carry out a rotation. 
+
+To emphasize the benefit of T-gate optimization, let us take the example of binary state loading, which is typically carried out through some method of phase manipulation. Here, a :math:`N`-bit binary string can be represented by :math:`n=log_2(N)` qubits in superposition that conditionally undergo a rotation invoked by a set of gates. To ensure fault tolerance, these rotations should be carried out using distilled T-gates, causing the system to scale as :math:`\mathcal{O}(2^nlog_2(1/\epsilon))`, where :math:`\epsilon` is the desired precision, when taking a naïve approach. Yikes.
+
+A quick resource estimation for a single pass of this procedure can be carried out using PennyLane and the qre.estimate() tool. Note that, for a :math:`n` qubit system, SelectPauliRot (a multiplexer) will apply a total of :math:`R=2^n` rotations to address each possible binary state. Thus, for a 3 qubit system, 8 rotations will be applied in a single pass.
+
+CIRCUIT DIAGRAM
 """
 import pennylane as qp
 import numpy as np
 import matplotlib.pyplot as plt
 from pennylane.labs.transforms import select_pauli_rot_phase_gradient
 import pennylane.estimator as qre
-
-###############################################################################
-# Quantifying Efficiency
-# ----------------------
-# As we work toward practical quantum computation, we simultaneously (and necessarily) strive to ensure each building block can operate as efficiently as possible. This principle is embedded in the goals of algorithm advancement, especially as the field works toward achieving `fault tolerance <https://pennylane.ai/topics/fault-tolerant-quantum-computing>`_. Fault-tolerant quantum devices will inevitably need to integrate some kind of `quantum error correction (QEC) <https://pennylane.ai/codebook/quantum-error-correction>`_ strategy into their architecture. In the pursuit of effective QEC strategies, it has become clear that we can divide established gates into two categories: fault-tolerant and not-fault-tolerant. 
-#
-# Those that fall into the fault-tolerant category encourage good neighbourly qualities, since, if a single qubit in a set of qubits that interact with the gate accumulates an error, it will not induce subsequent errors on the other qubits in the set. Since the error is therefore contained, it is much easier to identify the impacted qubit and correct the issue (ex. apply an X gate to reverse an unwanted bit flip). Members of the `Clifford gates <https://pennylane.ai/qml/demos/tutorial_clifford_circuit_simulations>`_ category are prominent examples of fault-tolerant gates. 
-#
-# Non-fault-tolerant gates, however, do not have the same courtesy. When a qubit incurs an error as a result of an interaction with one of these gates, it is likely to cascade through the entire set. As a result, errors become much more difficult (if not impossible) to correct. Though it is tempting to say that the use of these gates should just be avoided in favour of fault tolerance, doing so would eliminate the possibility of achieving `universality <https://pennylane.ai/compilation/clifford-t-gate-set>`_ in a gate set. 
-#
-# To work around this issue, non-Clifford gates can be broken down into an equivalent series of `T-gates <https://pennylane.ai/qml/demos/tutorial_achieving_universality_with_the_clifford_hierarchy>`_, which represent a fixed :math:`\frac{\pi}{4}` rotation, and auxiliary Clifford gates. While these (like arbitrary rotations) are not fault tolerant, they can be "protected" via a process called `magic state distillation <https://pennylane.ai/qml/demos/tutorial_magic_state_distillation>`_. Perhaps this all sounds a bit far fetched now that `magic <https://pennylane.ai/qml/demos/tutorial_magic_states>`_ has come into play, but the idea can be summarized as follows: non-Clifford gates tend to not have inherent fault tolerance, so the operations they represent should ideally be built out of components on which errors can be easily detected such that any error ridden qubits can be thrown away before the entire system is impacted. 
-# 
-# .. figure:: ../demonstrations_v2/efficient_rotations_with_phase_gradient_states/GateDecompBig.gif
-#     :align: center
-#     :width: 500px
-#
-# The point? It takes **a lot** of T-gates to do this. Consider, as we will for the rest of this demo, an arbitrary rotation. To execute an 11.71° rotation, for example, a cascade of 45° rotations in the form of T-gates will need to be applied in tandem with Clifford gates to achieve the desired outcome. This can quickly grow to the scale of 100s of T-gates and beyond. This is resource intensive in itself, but when one remembers that the process of magic state distillation involves throwing away any T-gate that accumulates an error, the total cost can become astronomical. So, though it is common in classical algorithms to discuss efficiency in terms of time, quantum algorithms, as they stand, tend to have efficiency benchmarks expressed in terms of T-gate count. These quantities seem to not be completely divorced, however, since high distillation costs equate to a dominant bottleneck courtesy of :math:`|T\rangle` state production [#Gidney2018]_. So, how do we ensure our algorithms are as efficient as possible? For now, by striving to minimize the amount of T-gates used by (also known as the T-count of) an algorithm.
-#
-# Efficient Rotations?
-# --------------------
-# As established, arbitrary rotations are expensive. Unfortunately, they are also foundational to some of the most important tools we have in quantum algorithms and computing, such as the `quantum fourier transform (QFT) <https://pennylane.ai/qml/demos/tutorial_qft>`_, `quantum read-only memory (QROM) <https://pennylane.ai/qml/demos/tutorial_intro_qrom>`_, and the `trotterization algorithm <https://pennylane.ai/challenges/a_simple_trotterization>`_. As a result, optimizing these operations in the fault-tolerant picture is very important. There have been a diverse array of optimization strategies proposed that all boil down to reducing the number of T-gates required to carry out a rotation. 
-#
-# To emphasize the benefit of T-gate optimization, let us take the example of binary state loading, which is typically carried out through some method of phase manipulation. For QROM, for example, a :math:`N`-bit binary string can be represented by :math:`n=log_2(N)` qubits in superposition that conditionally undergo a phase shift invoked by a set of gates. To ensure fault tolerance, these rotations should be carried out using distilled T-gates, causing the system to scale as :math:`\mathcal{O}(2^nlog_2(1/\epsilon))`, where :math:`\epsilon` is the desired precision. Yikes.
-#
-# A quick resource estimation for a single pass of this procedure can be carried out using PennyLane and the qre.estimate() tool. Note that, for a :math:`n` qubit system, SelectPauliRot (a multiplexer) will apply a total of :math:`R=2^n` rotations to address each possible binary state. Thus, for a 3 qubit system, 8 rotations will be applied in a single pass.
-#
-# CIRCUIT DIAGRAM
 
 prec = 0.1 #Desired Accuracy
 n = 3 #Control Qubits
@@ -67,7 +65,7 @@ print(qre.estimate(circuit_baseline)())
 # ------------------------
 # What if, instead of having to apply an individual, expensive rotation to each bit to achieve the desired outcome, we could simply add a pre-defined phase to each qubit as needed?
 #
-# `Phase gradient states <https://pennylane.ai/compilation/phase-gradient>`_ are a type of catalytic resource state that can be used as a substitute for typical, multiplication based rotation gate operations. For clarity, a state is "catalytic" if it is unchanged by a process that it plays a role in facilitating. To (aptly) borrow the language of chemistry, it exists to catalyze (assist) a specific process (operation). The phase gradient state can be interpreted as a catalyst for phase shifts, invoking phase accumulation on other qubits without sacrificing its own properties. The state can be represented as the conditional phase operator
+# `Phase gradient states <https://pennylane.ai/compilation/phase-gradient>`_ are a type of catalytic resource state that can be used to facilitate rotations additively. For clarity, a state is "catalytic" if it is unchanged by a process that it plays a role in facilitating. To (aptly) borrow from the language of chemistry, it exists to catalyze (assist) a specific process (operation). The phase gradient state can be interpreted as a catalyst for phase shifts, invoking phase accumulation on other qubits without sacrificing its own properties. The state can be represented as the conditional phase operator
 #
 # .. math::
 #    |\nabla_b\rangle=\frac{1}{\sqrt{B}}\sum_{k=0}^{B-1}e^{-2\pi i \frac{k}{B}}|k\rangle
@@ -79,9 +77,19 @@ print(qre.estimate(circuit_baseline)())
 #
 # Here, :math:`B=2^b` is the total number of possible states in the superposition, :math:`b=\log_2(1/\epsilon)` is the total number of qubits stored in the gradient register, and :math:`j` is the index of a specific qubit within the register. 
 #
-# The phase gradient state basically acts as a conditional rotation operator in itself. What is special, however, is that this state can be prepared once, stored in an auxiliary register, and reused catalytically. To induce a phase shift, the data register (storing an integer value) can be *added* to the gradient register and, via `phase kickback <https://pennylane.ai/qml/demos/tutorial_phase_kickback>`_, the data register accumulates a phase shift proportional to its integer value. One can take the term "gradient" literally here; the phase gradient state essentially stores spatially dependent phases that can be applied to encode data as a function of qubit position. 
+# The phase gradient state can be interpreted as acting as a pre-defined plane of stored angles that can be accessed and invoked on a target state when desired. This state can be prepared once, stored in an auxiliary register, and reused. To induce a phase shift, the data register (storing an integer value) simply needs to be added to the gradient register, which is done most commonly (and most efficiently) using a `SemiAdder() <https://docs.pennylane.ai/en/stable/code/api/pennylane.SemiAdder.html>`_ step. This addition can be interpreted as a "push" invoked by the data register on the phase gradient register. Via quantum addition, the gradient register is shifted by an amount equivalent to the binary weight of each data qubit that was added to it. Since the data state remains "stationary", the two states will now be *out of phase* by an amount equivalent to the total shift experienced by the register. Since phase is relative, it can reasonably be said that the data register has accumulated a phase equivalent to this difference value, which is a process referred to as `phase kickback <https://pennylane.ai/qml/demos/tutorial_phase_kickback>`_,. As mentioned, this phase and the positional shift that invoked it is completely relative, so the properties of the gradient register are globally unchanged, solidifying it as a catalytic resource. Thus, the phase gradient state essentially stores spatially dependent phases that can be applied to encode data as a function of qubit position. 
 #
-# This approach, as a whole, has two major optimization benefits. First, the phase gradient states only needs to be generated *once* since its catalytic nature leaves it unchanged after it interacts with the data register, meaning it will have a one-time, upfront preparation T-gate cost that is never repeated. Second, the phase shifts are applied by an addition operation rather than multiplication, meaning the phase gradient method's T-gate count scales as :math:`\mathcal{O}(n+\log_2(1/\epsilon))`. 
+# KICKBACK ANIMATION - PHASE GRADIENT SHIFTS > RELATIVE SHIFT > "KICKBACK"
+#
+# To summarize, the phase gradient rotation algorithm can be itemized as follows,
+#
+# 1. A phase gradient state is encoded onto a register composed of :math:`b` qubits.
+# 2. A semi-adder operation is performed between the data register and the gradient register.
+# 3. The phase gradient register shifts proportionally to the value of the data qubit added to it.
+# 4. The shift in the gradient register causes the data gradient to accumulate a relative phase (commonly referred to as phase kickback in this application)
+# 5. Since position shifts are relative and do not alter structure, the catalytic phase gradient state remains unchanged and can be reused as desired.
+#
+# This approach, as a whole, has two major optimization benefits. First, the phase gradient states only needs to be generated *once* since its catalytic nature leaves it unchanged after it interacts with the data register, meaning it will have a one-time, upfront preparation T-gate cost that is never repeated. Second, the phase shifts are applied by an addition operation rather than multiplication, meaning the phase gradient method's T-gate count scales as :math:`\mathcal{O}(n+\log_2(1/\epsilon))` when memory costs (here being `QROM <https://pennylane.ai/demos/tutorial_intro_qrom>`_) are considered. 
 #
 # Now, we can implement the same procedure as above, replacing the individual rotations carried out by the Pauli rotation operator with a `SemiAdder() <https://docs.pennylane.ai/en/stable/code/api/pennylane.SemiAdder.html>`_ facilitated application of the phase gradient state. This can be done easily using PennyLane's lab transform `select_pauli_rot_phase_gradient() <https://github.com/PennyLaneAI/pennylane/pull/8738>`_, which will identify Pauli rotation gates and replace them with the necessary phase gradient steps.
 #
@@ -113,26 +121,27 @@ print(qre.estimate(circuit_phase_grad)())
 #    :align: center
 #    :width: 80%
 # 
-# Though the phase gradient approach requires an investment of resources to prepare the gradient register, the additive nature of the loading procedure results in a very slow accumulation of resources. The benefit of this quickly outweighs the lack of setup cost in the simple multiplicative case, justifying the benefit of phase gradient states in rotation-based algorithms.
+# Though the phase gradient approach requires an investment of resources to prepare the gradient register, the additive nature of the loading procedure results in a very slow accumulation of resources. The benefit of this quickly outweighs the lack of setup cost intrinsic to alternative approaches, justifying the benefit of phase gradient states in rotation-based algorithms.
 #
 # Sizing Up Other Optimizations
 # --------------------------------
 # The importance of carrying out efficient rotations has been known to the industry for some time. As a result, the phase gradient approach is not the only gate-synthesis strategy available in the quantum algorithmic toolkit. There are certainly nuances between the ideal applications of each algorithm, but a full exploration will not be included here. Instead, comparing the per-rotation gate cost reveals the relative cost of each strategy, which must be weighed against the nuance of the specific application.
 #
-# +----------------------------+--------------------+-----------------------------------------------------+
-# | Algorithm                  | Setup Cost         | Gate Cost Per Rotation                              |
-# +============================+====================+=====================================================+
-# | GridSynth                  | 0                  | :math:`3\log_2(1/\epsilon)` [#Ross2016]_            | 
-# +----------------------------+--------------------+-----------------------------------------------------+
-# | Kliuchnikov                | 0                  | :math:`2\log(1/\epsilon)` [#Kliuchnikov2015]_       | 
-# +----------------------------+--------------------+-----------------------------------------------------+
-# | Phase Gradient             | :math:`4\log_2(1/  | 4 [#Gidney2018]_                                    |
-# |                            | \epsilon)`         |                                                     | 
-# +----------------------------+--------------------+-----------------------------------------------------+
-# | Repeat Until Success (RUS) | 0                  | :math:`2.4\log_2(1/\epsilon)` [#Paetznick2014]_     | 
-# +----------------------------+--------------------+-----------------------------------------------------+
-# | Solovay-Kitaev             | 0                  | :math:`\log^{3.97}(1/\epsilon)` [#Dawson2006]_      | 
-# +----------------------------+--------------------+-----------------------------------------------------+
+# +-----------------------------------+------------------------------+-----------------------------------------------------+
+# |             Algorithm             |        Setup Cost (T)        |             Gate Cost Per Rotation (T)              |
+# +===================================+==============================+=====================================================+
+# |          Solovay-Kitaev           |              0               |   :math:`\log^{3.97}(1/\epsilon)` [#Dawson2006]_    |
+# +-----------------------------------+------------------------------+-----------------------------------------------------+
+# |             GridSynth             |              0               |      :math:`3\log_2(1/\epsilon)` [#Ross2016]_       |
+# +-----------------------------------+------------------------------+-----------------------------------------------------+
+# |            Kliuchnikov            |              0               |    :math:`2\log(1/\epsilon)` [#Kliuchnikov2015]_    |
+# +-----------------------------------+------------------------------+-----------------------------------------------------+
+# |    Repeat Until Success (RUS)     |              0               |   :math:`2.4\log_2(1/\epsilon)` [#Paetznick2014]_   |
+# +-----------------------------------+------------------------------+-----------------------------------------------------+
+# |  Single Qubit Gate Approximation  |              0               |  :math:`0.56\log_2(1/\epsilon)` [#Kliuchnikov2022]_ |
+# +-----------------------------------+------------------------------+-----------------------------------------------------+
+# |          Phase Gradient           |  :math:`\log_2(1/\epsilon)`  |                  1 [#Gidney2018]_                   |
+# +-----------------------------------+------------------------------+-----------------------------------------------------+
 #
 #
 # Conclusion
@@ -148,3 +157,4 @@ print(qre.estimate(circuit_phase_grad)())
 # .. [#Paetznick2014] Adam Paetznick and Krysta M. Svore. "Repeat-Until-Success: Non-deterministic decomposition of single-qubit unitaries." *Quantum Information & Computation*, vol. 14, no. 15-16, 2014, pp. 1277–1301. arXiv:1311.1074 [quant-ph]
 # .. [#Dawson2006] Christopher M. Dawson and Michael A. Nielsen. "The Solovay-Kitaev algorithm." *Quantum Information and Computation*, vol. 6, no. 1, 2006, pp. 81–95. arXiv:quant-ph/0505030
 # .. [#Kliuchnikov2015] Vadym Kliuchnikov, Alex Bocharov, Martin Roetteler, and Jon Yard. "A Framework for Approximating Qubit Unitaries." *arXiv*, 2015. arXiv:1510.03888 [quant-ph]
+# .. [#Kliuchnikov2022] Kliuchnikov, V., Lauter, K., Minko, R., Paetznick, A., & Petit, C. (2022). Shorter quantum circuits via single-qubit gate approximation. Quantum, 7, 1208. https://doi.org/10.22331/q-2023-12-18-1208
