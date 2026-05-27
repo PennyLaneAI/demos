@@ -8,7 +8,7 @@ The field of quantum algorithms has long been focused on ensuring operations can
 
 .. admonition:: Quantifying Efficiency
    :class: note
-   
+
    Broadly, quantum gates can be divided into two categories: `fault-tolerant <https://pennylane.ai/topics/fault-tolerant-quantum-computing>`_ and not-fault-tolerant. 
    
    |
@@ -90,15 +90,19 @@ print(qre.estimate(circuit_baseline)())
 #
 # The phase gradient state can be interpreted as acting as a pre-defined plane of stored angles that can be accessed and invoked on a target state when desired. This state can be prepared once, stored in an auxiliary register, and reused. To induce a phase shift, the data register (storing an integer value) simply needs to be added to the gradient register, which is done most commonly (and most efficiently) using a `SemiAdder() <https://docs.pennylane.ai/en/stable/code/api/pennylane.SemiAdder.html>`_ step. This addition can be interpreted as a "push" invoked by the data register on the phase gradient register. Via quantum addition, the gradient register is shifted by an amount equivalent to the binary weight of each data qubit that was added to it. Since the data state remains "stationary", the two states will now be *out of phase* by an amount equivalent to the total shift experienced by the register. Since phase is relative, it can reasonably be said that the data register has accumulated a phase equivalent to this difference value, which is a process referred to as `phase kickback <https://pennylane.ai/qml/demos/tutorial_phase_kickback>`_,. As mentioned, this phase and the positional shift that invoked it is completely relative, so the properties of the gradient register are globally unchanged, solidifying it as a catalytic resource. Thus, the phase gradient state essentially stores spatially dependent phases that can be applied to encode data as a function of qubit position. 
 #
-# KICKBACK ANIMATION - PHASE GRADIENT SHIFTS > RELATIVE SHIFT > "KICKBACK"
+# .. figure:: ../demonstrations_v2/efficient_rotations_with_phase_gradient_states/PhaseKickbackAnimation.gif
+#      :align: center
+#      :width: 500px
 #
-# To summarize, the phase gradient rotation algorithm can be itemized as follows,
+# .. container:: admonition note
+#     :class: tip
+#     To summarize, the phase gradient rotation algorithm can be itemized as follows,
 #
-# 1. A phase gradient state is encoded onto a register composed of :math:`b` qubits.
-# 2. A semi-adder operation is performed between the data register and the gradient register.
-# 3. The phase gradient register shifts proportionally to the value of the data qubit added to it.
-# 4. The shift in the gradient register causes the data gradient to accumulate a relative phase (commonly referred to as phase kickback in this application)
-# 5. Since position shifts are relative and do not alter structure, the catalytic phase gradient state remains unchanged and can be reused as desired.
+#     1. A phase gradient state is encoded onto a register composed of :math:`b` qubits.
+#     2. A semi-adder operation is performed between the data register and the gradient register.
+#     3. The phase gradient register shifts proportionally to the value of the data qubit added to it.
+#     4. The shift in the gradient register causes the data gradient to accumulate a relative phase (commonly referred to as phase kickback in this application)
+#     5. Since position shifts are relative and do not alter structure, the catalytic phase gradient state remains unchanged and can be reused as desired.
 #
 # This approach, as a whole, has two major optimization benefits. First, the phase gradient states only needs to be generated *once* since its catalytic nature leaves it unchanged after it interacts with the data register, meaning it will have a one-time, upfront preparation T-gate cost that is never repeated. Second, the phase shifts are applied by an addition operation rather than multiplication, meaning the phase gradient method's T-gate count scales as :math:`\mathcal{O}(n+\log_2(1/\epsilon))` when memory costs (here being `QROM <https://pennylane.ai/demos/tutorial_intro_qrom>`_) are considered. 
 #
