@@ -7,8 +7,9 @@ Efficiency, efficiency, efficiency. Is it possible for this become more than jus
 The field of quantum algorithms has long been focused on ensuring operations can be executed on quantum hardware as efficiently as possible. Telling the story of efficiency in terms of speed is compelling, but this metric holds a lot of nuance that needs to be accounted for in optimization processes. In terms of quantum gate construction, the idea of resource optimization is front and center. How can we carry out the processes we want to execute as effectively as possible using as few resources as possible? The answer is likely not universal; different operations will require different optimization strategies. This demo will explore the idea of the **phase gradient state**, a resource optimization strategy that can be applied to carry out highly efficient arbitrary rotations, a dominant expense in applications that employ them. If you care about efficient rotations, you should care about this!
 
 .. admonition:: Quantifying Efficiency
-
-   Broadly, quantum gates can be divided into two categories: **`fault-tolerant <https://pennylane.ai/topics/fault-tolerant-quantum-computing>`_ and not-fault-tolerant**. 
+   :class: note
+   
+   Broadly, quantum gates can be divided into two categories: `fault-tolerant <https://pennylane.ai/topics/fault-tolerant-quantum-computing>`_ and not-fault-tolerant. 
    
    |
 
