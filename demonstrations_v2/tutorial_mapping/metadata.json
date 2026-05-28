@@ -8,7 +8,7 @@
     "executable_stable": true,
     "executable_latest": true,
     "dateOfPublication": "2024-05-06T00:00:00+00:00",
-    "dateOfLastModification": "2026-04-17T15:48:14+00:00",
+    "dateOfLastModification": "2026-05-28T00:00:00+00:00",
     "categories": [
         "Algorithms",
         "Quantum Computing",
@@ -31,7 +31,7 @@
         {
             "id": "Tranter",
             "type": "article",
-            "title": "The Bravyi–Kitaev Transformation: Properties and Applications",
+            "title": "The Bravyi\u2013Kitaev Transformation: Properties and Applications",
             "authors": "A. Tranter, S. Sofia et al.",
             "year": "2015",
             "publisher": "International Journal of Quantum Chemistry",

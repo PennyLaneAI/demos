@@ -6,7 +6,7 @@
         }
     ],
     "dateOfPublication": "2025-11-25T00:00:00+00:00",
-    "dateOfLastModification": "2025-11-25T00:00:00+00:00",
+    "dateOfLastModification": "2026-05-28T00:00:00+00:00",
     "categories": [
         "Quantum Chemistry",
         "How-to"
@@ -55,7 +55,7 @@
         {
             "id": "Galli2",
             "type": "article",
-            "title": "Green’s function formulation of quantum defect embedding theory",
+            "title": "Green\u2019s function formulation of quantum defect embedding theory",
             "authors": "Sheng, Nan and Vorwerk, Christian and Govoni, Marco and Galli, Giulia",
             "year": "2022",
             "journal": "",
@@ -78,7 +78,7 @@
             "year": "2024",
             "journal": "",
             "url": "https://arxiv.org/pdf/2405.13115"
-        }	
+        }
     ],
     "basedOnPapers": [],
     "referencedByPapers": [],

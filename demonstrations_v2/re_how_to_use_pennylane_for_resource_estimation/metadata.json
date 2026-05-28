@@ -11,7 +11,7 @@
     "executable_stable": true,
     "executable_latest": true,
     "dateOfPublication": "2026-01-13T10:00:00+00:00",
-    "dateOfLastModification": "2026-05-25T15:00:00+00:00",
+    "dateOfLastModification": "2026-05-28T00:00:00+00:00",
     "categories": [
         "Algorithms",
         "How-to",
@@ -33,7 +33,9 @@
     "doi": "",
     "references": [],
     "basedOnPapers": [],
-    "referencedByPapers": ["10.48550/arXiv.2601.16264"],
+    "referencedByPapers": [
+        "10.48550/arXiv.2601.16264"
+    ],
     "relatedContent": [
         {
             "type": "demonstration",

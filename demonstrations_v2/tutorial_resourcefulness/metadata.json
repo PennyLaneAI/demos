@@ -2,7 +2,7 @@
     "title": "Resourcefulness of quantum states with Fourier analysis",
     "authors": [
         {
-          "username": "impolster"
+            "username": "impolster"
         },
         {
             "username": "mariaschuld"
@@ -11,7 +11,7 @@
     "executable_stable": true,
     "executable_latest": true,
     "dateOfPublication": "2025-10-30T09:00:00+00:00",
-    "dateOfLastModification": "2026-04-17T09:00:00+00:00",
+    "dateOfLastModification": "2026-05-28T00:00:00+00:00",
     "categories": [
         "Quantum Computing"
     ],
@@ -33,12 +33,14 @@
             "id": "Bermejo_Braccia",
             "type": "preprint",
             "title": "Characterizing quantum resourcefulness via group-Fourier decompositions",
-            "authors": "Pablo Bermejo, Paolo Braccia, Antonio Anna Mele, N. L. Diaz, Andrew E. Deneris, Martín Larocca, Marco Cerezo",
+            "authors": "Pablo Bermejo, Paolo Braccia, Antonio Anna Mele, N. L. Diaz, Andrew E. Deneris, Mart\u00edn Larocca, Marco Cerezo",
             "year": "2025",
             "url": "https://arxiv.org/pdf/2506.19696"
         }
     ],
-    "basedOnPapers": ["10.48550/arXiv.2506.19696"],
+    "basedOnPapers": [
+        "10.48550/arXiv.2506.19696"
+    ],
     "referencedByPapers": [],
     "relatedContent": [
         {
@@ -47,9 +49,9 @@
             "weight": 0.5
         },
         {
-        "type": "demonstration",
-        "id": "tutorial_period_finding",
-        "weight": 0.5
+            "type": "demonstration",
+            "id": "tutorial_period_finding",
+            "weight": 0.5
         }
     ]
 }

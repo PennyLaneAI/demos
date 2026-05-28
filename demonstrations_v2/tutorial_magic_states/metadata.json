@@ -8,7 +8,7 @@
     "executable_stable": true,
     "executable_latest": true,
     "dateOfPublication": "2026-01-23T10:00:00+00:00",
-    "dateOfLastModification": "2026-04-17T15:48:14+00:00",
+    "dateOfLastModification": "2026-05-28T00:00:00+00:00",
     "categories": [
         "Quantum Computing"
     ],
@@ -36,86 +36,86 @@
             "url": "https://arxiv.org/abs/quant-ph/0403025"
         },
         {
-        "id": "Fowler",
-        "type": "article",
-        "title": "Surface codes: Towards practical large-scale quantum computation",
-        "authors": "Austin G. Fowler, Matteo Mariantoni, John M. Martinis, Andrew N. Cleland",
-        "year": "2012",
-        "journal": "Phys. Rev. A",
-        "url": "https://journals.aps.org/pra/abstract/10.1103/PhysRevA.86.032324"
-    },
-    {
-        "id": "Gidney2024",
-        "type": "article",
-        "title": "Magic state cultivation: growing T states as cheap as CNOT gates",
-        "authors": "Craig Gidney, Noah Shutty, Cody Jones",
-        "year": "2024",
-        "journal": "arXiv",
-        "url": "https://arxiv.org/abs/2409.17595"
-    },
-    {
-        "id": "QuEra2025",
-        "type": "article",
-        "title": "Experimental demonstration of logical magic state distillation",
-        "authors": "Pedro Sales Rodriguez, et al.",
-        "year": "2025",
-        "journal": "Nature",
-        "url": "https://www.nature.com/articles/s41586-025-09367-3"
-    },
-    {
-        "id": "Ruiz2025",
-        "type": "article",
-        "title": "Unfolded distillation: very low-cost magic state preparation for biased-noise qubits",
-        "authors": "Diego Ruiz, Jérémie Guillaud, Christophe Vuillot, Mazyar Mirrahimi",
-        "year": "2025",
-        "journal": "arXiv",
-        "url": "https://arxiv.org/abs/2507.12511"
-    },
-    {
-        "id": "Itogawa2025",
-        "type": "article",
-        "title": "Efficient magic state distillation by zero-Level distillation",
-        "authors": "Tomohiro Itogawa, Yugo Takada, Yutaka Hirano, Keisuke Fujii",
-        "year": "2025",
-        "journal": "PRX Quantum",
-        "url": "https://journals.aps.org/prxquantum/abstract/10.1103/thxx-njr6"
-    },
-    {
-        "id": "Hirano2024",
-        "type": "article",
-        "title": "Leveraging Zero-Level Distillation to Generate High-Fidelity Magic States",
-        "authors": "Yutaka Hirano, Tomohiro Itogawa, Keisuke Fujii",
-        "year": "2024",
-        "journal": "arXiv",
-        "url": "https://arxiv.org/abs/2404.09740"
-    },
-    {
-        "id": "Google2025",
-        "type": "article",
-        "title": "Magic state cultivation on a superconducting quantum processor",
-        "authors": "Emma Rosenfeld, et al.",
-        "year": "2025",
-        "journal": "arXiv",
-        "url": "https://arxiv.org/abs/2512.13908"
-    },
-    {
-        "id": "Chen2025",
-        "type": "article",
-        "title": "Efficient Magic State Cultivation on ℝ\u21192",
-        "authors": "Zi-Han Chen, Ming-Cheng Chen, Chao-Yang Lu, Jian-Wei Pan",
-        "year": "2025",
-        "journal": "arXiv",
-        "url": "https://arxiv.org/abs/2503.18657"
-    },
-    {
-        "id": "Hirano2025",
-        "type": "article",
-        "title": "Efficient magic state cultivation with lattice surgery",
-        "authors": "Yutaka Hirano, Riki Toshio, Tomohiro Itogawa, Keisuke Fujii",
-        "year": "2025",
-        "journal": "arXiv",
-        "url": "https://arxiv.org/abs/2510.24615"
-    },
+            "id": "Fowler",
+            "type": "article",
+            "title": "Surface codes: Towards practical large-scale quantum computation",
+            "authors": "Austin G. Fowler, Matteo Mariantoni, John M. Martinis, Andrew N. Cleland",
+            "year": "2012",
+            "journal": "Phys. Rev. A",
+            "url": "https://journals.aps.org/pra/abstract/10.1103/PhysRevA.86.032324"
+        },
+        {
+            "id": "Gidney2024",
+            "type": "article",
+            "title": "Magic state cultivation: growing T states as cheap as CNOT gates",
+            "authors": "Craig Gidney, Noah Shutty, Cody Jones",
+            "year": "2024",
+            "journal": "arXiv",
+            "url": "https://arxiv.org/abs/2409.17595"
+        },
+        {
+            "id": "QuEra2025",
+            "type": "article",
+            "title": "Experimental demonstration of logical magic state distillation",
+            "authors": "Pedro Sales Rodriguez, et al.",
+            "year": "2025",
+            "journal": "Nature",
+            "url": "https://www.nature.com/articles/s41586-025-09367-3"
+        },
+        {
+            "id": "Ruiz2025",
+            "type": "article",
+            "title": "Unfolded distillation: very low-cost magic state preparation for biased-noise qubits",
+            "authors": "Diego Ruiz, J\u00e9r\u00e9mie Guillaud, Christophe Vuillot, Mazyar Mirrahimi",
+            "year": "2025",
+            "journal": "arXiv",
+            "url": "https://arxiv.org/abs/2507.12511"
+        },
+        {
+            "id": "Itogawa2025",
+            "type": "article",
+            "title": "Efficient magic state distillation by zero-Level distillation",
+            "authors": "Tomohiro Itogawa, Yugo Takada, Yutaka Hirano, Keisuke Fujii",
+            "year": "2025",
+            "journal": "PRX Quantum",
+            "url": "https://journals.aps.org/prxquantum/abstract/10.1103/thxx-njr6"
+        },
+        {
+            "id": "Hirano2024",
+            "type": "article",
+            "title": "Leveraging Zero-Level Distillation to Generate High-Fidelity Magic States",
+            "authors": "Yutaka Hirano, Tomohiro Itogawa, Keisuke Fujii",
+            "year": "2024",
+            "journal": "arXiv",
+            "url": "https://arxiv.org/abs/2404.09740"
+        },
+        {
+            "id": "Google2025",
+            "type": "article",
+            "title": "Magic state cultivation on a superconducting quantum processor",
+            "authors": "Emma Rosenfeld, et al.",
+            "year": "2025",
+            "journal": "arXiv",
+            "url": "https://arxiv.org/abs/2512.13908"
+        },
+        {
+            "id": "Chen2025",
+            "type": "article",
+            "title": "Efficient Magic State Cultivation on \u211d\u21192",
+            "authors": "Zi-Han Chen, Ming-Cheng Chen, Chao-Yang Lu, Jian-Wei Pan",
+            "year": "2025",
+            "journal": "arXiv",
+            "url": "https://arxiv.org/abs/2503.18657"
+        },
+        {
+            "id": "Hirano2025",
+            "type": "article",
+            "title": "Efficient magic state cultivation with lattice surgery",
+            "authors": "Yutaka Hirano, Riki Toshio, Tomohiro Itogawa, Keisuke Fujii",
+            "year": "2025",
+            "journal": "arXiv",
+            "url": "https://arxiv.org/abs/2510.24615"
+        },
         {
             "id": "Heinrich2019",
             "type": "article",

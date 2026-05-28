@@ -8,7 +8,7 @@
     "executable_stable": true,
     "executable_latest": true,
     "dateOfPublication": "2025-07-22T00:00:00+00:00",
-    "dateOfLastModification": "2026-04-17T15:48:14+00:00",
+    "dateOfLastModification": "2026-05-28T00:00:00+00:00",
     "categories": [
         "Algorithms",
         "Quantum Machine Learning"
@@ -40,7 +40,7 @@
             "id": "delejarza2025",
             "type": "article",
             "title": "Quantum Chebyshev Probabilistic Models for Fragmentation Functions",
-            "authors": "Jorge J. Martínez de Lejarza, Hsin-Yu Wu, Oleksandr Kyriienko, Germán Rodrigo, Michele Grossi",
+            "authors": "Jorge J. Mart\u00ednez de Lejarza, Hsin-Yu Wu, Oleksandr Kyriienko, Germ\u00e1n Rodrigo, Michele Grossi",
             "year": "2025",
             "url": "https://arxiv.org/abs/2503.16073"
         }

@@ -14,7 +14,7 @@
     "executable_stable": true,
     "executable_latest": true,
     "dateOfPublication": "2023-10-25T00:00:00+00:00",
-    "dateOfLastModification": "2026-04-17T15:48:14+00:00",
+    "dateOfLastModification": "2026-05-28T00:00:00+00:00",
     "categories": [
         "Algorithms",
         "Quantum Computing"
@@ -37,7 +37,7 @@
             "id": "qsvt",
             "type": "article",
             "title": "Quantum singular value transformation and beyond: exponential improvements for quantum matrix arithmetics",
-            "authors": "András Gilyén, Yuan Su, Guang Hao Low, Nathan Wiebe",
+            "authors": "Andr\u00e1s Gily\u00e9n, Yuan Su, Guang Hao Low, Nathan Wiebe",
             "year": "2019",
             "publisher": "",
             "journal": "",

@@ -8,7 +8,7 @@
     "executable_stable": true,
     "executable_latest": true,
     "dateOfPublication": "2024-03-12T00:00:00+00:00",
-    "dateOfLastModification": "2026-04-17T15:48:14+00:00",
+    "dateOfLastModification": "2026-05-28T00:00:00+00:00",
     "categories": [
         "Quantum Machine Learning"
     ],
@@ -54,7 +54,7 @@
             "id": "Larocca2023",
             "type": "article",
             "title": "Theory of overparametrization in quantum neural networks",
-            "authors": "Larocca, M., Ju, N., García-Martín, D., Coles, P. J., & Cerezo, M.",
+            "authors": "Larocca, M., Ju, N., Garc\u00eda-Mart\u00edn, D., Coles, P. J., & Cerezo, M.",
             "year": "2023",
             "journal": "Nature Computational Science",
             "url": "http://dx.doi.org/10.1038/s43588-023-00467-6",

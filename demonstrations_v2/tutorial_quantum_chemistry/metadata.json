@@ -8,7 +8,7 @@
     "executable_stable": true,
     "executable_latest": true,
     "dateOfPublication": "2020-08-02T00:00:00+00:00",
-    "dateOfLastModification": "2026-01-14T15:48:14+00:00",
+    "dateOfLastModification": "2026-05-28T00:00:00+00:00",
     "categories": [
         "Quantum Chemistry"
     ],
@@ -43,7 +43,7 @@
         {
             "id": "pople1977",
             "type": "article",
-            "title": "Self‐consistent molecular orbital methods. XVIII. Constraints and stability in Hartree–Fock theory",
+            "title": "Self\u2010consistent molecular orbital methods. XVIII. Constraints and stability in Hartree\u2013Fock theory",
             "authors": "Rolf Seeger, John Pople",
             "year": "1977",
             "journal": "Journal of Chemical Physics",

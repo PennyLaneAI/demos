@@ -11,7 +11,7 @@
     "executable_stable": true,
     "executable_latest": true,
     "dateOfPublication": "2025-02-14T09:00:00+00:00",
-    "dateOfLastModification": "2026-04-17T00:00:00+00:00",
+    "dateOfLastModification": "2026-05-28T00:00:00+00:00",
     "categories": [
         "Optimization",
         "Algorithms"
@@ -89,7 +89,7 @@
             "id": "ravuri",
             "type": "preprint",
             "title": "Understanding Deep Generative Models with Generalized Empirical Likelihoods",
-            "authors": "Suman Ravuri, Mélanie Rey, Shakir Mohamed, Marc Deisenroth",
+            "authors": "Suman Ravuri, M\u00e9lanie Rey, Shakir Mohamed, Marc Deisenroth",
             "year": "2023",
             "publisher": "",
             "journal": "",

@@ -8,7 +8,7 @@
     "executable_stable": true,
     "executable_latest": true,
     "dateOfPublication": "2024-04-09T00:00:00+00:00",
-    "dateOfLastModification": "2026-05-25T15:00:00+00:00",
+    "dateOfLastModification": "2026-05-28T00:00:00+00:00",
     "categories": [
         "Optimization",
         "Quantum Hardware"
@@ -53,7 +53,7 @@
             "id": "Dawid22",
             "type": "preprint",
             "title": "Modern applications of machine learning in quantum sciences",
-            "authors": "Anna Dawid and Julian Arnold and Borja Requena and Alexander Gresch and Marcin Płodzień and Kaelan Donatella and Kim A. Nicoli and Paolo Stornati and Rouven Koch and Miriam Büttner and Robert Okuła and Gorka Muñoz-Gil and Rodrigo A. Vargas-Hernández and Alba Cervera-Lierta and Juan Carrasquilla and Vedran Dunjko and Marylou Gabrié and Patrick Huembeli and Evert van Nieuwenburg and Filippo Vicentini and Lei Wang and Sebastian J. Wetzel and Giuseppe Carleo and Eliška Greplová and Roman Krems and Florian Marquardt and Michał Tomza and Maciej Lewenstein and Alexandre Dauphin",
+            "authors": "Anna Dawid and Julian Arnold and Borja Requena and Alexander Gresch and Marcin P\u0142odzie\u0144 and Kaelan Donatella and Kim A. Nicoli and Paolo Stornati and Rouven Koch and Miriam B\u00fcttner and Robert Oku\u0142a and Gorka Mu\u00f1oz-Gil and Rodrigo A. Vargas-Hern\u00e1ndez and Alba Cervera-Lierta and Juan Carrasquilla and Vedran Dunjko and Marylou Gabri\u00e9 and Patrick Huembeli and Evert van Nieuwenburg and Filippo Vicentini and Lei Wang and Sebastian J. Wetzel and Giuseppe Carleo and Eli\u0161ka Greplov\u00e1 and Roman Krems and Florian Marquardt and Micha\u0142 Tomza and Maciej Lewenstein and Alexandre Dauphin",
             "year": "2022",
             "publisher": "",
             "journal": "",
