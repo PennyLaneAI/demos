@@ -62,7 +62,7 @@
             "id": "vonburg",
             "type": "article",
             "title": "Quantum computing enhanced computational catalysis",
-            "authors": "Vera von Burg, Guang Hao Low, Thomas H\u00e4ner, Damien S. Steiger, Markus Reiher, Martin Roetteler, and Matthias Troyer",
+            "authors": "Vera von Burg, Guang Hao Low, Thomas Häner, Damien S. Steiger, Markus Reiher, Martin Roetteler, and Matthias Troyer",
             "journal": "arXiv",
             "year": "2020",
             "url": "https://arxiv.org/abs/2007.14460"
@@ -94,7 +94,7 @@
         {
             "type": "demonstration",
             "id": "tutorial_qrom",
-            "weight": 1.0
+            "weight":1.0
         }
     ]
 }

@@ -1,23 +1,20 @@
 {
     "title": "Quantum low-density parity-check (qLDPC) codes for quantum error correction",
-    "authors": [
-        {
-            "username": "whatsis"
-        }
-    ],
+    "authors": [{
+        "username": "whatsis"
+    }],
     "executable_stable": true,
     "executable_latest": true,
     "dateOfPublication": "2026-04-13T00:00:00+00:00",
     "dateOfLastModification": "2026-05-28T00:00:00+00:00",
-    "categories": [
-        "Algorithms",
-        "FTQC",
-        "Quantum Computing",
+"categories": [
+"Algorithms",
+"FTQC",
+"Quantum Computing",
         "Quantum Hardware"
     ],
     "tags": [],
-    "previewImages": [
-        {
+    "previewImages": [{
             "type": "thumbnail",
             "uri": "/_static/demo_thumbnails/regular_demo_thumbnails/pennylane-demo-quantum-lowdensity-paritycheck-thumbnail.png"
         },
@@ -28,8 +25,7 @@
     ],
     "seoDescription": "Learn how to use quantum low-density parity-check (qLDPC) codes for quantum error correction.",
     "doi": "",
-    "references": [
-        {
+    "references": [{
             "id": "qldpc1",
             "type": "article",
             "title": "Quantum Low-Density Parity-Check Codes",
@@ -53,7 +49,7 @@
             "id": "HGP",
             "type": "article",
             "title": "Quantum LDPC Codes With Positive Rate and Minimum Distance Proportional to the Square Root of the Blocklength",
-            "authors": "Tillich, J. P., Z\u00e9mor, G.",
+            "authors": "Tillich, J. P., Zémor, G.",
             "year": "2014",
             "journal": "IEEE Transactions on Information Theory",
             "doi": "10.1109/TIT.2013.2292061",
@@ -132,8 +128,7 @@
     ],
     "basedOnPapers": [],
     "referencedByPapers": [],
-    "relatedContent": [
-        {
+    "relatedContent": [{
             "type": "demonstration",
             "id": "tutorial_stabilizer_codes",
             "weight": 1.0

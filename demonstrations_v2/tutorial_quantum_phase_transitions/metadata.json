@@ -4,20 +4,14 @@
         {
             "username": "damian_pope"
         },
-        {
+	{
             "username": "tirthshah2806"
         }
     ],
     "dateOfPublication": "2025-10-28T00:00:00+00:00",
     "dateOfLastModification": "2026-05-28T00:00:00+00:00",
-    "categories": [
-        "Optimization",
-        "Quantum Machine Learning"
-    ],
-    "tags": [
-        "quantum phase transition",
-        "Ising model"
-    ],
+    "categories": ["Optimization","Quantum Machine Learning"],
+    "tags": ["quantum phase transition", "Ising model"],
     "previewImages": [
         {
             "type": "thumbnail",
@@ -39,7 +33,7 @@
             "year": "2002",
             "url": "https://link.springer.com/book/10.1007/978-3-662-04804-7"
         },
-        {
+ 	{
             "id": "Mazumdar2019",
             "type": "article",
             "title": "Cosmic phase transitions: their applications and experimental signatures",
@@ -47,15 +41,15 @@
             "year": "2019",
             "url": "https://iopscience.iop.org/article/10.1088/1361-6633/ab1f55"
         },
-        {
+	{
             "id": "Mueller2023",
             "type": "article",
             "title": "Quantum Computation of Dynamical Quantum Phase Transitions and Entanglement Tomography in a Lattice Gauge Theory",
-            "authors": "Niklas Mueller, Joseph A. Carolan, Andrew Connelly, Zohreh Davoudi, Eugene F. Dumitrescu, K\u00fcbra Yeter-Aydeniz",
+            "authors": "Niklas Mueller, Joseph A. Carolan, Andrew Connelly, Zohreh Davoudi, Eugene F. Dumitrescu, Kübra Yeter-Aydeniz",
             "year": "2023",
             "url": "https://journals.aps.org/prxquantum/abstract/10.1103/PRXQuantum.4.030323"
         },
-        {
+	{
             "id": "Smith2019",
             "type": "preprint",
             "title": "Quantum Computation of Dynamical Quantum Phase Transitions and Entanglement Tomography in a Lattice Gauge Theory",
@@ -63,7 +57,7 @@
             "year": "2019",
             "url": "https://arxiv.org/abs/1910.05351"
         },
-        {
+	{
             "id": "Haghshenas2024",
             "type": "preprint",
             "title": "Probing critical states of matter on a digital quantum computer",
@@ -71,7 +65,7 @@
             "year": "2024",
             "url": "https://arxiv.org/abs/2305.01650"
         },
-        {
+	{
             "id": "Chertkov2022",
             "type": "preprint",
             "title": "Characterizing a non-equilibrium phase transition on a quantum computer",
@@ -79,7 +73,7 @@
             "year": "2022",
             "url": "https://arxiv.org/abs/2305.01650"
         },
-        {
+	{
             "id": "Thompson2023",
             "type": "preprint",
             "title": "Quantum Computation of Phase Transition in Interacting Scalar Quantum Field Theory",
@@ -87,15 +81,15 @@
             "year": "2023",
             "url": "https://arxiv.org/abs/2303.02425"
         },
-        {
+	{
             "id": "Vodeb2025",
             "type": "article",
             "title": "Stirring the false vacuum via interacting quantized bubbles on a 5,564-qubit quantum annealer",
-            "authors": "Jaka Vodeb, Jean-Yves Desaules, Andrew Hallam, Andrea Rava, Gregor Humar, Dennis Willsch, Fengping Jin, Madita Willsch, Kristel Michielsen, Zlatko Papi\u0107",
+            "authors": "Jaka Vodeb, Jean-Yves Desaules, Andrew Hallam, Andrea Rava, Gregor Humar, Dennis Willsch, Fengping Jin, Madita Willsch, Kristel Michielsen, Zlatko Papić",
             "year": "2024",
             "url": "https://www.nature.com/articles/s41567-024-02765-w"
         },
-        {
+	{
             "id": "Kandala2017",
             "type": "preprint",
             "title": "Hardware-efficient Variational Quantum Eigensolver for Small Molecules and Quantum Magnets",
@@ -103,7 +97,7 @@
             "year": "2017",
             "url": "https://arxiv.org/abs/1704.05018"
         },
-        {
+	{
             "id": "Blote2002",
             "type": "article",
             "title": "Cluster Monte Carlo simulation of the transverse Ising model",
@@ -111,7 +105,7 @@
             "year": "2002",
             "url": "https://journals.aps.org/pre/abstract/10.1103/PhysRevE.66.066110"
         },
-        {
+	{
             "id": "Hashizume2022",
             "type": "article",
             "title": "Dynamical phase transitions in the two-dimensional transverse-field Ising model",
@@ -128,12 +122,12 @@
             "id": "tutorial_isingmodel_PyTorch",
             "weight": 1.0
         },
-        {
+		{
             "type": "demonstration",
             "id": "tutorial_annni",
             "weight": 1.0
         },
-        {
+		{
             "type": "demonstration",
             "id": "tutorial_mitigation_advantage",
             "weight": 1.0

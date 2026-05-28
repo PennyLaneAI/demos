@@ -64,7 +64,7 @@
             "id": "qrisp_2024",
             "type": "preprint",
             "title": "Qrisp: A Framework for Compilable High-Level Programming of Gate-Based Quantum Computers",
-            "authors": "R. Seidel, S. Bock, R. Zander, M. Petri\u010d, N. Steinmann, N. Tcholtchev, M. Hauswirth",
+            "authors": "R. Seidel, S. Bock, R. Zander, M. Petrič, N. Steinmann, N. Tcholtchev, M. Hauswirth",
             "year": "2024",
             "doi": "10.48550/arXiv.2406.14792",
             "url": "https://arxiv.org/abs/2406.14792"

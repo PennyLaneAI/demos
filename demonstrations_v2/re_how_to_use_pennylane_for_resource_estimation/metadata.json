@@ -33,9 +33,7 @@
     "doi": "",
     "references": [],
     "basedOnPapers": [],
-    "referencedByPapers": [
-        "10.48550/arXiv.2601.16264"
-    ],
+    "referencedByPapers": ["10.48550/arXiv.2601.16264"],
     "relatedContent": [
         {
             "type": "demonstration",
