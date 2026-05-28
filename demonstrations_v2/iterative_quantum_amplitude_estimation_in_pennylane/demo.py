@@ -24,15 +24,15 @@ Where :math:`a` is the probability of measuring a "good" state, :math:`|\psi_0\r
 
 In this implementation, the goal of the IQAE algorithm will be to identify the probability that a given entry in a data set is a multiple of 8. When encoded in binary, multiples of 8 will always have 0 in the last three positions, which serves as a simple success criterion for the algorithm (i.e. a "good" state will always have 0s in the 3 least significant positions). 
 
-To carry this search out, we will define an operator :math:`\mathcal{A}` that maps a set of input qubits onto the problem, meaning the structure of :math:`\mathcal{A}` will differ depending on the application. :math:`\mathcal{A}` should impose a unitary operation on the input states that invokes a superposition state that is identical to :math:`|\Psi_{IQAE}\rangle`. In this case, a randomly weighted superposition of all combinations of the input qubits should be generated and the final 3 qubits in each string should be checked for adherence to the success criteria (i.e. are they all zero?) via a multi-controlled CNOT gate. If the logic gate is triggered, a single-qubit evaluation register will be flipped to :math:`|1\rangle`, indicating a "good" result. However, the goal will not be to identify all "good" results in one sweep. Instead, several iterations will be carried out in which the Grover operator is applied :math:`k` times with the goal of extracting a probability amplitude with adequate accuracy by refining the interval within which the solution is likely to lie. To do this, each iteration of the IQAE algorithm will yield the following state:
+To carry this search out, we will define an operator :math:`\mathcal{A}` that maps a set of input qubits onto the problem, meaning the structure of :math:`\mathcal{A}` will differ depending on the application. :math:`\mathcal{A}` should impose a unitary operation on the input states that invokes a superposition state that is identical to :math:`|\Psi_{IQAE}\rangle`. In this case, a randomly weighted superposition of all combinations of the input qubits should be generated and the final 3 qubits in each string should be checked for adherence to the success criteria (i.e. are they all zero?) via a multi-controlled CNOT gate. If the logic gate is triggered, a single-qubit evaluation register will be flipped to :math:`|1\rangle`, indicating a "good" result. However, the goal will not be to identify all "good" results in one sweep. Instead, several iterations will be carried out in which the Grover operator is applied :math:`k` times with the goal of extracting a probability amplitude with adequate accuracy by refining the interval within which the solution is likely to lie. To do this, each iteration of the IQAE algorithm will yield
 
 .. math::
-   \mathcal{Q}^k\mathcal{A}|0\rangle_n|0\rangle_{eval} = \cos((2k+1)\theta_a)|\psi_0\rangle_n|0\rangle_{eval}+\sin((2k+1)\theta_a)|\psi_1\rangle_n|1\rangle_{eval}
+   \mathcal{Q}^k\mathcal{A}|0\rangle_n|0\rangle_{eval} = \cos((2k+1)\theta_a)|\psi_0\rangle_n|0\rangle_{eval}+\sin((2k+1)\theta_a)|\psi_1\rangle_n|1\rangle_{eval}.
 
-Where :math:`n` is the number of qubits, :math:`\mathcal{Q}` is the Grover operator, :math:`\theta_a` is related to the angle that the state is rotated by Grover's operator (note :math:`a=sin^2(\theta_a)`), and :math:`k` is the number of times that the Grover operator is applied to the state in a single IQAE iteration. The specifications of this equation are covered thoroughly in [#Brassard2000]_, but the important result is that the probability of measuring a "good" state at the end of an iteration is given by:
+Where :math:`n` is the number of qubits, :math:`\mathcal{Q}` is the Grover operator, :math:`\theta_a` is related to the angle that the state is rotated by Grover's operator (note :math:`a=sin^2(\theta_a)`), and :math:`k` is the number of times that the Grover operator is applied to the state in a single IQAE iteration. The specifications of this equation are covered thoroughly in [#Brassard2000]_, but the important result is that the probability of measuring a "good" state at the end of an iteration is given by
 
 .. math::
-   \mathbb{P}(|1\rangle)=\sin^2((2k+1)\theta_a)
+   \mathbb{P}(|1\rangle)=\sin^2((2k+1)\theta_a).
 
 From this, it is clear that the probability is correlated to the angle imposed by the Grover operator. This relationship can be made clearer by taking into consideration the fact that :math:`\mathcal{Q}` invokes a :math:`2\theta_a` rotation in a 2D space defined by the "good" and "bad" state axes each time it is applied. So, if we can figure out the angle that has been imposed on the state as a result of the operator application, we can obtain the probability of extracting a "good" state. Since we do not aspire to use QPE, our best bet is to use our iterative :math:`k` value combined with an measurement of the quantum circuit that outputs an intermediate amplitude guess. The above equation also shows that the size of :math:`k` determines the resolution of the search, with a large :math:`k` corresponding to a high probability oscillation frequency and, therefore, a high resolution. If the frequency becomes too high, however, the measurement outcomes can become ambiguous, once again justifying the iterative approach to ensure an ideal :math:`k` value is found using sequential information collected from the system [#Grinko2021]_.
 
@@ -68,7 +68,7 @@ MCX_wires = [num_qubits-3,num_qubits-2,num_qubits-1,num_qubits]
 # As mentioned, the backbone of the quantum portion of the IQAE algorithm is the Grover operator :math:`\mathcal{Q}`, which aims to identify "good" states and introduce an identifiable phase flip and amplitude amplification. The basic structure of :math:`\mathcal{Q}` is 
 #
 # .. math::
-#    \mathcal{Q}=-\mathcal{A}\mathcal{S}_0\mathcal{A}^{-1}\mathcal{S}_{\psi_1}
+#    \mathcal{Q}=-\mathcal{A}\mathcal{S}_0\mathcal{A}^{-1}\mathcal{S}_{\psi_1}.
 #
 # In which :math:`\mathcal{S}_{\psi_1}` acts as the oracle and flips the phase of (marks) a "good" state and :math:`\mathcal{S}_0` flips everything except the :math:`|0\rangle` state (see figures 1 through 3 in the `amplitude amplification <https://pennylane.ai/qml/demos/tutorial_intro_amplitude_amplification/>`_ demo for an intuitive visualization). Since this is an uneven superposition, the operator that facilitates this process needs to be defined rather than using PennyLane's built in GroverOperator() function, which assumes an even superposition. 
 #
@@ -117,6 +117,7 @@ def A(state):
 # Due to the repeated applications of the Grover operator (which, as will be explored soon, grows quickly between iterations) and the exponential scale of the input state with number of qubits, the computational demand of this algorithm can become quickly unmanagable. To mitigate this, `PennyLane's Catalyst compiler <https://pennylane.ai/blog/2023/03/introducing-catalyst-quantum-just-in-time-compilation>`_ can be used to compile the :math:`\mathcal{Q}` loop and reduce the demand. For small systems (like, for example, a 5 qubit example), the difference is neglegible but becomes more apparent as the system grows.
 
 k_i = 0
+dev = qp.device("lightning.qubit", wires=num_qubits+1)
 
 #Declare if Catalyst compiler should be used
 catalyst_bool = True
@@ -159,10 +160,10 @@ circuit = circuit_builder(catalyst_bool)
 # Digesting the FindNextK Function
 # --------------------------------
 #
-# As shown, the iteration variable :math:`k` is directly tied to the total angle of the state since the Grover operator invokes a deterministic rotation each time it is applied. The :math:`sin^2(x)` function adds complexity to the probability calculations, so standard trigonometric identities can be employed to achieve:
+# As shown, the iteration variable :math:`k` is directly tied to the total angle of the state since the Grover operator invokes a deterministic rotation each time it is applied. The :math:`sin^2(x)` function adds complexity to the probability calculations, so standard trigonometric identities can be employed to achieve
 #
 # .. math::
-#    \mathbb{P}(|1\rangle)=\frac{1-cos((4k+2)\theta_a)}{2}=\frac{1-cos(K_i\theta_a)}{2}
+#    \mathbb{P}(|1\rangle)=\frac{1-cos((4k+2)\theta_a)}{2}=\frac{1-cos(K_i\theta_a)}{2}.
 #
 # Letting :math:`K_i=4k+2` be the frequency term.
 #
@@ -182,7 +183,7 @@ circuit = circuit_builder(catalyst_bool)
 # To carry out the actual comparison logic, however, some translation is required. First, the maximum possible value of :math:`k` must be defined in relation to the angles. [#Grinko2021]_ defines this value as
 #
 # .. math::
-#    K_{max} = \lfloor \frac{\pi}{\theta_{max}-\theta_{min}} \rfloor
+#    K_{max} = \lfloor \frac{\pi}{\theta_{max}-\theta_{min}} \rfloor.
 #
 # Where :math:`K_{max}` can be interpreted as the maximum number of rotations that can be carried out before aliasing becomes an issue.
 #
@@ -236,10 +237,10 @@ def FindNextK(k_i,theta_min, theta_max, HalfPlane_bool):
 # .. math::
 #    \epsilon_{a_i}=\sqrt{\frac{1}{2N}\log{\frac{2T}{\alpha}}}.
 #
-# Where :math:`\epsilon_{a_i}` is change between the previous amplitude estimation and current amplitude estimation and :math:`T` defines the maximum number of iterations required to achieve a precision of :math:`\epsilon_{a_i}` and is given by:
+# Where :math:`\epsilon_{a_i}` is change between the previous amplitude estimation and current amplitude estimation and :math:`T` defines the maximum number of iterations required to achieve a precision of :math:`\epsilon_{a_i}` and
 #
 # .. math::
-#    T = \lceil \log_{2}{\frac{\pi}{8\epsilon}} \rceil
+#    T = \lceil \log_{2}{\frac{\pi}{8\epsilon}} \rceil.
 #
 # Which can be used to estimate the upper and lower bounds of the probability interval estimate.
 #
