@@ -17,7 +17,7 @@ The field of quantum algorithms has long been focused on ensuring operations can
 
    |
 
-   Non-fault-tolerant gates, however, do not have the same courtesy. When one of these gates invokes an error, has the potential to cascade through the entire system. As a result, errors become much more difficult (if not impossible) to correct. Though it is tempting to say that the use of these gates should just be avoided, doing so would eliminate the possibility of achieving `universality <https://pennylane.ai/compilation/clifford-t-gate-set>`_ in a gate set. 
+   Non-fault-tolerant gates, however, do not have the same courtesy. When one of these gates invokes an error, has the potential to cascade through the entire system. As a result, errors become much more difficult (if not impossible) to correct. Though it is tempting to say the use of these gates should just be avoided, doing so would eliminate the possibility of achieving `universality <https://pennylane.ai/compilation/clifford-t-gate-set>`_ in a gate set. 
 
    |
 
