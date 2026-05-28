@@ -276,7 +276,7 @@ plt.tight_layout(pad=3.7)
 #
 #    Johannes Jakob Meyer, Maria Schuld
 #    “Tutorial: Quantum models as Fourier series”,
-#    `Pennylane: Quantum models as Fourier series <https://pennylane.ai/qml/demos/tutorial_expressivity_fourier_series/>`__, 2021.
+#    `Pennylane: Quantum models as Fourier series <https://pennylane.ai/demos/tutorial_expressivity_fourier_series/>`__, 2021.
 #
 # .. [#demoqibo]
 #
@@ -287,5 +287,5 @@ plt.tight_layout(pad=3.7)
 #
 #    Josh Izaac, Maria Schuld
 #    "How to optimize a QML model using JAX and Optax",
-#    `Pennylane: How to optimize a QML model using JAX and Optax  <https://pennylane.ai/qml/demos/tutorial_How_to_optimize_QML_model_using_JAX_and_Optax/>`__, 2024
+#    `Pennylane: How to optimize a QML model using JAX and Optax  <https://pennylane.ai/demos/tutorial_How_to_optimize_QML_model_using_JAX_and_Optax/>`__, 2024
 #

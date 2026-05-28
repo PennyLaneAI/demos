@@ -16,7 +16,7 @@ use LCUs to create another powerful building block of quantum algorithms: block 
 Among their many uses, block encodings allow us to transform quantum states by non-unitary
 operators, and they are useful in a variety of contexts, perhaps most famously in
 `qubitization <https://arxiv.org/abs/1610.06546>`_ and the `quantum
-singular value transformation (QSVT) <https://pennylane.ai/qml/demos/tutorial_intro_qsvt>`_.
+singular value transformation (QSVT) <https://pennylane.ai/demos/tutorial_intro_qsvt>`_.
 
 |
 

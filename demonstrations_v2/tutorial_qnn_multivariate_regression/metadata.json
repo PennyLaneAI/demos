@@ -55,7 +55,7 @@
             "authors": "Johannes Jakob Meyer, Maria Schuld",
             "year": "2021",
             "publisher": "",
-            "url": "https://pennylane.ai/qml/demos/tutorial_expressivity_fourier_series/"
+            "url": "https://pennylane.ai/demos/tutorial_expressivity_fourier_series/"
         },
         {
             "id": "demojax",

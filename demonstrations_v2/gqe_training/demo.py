@@ -5,7 +5,7 @@ We will be demonstrating and evaluating a novel algorithm proposed by Nakaji et 
 `The generative quantum eigensolver (GQE) and its application for ground state search <https://arxiv.org/abs/2401.09253>`__
 that employs a classical generative model of quantum circuits for the purpose of ground-state
 energy estimation of any molecular Hamiltonian [#nakaji2024]_.  
-It has been proposed as a scalable alternative to the `variational quantum eigensolver (VQE) <https://pennylane.ai/qml/demos/tutorial_vqe/>`__ approach,
+It has been proposed as a scalable alternative to the `variational quantum eigensolver (VQE) <https://pennylane.ai/demos/tutorial_vqe/>`__ approach,
 where the quantum state is represented as a quantum circuit with tunable parameters which are then optimized during training in order to arrive at a 
 state minimizing the corresponding energy :math:`E.` Instead, in GQE, the structure of the quantum circuit is given by a trained generative model.
 

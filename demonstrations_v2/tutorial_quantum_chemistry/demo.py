@@ -253,7 +253,7 @@ print(H)
 ##############################################################################
 # In this case, since we have truncated the basis of molecular orbitals, the resulting
 # observable is an approximation of the Hamiltonian generated in the
-# section `Building the Hamiltonian <https://pennylane.ai/qml/demos/tutorial_quantum_chemistry/#building-the-hamiltonian>`__.
+# section `Building the Hamiltonian <https://pennylane.ai/demos/tutorial_quantum_chemistry/#building-the-hamiltonian>`__.
 #
 # OpenFermion-PySCF backend
 # -------------------------

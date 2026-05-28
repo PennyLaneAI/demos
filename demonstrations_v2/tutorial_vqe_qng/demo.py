@@ -268,7 +268,7 @@ print("Number of qubits = ", qubits)
 
 ##############################################################################
 # For our ansatz, we use the circuit from the
-# `VQE tutorial <https://pennylane.ai/qml/demos/tutorial_vqe>`__
+# `VQE tutorial <https://pennylane.ai/demos/tutorial_vqe>`__
 # but expand out the arbitrary single-qubit rotations to elementary
 # gates (RZ-RY-RZ).
 

@@ -29,7 +29,7 @@ In this tutorial, you will learn about the :math:`\mathrm{SU}(N)` gate
 can act like *any* gate on its qubits by choosing the parameters accordingly.
 We will look at a custom derivative rule [#wiersema]_ for this gate and compare it to two
 alternative differentiation strategies, namely finite differences and the `stochastic
-parameter-shift rule <https://pennylane.ai/qml/demos/tutorial_stochastic_parameter_shift>`_.
+parameter-shift rule <https://pennylane.ai/demos/tutorial_stochastic_parameter_shift>`_.
 Finally, we will compare the performance of
 ``qp.SpecialUnitary`` for a toy minimization problem to that of two other general
 local gates. That is, we compare the trainability of equally expressive ansätze.

@@ -315,7 +315,7 @@ print(f"Cost:{cost}")
 # -------
 #
 # We use QAOA `[1] <https://arxiv.org/pdf/1411.4028.pdf>`__ to find the solution to our Knapsack
-# Problem (`read this demo <https://pennylane.ai/qml/demos/tutorial_qaoa_intro>`__ for a more detailed explanation
+# Problem (`read this demo <https://pennylane.ai/demos/tutorial_qaoa_intro>`__ for a more detailed explanation
 # of the QAOA algorithm). In this case, the cost Hamiltonian, :math:`H_c(Z),` obtained from the QUBO
 # formulation is translated into a parametric unitary gate given by
 #

@@ -283,7 +283,7 @@ Teleportation
 Now that we have all the necessary tools, let's see how to describe teleportation as a ZX-diagram and simplify it
 with our rewriting rules. The results are surprisingly elegant! We follow the explanation from [#JvdW2020]_. You can
 find an introduction to teleportation in
-`the MBQC demo <https://pennylane.ai/qml/demos/tutorial_mbqc>`__.
+`the MBQC demo <https://pennylane.ai/demos/tutorial_mbqc>`__.
 
 Teleportation is a protocol for transferring quantum information (a state) from Alice (the sender) to Bob (the
 receiver). To perform this, Alice and Bob first need to share a maximally entangled state. The protocol for Alice to send

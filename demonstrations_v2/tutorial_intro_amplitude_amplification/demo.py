@@ -1,7 +1,7 @@
 r"""Intro to Amplitude Amplification
 =======================================================================
 
-`Grover's algorithm <https://pennylane.ai/qml/demos/tutorial_grovers_algorithm/>`_ is one of the most important
+`Grover's algorithm <https://pennylane.ai/demos/tutorial_grovers_algorithm/>`_ is one of the most important
 developments in quantum computing. This technique is a special case of a quantum algorithm called
 **Amplitude Amplification** (Amp Amp). In this demo, you will learn its basic principles and
 how to implement it in PennyLane using the new :class:`~.pennylane.AmplitudeAmplification` template. We also discuss
@@ -178,7 +178,7 @@ plt.show()
 #     \text{Sum}|x\rangle|0\rangle = |x\rangle|\sum v_ix_i\rangle,
 #
 # where :math:`v_i` is the :math:`i`-th integer in the input set. For more details of how we build this operation take a
-# look at `Basic arithmetic with the Quantum Fourier Transform <https://pennylane.ai/qml/demos/tutorial_qft_arithmetics/>`_.
+# look at `Basic arithmetic with the Quantum Fourier Transform <https://pennylane.ai/demos/tutorial_qft_arithmetics/>`_.
 #
 
 import numpy as np

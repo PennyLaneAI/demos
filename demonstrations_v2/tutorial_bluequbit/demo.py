@@ -32,7 +32,7 @@ Build your PennyLane circuit
 ----------------------------
 
 Here we will build a simple :doc:`Bell pair </glossary/what-are-bell-states>` and simulate it on the BlueQubit backend.
-Later in this tutorial we will show a larger example — a 26-qubit circuit that demonstrates the central limit theorem using a `Draper QFT adder <https://pennylane.ai/qml/demos/tutorial_qft_arithmetics>`__.
+Later in this tutorial we will show a larger example — a 26-qubit circuit that demonstrates the central limit theorem using a `Draper QFT adder <https://pennylane.ai/demos/tutorial_qft_arithmetics>`__.
 
 Here is the example circuit we will be simulating:
 """
@@ -81,7 +81,7 @@ print(result)
 # Larger workloads: 26 qubits
 # ---------------------------
 # Here we will see a much larger example — a 26-qubit circuit.
-# Inspired by `Guillermo Allonso's <https://www.pennylane.ai/profile/ketpuntog>`__ PennyLane Demo `Basic arithmetic with the quantum Fourier transform (QFT) <https://pennylane.ai/qml/demos/tutorial_qft_arithmetics>`__,
+# Inspired by `Guillermo Allonso's <https://www.pennylane.ai/profile/ketpuntog>`__ PennyLane Demo `Basic arithmetic with the quantum Fourier transform (QFT) <https://pennylane.ai/demos/tutorial_qft_arithmetics>`__,
 # which implements a quantum adder in PennyLane, we build our own adder and use it to add together quantum registers.
 # 
 # In the quantum world we can use the idea of superposition to add multiple numbers at the same time.

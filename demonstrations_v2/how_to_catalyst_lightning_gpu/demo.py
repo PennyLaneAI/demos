@@ -124,7 +124,7 @@ to highlight Catalyst with Lightning-GPU features.
 # a set of trainable arguments.
 # This method is particularly useful for variational quantum algorithms
 # where the gradient of the cost function with respect to the circuit parameters is required.
-# You can check out `this demo <https://pennylane.ai/qml/demos/tutorial_how_to_quantum_just_in_time_compile_vqe_catalyst>`__
+# You can check out `this demo <https://pennylane.ai/demos/tutorial_how_to_quantum_just_in_time_compile_vqe_catalyst>`__
 # for more information on compiling and optimizing Variational Quantum Eigensolver (VQE) with Catalyst.
 #
 # .. code-block:: python
@@ -154,7 +154,7 @@ to highlight Catalyst with Lightning-GPU features.
 # Now that we have seen how to leverage the device differentiation capabilities,
 # we can move on to further optimizing the circuit parameters using Catalyst.
 # We follow the same steps as in
-# `the VQE demo <https://pennylane.ai/qml/demos/tutorial_how_to_quantum_just_in_time_compile_vqe_catalyst>`__,
+# `the VQE demo <https://pennylane.ai/demos/tutorial_how_to_quantum_just_in_time_compile_vqe_catalyst>`__,
 # to QJIT-compile the entire optimization workflow.
 #
 # .. code-block:: python
