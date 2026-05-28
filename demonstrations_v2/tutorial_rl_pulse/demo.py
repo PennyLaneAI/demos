@@ -35,7 +35,7 @@ refer to as a *pulse program*. However, each qubit in the device has distinct pr
 the frequency and the connectivity to other qubits. These differences cause the same pulse programs
 to produce different operations for every qubit. Consequently, every gate must be carefully
 calibrated for each individual qubit in the hardware. For further details about superconducting
-quantum computers and their control see `this demo <https://pennylane.ai/demos/oqc_pulse/>`__.
+quantum computers and their control see :doc:`this demo <demos/oqc_pulse>`.
 
 A common strategy to calibrate quantum gates involves the detailed modelling of the quantum
 computer, enabling the gate optimization through analytical and numerical techniques. Nevertheless,
@@ -57,7 +57,7 @@ Among all the possibilities, we will ilustrate it using coupled-transmon superco
 computers simulated with PennyLane. This will allow us to focus on the method itself, skipping some
 of the nuances associated with the execution on real devices, while ensuring that the resulting
 code can be easily adapted to run in a quantum computer using the PennyLane plugins, as shown in
-`this demo <https://pennylane.ai/demos/oqc_pulse/>`__.
+:doc:`this demo <demos/oqc_pulse>`.
 
 Reinforcement learning basics
 -----------------------------
@@ -994,9 +994,9 @@ def evolve_states(state, params, t):
 # quantum computers work, see [#KrantzAPR19]_ for an extensive review, and the related :mod:`PennyLane documentation <pennylane.pulse>`.
 #
 # Finally, check out the related demos for alternative ways to tune pulse programs. In particular,
-# `this demo <https://pennylane.ai/demos/tutorial_optimal_control/>`__ for an optimal control
-# approach to gate calibration, `this demo on optimizing pulses using hardware compatible gradients <https://pennylane.ai/demos/tutorial_odegen/>`__, and 
-# `this more general intro to differentiable pulse programming <https://pennylane.ai/demos/tutorial_pulse_programming101/>`__. 
+# :doc:`this demo <demos/tutorial_optimal_control>` for an optimal control
+# approach to gate calibration, :doc:`this demo on optimizing pulses using hardware compatible gradients <demos/tutorial_odegen>`, and 
+# :doc:`this more general intro to differentiable pulse programming <demos/tutorial_pulse_programming101>`. 
 # 
 #
 # References

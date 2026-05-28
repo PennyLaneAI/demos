@@ -408,7 +408,7 @@ plt.show()
 #
 # As mentioned earlier, Tanner graphs constructed using the parity-check matrix of the code
 # can be used for decoding errors efficiently using an iterative message-passing algorithm
-# like `Belief Propagation (BP) <https://pennylane.ai/demos/tutorial_bp_catalyst>`_ [#BProp]_.
+# like :doc:`Belief Propagation (BP) <demos/tutorial_bp_catalyst>` [#BProp]_.
 # This decoding process can be thought of as a collaborative exercise, where the variable nodes
 # (qubits) and check nodes (parity rules) act like detectives passing *messages* back and forth.
 # A variable node sends a confidence level message, *"I am 84% sure that I have an error"*. The

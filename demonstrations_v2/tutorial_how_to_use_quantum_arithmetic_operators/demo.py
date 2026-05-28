@@ -11,7 +11,7 @@ serving as fundamental building blocks in their design and execution. For exampl
 
 1. In `Shor's algorithm <https://pennylane.ai/codebook/10-shors-algorithm/>`__ quantum arithmetic is crucial for performing modular exponentiation [#shor_exp]_. 
 
-2. :doc:`Grover's algorithm <demos/tutorial_grovers_algorithm>` might need to use quantum arithmetic to construct oracles, as shown in `this related demo <https://pennylane.ai/demos/tutorial_qft_arithmetics/>`_.
+2. :doc:`Grover's algorithm <demos/tutorial_grovers_algorithm>` might need to use quantum arithmetic to construct oracles, as shown in :doc:`this related demo <demos/tutorial_qft_arithmetics>`.
 
 3. Loading data or preparing initial states on a quantum computer often requires several quantum arithmetic operations [#sanders]_.
 
@@ -62,7 +62,7 @@ added together and the result is stored in a third register:
 
    \text{OutAdder} |x \rangle |y \rangle |0 \rangle = |x \rangle |y \rangle |x + y \rangle.
 
-To implement these operators in PennyLane, the first step is to define the `registers of wires <https://pennylane.ai/demos/tutorial_how_to_use_registers/>`_
+To implement these operators in PennyLane, the first step is to define the :doc:`registers of wires <demos/tutorial_how_to_use_registers>`
 we will work with. We define wires for input registers, the output register, and also additional ``work_wires`` that will be important when we later discuss the :class:`~.pennylane.Multiplier` operator.
 """
 
@@ -131,7 +131,7 @@ fig.show()
 # From the :class:`~.pennylane.Adder` circuit we can see that the addition is performed 
 # in the Fourier basis. This includes a quantum Fourier transformation (QFT) followed by rotations to perform the addition, and 
 # concludes with an inverse QFT transformation. A more detailed explanation on the decomposition of arithmetic operators can be found in
-# `the PennyLane Demo on quantum arithmetic with the QFT <https://pennylane.ai/demos/tutorial_qft_arithmetics/>`_. 
+# :doc:`the PennyLane Demo on quantum arithmetic with the QFT <demos/tutorial_qft_arithmetics>`. 
 #
 # Now, let's see an example for the :class:`~.pennylane.OutAdder` operator to add the states 
 # :math:`|x \rangle` and :math:`|y \rangle` to the output register.

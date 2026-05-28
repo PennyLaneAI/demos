@@ -82,10 +82,10 @@ taylor_degree = 2  # Truncate to Quadratic Vibronic Coupling
 # quantum circuits interleaved together:
 #
 # 1.  **Kinetic Energy Fragment:** This implements the nuclear kinetic energy. Since the kinetic operator depends
-#     on momentum :math:`P`, this circuit uses the `Quantum Fourier Transform (QFT) <https://pennylane.ai/demos/tutorial_qft>`_
+#     on momentum :math:`P`, this circuit uses the :doc:`Quantum Fourier Transform (QFT) <demos/tutorial_qft>`
 #     to switch to the momentum basis, applies a phase rotation, and then switches back.
 # 2.  **Potential Energy Fragments:** These implement the interaction terms. For each fragment, the algorithm
-#     loads coefficients using a `QROM (Quantum Read-Only Memory) <https://pennylane.ai/demos/tutorial_intro_qrom>`_,
+#     loads coefficients using a :doc:`QROM (Quantum Read-Only Memory) <demos/tutorial_intro_qrom>`,
 #     computes the vibrational monomial product using quantum arithmetic, and applies a `phase gradient <https://pennylane.ai/compilation/phase-gradient/>`_.
 #
 #

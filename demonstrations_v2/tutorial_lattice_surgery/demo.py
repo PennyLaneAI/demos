@@ -62,7 +62,7 @@ of each logical qubit patch, indicated here by the red line exemplarily for one 
     :target: javascript:void(0)
 
 This is called a transversal operation because the logical operation just corresponds to performing the physical operation on each qubit.
-For a two-qubit gate, this is problematic on hardware with only local (physical) connectivity (like those built of `superconducting qubits <https://pennylane.ai/demos/tutorial_sc_qubits>`__).
+For a two-qubit gate, this is problematic on hardware with only local (physical) connectivity (like those built of :doc:`superconducting qubits <demos/tutorial_sc_qubits>`).
 In that case, we want to perform CNOT gates non-transversally to accomodate the connectivity constraints of such hardware platforms.
 In the early days, this was achieved via braiding [#braiding]_, 
 a concept commonly encountered in algebraic topology.
@@ -109,7 +109,7 @@ Non-Clifford PPRs can be realized using a magic resource state in the following 
     :width: 50%
     :target: javascript:void(0)
 
-Here, we injected a magic state :math:`T|+\rangle = \tfrac{1}{\sqrt{2}} \left(|0\rangle + e^{-i \tfrac{1}{4}} |1\rangle\right)` that was produced separately via `magic state distillation <https://pennylane.ai/demos/tutorial_magic_state_distillation>`__.
+Here, we injected a magic state :math:`T|+\rangle = \tfrac{1}{\sqrt{2}} \left(|0\rangle + e^{-i \tfrac{1}{4}} |1\rangle\right)` that was produced separately via :doc:`magic state distillation <demos/tutorial_magic_state_distillation>`.
 Note that Pauli operations that have angles that are multiples of 
 :math:`\pi` do not need to be executed on hardware, but can be tracked in software.
 In addition, we stress that there are different circuit identities to realize PPRs via PPMs. Here, we showed just the basic examples from [#Litinski]_.

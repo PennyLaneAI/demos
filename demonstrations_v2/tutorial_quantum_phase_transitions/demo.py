@@ -46,7 +46,7 @@ Furthermore, these systems have been applied to studying scalar quantum field th
 
 
 Note: This tutorial focuses on the *quantum* Ising model. It complements existing content on this
-model: `3-qubit Ising model in PyTorch <https://pennylane.ai/demos/tutorial_isingmodel_PyTorch>`_, `Transverse-field Ising model <https://pennylane.ai/datasets/transverse-field-ising-model>`_, and `Quadratic Unconstrained Binary Optimization (QUBO) <https://pennylane.ai/demos/tutorial_QUBO>`_
+model: :doc:`3-qubit Ising model in PyTorch <demos/tutorial_isingmodel_PyTorch>`, `Transverse-field Ising model <https://pennylane.ai/datasets/transverse-field-ising-model>`_, and :doc:`Quadratic Unconstrained Binary Optimization (QUBO) <demos/tutorial_QUBO>`
 
 
 What is the Ising model?
@@ -115,7 +115,7 @@ print(f"H={H}")
 # Seeing Phase Transitions with Quantum Computers
 # -----------------------------------------------
 # To do this, we'll use the well-known variational quantum eigensolver (VQE) algorithm to find the
-# ground state. You can find an introduction to it `here <https://pennylane.ai/demos/tutorial_vqe>`_.
+# ground state. You can find an introduction to it :doc:`here <demos/tutorial_vqe>`.
 #
 # Let's start by finding the ground state of the Ising model for a fixed value of :math:`J`.
 # We'll use the Hardware Efficient Ansatz (HEA) [#Kandala2017]_ to do this. It's a

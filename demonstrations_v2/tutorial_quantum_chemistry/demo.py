@@ -102,6 +102,8 @@ symbols, coordinates = qchem.read_structure("quantum_chemistry/h2o.xyz")
 # PennyLane provides a differentiable Hartree-Fock solver and the functionality to construct a
 # fully-differentiable molecular Hamiltonian.
 #
+# .. _tutorial-quantum-chemistry-building-the-hamiltonian:
+#
 # Building the Hamiltonian
 # ------------------------
 # In the second quantization formalism, the electronic wave function of the molecule
@@ -253,7 +255,7 @@ print(H)
 ##############################################################################
 # In this case, since we have truncated the basis of molecular orbitals, the resulting
 # observable is an approximation of the Hamiltonian generated in the
-# section `Building the Hamiltonian <https://pennylane.ai/demos/tutorial_quantum_chemistry/#building-the-hamiltonian>`__.
+# section :ref:`Building the Hamiltonian <tutorial-quantum-chemistry-building-the-hamiltonian>`.
 #
 # OpenFermion-PySCF backend
 # -------------------------

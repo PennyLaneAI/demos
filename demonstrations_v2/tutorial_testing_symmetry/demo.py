@@ -53,7 +53,7 @@ It is sensible to ask that the unitary operators preserve the structure of the g
 
    U(g_1)U(g_2) = U(g_1 \circ g_2).
 
-For more on groups and how to represent them with matrices, see our `demo on geometric learning <https://pennylane.ai/demos/tutorial_geometric_qml>`__.
+For more on groups and how to represent them with matrices, see our :doc:`demo on geometric learning <demos/tutorial_geometric_qml>`.
 For the Hamiltonian to respect the symmetries encoded in the group :math:`G` it means that it commutes with the matrices,
 
 .. math::

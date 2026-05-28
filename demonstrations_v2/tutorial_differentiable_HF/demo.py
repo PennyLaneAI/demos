@@ -74,6 +74,8 @@ principle increase the accuracy of the computed energy without increasing the nu
 quantum simulation. The joint optimization of the circuit and Hamiltonian parameters can also be
 used when the chemical problem involves optimizing the parameters of external potentials.
 
+.. _tutorial-differentiable-HF-the-hartree-fock-method:
+
 The Hartree-Fock method
 -----------------------
 

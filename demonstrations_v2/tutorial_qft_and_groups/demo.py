@@ -5,12 +5,12 @@ It's all about groups: From Fast Fourier Transforms to QFTs
 Quantum Fourier Transforms (QFTs) are unitary operations that turn a quantum state :math:`\sum_x f(x) |x \rangle` of amplitudes :math:`f(x)` into
 another quantum state whose amplitudes are the Fourier coefficients :math:`\hat{f}(x)` of :math:`f(x)`. They appear
 literally everywhere in quantum computing: even if you're not interested in `Shor's algorithm
-<https://pennylane.ai/codebook/shors-algorithm/shors-algorithm>`__, `hidden subgroup problems <https://pennylane.ai/demos/tutorial_period_finding>`__,
-`quantum phase estimation <https://pennylane.ai/demos/tutorial_qpe>`__
-or `quantum arithmetics <https://pennylane.ai/demos/tutorial_qft_arithmetics>`__,
+<https://pennylane.ai/codebook/shors-algorithm/shors-algorithm>`__, :doc:`hidden subgroup problems <demos/tutorial_period_finding>`,
+:doc:`quantum phase estimation <demos/tutorial_qpe>`
+or :doc:`quantum arithmetics <demos/tutorial_qft_arithmetics>`,
 you probably have worked with a circuit that applies Hadamard gates to each qubit.
 Well, a layer of Hadamards is a Quantum Fourier Transform as well! The reason why you might not have appreciated this fact is that Hadamards do not form the
-`famous QFT <https://pennylane.ai/demos/tutorial_qft>`__ we know from Nielsen \& Chuang's standard textbook. They move into a
+:doc:`famous QFT <demos/tutorial_qft>` we know from Nielsen \& Chuang's standard textbook. They move into a
 Fourier basis nevertheless---only of a different *group*.
 
 .. figure:: ../_static/demonstration_assets/qft_groups/pennylane-demo-fft-to-qft-hadamard-image.png
@@ -216,7 +216,7 @@ plt.show()
 # ----------------------------------------
 #
 # As previously mentioned, a Quantum Fourier Transform is just a Fourier transform of the amplitudes of a quantum state.
-# You might have already come across the `standard QFT <https://pennylane.ai/demos/tutorial_qft>`_ that implicitly
+# You might have already come across the :doc:`standard QFT <demos/tutorial_qft>` that implicitly
 # uses the group :math:`Z_N`.
 # Each computational basis state :math:`|x \rangle` is associated with an integer from the group, and the corresponding amplitude encodes
 # the original function value :math:`f(x)`. The QFT then maps to a new quantum state where the computational basis states

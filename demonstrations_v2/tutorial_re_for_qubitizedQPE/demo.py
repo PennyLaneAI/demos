@@ -2,11 +2,11 @@ r"""Qubit and gate trade-offs in Qubitized Quantum Phase Estimation
 ======================================================================
 
 
-`Quantum Phase Estimation (QPE) <https://pennylane.ai/demos/tutorial_qpe>`_ is a powerful quantum algorithm
+:doc:`Quantum Phase Estimation (QPE) <demos/tutorial_qpe>` is a powerful quantum algorithm
 that allows us to estimate the eigenvalues of a Hamiltonian with high precision.
 The most advanced variants of QPE rely on
-`qubitization <https://pennylane.ai/demos/tutorial_qubitization>`_  to encode chemical Hamiltonians  as unitary operators. This leverages a `linear combination of unitaries (LCU) <https://pennylane.ai/demos/tutorial_lcu_blockencoding>`_ decomposition to create a
-`block encoding <https://pennylane.ai/demos/tutorial_lcu_blockencoding>`_ of the Hamiltonian , which is then used to construct a "quantum walk" operator that is used as input to QPE.
+:doc:`qubitization <demos/tutorial_qubitization>`  to encode chemical Hamiltonians  as unitary operators. This leverages a :doc:`linear combination of unitaries (LCU) <demos/tutorial_lcu_blockencoding>` decomposition to create a
+:doc:`block encoding <demos/tutorial_lcu_blockencoding>` of the Hamiltonian , which is then used to construct a "quantum walk" operator that is used as input to QPE.
 
 We focus on the Tensor Hypercontraction (THC) representation, a state-of-the-art LCU decomposition for quantum chemistry
 that approximates the interaction tensor via a low-rank factorization.
@@ -29,7 +29,7 @@ a few hundred logical qubits. In particular, we show how to implement **QPE for 
 # the ``Prepare`` oracle, which prepares a state encoding the Hamiltonian coefficients, and the
 # ``Select`` oracle, which applies the Hamiltonian terms controlled by that state. The implementation of these subroutines
 # offers the flexibility to trade off qubits for gates, and vice versa. Specifically, we can tune two algorithmic knobs to perform this trade-off: batched Givens rotations and
-# `Quantum Read-Only Memory (QROM) <https://pennylane.ai/demos/tutorial_intro_qrom>`_ Select-Swap. Let's see these two in detail.
+# :doc:`Quantum Read-Only Memory (QROM) <demos/tutorial_intro_qrom>` Select-Swap. Let's see these two in detail.
 #
 # Knob #1: Batched Givens rotations
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -51,7 +51,7 @@ a few hundred logical qubits. In particular, we show how to implement **QPE for 
 #
 # Knob #2: QROM SelectSwap
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-# The second major optimization strategy is through `QROM <https://pennylane.ai/demos/tutorial_intro_qrom>`_ itself. Crucially, both ``Prepare`` and ``Select``
+# The second major optimization strategy is through :doc:`QROM <demos/tutorial_intro_qrom>` itself. Crucially, both ``Prepare`` and ``Select``
 # rely on QROM to access Hamiltonian coefficients and rotation angles, respectively. We can use
 # the select-swap variant of QROM, which allows us to trade the depth of the circuit for width, as shown in the diagrams below:
 #

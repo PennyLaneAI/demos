@@ -24,7 +24,7 @@ This demo is based on some of the techniques and results of the paper titled
 * Introduce QKSD briefly.
 * Build a circuit that uses QSP to prepare the QKSD ground-state.
 * Simulate circuits that estimate the one-particle reduced density matrix of a molecular system from the QKSD ground-state.
-* Use the `PennyLane-Qualtran integration <https://pennylane.ai/demos/tutorial_how_to_use_qualtran_with_pennylane>`_ to count relevant circuit resources and demonstrate linear resource scaling with respect to the Krylov dimension, :math:`D`.
+* Use the :doc:`PennyLane-Qualtran integration <demos/tutorial_how_to_use_qualtran_with_pennylane>` to count relevant circuit resources and demonstrate linear resource scaling with respect to the Krylov dimension, :math:`D`.
 """
 
 ######################################################################
@@ -52,7 +52,7 @@ This demo is based on some of the techniques and results of the paper titled
 # eigenenergies and eigenstates of the Hamiltonian [#QKSD]_, including the Krylov ground-state,
 # :math:`|\Psi_0\rangle = \sum_k c^0_k | \psi_k \rangle`.
 # Such an eigenstate is a linear combination of the states spanning the Krylov subspace and can
-# be prepared with `QSP <https://pennylane.ai/demos/function_fitting_qsp>`_, as we will see
+# be prepared with :doc:`QSP <demos/function_fitting_qsp>`, as we will see
 # shortly.
 #
 # Let's now apply the above formalism to a familiar example: the :math:`H_2O` molecule. We will use
@@ -128,7 +128,7 @@ hamiltonian = qp.Hamiltonian(coeffs, paulis)
 #
 # For more details about implementing polynomials of block-encoded Hamiltonians, block-encoding
 # operators, and rotation operators, see the
-# `Intro to QSVT demo <https://pennylane.ai/demos/tutorial_intro_qsvt>`_.
+# :doc:`Intro to QSVT demo <demos/tutorial_intro_qsvt>`.
 #
 #
 # Measuring the reduced density matrices

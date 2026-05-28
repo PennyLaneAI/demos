@@ -48,8 +48,8 @@ Equivariant Quantum Machine learning
 -----------------------------------
 
 In order to incorporate symmetries into machine learning models, we need a few concepts from group theory. A formal course on the
-subject is out of the scope of the present document, which is why we refer to two other demos, `equivariant graph embedding <https://pennylane.ai/demos/tutorial_equivariant_graph_embedding/>`_
-and `geometric quantum machine learning <https://pennylane.ai/demos/tutorial_geometric_qml/#introduction>`_, as well as Ref. [#Meyer23]_ for a more thorough introduction.
+subject is out of the scope of the present document, which is why we refer to two other demos, :doc:`equivariant graph embedding <demos/tutorial_equivariant_graph_embedding>`
+and :doc:`geometric quantum machine learning <demos/tutorial_geometric_qml>`, as well as Ref. [#Meyer23]_ for a more thorough introduction.
 
 In the following, we will denote elements of a symmetry group :math:`G` with :math:`g \in G.` :math:`G` could be for instance the rotation group :math:`SO(3),`
 or the permutation group :math:`S_n.` Groups are often easier understood in terms of their representation :math:`V_g : \mathcal{V} \rightarrow \mathcal{V}` which maps group elements
@@ -70,7 +70,7 @@ and :math:`\mathcal{W}` and :math:`\mathcal{R}_g` as the qubit space and the sym
 
 Now that we have the basics, we will focus on the task at hand: building an equivariant quantum neural network for chemistry!
 
-We use a `quantum reuploading model <https://pennylane.ai/demos/tutorial_expressivity_fourier_series/>`__, which consists of a
+We use a :doc:`quantum reuploading model <demos/tutorial_expressivity_fourier_series>`, which consists of a
 variational ansatz :math:`M_\Theta(\mathcal{X})` applied to some initial state
 :math:`|\psi_0\rangle.` Here, :math:`\mathcal{X}` denotes the description of a molecular configuration, i.e.,
 the set of Cartesian coordinates of the atoms. The quantum circuit is given by

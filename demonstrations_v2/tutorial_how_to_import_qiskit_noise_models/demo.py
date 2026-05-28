@@ -3,7 +3,7 @@ r"""How to import noise models from Qiskit
 
 Noise models describe how a quantum system interacts with its environment.
 These models are typically represented by a set of
-`Kraus operators <https://pennylane.ai/demos/tutorial_noisy_circuits/#noisy-operations>`_
+:ref:`Kraus operators <tutorial-noisy-circuits-noisy-operations>`
 that encapsulates the probabilistic nature of quantum errors. ⚡
 Interestingly, different sets of Kraus operators can represent the same quantum noise process.
 The non-unique nature of these representations allows quantum computing libraries to use
