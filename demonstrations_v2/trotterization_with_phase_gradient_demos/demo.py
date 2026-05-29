@@ -2,21 +2,29 @@ r"""
 Trotterization
 ==============
 
-Whether we like it or not, time is always moving forward. Even more frustrating, things tend to change with time, meaning we cannot neglect time evolution as we set out to model realistic systems. To execute this successfully, though, tends to be incredibly computationally intense. In the case of particle systems, which constitute much of the interesting simulation work being done in cutting edge science, the exponential nature of the system's configuration scaling (ie. for :math`n` particles, there are :math:`2^n` possible configurations, meaning the Hamiltonian energy matrix of the system used in the time evolution operator :math:`U(t)=e^{-iHt}` would be :math:`2^n \times 2^n`) very quickly renders classical, sequential simulation impossible, even for incredibly short time scales. Luckily, quantum computers have shown promise in addressing this issue since, instead of having to represent each possible state contained in the problem's Hilbert space, qubits can themselves act as analogues for the particles that make up the system, enabling polynomial scaling with particle count rather than exponential scaling. `Maybe Feynman was onto something <https://s2.smu.edu/~mitch/class/5395/papers/feynman-quantum-1981.pdf>`_! Carrying out time evolution on these more-efficient systems, however, is not easy, meaning Hamiltonian simulation techniques such as **Trotterization** need to be implemented to achieve legible and realistic results. This demo will explore how we can do exactly that!
+Whether we like it or not, time is always moving forward. Even more frustrating, things tend to change with time, meaning we cannot neglect time evolution as we set out to model realistic systems. To execute this successfully, though, tends to be incredibly computationally intense. In the case of particle systems, which constitute much of the interesting simulation work being done in cutting edge science, the exponential nature of the system's configuration scaling (ie. for :math`n` particles, there are :math:`2^n` possible configurations, meaning the Hamiltonian energy matrix of the system used in the time evolution operator :math:`U(t)=e^{-iHt}` would be :math:`2^n \times 2^n`) very quickly renders classical, sequential simulation impossible, even for incredibly short time scales. 
+
+Luckily, quantum computers have shown promise in addressing this issue since, instead of having to represent each possible state contained in the problem's Hilbert space, qubits can themselves act as analogues for the particles that make up the system, enabling polynomial scaling with particle count rather than exponential scaling. `Maybe Feynman was onto something <https://s2.smu.edu/~mitch/class/5395/papers/feynman-quantum-1981.pdf>`_! Carrying out time evolution on these more-efficient systems, however, is not easy, meaning Hamiltonian simulation techniques such as **Trotterization** need to be implemented to achieve legible and realistic results. This demo will explore how we can do exactly that!
 
 The Commutation Problem
 -----------------------
 
-For a completely isolated free particle experiencing no potential energy, the Hamiltonian of the system can be simply defined in terms of kinetic energy and applied to the system via a unitary gate representing :math:`U_{free}(t)=e^{-iHt}=e^{-iTt}. Sticking to this idealized case would, of course, be useless. With each additional term added to the Hamiltonian, though, the feasibility of the time evolution operator :math:`e^{-iHt}` being executable on hardware diminishes. This brings to mind an easy fix, why not just split the Hamiltonian into pieces? If we taken the representation :math:`H=H_1+H_2+...+H_n`, we could naïvely say that our time evolution operator could become :math:`e^{-i(H_1+H_2+...+H_n)t}=e^{-iH_1t}e^{-iH_2t}...e^{-iH_nt}. In our naïveté, however, we would neglect to consider the commutation relations that the components of the split Hamiltonian share. 
+For a completely isolated free particle experiencing no potential energy, the Hamiltonian of the system can be simply defined in terms of kinetic energy and applied to the system via a unitary gate representing :math:`U_{free}(t)=e^{-iHt}=e^{-iTt}. Sticking to this idealized case would, of course, be useless. With each additional term added to the Hamiltonian, though, the feasibility of the time evolution operator :math:`e^{-iHt}` being executable on hardware diminishes. This brings to mind an easy fix, why not just split the Hamiltonian into pieces? If we taken the representation :math:`H=H_1+H_2+...+H_n`, we could naïvely say that our time evolution operator could become :math:`e^{-i(H_1+H_2+...+H_n)t}=e^{-iH_1t}e^{-iH_2t}...e^{-iH_nt}`. In our naïveté, however, we would neglect to consider the commutation relations that the components of the split Hamiltonian share. 
 
 .. admonition:: Recall
    :class: note
 
    For commuting matrices, where :math:`AB=BA` and it is implied that A and B are completely independent,
+
    :math:`(A+B)^2 = A^2+2AB+B^2`.
 
+   |
+
    For non-commuting matrices, where :math:`AB \neq BA` and it is implied that A and B have some level of dependency,
+
    :math:`(A+B)^2 = A^2+AB+BA+B^2`
+
+   |
 
    So, the Taylor expansion :math:`e^{A+B}=I+(A+B)+\frac{1}{2}(A+B)^2+...` differs in the two cases!
 
@@ -83,10 +91,10 @@ def TrotterStepper(t,r,coeffs):
 ###############################################################################
 # Trotter Error
 # -------------
-# Understanding how Hamiltonian simulations deviate from the theory of the system it is trying to recreate is a field of study in itself. Intuitively, we expect the size of the time step being taken to dictate the amount of error in the simulation. A nuanced exploration tends to begin expansion via the `Baker-Campbell-Hausdorff formula <https://en.wikipedia.org/wiki/Baker%E2%80%93Campbell%E2%80%93Hausdorff_formula>`_
+# Understanding how Hamiltonian simulations deviate from the theory of the system it is trying to recreate is a field of study in itself. Intuitively, we expect the size of the time step being taken to dictate the amount of error in the simulation. A nuanced exploration tends to begin expansion via the `Baker-Campbell-Hausdorff formula <https://en.wikipedia.org/wiki/Baker%E2%80%93Campbell%E2%80%93Hausdorff_formula>`_ [#Su2020]_.
 #
 # .. math::
-#     e^{-iBt}e^{iAt}=e^{it(A+B)}-\frac{t^2}{2}[B,A]+i\frac{t^3}{12}[B[B,A]]-... [#Su2020]_.
+#     e^{-iBt}e^{iAt}=e^{it(A+B)}-\frac{t^2}{2}[B,A]+i\frac{t^3}{12}[B[B,A]]-...
 #
 # As is familiar when handling series expansions, the degree to which the BCH formula is truncated dictates the amount of error to expect in the Hamiltonian. Comparing the previous definition of the approximated Trotter formula to this expansion expression, we can see that we are only concerned with the first term and, therefore, our error is dominated by the term :math:`-\frac{t^2}{2}[B,A]` (also known as the First-Order Trotter error). Taking :math:`t=\Delta t` for each time step, we can reason out that the error is proportional to :math:`\frac{t^2}{r}`. This result aligns with our earlier intuition, implying that error will increase with length of time and decrease with number of steps.
 #
@@ -115,6 +123,9 @@ exact_exp_Z = np.real(evolved_H.conj() @ Z @ evolved_H)
 ###############################################################################
 # By keeping the simulation duration fixed and varying the number of steps taken, the error at each resolution can be obtained. 
 
+print(f"{'r':>5} | {'X error':>8} | {'Y error':>8} | {'Z error':>8} | {'Total error':>11}")
+print("-" * 51)
+
 for r in R:
     result = TrotterStepper(t,r,coeffs)
     X_error = abs(result[0]-exact_exp_X)
@@ -123,17 +134,79 @@ for r in R:
     total_error = np.sqrt(X_error**2+Y_error**2+Z_error**2)
     print(f"{r:>5} | {X_error:>8.5f} | {Y_error:>8.5f} | {Z_error:>8.5f} | {total_error:>11.5f}")
 ###############################################################################
-
-#
-
+# As expected, the simulation error decreases with increasing time steps.
+# 
 # Gate Synthesis Considerations
 # -----------------------------
-# Add comment blocks to separate code blocks
+# In fault tolerant architectures, arbitrary rotations must be decomposed into a series of `Clifford+T gates <https://pennylane.ai/compilation/clifford-t-gate-set>`_ via some method of `gate synthesis <https://pennylane.ai/compilation/two-qubit-synthesis>_`. The PennyLane `estimate() <https://docs.pennylane.ai/en/stable/code/api/pennylane.estimator.estimate.estimate.html>`_ tool can be used to determine how many gates are used to implement the synthesized rotation and takes a Repeat Until Success (RUS) approach, which tends to cost :math:`\mathcal{O}(2.4\log_2(1/\epsilon))` T-gates per rotation [#Paetznick2014]_. An alternative approach is the `phase gradient method <https://pennylane.ai/demos/efficient_rotations_with_phase_gradient_states>`_ (check out the linked demo if you need to brush up on T-counts and quantifying efficiency before going further), which takes advantage of a static register that holds spatially dependent phase values that can be added to a target state as needed. This method has a total cost of :math:`\mathcal{O}(4log_2(1/\epsilon)+4N)`, where :math:`N` is the number of rotations. 
+#
+# When we discuss selecting a gate synthesis method, our goal tends to be to minimize the T-count in favour of implementability and efficiency. From this perspective, it seems obvious to always select the method with the lowest cost, here being the phase gradient approach. Using PennyLane's `rz_phase_gradient() <https://docs.pennylane.ai/en/stable/code/api/pennylane.transforms.rz_phase_gradient.html>`_ transformation, the expensive :math:`R_z{\phi}` rotations implemented in the above Trotterization can be translated into phase gradient additions and compared to the naïve approach. For example, a step count of :math:`r=200` will be taken.
+
+#Convert to phase gradient approach
+prec = 0.1
+b = int(np.ceil(np.log2(1/prec)))
+
+angle_wires = list(range(1,1+b)) #Since we are only dealing with one logical wire, we can just start indexing the auxillary wires at 1
+gradient_wires = list(range(1+b,1+2*b))
+work_wires = list(range(1+2*b,1+3*b))
+
+dev2 = qp.device("lightning.qubit", wires=(1+3*b))
+
+@qp.qnode(dev2)
+@rz_phase_gradient(angle_wires,gradient_wires,work_wires)
+def TrotterStepperPG(t,r,coeffs):
+    del_t = t/r
+
+    #Apply the rotation r times
+    for i in range(r):
+        U_A = qp.RX(2*coeffs[0]*del_t, wires=0)
+        U_B = qp.RZ(2*coeffs[1]*del_t, wires=0)
+
+    return [qp.expval(qp.PauliX(0)), qp.expval(qp.PauliY(0)), qp.expval(qp.PauliZ(0))]
+
+#Resource estimation
+test_r = 200
+Trotter_resources = qre.estimate(TrotterStepper)(t,test_r,coeffs) #Repeat Until Success!
+Trotter_resources_PG = qre.estimate(TrotterStepperPG)(t,test_r,coeffs)
+print("Repeat Until Success")
+print(Trotter_resources)
+print("Phase Gradient")
+print(Trotter_resources_PG)
+###############################################################################
+# As expected, the 'T'-count is much lower in the phase gradient method. This, however, is not a definitive affirmation that the phase gradient method is the ideal gate synthesis method here. Let's compare the trotter error in the two methods.
+print("Repeat Until Success")
+print(f"{'r':>5} | {'X error':>8} | {'Y error':>8} | {'Z error':>8} | {'Total error':>11}")
+print("-" * 51)
+
+for r in R:
+    result = TrotterStepper(t,r,coeffs)
+    X_error = abs(result[0]-exact_exp_X)
+    Y_error = abs(result[1]-exact_exp_Y)
+    Z_error = abs(result[2]-exact_exp_Z)
+    total_error = np.sqrt(X_error**2+Y_error**2+Z_error**2)
+    print(f"{r:>5} | {X_error:>8.5f} | {Y_error:>8.5f} | {Z_error:>8.5f} | {total_error:>11.5f}")
+
+print("Phase Gradient")
+print(f"{'r':>5} | {'X error':>8} | {'Y error':>8} | {'Z error':>8} | {'Total error':>11}")
+print("-" * 51)
+
+for r in R:
+    resultPG = TrotterStepperPG(t,r,coeffs)
+    X_error_PG = abs(resultPG[0]-exact_exp_X)
+    Y_error_PG = abs(resultPG[1]-exact_exp_Y)
+    Z_error_PG = abs(resultPG[2]-exact_exp_Z)
+    total_error_PG = np.sqrt(X_error_PG**2+Y_error_PG**2+Z_error_PG**2)
+    print(f"{r:>5} | {X_error_PG:>8.5f} | {Y_error_PG:>8.5f} | {Z_error_PG:>8.5f} | {total_error_PG:>11.5f}")
+
+# Ah ha! A tradeoff has made itself clear! In the phase gradient implementation, the Trotter error is univerally higher than in the RUS case. 
+# Fast Fowarding
+# --------------
+#
 #
 # .. _references:
 #
 # References
 # ----------
 # .. [#Su2020] Yuan Su. "A Theory of Trotter Error." Presentation at the Simons Institute for the Theory of Computing, UC Berkeley, April 2020. URL: https://simons.berkeley.edu/sites/default/files/docs/15639/trottererrortheorysimons.pdf
+# .. [#Paetznick2014] Adam Paetznick and Krysta M. Svore. "Repeat-Until-Success: Non-deterministic decomposition of single-qubit unitaries." *Quantum Information & Computation*, vol. 14, no. 15-16, 2014, pp. 1277–1301. arXiv:1311.1074 [quant-ph]
 
-print("World")
