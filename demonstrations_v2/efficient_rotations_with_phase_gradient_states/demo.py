@@ -99,7 +99,7 @@ print(qre.estimate(circuit_baseline)())
 #    |\Psi\rangle|\nabla_b\rangle &= \alpha|0\rangle|\nabla_b\rangle+\beta|1\rangle|\nabla_b\rangle \\
 #    C(Add_k)|\Psi\rangle|\nabla_b\rangle &= \alpha|0\rangle|\nabla_b\rangle+\beta|1\rangle Add_k |\nabla_b\rangle \\
 #                                         &= \alpha|0\rangle|\nabla_b\rangle+\beta|1\rangle e^{-\frac{2\pi i k}{B}} |\nabla_b\rangle \\
-#                                         &= (\alpha|0\rangle+\beta e^{-\frac{2\pi i k}{B}} |1\rangle)|\nabla_b\rangle. \\
+#                                         &= (\alpha|0\rangle+\beta e^{-\frac{2\pi i k}{B}} |1\rangle)|\nabla_b\rangle.
 #    \end{aligned}
 #
 # .. admonition:: Phase Gradient Rotation Algorithm
