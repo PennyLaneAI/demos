@@ -1,0 +1,139 @@
+r"""
+Trotterization
+==============
+
+Whether we like it or not, time is always moving forward. Even more frustrating, things tend to change with time, meaning we cannot neglect time evolution as we set out to model realistic systems. To execute this successfully, though, tends to be incredibly computationally intense. In the case of particle systems, which constitute much of the interesting simulation work being done in cutting edge science, the exponential nature of the system's configuration scaling (ie. for :math`n` particles, there are :math:`2^n` possible configurations, meaning the Hamiltonian energy matrix of the system used in the time evolution operator :math:`U(t)=e^{-iHt}` would be :math:`2^n \times 2^n`) very quickly renders classical, sequential simulation impossible, even for incredibly short time scales. Luckily, quantum computers have shown promise in addressing this issue since, instead of having to represent each possible state contained in the problem's Hilbert space, qubits can themselves act as analogues for the particles that make up the system, enabling polynomial scaling with particle count rather than exponential scaling. `Maybe Feynman was onto something <https://s2.smu.edu/~mitch/class/5395/papers/feynman-quantum-1981.pdf>`_! Carrying out time evolution on these more-efficient systems, however, is not easy, meaning Hamiltonian simulation techniques such as **Trotterization** need to be implemented to achieve legible and realistic results. This demo will explore how we can do exactly that!
+
+The Commutation Problem
+-----------------------
+
+For a completely isolated free particle experiencing no potential energy, the Hamiltonian of the system can be simply defined in terms of kinetic energy and applied to the system via a unitary gate representing :math:`U_{free}(t)=e^{-iHt}=e^{-iTt}. Sticking to this idealized case would, of course, be useless. With each additional term added to the Hamiltonian, though, the feasibility of the time evolution operator :math:`e^{-iHt}` being executable on hardware diminishes. This brings to mind an easy fix, why not just split the Hamiltonian into pieces? If we taken the representation :math:`H=H_1+H_2+...+H_n`, we could naïvely say that our time evolution operator could become :math:`e^{-i(H_1+H_2+...+H_n)t}=e^{-iH_1t}e^{-iH_2t}...e^{-iH_nt}. In our naïveté, however, we would neglect to consider the commutation relations that the components of the split Hamiltonian share. 
+
+.. admonition:: Recall
+   :class: note
+
+   For commuting matrices, where :math:`AB=BA` and it is implied that A and B are completely independent,
+   :math:`(A+B)^2 = A^2+2AB+B^2`.
+
+   For non-commuting matrices, where :math:`AB \neq BA` and it is implied that A and B have some level of dependency,
+   :math:`(A+B)^2 = A^2+AB+BA+B^2`
+
+   So, the Taylor expansion :math:`e^{A+B}=I+(A+B)+\frac{1}{2}(A+B)^2+...` differs in the two cases!
+
+As we know, most physical systems require a combination of non-commuting operators to be fully described. Thus, splitting the Hamiltonian this way in a non-commuting scenario would not produce an accurate picture of reality in the time evolution operator. To imagine this more physically, consider what it would mean to exponentiate two dependent properties in this way. Taking A and B to be position and momentum, for example, and letting :math:`e^{iHt}=e^{iAt}e^{iBt}, applying these operators seperately assumes that the system is accurately described by iterating the position then iterating the momentum sequentially. This, of course, ignores the nuance of how the two properties influence each other and renders the simulation inaccurate. Rats!
+
+Luckily for us, this is an issue that some brilliant people gave thought to in order to solve. The `Lie-Trotter product formula <https://en.wikipedia.org/wiki/Lie_product_formula>`_ is the result of such effort. The theorem states that for arbitrary mxm matrices A and B
+
+.. math::
+   e^{A+B}=\lim_{r \to \infty}(e^{A/r}e^{B/r})^r.
+
+Turning back to the Hamiltonian picture, if we take a large, finite :math:`r`, letting :math:`r` represent the time step of the evolution, we can approximate the Lie-Trotter formula to
+
+.. math::
+   e^{-iHt}=(\prod_j e^{-iH_j t/r})^r.
+
+So, by slicing the total time the simulation is trying to emulate, the dependency between non-commuting properties can be integrated via alternating applications of each operator. To turn back to our earlier example, instead of taking one complete position step and one complete momentum step, we are now alternating small, partial steps in position and momentum, simulating simultaneity to the best of our ability. 
+
+Implementing the Trotter Method
+-------------------------------
+The form of the Lie-Trotter approximation implies a clear order of operations that must be executed to simulate the time evolution of a non-commuting system. 
+
+As implied, the first step of carrying out Hamiltonian simulation using Trotterization is splitting the Hamiltonian. To jump a few steps ahead, implementing the Trotterized time evolution operators will require the construction of equivalent unitary operators using universal gate sets. As a rule of thumb, feasible algorithms should strive for a minimum gate count, meaning we should strive for a minimum number of operators and, therefore, a minumum number of Hamiltonian fragments. To achieve this, the Hamiltonian should be split only where mathematically necessary, meaning commuting terms should always be grouped together to the greatest extent possible. Take, for example, a Hamiltonian containing the terms :math:`Z_1Z_3`, :math:`Z_2Z_4`, and :math:`X_1X_2`, where :math:`Z_i` and :math:`X_j` are Pauli operators. The first and second terms will always commute since they consist completely of Z operators, but neither of the first two operators commute with the third operator. Therefore, the most optimal splitting would yeild :math:`H_1=Z_1Z_3+Z_2Z_4` and :math:`H_2=X_1X_2`. This is not always so obvious in complex physical systems, so thorough analysis should be carried out to ensure optimal operator pairing. 
+
+Once the Hamiltonian is appropriately split, we need to ensure that the fragmented Hamiltonian we are working with can be implemented on realistic hardware. This tends to require some kind of `transformation <https://pennylane.ai/demos/tutorial_mapping>`_ to take place. Recalling the relevance of this method in simulating particle systems, one relevant example is the mapping of Fermionic states to qubit states via the `Jordan-Wigner transformation <https://docs.pennylane.ai/en/stable/code/api/pennylane.jordan_wigner.html>`_, which translates fermionic creation and annihilation operators to Pauli operators. For the purposes of this demonstration, we will assume our Hamiltonian was originally defined in the Pauli basis and forgo the transformation step. 
+
+To carry out the split-time method, the number of time steps :math:`r` must be defined, ideally achieving a high level of accuracy while remaining within reasonable computational resource bounds. From there, the circuit should simply alternate between the time evolution operator unitary gates for the desired length of time. Once again considering the Pauli basis, recall that exponentiated Pauli operators are represented by rotation gates, where, letting :math:`\sigma_i` be a Pauli operator,
+
+.. math:
+   R_\sigma_i(\theta)=e^{-i\frac{\theta}{2}\sigma_i}.
+
+So, taking the Hamiltonian :math:`H=\alpha X+\beta Z`, where :math:`\alpha` and :math:`\beta` are probability weights, and recognizing :math:`H_1=\alpha Z` and :math:`H_2=\beta X`
+
+.. math::
+   U(t)=e^{-i \alpha X t}e^{-i \beta Z t}=R_X(2\alpha t)R_Z(2 \beta t).
+
+This is easily translatable to code.
+"""
+
+import pennylane as qp
+import numpy as np
+from scipy.linalg import expm
+import pennylane.estimator as qre
+from pennylane.transforms.rz_phase_gradient import rz_phase_gradient
+
+#Define System Parameters
+coeffs = [0.2, 1.3] #Define Hamiltonian coefficients
+observables = [qp.PauliX(0), qp.PauliZ(0)] #Define observables
+t = 10 #Define time in seconds
+R = [10, 20, 30, 40, 50, 100, 200, 400] #Trotter steps
+
+dev = qp.device("lightning.qubit", wires=1)
+
+#Define Trotterization Function
+@qp.qnode(dev)
+def TrotterStepper(t,r,coeffs):
+    del_t = t/r
+
+    #Apply the rotation r times
+    for i in range(r):
+        U_A = qp.RX(2*coeffs[0]*del_t, wires=0)
+        U_B = qp.RZ(2*coeffs[1]*del_t, wires=0)
+
+    return [qp.expval(qp.PauliX(0)), qp.expval(qp.PauliY(0)), qp.expval(qp.PauliZ(0))]
+###############################################################################
+# Trotter Error
+# -------------
+# Understanding how Hamiltonian simulations deviate from the theory of the system it is trying to recreate is a field of study in itself. Intuitively, we expect the size of the time step being taken to dictate the amount of error in the simulation. A nuanced exploration tends to begin expansion via the `Baker-Campbell-Hausdorff formula <https://en.wikipedia.org/wiki/Baker%E2%80%93Campbell%E2%80%93Hausdorff_formula>`_
+#
+# .. math::
+#     e^{-iBt}e^{iAt}=e^{it(A+B)}-\frac{t^2}{2}[B,A]+i\frac{t^3}{12}[B[B,A]]-... [#Su2020]_.
+#
+# As is familiar when handling series expansions, the degree to which the BCH formula is truncated dictates the amount of error to expect in the Hamiltonian. Comparing the previous definition of the approximated Trotter formula to this expansion expression, we can see that we are only concerned with the first term and, therefore, our error is dominated by the term :math:`-\frac{t^2}{2}[B,A]` (also known as the First-Order Trotter error). Taking :math:`t=\Delta t` for each time step, we can reason out that the error is proportional to :math:`\frac{t^2}{r}`. This result aligns with our earlier intuition, implying that error will increase with length of time and decrease with number of steps.
+#
+# In the simple example implemented in this demo, an observed Trotter error can be achieved by calculating time evolution of the system mathematically. This would, of course, be unfeasible for large, complicated models or long time scales, but it is sufficient for this example.
+#
+
+#Approximate evolution for Trotter error calculation
+H = qp.Hamiltonian(coeffs, observables)
+
+#Pauli matrix representations
+X = np.array([[0, 1], [1, 0]])
+Z = np.array([[1, 0], [0, -1]])
+Y = np.array([[0, -1j], [1j, 0]])
+
+H = coeffs[0]*X + coeffs[1]*Z
+U = expm(-1j*H*t)
+
+state_0 = np.array([1,0])
+state_1 = np.array([0,1])
+
+evolved_H = U @ state_0
+
+exact_exp_X = np.real(evolved_H.conj() @ X @ evolved_H)
+exact_exp_Y = np.real(evolved_H.conj() @ Y @ evolved_H)
+exact_exp_Z = np.real(evolved_H.conj() @ Z @ evolved_H)
+###############################################################################
+# By keeping the simulation duration fixed and varying the number of steps taken, the error at each resolution can be obtained. 
+
+for r in R:
+    result = TrotterStepper(t,r,coeffs)
+    X_error = abs(result[0]-exact_exp_X)
+    Y_error = abs(result[1]-exact_exp_Y)
+    Z_error = abs(result[2]-exact_exp_Z)
+    total_error = np.sqrt(X_error**2+Y_error**2+Z_error**2)
+    print(f"{r:>5} | {X_error:>8.5f} | {Y_error:>8.5f} | {Z_error:>8.5f} | {total_error:>11.5f}")
+###############################################################################
+
+#
+
+# Gate Synthesis Considerations
+# -----------------------------
+# Add comment blocks to separate code blocks
+#
+# .. _references:
+#
+# References
+# ----------
+# .. [#Su2020] Yuan Su. "A Theory of Trotter Error." Presentation at the Simons Institute for the Theory of Computing, UC Berkeley, April 2020. URL: https://simons.berkeley.edu/sites/default/files/docs/15639/trottererrortheorysimons.pdf
+
+print("World")
