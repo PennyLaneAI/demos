@@ -66,7 +66,6 @@ def circuit_baseline():
   return qp.probs(target_wire)
 
 print(qre.estimate(circuit_baseline)())
-
 ###############################################################################
 # From this estimate, we can see that even a simple, single pass of a rotation multiplexer for a small set of arbitrary angles requires over 300 T-gates. Considering the cost of distillation and the fact that useful applications of this procedure will need to handle many more qubits and many more rotations, it is easy to see that the cost will grow very quickly. We need a hero!
 #
@@ -92,7 +91,7 @@ print(qre.estimate(circuit_baseline)())
 #        :align: center
 #        :width: 500px
 #
-#This addition can be interpreted as a "push" invoked by the data register on the phase gradient register. Via quantum addition, the gradient register is shifted by an amount equivalent to the binary weight of each data qubit that was added to it. Since the data state remains "stationary", the two states will now be *out of phase* by an amount equivalent to the shift experienced by the register. Since phase is relative, it can be said without issue that the data register has accumulated a phase equivalent to this shift. This process is referred to as `phase kickback <https://pennylane.ai/qml/demos/tutorial_phase_kickback>`_. As mentioned, this phase and the positional shift that invoked it are completely relative, so the properties of the gradient register are globally unchanged, solidifying it as a catalytic resource. Thus, the phase gradient state essentially stores spatially dependent phases that can be applied to encode data as a function of qubit position. 
+# This addition can be interpreted as a "push" invoked by the data register on the phase gradient register. Via quantum addition, the gradient register is shifted by an amount equivalent to the binary weight of each data qubit that was added to it. Since the data state remains "stationary", the two states will now be *out of phase* by an amount equivalent to the shift experienced by the register. Since phase is relative, it can be said without issue that the data register has accumulated a phase equivalent to this shift. This process is referred to as `phase kickback <https://pennylane.ai/qml/demos/tutorial_phase_kickback>`_. As mentioned, this phase and the positional shift that invoked it are completely relative, so the properties of the gradient register are globally unchanged, solidifying it as a catalytic resource. Thus, the phase gradient state essentially stores spatially dependent phases that can be applied to encode data as a function of qubit position. 
 #
 # .. figure:: ../demonstrations_v2/efficient_rotations_with_phase_gradient_states/PhaseKickbackAnimation.gif
 #      :align: center
