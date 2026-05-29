@@ -157,6 +157,17 @@
             "journal": "",
             "doi": "10.48550/arxiv.2309.09342",
             "url": "https://arxiv.org/abs/2309.09342"
+        },
+        {
+            "id": "wierichs",
+            "type": "preprint",
+            "title": "Recursive Cartan decompositions for unitary synthesis",
+            "authors": "David Wierichs, Maxwell West, Roy T. Forestano, M. Cerezo, Nathan Killoran",
+            "year": "2025",
+            "publisher": "",
+            "journal": "",
+            "doi": "10.48550/arxiv.2503.19014",
+            "url": "https://arxiv.org/abs/2503.19014"
         }
     ],
     "basedOnPapers": [],
