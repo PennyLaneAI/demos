@@ -5,14 +5,16 @@ Pandoc filter to convert all unrecognized directives to epigraphs (BlockQuotes).
 Also convert reference links to links to the online demo's references section.
 Code, link URLs, etc. are not affected.
 """
-import os
-from pandocfilters import toJSONFilter, BlockQuote, Link
 
-DEMOS_URL = "https://pennylane.ai/qml/demos/"
+import os
+
+from pandocfilters import BlockQuote, Link, toJSONFilter
+
+DEMOS_URL = "https://pennylane.ai/demos/"
 
 
 def filter_directives(key, value, format, _):
-    if key == 'Div':
+    if key == "Div":
         [[_, classes, _], body] = value
         if "related" in classes or "meta" in classes:
             return []
@@ -21,8 +23,8 @@ def filter_directives(key, value, format, _):
             rst_class_type = metadata.get("c")[0].get("c")
             if rst_class_type == "sphx-glr-script-out":
                 if len(body) == 1:
-                # This is the new format for sphx-glr-script-out.
-                # Just discard this block.
+                    # This is the new format for sphx-glr-script-out.
+                    # Just discard this block.
                     return []
                 return body[1]
             else:
@@ -30,7 +32,7 @@ def filter_directives(key, value, format, _):
         else:
             return BlockQuote(body)
 
-    if key == 'Link':
+    if key == "Link":
         [roles, _, [link, _]] = value
         if len(link) > 8:
             if link[:8] == "##NOTE##":
@@ -40,10 +42,11 @@ def filter_directives(key, value, format, _):
                 return Link(roles, [{"t": "Str", "c": " [Refs]"}], [link, ""])
 
     # Remove the references section from the demo.
-    if key == 'Header':
+    if key == "Header":
         [level, keys, _] = value
         if "references" in keys:
             return []
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     toJSONFilter(filter_directives)

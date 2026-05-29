@@ -100,6 +100,9 @@ First, let us do a linear combination of :math:`\{iX, iY, iZ\}` with some real v
 import numpy as np
 import pennylane as qp
 from pennylane import X, Y, Z
+import warnings
+
+warnings.filterwarnings(action="ignore", category=RuntimeWarning)
 
 su2 = [1j * X(0), 1j * Y(0), 1j * Z(0)]
 

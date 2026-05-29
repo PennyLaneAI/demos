@@ -10,7 +10,7 @@ The non-unique nature of these representations allows quantum computing librarie
 different approaches for storing and building Kraus operators to construct noise models. 
 In this how-to guide, we will first compare the construction of noise models in
 `Qiskit <https://docs.quantum.ibm.com/>`_ and
-`PennyLane <https://docs.pennylane.ai/en/stable/code/qp.html>`_. Then, we will learn how to
+:mod:`PennyLane <pennylane>`. Then, we will learn how to
 convert a Qiskit noise model into an equivalent PennyLane one, allowing users to import any
 custom user-defined or fake backend-based noise models.
 """
@@ -180,7 +180,7 @@ print(pl_noise_model)
 #    gate `operations <https://docs.pennylane.ai/en/stable/introduction/operations.html>`_.
 # 2. Next, the operations with noise are mapped to the corresponding error channels
 #    defined via :class:`~.pennylane.QubitChannel`.
-# 3. Finally, the `Boolean conditionals <https://docs.pennylane.ai/en/stable/code/qml_noise.html#boolean-functions>`_
+# 3. Finally, the :ref:`Boolean conditionals <intro_boolean_fn>`
 #    are constructed and combined based on their associated errors.
 #
 # This can be done for any noise model defined in Qiskit with a minor catch that
@@ -208,7 +208,7 @@ print(pl_noise_model.meas_map)
 # to convert the Qiskit noise model automatically. 💪
 #
 # Should you have any questions about using noise models in PennyLane, you can consult the
-# `noise module documentation <https://docs.pennylane.ai/en/stable/code/qml_noise.html>`_,
+# :doc:`noise module documentation <pennylane:code/qp_noise>`,
 # the `PennyLane Codebook module on Noisy Quantum Theory
 # <https://pennylane.ai/codebook/#06-noisy-quantum-theory>`_,
 # or create a post on the `PennyLane Discussion Forum <https://discuss.pennylane.ai>`_.

@@ -205,7 +205,7 @@ def equivariant_encoding(alpha, data, wires):
 
     hamiltonian = jnp.einsum("i,ijk", data, sigmas)  # Heisenberg Hamiltonian
     U = jax.scipy.linalg.expm(-1.0j * alpha * hamiltonian / 2)
-    qp.QubitUnitary(U, wires=wires, id="E")
+    qp.fourier.mark(qp.QubitUnitary(U, wires=wires), "E")
 
 
 ######################################################################
@@ -260,7 +260,7 @@ def equivariant_encoding(alpha, data, wires):
 def trainable_layer(weight, wires):
     hamiltonian = jnp.einsum("ijk->jk", sigmas_sigmas)
     U = jax.scipy.linalg.expm(-1.0j * weight * hamiltonian)
-    qp.QubitUnitary(U, wires=wires, id="U")
+    qp.fourier.mark(qp.QubitUnitary(U, wires=wires), "U")
 
 
 # Invariant observable

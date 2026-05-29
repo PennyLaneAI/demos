@@ -1,14 +1,14 @@
 # Specifies global constraints for the stable build
 --extra-index-url https://download.pytorch.org/whl/cpu
-pennylane==0.44.*
+pennylane==0.45.*
 pennylane-cirq==0.44.*
-pennylane-qiskit==0.44.*
+pennylane-qiskit==0.45.*
 pennylane-qulacs==0.44.*
-pennylane-catalyst==0.14.*
+pennylane-catalyst==0.15.*
 
 # Install external packages
 matplotlib==3.10.0
-aiohttp==3.9.5
+aiohttp==3.13.4
 fastapi<1.0.0
 fsspec==2024.6.1
 h5py==3.11.0
