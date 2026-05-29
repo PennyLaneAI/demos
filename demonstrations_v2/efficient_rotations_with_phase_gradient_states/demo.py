@@ -92,13 +92,22 @@ print(qre.estimate(circuit_baseline)())
 #      :align: center
 #      :width: 500px
 #
-# To summarize, the phase gradient rotation algorithm can be itemized as follows,
+# The total transformation can be summarized as
 #
-# 1. A phase gradient state is encoded onto a register composed of :math:`b` qubits.
-# 2. A semi-adder operation is performed between a data register and the gradient register.
-# 3. The phase gradient register shifts proportionally to the weight of the data qubit added to it.
-# 4. The shift in the gradient register causes the data register to accumulate a relative phase via phase kickback.
-# 5. Since position shifts are relative and do not alter structure, the catalytic phase gradient state remains unchanged and can be reused as desired.
+# .. math::
+#    |\Psi\rangle|\nabla_b\rangle = \alpha|0\rangle|\nabla_b\rangle+\beta|1\rangle|\nabla_b\rangle
+#    C(Add_k)|\Psi\rangle|\nabla_b\rangle = \alpha|0\rangle|\nabla_b\rangle+\beta|1\rangle Add_k |\nabla_b\rangle
+#                                         = \alpha|0\rangle|\nabla_b\rangle+\beta|1\rangle e^{-\frac{2\pi i k}{B}} |\nabla_b\rangle
+#                                         = (\alpha|0\rangle+\beta e^{-\frac{2\pi i k}{B}} |1\rangle)|\nabla_b\rangle.
+#
+#
+# .. admonition:: Phase Gradient Rotation Algorithm
+#    :class: tip
+#     1. A phase gradient state is encoded onto a register composed of :math:`b` qubits.
+#     2. A semi-adder operation is performed between a data register and the gradient register.
+#     3. The phase gradient register shifts proportionally to the weight of the data qubit added to it.
+#     4. The shift in the gradient register causes the data register to accumulate a relative phase via phase kickback.
+#     5. Since position shifts are relative and do not alter structure, the catalytic phase gradient state remains unchanged and can be reused as desired.
 #
 # This approach, as a whole, has two major optimization benefits. First, the phase gradient state only needs to be generated *once* since its catalytic nature leaves it unchanged after it interacts with the data register, meaning it will have a one-time, upfront preparation T-gate cost that is never repeated. Second, the phase shifts are applied by an addition operation rather than multiplication, meaning the phase gradient method's T-gate count scales as :math:`\mathcal{O}(2^n+\log_2(1/\epsilon))` when memory costs (here being `QROM <https://pennylane.ai/demos/tutorial_intro_qrom>`_) are considered. 
 #
