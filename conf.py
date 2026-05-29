@@ -222,7 +222,7 @@ intersphinx_mapping = {
         + ("latest/" if dev else "stable/"),
         None,
     ),
-    "demo": ("https://pennylane.ai/qml", None),
+    "demo": ("https://pennylane.ai", None),
 }
 
 # Enable :doc: references for intersphinx (disabled by default in Sphinx 5.0+)
