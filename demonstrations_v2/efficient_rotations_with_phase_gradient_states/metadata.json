@@ -17,7 +17,7 @@
       "uri": "/_static/demo_thumbnails/regular_demo_thumbnails/thumbnail_placeholder.png"
     }
   ],
-  "seoDescription": "Arbitrary rotations are expensive, especially when considering the requirements of fault tolerant archetecture. This demo explores how the catalytic phase gradient state can be used to reduce the cost of rotation.",
+  "seoDescription": "The ability to perform arbitrary rotations is essential for the realization of usable algorithms on quantum computers. These operations, however, are expensive when one considers the resources required to translate these operations into fault-tolerant systems. To minimize gate costs, efficient gate synthesis methods, of which the phase gradient method is a prominent example, should be selected for implementation. This demo will explore how the phase gradient state can be used to perform efficient rotations in quantum systems.",
   "doi": "",
   "references": [],
   "basedOnPapers": [],
