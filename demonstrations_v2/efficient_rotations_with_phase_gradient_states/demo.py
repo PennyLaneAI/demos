@@ -77,7 +77,7 @@ print(qre.estimate(circuit_baseline)())
 #
 # Here, :math:`b=\log_2(1/\epsilon)` is the total number of qubits stored in the phase gradient register, :math:`B=2^b` is the total number of possible states in the superposition between all qubits in the gradient register, and :math:`j` is the index of a specific qubit within the register. 
 #
-# The phase gradient state can be interpreted as acting as a pre-defined plane of stored angles that can be accessed and invoked on a target state when desired. This state can be prepared once, stored in an auxiliary register, and reused. To induce a phase shift, the data register (storing an integer value) simply needs to be added to the gradient register, which is done most commonly (and most efficiently) using a `SemiAdder() <https://docs.pennylane.ai/en/stable/code/api/pennylane.SemiAdder.html>`_ step. 
+# The phase gradient state can be interpreted as acting as a pre-defined plane of stored angles that can be accessed and invoked on a target state when desired. This state can be prepared once, stored in an auxiliary register, and reused. To induce a phase shift, the data register (storing an integer value) simply needs to be added to the gradient register, which is done most commonly using a `SemiAdder() <https://docs.pennylane.ai/en/stable/code/api/pennylane.SemiAdder.html>`_ step. 
 #
 # .. figure:: ../demonstrations_v2/efficient_rotations_with_phase_gradient_states/PhaseShiftCircuitDiagram.png
 #        :align: center
