@@ -1,4 +1,4 @@
-/glossary/r"""
+r"""
 An equivariant graph embedding
 ==============================
 
@@ -148,7 +148,7 @@ plt.show()
 #
 # When we design a machine learning model that takes graph data, the first step is to encode
 # the adjacency matrix into a quantum state using an embedding or
-# `quantum feature map <https://pennylane.ai/qml/glossary/quantum_feature_map>`_
+# `quantum feature map <https://pennylane.ai/glossary/quantum_feature_map>`_
 # :math:`\phi:`
 #
 # .. math::

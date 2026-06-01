@@ -1,8 +1,8 @@
-/glossary/r"""A Game of Surface Codes: Large-Scale Quantum Computing with Lattice Surgery
+r"""A Game of Surface Codes: Large-Scale Quantum Computing with Lattice Surgery
 ===============================================================================
 
 In surface-code based fault tolerant quantum computing architectures, 
-T gates are typically implemented via injected `magic states <https://pennylane.ai/qml/glossary/what-are-magic-states>`__.
+T gates are typically implemented via injected `magic states <https://pennylane.ai/glossary/what-are-magic-states>`__.
 The layout and design of the architecture plays a crucial role in how fast a magic state can be reliably produced and consumed for computation.
 The game of surface codes [#Litinski]_ allows us to reason about such space-time tradeoffs in architecture designs, without having to get into
 the nitty-gritty details of surface code physics. In this demo, we will see how different designs can lead to faster computations at the cost of involving more qubits and vice versa.
@@ -30,7 +30,7 @@ However, it still helps to understand the correspondences in physical fault tole
 First of all it is important to note that we consider surface codes that implement `(Clifford + T) <https://pennylane.ai/compilation/clifford-t-gate-set>`__ circuits.
 In particular, these circuits can be compiled to circuits that just perform `Pauli product measurements <https://pennylane.ai/compilation/pauli-based-computation>`__.
 This is because all Clifford operations can be moved to the end of the circuit and merged with measurements. 
-The remaining non-Clifford gates are realized by `magic state injection <https://pennylane.ai/qml/glossary/what-are-magic-states>`__ and more Clifford operations, which can be merged with measurements again.
+The remaining non-Clifford gates are realized by `magic state injection <https://pennylane.ai/glossary/what-are-magic-states>`__ and more Clifford operations, which can be merged with measurements again.
 Hence, we mainly care about performing measurements on qubits in arbitrary bases and efficiently distilling and injecting magic states.
 
 We also note that the patches that represent qubits correspond to surface code qubits.
@@ -114,7 +114,7 @@ which is the most crucial operation in this framework, since everything is mappe
 Non-Clifford Pauli rotations
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Non-Clifford Pauli rotations :math:`e^{-i \frac{\pi}{8} P}` for some Pauli word :math:`P` are realized via `magic state distillation and injection <https://pennylane.ai/qml/glossary/what-are-magic-states>`__.
+Non-Clifford Pauli rotations :math:`e^{-i \frac{\pi}{8} P}` for some Pauli word :math:`P` are realized via `magic state distillation and injection <https://pennylane.ai/glossary/what-are-magic-states>`__.
 Magic state distillation blocks are a crucial part of the architecture design that we are going to cover later. 
 For the moment we assume that we have means to prepare magic states :math:`|m\rangle = |0\rangle + e^{-i \frac{\pi}{4}} |1\rangle` on special qubit tiles (distillation blocks).
 Magic state injection in this case then refers to the following protocol:
