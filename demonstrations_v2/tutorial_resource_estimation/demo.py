@@ -56,7 +56,7 @@ QPE cost for simulating molecules
 We study the double low-rank Hamiltonian factorization algorithm of [#vonburg2021]_ and use its cost
 equations as provided in APPENDIX C of [#lee2021]_.
 This algorithm requires the one- and two-electron
-:ref:`integrals <tutorial-differentiable-HF-the-hartree-fock-method>`
+`integrals <https://pennylane.ai/qml/demos/tutorial_differentiable_HF#the-hartree-fock-method>`_
 as input. These integrals can be obtained in different ways and here we use PennyLane to compute
 them. We first need to define the atomic symbols and coordinates for the given molecule. Let's use
 the water molecule at its equilibrium geometry with the
