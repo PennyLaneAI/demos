@@ -1,4 +1,4 @@
-r"""
+/glossary/r"""
 An equivariant graph embedding
 ==============================
 

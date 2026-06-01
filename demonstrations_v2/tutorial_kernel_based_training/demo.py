@@ -1,4 +1,4 @@
-"""
+/glossary/"""
 .. _kernel_based_training:
 
 .. role:: html(raw)

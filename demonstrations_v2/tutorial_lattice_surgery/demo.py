@@ -77,7 +77,7 @@ Universal quantum computing with Pauli product measurements
 -----------------------------------------------------------
 
 To achieve universal quantum computing, we need to be able to perform all Clifford gates, particularly CNOT gates.
-Furthermore, we need to be able to reliably inject states to enable `magic state injection <https://pennylane.ai/qml/glossary/what-are-magic-states>`__.
+Furthermore, we need to be able to reliably inject states to enable `magic state injection <https://pennylane.ai/glossary/what-are-magic-states>`__.
 This line of reasoning is a bottom-up way to show that lattice surgery enables universal quantum computing, which was done in its original introduction [#latticesurgery]_.
 
 Let us alternatively take a top-down approach here and show that we can perform arbitrary `Pauli product measurements <https://pennylane.ai/compilation/pauli-based-computation>`__ (PPMs), 

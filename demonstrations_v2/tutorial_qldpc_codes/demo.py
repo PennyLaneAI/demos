@@ -648,7 +648,7 @@ print("Do Lx and Lz anticommute? ", np.allclose(lx @ lz.T, np.eye(lx.shape[0])))
 # any nontrivial local-error-detecting quantum code to be non-universal. For most stabilizer codes,
 # the transversal gate set is limited to the Clifford group. The non-Clifford gates such as
 # :class:`~.pennylane.T` must instead be realized indirectly, for example via `magic state injection
-# <https://pennylane.ai/qml/glossary/what-are-magic-states>`__ [#Transversal]_.
+# <https://pennylane.ai/glossary/what-are-magic-states>`__ [#Transversal]_.
 #
 # A notable property of certain qLDPC code families is their native support for transversal
 # non-Clifford gates, such as the :class:`~.pennylane.CCZ` gate. While this property

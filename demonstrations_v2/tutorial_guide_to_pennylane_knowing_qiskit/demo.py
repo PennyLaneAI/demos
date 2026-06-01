@@ -1,4 +1,4 @@
-r"""Your guide to PennyLane if you know Qiskit
+/glossary/r"""Your guide to PennyLane if you know Qiskit
 ===================================================
 
 Greetings, fellow quantum programmers 👋! Isn’t it such a wonderful world we live in, with so many

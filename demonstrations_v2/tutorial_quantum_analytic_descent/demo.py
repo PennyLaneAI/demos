@@ -295,7 +295,7 @@ line2 = ax.plot(
 #   E^{(D)}_{kl} &= \frac{\partial^2 E(\boldsymbol{\theta})}{\partial\theta_k\partial\theta_l}\Bigg|_{\boldsymbol{\theta}=0}
 #
 # In PennyLane, computing the gradient of a cost function with respect to an array of parameters can be easily done
-# with the `parameter-shift rule <https://pennylane.ai/qml/glossary/parameter_shift>`_.
+# with the `parameter-shift rule <https://pennylane.ai/glossary/parameter_shift>`_.
 # By iterating the rule, we can obtain the second derivatives – the Hessian (see for example [#higher_order_diff]_).
 # Let us implement a function that does just that and prepares the coefficients :math:`E^{(A/B/C/D)}:`
 

@@ -1,4 +1,4 @@
-r"""A Game of Surface Codes: Large-Scale Quantum Computing with Lattice Surgery
+/glossary/r"""A Game of Surface Codes: Large-Scale Quantum Computing with Lattice Surgery
 ===============================================================================
 
 In surface-code based fault tolerant quantum computing architectures, 

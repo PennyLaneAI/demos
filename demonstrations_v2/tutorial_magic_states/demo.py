@@ -38,7 +38,7 @@ Notice that this state is obtained by applying a T gate to the :math:`|+\rangle`
 (the +1 eigenstate of the Pauli X operator).  
 Using **magic state injection** (see the circuit illustration below), we can apply a T operation to an 
 arbitrary single-qubit state :math:`|\psi\rangle` (wire 0 in the code). A step-by-step breakdown of this process 
-can be found in this PennyLane `glossary page <https://pennylane.ai/qml/glossary/what-are-magic-states>`__.
+can be found in this PennyLane `glossary page <https://pennylane.ai/glossary/what-are-magic-states>`__.
 
 .. figure:: _static/demonstration_assets/magic_states/magic-state-injection.png
     :alt: Magic state injection protocol for an H magic state
