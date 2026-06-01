@@ -10,7 +10,7 @@ because quantum computers can only perform unitary evolutions 🔥. Block encodi
 that solves this problem by embedding a non-unitary operator as a sub-block of a larger unitary 
 matrix 🧯.
 
-In previous demos we have discussed methods for :ref:`simulator-friendly <tutorial-intro-qsvt-transforming-matrices-encoded-in-matrices>`
+In previous demos we have discussed methods for `simulator-friendly <https://pennylane.ai/demos/tutorial_intro_qsvt#transforming-matrices-encoded-in-matrices>`_
 encodings and block encodings using :doc:`linear combination of unitaries <demos/tutorial_lcu_blockencoding>`
 (LCU) decompositions. In this tutorial we explore another general block encoding framework that can be
 very efficient for sparse and structured matrices: block encoding with matrix access oracles.

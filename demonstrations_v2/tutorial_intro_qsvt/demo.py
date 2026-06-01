@@ -133,8 +133,6 @@ plt.show()
 # underlying the QSVT algorithm. If you've made it this far, you're in great shape for the rest to come 🥇
 #
 #
-# .. _tutorial-intro-qsvt-transforming-matrices-encoded-in-matrices:
-#
 # Transforming matrices encoded in matrices
 # ------------------------------------------
 #
