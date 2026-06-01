@@ -58,7 +58,7 @@ r"""Adversarial attacks and robustness for quantum machine learning
 # attacks are imperceptible to humans, and hence difficult to detect. For this reason, it is essential
 # that ML models in security-critical applications are robust against these types of attacks.
 #
-# `Quantum machine learning (QML) <[/whatisqml](https://pennylane.ai/qml/whatisqml/)>`__ has been shown to have theoretical advantages over classical ML methods [#Liu]_
+# `Quantum machine learning (QML) <[/whatisqml](https://pennylane.ai/whatisqml/)>`__ has been shown to have theoretical advantages over classical ML methods [#Liu]_
 # and is becoming increasingly popular. However, first works in this direction suggest that QML
 # suffers from the same vulnerabilities as classical ML [#Lu]_. How the vulnerability of QML models
 # relates to classical models and how robust the models are in comparison is evaluated in [#Wendlinger]_. But

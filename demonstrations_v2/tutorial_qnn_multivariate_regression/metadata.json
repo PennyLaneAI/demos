@@ -46,7 +46,7 @@
             "authors": "Jorge J. Martinez de Lejarza",
             "year": "2023",
             "publisher": "",
-            "url": "hhttps://qibo.science/qibo/stable/code-examples/tutorials/qfiae/qfiae_demo.html"
+            "url": "https://qibo.science/qibo/stable/code-examples/tutorials/qfiae/qfiae_demo.html"
         },
         {
             "id": "demoschuld",
@@ -64,7 +64,7 @@
             "authors": "Josh Izaac, Maria Schuld",
             "year": "2024",
             "publisher": "",
-            "url": "ttps://pennylane.ai/qml/demos/tutorial_How_to_optimize_QML_model_using_JAX_and_Optax/"
+            "url": "https://pennylane.ai/demos/tutorial_How_to_optimize_QML_model_using_JAX_and_Optax/"
         }
     ],
     "basedOnPapers": [],

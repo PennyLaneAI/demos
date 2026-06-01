@@ -395,7 +395,7 @@ The ZX-calculus for quantum machine learning
 
 We now move away from the standard use of the ZX-calculus in order to show its utility for calculus and,
 more specifically, for quantum derivatives (`the parameter-shift rule
-<https://pennylane.ai/qml/glossary/parameter_shift.html>`__). What follows is not implemented in PennyLane or PyZX.
+<https://pennylane.ai/glossary/parameter_shift>`__). What follows is not implemented in PennyLane or PyZX.
 By adding derivatives to the framework, it shows that the ZX-calculus has a role to play in analyzing quantum machine
 learning problems. After reading this section, you should be convinced that the ZX-calculus can be used to study any
 kind of quantum-related problem.
