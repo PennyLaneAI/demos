@@ -174,14 +174,14 @@ print(qre.estimate(circuit_phase_grad)())
 #
 # References
 # ----------
-# .. [#Gidney2018] C.\ Gidney, "Halving the cost of quantum addition," *Quantum*, vol. 2, p. 74, Jun. 2018. doi: 10.22331/q-2018-06-18-74.
+# .. [#Gidney2018] C.\ Gidney, "Halving the cost of quantum addition," *Quantum*, vol. 2, p. 74, Jun. 2018. `doi: 10.22331/q-2018-06-18-74 <https://quantum-journal.org/papers/q-2018-06-18-74/>`_`.
 #
-# .. [#Ross2016] N.\ J. Ross and P. Selinger, "Optimal ancilla-free Clifford+T approximation of z-rotations," *Quantum Inf. Comput.*, vol. 16, no. 11-12, pp. 901–953, 2016, arXiv: 1403.2975 [quant-ph].
+# .. [#Ross2016] N.\ J. Ross and P. Selinger, "Optimal ancilla-free Clifford+T approximation of z-rotations," *Quantum Inf. Comput.*, vol. 16, no. 11-12, pp. 901–953, 2016, `arXiv: 1403.2975 <https://arxiv.org/abs/1403.2975>`_.
 #
-# .. [#Paetznick2014] A.\ Paetznick and K. M. Svore, "Repeat-Until-Success: Non-deterministic decomposition of single-qubit unitaries," *Quantum Inf. Comput.*, vol. 14, no. 15-16, pp. 1277–1301, 2014, arXiv: 1311.1074 [quant-ph].
+# .. [#Paetznick2014] A.\ Paetznick and K. M. Svore, "Repeat-Until-Success: Non-deterministic decomposition of single-qubit unitaries," *Quantum Inf. Comput.*, vol. 14, no. 15-16, pp. 1277–1301, 2014, `arXiv: 1311.1074 <https://arxiv.org/pdf/1311.1074>`_.
 #
-# .. [#Dawson2006] C.\ M. Dawson and M. A. Nielsen, "The Solovay-Kitaev algorithm," *Quantum Inf. Comput.*, vol. 6, no. 1, pp. 81–95, 2006, arXiv: quant-ph/0505030.
+# .. [#Dawson2006] C.\ M. Dawson and M. A. Nielsen, "The Solovay-Kitaev algorithm," *Quantum Inf. Comput.*, vol. 6, no. 1, pp. 81–95, 2006, `arXiv: quant-ph/0505030 <https://arxiv.org/pdf/quant-ph/0505030>`_.
 #
-# .. [#Kliuchnikov2015] V.\ Kliuchnikov, A. Bocharov, M. Roetteler, and J. Yard, "A Framework for Approximating Qubit Unitaries," 2015, arXiv: 1510.03888 [quant-ph].
+# .. [#Kliuchnikov2015] V.\ Kliuchnikov, A. Bocharov, M. Roetteler, and J. Yard, "A Framework for Approximating Qubit Unitaries," 2015, `arXiv: 1510.03888 [quant-ph] <https://arxiv.org/pdf/1510.03888>`_.
 #
-# .. [#Kliuchnikov2022] V.\ Kliuchnikov, K. Lauter, R. Minko, A. Paetznick, and C. Petit, "Shorter quantum circuits via single-qubit gate approximation," *Quantum*, vol. 7, p. 1208, Dec. 2023. doi: 10.22331/q-2023-12-18-1208.
+# .. [#Kliuchnikov2022] V.\ Kliuchnikov, K. Lauter, R. Minko, A. Paetznick, and C. Petit, "Shorter quantum circuits via single-qubit gate approximation," 2022, `arXiv: 2203.10064 <https://arxiv.org/abs/2203.10064>`_
