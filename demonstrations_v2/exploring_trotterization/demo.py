@@ -204,7 +204,7 @@ for r in R:
     total_error_PG = np.sqrt(X_error_PG**2+Y_error_PG**2+Z_error_PG**2)
     print(f"{r:>5} | {X_error_PG:>8.5f} | {Y_error_PG:>8.5f} | {Z_error_PG:>8.5f} | {total_error_PG:>11.5f}")
 #############################################################################################################
-
+#
 # Ah ha! A tradeoff has made itself clear! In the phase gradient implementation, the Trotter error is univerally higher than in the RUS case.  What is also (maybe even more) interesting is that, after a certain :math:`r` threshold is reached, the phase gradient system no longer evolves. This is an example of `underflow <https://en.wikipedia.org/wiki/Arithmetic_underflow>`_ in `quantum arithmetic <https://pennylane.ai/demos/tutorial_how_to_use_quantum_arithmetic_operators>`_, where, put simply, the simulation has reached a computational limit and is stuck rounding to the same value each pass. So, when we choose which techniques to use for gate synthesis, we must consider the needs of our system in tandem with the cost of our system. Sometimes an investment is necessary!
 #
 # Fast-Fowarding
