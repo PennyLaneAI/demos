@@ -50,8 +50,6 @@ the good news is that you actually already know the elements of both. Roughly sp
 is the space of unitaries, and the relevant Lie algebra is the space of Hermitian matrices. Further, they are related to each other: The Lie algebra (Hermitian matrices)
 generates the Lie group (unitaries) via the exponential map. There are, however, some subtleties if we want to be mathematically precise, as we will explore more in depth now.
 
-.. _tutorial-liealgebra-lie-algebras:
-
 Lie algebras
 ------------
 

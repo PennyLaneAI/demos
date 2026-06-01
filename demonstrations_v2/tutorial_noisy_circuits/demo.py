@@ -29,8 +29,7 @@ We're putting the N in NISQ.
 
 ##############################################################################
 #
-# .. _tutorial-noisy-circuits-noisy-operations:
-#
+# 
 # Noisy operations
 # ----------------
 # Noise is any unwanted transformation that corrupts the intended

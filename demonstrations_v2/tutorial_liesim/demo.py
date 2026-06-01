@@ -66,7 +66,7 @@ use the trace inner product between operators :math:`\langle h_\alpha, h_\beta \
     Technically, the (dynamical) Lie algebra is formed by skew-Hermitian operators :math:`\{i h_i\}.`
     We avoid this distinction here since for all practical purposes one can also look at Hermitian
     operators and explicitly add imaginary units in the exponents where appropriate.
-    For more details, see the note in the "Lie algebras" section of our :ref:`Intro to (dynamical) Lie algebras for quantum practitioners <tutorial-liealgebra-lie-algebras>`.
+    For more details, see the note in the "Lie algebras" section of our `Intro to (dynamical) Lie algebras for quantum practitioners <https://pennylane.ai/demos/tutorial_liealgebra/#lie-algebras>`__.
 
 :math:`\mathfrak{g}`-sim theory
 -------------------------------

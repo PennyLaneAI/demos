@@ -128,7 +128,7 @@ print(f"eigenvectors:\n{np.real(vec.T)}")
 # where :math:`\alpha` and :math:`\beta` denote the electron spin and :math:`p, q, r, s` are the
 # orbital indices. The coefficients :math:`c` are integrals over
 # molecular orbitals that are obtained from
-# :ref:`Hartree-Fock <tutorial-differentiable-HF-the-hartree-fock-method>`
+# `Hartree-Fock <https://pennylane.ai/demos/tutorial_differentiable_HF#the-hartree-fock-method>`_
 # calculations. These integrals can be computed with PennyLane using the
 # :func:`~.pennylane.qchem.electron_integrals` function. We can build the molecular Hamiltonian for
 # the hydrogen molecule as an example. We first define the atom types and the atomic coordinates.
