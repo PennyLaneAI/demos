@@ -205,17 +205,30 @@ for r in R:
     print(f"{r:>5} | {X_error_PG:>8.5f} | {Y_error_PG:>8.5f} | {Z_error_PG:>8.5f} | {total_error_PG:>11.5f}")
 #############################################################################################################
 
-# Ah ha! A tradeoff has made itself clear! In the phase gradient implementation, the Trotter error is univerally higher than in the RUS case. What is also (maybe even more) interesting is that, after a certain :math:`r` threshold is reached, the phase gradient system no longer evolves. This is an example of `underflow <https://en.wikipedia.org/wiki/Arithmetic_underflow>`_ in `quantum arithmetic <https://pennylane.ai/demos/tutorial_how_to_use_quantum_arithmetic_operators>`_, where, put simply, the simulation has reached a computational limit and is stuck rounding to the same value each pass. So, when we choose which techniques to use for gate synthesis, we must consider the needs of our system in tandem with the cost of our system. Sometimes an investment is necessary!
+# Ah ha! A tradeoff has made itself clear! In the phase gradient implementation, the Trotter error is univerally higher than in the RUS case.  What is also (maybe even more) interesting is that, after a certain :math:`r` threshold is reached, the phase gradient system no longer evolves. This is an example of `underflow <https://en.wikipedia.org/wiki/Arithmetic_underflow>`_ in `quantum arithmetic <https://pennylane.ai/demos/tutorial_how_to_use_quantum_arithmetic_operators>`_, where, put simply, the simulation has reached a computational limit and is stuck rounding to the same value each pass. So, when we choose which techniques to use for gate synthesis, we must consider the needs of our system in tandem with the cost of our system. Sometimes an investment is necessary!
 #
-# Fast Fowarding
+# Fast-Fowarding
 # --------------
+# To make a quantum simulation truly justifiable, one would hope that the required number of time steps would be minimal. If the depth of a circuit maintains proportionality to the length of the time interval being simulated, for example, it runs the risk of exceeding the coherence time of the system. In a completely ideal case, running a simulation for time :math:`t` would require a complexity less than :math:`\mathcal{O}(t)` or, in other words, with a complexity that is sublinear in :math:`t`. This, in theory, can be achieved by employing a "fast-forwarding" technique, which is an umbrella term that refers to techniques used to reduce the depth of a simulation circuit below the time step threshold.
 #
+# The technique contained under this umbrella that should be used to reduce the depth of a specific simulation must be decided based on the structure of the Hamiltonian itself. If your system has an analytical solution, your life is easy. Fast-forwarding in the analytical case can be carried out by computing the unitary transformation that diagonalizes the system's Hamiltonian and executing it in a quantum circuit. Since the entire evolution of the system is known, the phase angles used in the time-evolution operator (as shown above) can be altered to obtain different time lengths, essentially carrying out simulation with :math:`\mathcal{O}(1)` complexity. This is an incredibly ideal result that applies to a select few, generally not very interesting scenarios, such as a fixed pendulum. 
+#
+# When more complexity is added and the analytical solution of the system is no longer obtainable, we encounter the *no-fast-forwarding theorem* [#Childs2010]_.
+#
+# .. admonition:: The No-Fast-Forwarding Theorem, Put Simply
+#    :class: tip
+#    The time evolution of a generic physical system, often described by a general sparse Hamiltonian, cannot be carried out in sublinear time since there does not exist a generic method for fast-forwarding Hamiltonian simulations.
+#
+# In the general case, then, one can either accept that the resource requirements are at least :math:`\mathcal{O}(t)` or approximate methods can be employed to carry out fast-forwarding at the cost of some error. One such approximation method is called **Variational Fast Forwarding (VFF)**, in which feedback is used to approximately diagonalize the general Hamiltonian [#Cirstoiu2020]_. In the case of Trotterization, this implies that the unitary describing the Trotter step :math:`e^{-iH\Delta t}` is diagonalized via a gradient descent optimization that targets the diagonalized form. When this is adequately approximated, the diagonal unitary can be applied to the system and fast-forwarding can be carried out, again, by altering the phase angles of the operator [#Cirstoiu2020]_.
 #
 # .. _references:
 #
 # References
 # ----------
-# .. [#Su2020] Yuan Su. "A Theory of Trotter Error." Presentation at the Simons Institute for the Theory of Computing, UC Berkeley, April 2020. URL: https://simons.berkeley.edu/sites/default/files/docs/15639/trottererrortheorysimons.pdf
-# .. [#Paetznick2014] Adam Paetznick and Krysta M. Svore. "Repeat-Until-Success: Non-deterministic decomposition of single-qubit unitaries." *Quantum Information & Computation*, vol. 14, no. 15-16, 2014, pp. 1277–1301. arXiv:1311.1074 [quant-ph]
-# .. [#Gidney2018] C. Gidney, "Halving the cost of quantum addition," *Quantum*, vol. 2, p. 74, Jun. 2018. https://doi.org/10.22331/q-2018-06-18-74
-
+# .. [#Su2020] Y. Su, "A Theory of Trotter Error," presented at the Simons Institute for the Theory of Computing, UC Berkeley, Berkeley, CA, USA, Apr. 2020. [Online]. Available: https://simons.berkeley.edu/sites/default/files/docs/15639/trottererrortheorysimons.pdf
+#
+# .. [#Paetznick2014] A. Paetznick and K. M. Svore, "Repeat-Until-Success: Non-deterministic decomposition of single-qubit unitaries," *Quantum Inf. Comput.*, vol. 14, no. 15-16, pp. 1277–1301, Nov. 2014, arXiv: 1311.1074 [quant-ph].
+#
+# .. [#Childs2010] A. M. Childs and R. Kothari, "Limitations on the simulation of non-sparse Hamiltonians," *Quantum Inf. Comput.*, vol. 10, no. 7, pp. 669–684, Jul. 2010, arXiv: `0908.4398 <https://arxiv.org/abs/0908.4398>`_ [quant-ph].
+#
+# .. [#Cirstoiu2020] C. Cîrstoiu, Z. Holmes, J. Iosue, L. Cincio, P. J. Coles, and A. Sornborger, "Variational fast forwarding for quantum simulation beyond the coherence time," *npj Quantum Inf.*, vol. 6, no. 1, p. 82, Sep. 2020, arXiv: `1910.04292 <https://arxiv.org/abs/1910.04292>`_ [quant-ph].
