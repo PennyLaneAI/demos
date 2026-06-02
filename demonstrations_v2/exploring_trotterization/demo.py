@@ -46,7 +46,9 @@ Turning back to the Hamiltonian picture, if we take a large, finite :math:`r`, l
 
 So, by slicing the total time the simulation is trying to emulate, the dependency shared by non-commuting properties can be integrated via alternating applications of each operator. To turn back to our earlier example, instead of taking one complete position step and one complete momentum step, we are now alternating small, partial steps in position and momentum, approimating simultaneity to the best of our ability. The example of position and momentum also raises the question of operator bases, since clearly these two time evolution operators are defined in Fourier-conjugate bases. Indeed, if the non-commuting operators do not exist in the same basis, a basis change step (such as a `quantum Fourier transform (QFT) <https://pennylane.ai/demos/tutorial_qft>`_) will need to be added between each operator application. 
 
-ILLUSTRATION HERE?
+.. figure:: ../demonstrations_v2/exploring_trotterization/IterativeFitIllustration.png
+   :align: center
+   :width: 80%
 
 Implementing the Trotter Method
 -------------------------------
@@ -152,7 +154,7 @@ for r in R:
 prec = 0.05
 b = int(np.ceil(np.log2(1/prec)))
 
-angle_wires = list(range(1,1+b)) #Since we are only dealing with one logical wire, we can just start indexing the auxillary wires at 1
+angle_wires = list(range(1,1+b))
 gradient_wires = list(range(1+b,1+2*b))
 work_wires = list(range(1+2*b,1+3*b))
 
@@ -212,8 +214,8 @@ for r in R:
 #############################################################################################################
 # Ah ha! A tradeoff has made itself clear! In the phase gradient implementation, the Trotter error is universally higher than in the RUS case.  What is also (maybe even more) interesting is that, after a certain :math:`r` threshold is reached, the phase gradient system no longer evolves. This is an example of `underflow <https://en.wikipedia.org/wiki/Arithmetic_underflow>`_ in `quantum arithmetic <https://pennylane.ai/demos/tutorial_how_to_use_quantum_arithmetic_operators>`_, where, put very simply, the simulation has reached a computational limit and is stuck rounding to the same value each pass. So, when we choose which techniques to use for gate synthesis, we must consider the needs of our system in tandem with the cost of our system. Sometimes an investment is necessary!
 #
-# Fast-Forwarding
-# --------------
+# Fast-Forwarding **Cut this down**
+# ---------------
 # As demonstrated, implementing quantum simulation on hardware requires that a series of gates are implemented for each time step, meaning the depth of the circuit grows notably with increasing time. If the depth of a simulation circuit maintains proportionality to the length of the time interval being simulated, for example, it runs the (very real) risk of exceeding the `coherence time <https://en.wikipedia.org/wiki/Quantum_decoherence>`_ of the system. Ideally, running a simulation for time :math:`t` would require a complexity less than :math:`\mathcal{O}(t)` or, in other words, a complexity that is sublinear in :math:`t`. This, in theory, can be achieved by employing a **fast-forwarding** technique, which is an umbrella term that refers to strategies used to reduce the depth of a simulation circuit below the time step threshold, essentially carrying out a time evolution simulation in less time than the system evolves for.
 #
 # The specific fast-forwarding technique that should be used dominantly depends on the structure of the Hamiltonian being simulated. If your system has an analytical solution, your life is easy. Fast-forwarding in the analytical case can be carried out by computing the unitary transformation that diagonalizes the system's Hamiltonian and executing exactly using quantum gates. Since the entire evolution of the system is known, the phase angles used in the time-evolution operator (as shown above) can be altered to obtain different time lengths, essentially carrying out simulation with :math:`\mathcal{O}(1)` complexity. This is an incredibly ideal result that applies to a select few, generally not very interesting scenarios, such as a fixed pendulum. 
