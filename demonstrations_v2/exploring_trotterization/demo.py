@@ -48,7 +48,7 @@ So, by slicing the total time the simulation is trying to emulate, the dependenc
 
 .. figure:: ../demonstrations_v2/exploring_trotterization/IterativeFitIllustration.png
    :align: center
-   :width: 80%
+   :width: 700px
 
 Implementing the Trotter Method
 -------------------------------
@@ -214,7 +214,7 @@ for r in R:
 #############################################################################################################
 # Ah ha! A tradeoff has made itself clear! In the phase gradient implementation, the Trotter error is universally higher than in the RUS case.  What is also (maybe even more) interesting is that, after a certain :math:`r` threshold is reached, the phase gradient system no longer evolves. This is an example of `underflow <https://en.wikipedia.org/wiki/Arithmetic_underflow>`_ in `quantum arithmetic <https://pennylane.ai/demos/tutorial_how_to_use_quantum_arithmetic_operators>`_, where, put very simply, the simulation has reached a computational limit and is stuck rounding to the same value each pass. So, when we choose which techniques to use for gate synthesis, we must consider the needs of our system in tandem with the cost of our system. Sometimes an investment is necessary!
 #
-# Fast-Forwarding **Cut this down**
+# Fast-Forwarding
 # ---------------
 # As demonstrated, implementing quantum simulation on hardware requires that a series of gates are implemented for each time step, meaning the depth of the circuit grows notably with increasing time. If the depth of a simulation circuit maintains proportionality to the length of the time interval being simulated, for example, it runs the (very real) risk of exceeding the `coherence time <https://en.wikipedia.org/wiki/Quantum_decoherence>`_ of the system. Ideally, running a simulation for time :math:`t` would require a complexity less than :math:`\mathcal{O}(t)` or, in other words, a complexity that is sublinear in :math:`t`. This, in theory, can be achieved by employing a **fast-forwarding** technique, which is an umbrella term that refers to strategies used to reduce the depth of a simulation circuit below the time step threshold, essentially carrying out a time evolution simulation in less time than the system evolves for.
 #
