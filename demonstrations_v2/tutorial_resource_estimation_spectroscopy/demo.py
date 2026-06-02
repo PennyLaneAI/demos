@@ -49,17 +49,17 @@ the specific spectroscopy we are after, as well as the details of our implementa
 While the physical problem of interest dictates the type of Hamiltonian we must use (such as electronic, vibrational),
 we have significant freedom to optimize the implementation. For example, we can choose between different
 Hamiltonian representations, as well as the algorithms for actually performing time evolution, like Trotterization
-or `qubitization <https://pennylane.ai/qml/demos/tutorial_qubitization>`_.
+or :doc:`qubitization <demos/tutorial_qubitization>`.
 
-We begin with the example of `X-ray Absorption Spectroscopy (XAS) <https://pennylane.ai/qml/demos/tutorial_xas>`_, using
+We begin with the example of :doc:`X-ray Absorption Spectroscopy (XAS) <demos/tutorial_xas>`, using
 PennyLane's resource :mod:`estimator <pennylane.estimator>` to quantify the resource requirements.
 
 X-Ray Absorption Spectroscopy
 -----------------------------
-`XAS <https://pennylane.ai/qml/demos/tutorial_xas>`_ is a spectroscopic method used to study the electronic
+:doc:`XAS <demos/tutorial_xas>` is a spectroscopic method used to study the electronic
 and local structural environment of specific elements within a material, by probing core-level electron excitations.
 For this simulation, we follow the algorithm established in Fomichev et al. (2025) [#Fomichev2025]_,
-which utilizes the `Compressed Double-Factorization (CDF) <https://pennylane.ai/qml/demos/tutorial_how_to_build_compressed_double_factorized_hamiltonians>`_
+which utilizes the :doc:`Compressed Double-Factorization (CDF) <demos/tutorial_how_to_build_compressed_double_factorized_hamiltonians>`
 representation of the electronic Hamiltonian combined with Trotterization.
 
 To benchmark this approach, we focus on **Lithium Manganese (LiMn) oxide clusters**, which are
@@ -372,7 +372,7 @@ plt.show()
 # using Trotterization to recover the full spectrum. In PDT, we will instead employ a spectral filtering approach
 # to directly read out how much of the spectral internsity falls within a predetermined window (typically 700–850 nm).
 #
-# To do the filtering, we will use `generalized quantum signal processing (GQSP) <https://pennylane.ai/qml/demos/tutorial_estimator_hamiltonian_simulation_gqsp>`_,
+# To do the filtering, we will use :doc:`generalized quantum signal processing (GQSP) <demos/tutorial_estimator_hamiltonian_simulation_gqsp>`,
 # combining it with a qubitization-based
 # time evolution implementation. Specifically, we will use a walk operator constructed from the tensor hypercontracted
 # Hamiltonian, which allows for a highly compact block encoding. As with XAS, we can use the
@@ -383,11 +383,10 @@ plt.show()
 bodipy_ham = qre.THCHamiltonian(num_orbitals=11, tensor_rank=22, one_norm=6.48)
 
 ##################################################################
-# We now construct the `walk operator from the Hamiltonian <https://pennylane.ai/qml/demos/tutorial_re_for_qubitizedQPE>`_
+# We now construct the :doc:`walk operator from the Hamiltonian <demos/tutorial_re_for_qubitizedQPE>`
 # using the `QubitizeTHC <https://docs.pennylane.ai/en/stable/code/api/pennylane.estimator.templates.QubitizeTHC.html>`_ template.
 # For comprehensive details on how to construct and configure this operator,
-# we recommend the `Qubit and Gate Trade-offs in Qubitized Quantum Phase Estimation
-# <https://pennylane.ai/qml/demos/tutorial_re_for_qubitizedQPE>`_ demo.
+# we recommend the :doc:`Qubit and Gate Trade-offs in Qubitized Quantum Phase Estimation  <demos/tutorial_re_for_qubitizedQPE>` demo.
 # Let's define the precision parameters based on the error budget from Zhou et al., and construct the walk operator accordingly:
 
 error = 0.0016  # Error budget from Zhou et al. (2025), in Hartree (chemical accuracy)
@@ -480,7 +479,7 @@ print(resource_counts)
 # The small differences can be attributed to different tunable parameters being used.
 # We encourage you to explore further by testing other systems from the reference or analyzing how the resources scale
 # with different error budgets, using the parameter tuning techniques detailed in our
-# `qubitization demo <https://pennylane.ai/qml/demos/tutorial_re_for_qubitizedQPE>`_, or even by trying to use
+# :doc:`qubitization demo <demos/tutorial_re_for_qubitizedQPE>`, or even by trying to use
 # Trotterization instead.
 #
 # Conclusion

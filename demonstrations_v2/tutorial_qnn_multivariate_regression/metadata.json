@@ -11,7 +11,7 @@
     "executable_stable": true,
     "executable_latest": true,
     "dateOfPublication": "2024-10-01T00:00:00+00:00",
-    "dateOfLastModification": "2026-05-05T00:00:00+00:00",
+    "dateOfLastModification": "2026-05-28T00:00:00+00:00",
     "categories": [
         "Quantum Computing",
         "Quantum Machine Learning"
@@ -46,7 +46,7 @@
             "authors": "Jorge J. Martinez de Lejarza",
             "year": "2023",
             "publisher": "",
-            "url": "hhttps://qibo.science/qibo/stable/code-examples/tutorials/qfiae/qfiae_demo.html"
+            "url": "https://qibo.science/qibo/stable/code-examples/tutorials/qfiae/qfiae_demo.html"
         },
         {
             "id": "demoschuld",
@@ -55,7 +55,7 @@
             "authors": "Johannes Jakob Meyer, Maria Schuld",
             "year": "2021",
             "publisher": "",
-            "url": "https://pennylane.ai/qml/demos/tutorial_expressivity_fourier_series/"
+            "url": "https://pennylane.ai/demos/tutorial_expressivity_fourier_series/"
         },
         {
             "id": "demojax",
@@ -64,7 +64,7 @@
             "authors": "Josh Izaac, Maria Schuld",
             "year": "2024",
             "publisher": "",
-            "url": "ttps://pennylane.ai/qml/demos/tutorial_How_to_optimize_QML_model_using_JAX_and_Optax/"
+            "url": "https://pennylane.ai/demos/tutorial_How_to_optimize_QML_model_using_JAX_and_Optax/"
         }
     ],
     "basedOnPapers": [],

@@ -135,7 +135,7 @@ In particular, we can identify
 
 .. math:: L_\ell(x) = \langle 0 | U(\theta)^\dagger e^{i\frac{x}{2} P_\ell} H_\text{obj} e^{-i\frac{x}{2} P_\ell} U(\theta)|0\rangle
 
-as an expectation value shifted by the dummy variable :math:`x,` whose derivative is given by the standard two-term parameter-shift rule (see note above or `this derivation <https://pennylane.ai/qml/glossary/parameter_shift/>`_).
+as an expectation value shifted by the dummy variable :math:`x,` whose derivative is given by the standard two-term parameter-shift rule (see note above or `this derivation <https://pennylane.ai/glossary/parameter_shift/>`_).
 Overall, we have 
 
 .. math:: \frac{\partial \mathcal{L}}{\partial \theta_j} = \sum_\ell \omega_\ell^{(j)} \left(L_\ell\left(\frac{\pi}{2}\right) - L_\ell\left(-\frac{\pi}{2}\right) \right).

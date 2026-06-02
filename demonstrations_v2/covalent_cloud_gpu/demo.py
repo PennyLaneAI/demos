@@ -11,8 +11,7 @@ r"""Running GPU-accelerated quantum circuit simulations on Covalent Cloud using 
 # QSVMs are essentially `traditional
 # SVMs <https://en.wikipedia.org/wiki/Support_vector_machine>`__ that rely on `embedding
 # kernels <https://en.wikipedia.org/wiki/Kernel_method#Mathematics:_the_kernel_trick>`__ evaluated on
-# a quantum computer—a.k.a. `quantum embedding
-# kernel <https://pennylane.ai/qml/demos/tutorial_kernels_module/#training-and-evaluating-quantum-kernels>`__.
+# a quantum computer—a.k.a. :doc:`quantum embedding kernel <demos/tutorial_kernels_module>`.
 # These kernels provide a unique (and perhaps classically intractable) means of measuring pairwise
 # similarity.
 #
