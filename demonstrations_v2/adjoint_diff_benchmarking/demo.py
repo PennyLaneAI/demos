@@ -13,7 +13,7 @@ Adjoint Differentiation
 
 ##############################################################################
 # This page is supplementary material to the
-# `Adjoint Differentiation <https://pennylane.ai/qml/demos/tutorial_adjoint_diff>`__
+# :doc:`Adjoint Differentiation <demos/tutorial_adjoint_diff>`
 # demonstration.  The below script produces the benchmarking images used.
 
 import timeit

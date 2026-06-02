@@ -28,7 +28,7 @@ and, for a systematic summary which we will follow here,
 `Schuld (2021) <https://arxiv.org/abs/2101.11020>`__).
 
 The link between quantum models and kernel methods has important practical implications:
-we can replace the common `variational approach <https://pennylane.ai/qml/glossary/variational_circuit>`__
+we can replace the common `variational approach <https://pennylane.ai/glossary/variational_circuit>`__
 to quantum machine learning with a classical kernel method where the kernel—a small building block
 of the overall algorithm—is computed by a quantum device. In many situations there are
 guarantees that we get better or at least equally good results.
@@ -84,7 +84,7 @@ After working through this demo, you will:
 #
 # where :math:`| \phi(x)\rangle` is prepared
 # by a fixed `embedding
-# circuit <https://pennylane.ai/qml/glossary/quantum_embedding>`__ that
+# circuit <https://pennylane.ai/glossary/quantum_embedding>`__ that
 # encodes data inputs :math:`x,`
 # and :math:`\mathcal{M}` is an arbitrary observable. This model includes variational
 # quantum machine learning models, since the observable can
@@ -369,7 +369,7 @@ circuit_evals_kernel(n_data=len(X), split=len(X_train) / (len(X_train) + len(X_t
 # as possible. For this we use a bias term in the quantum model, and train
 # on the hinge loss.
 #
-# We also explicitly use the `parameter-shift <https://pennylane.ai/qml/glossary/parameter_shift>`__
+# We also explicitly use the `parameter-shift <https://pennylane.ai/glossary/parameter_shift>`__
 # differentiation method in the quantum node, since this is a method which works on hardware as well.
 # While ``diff_method='backprop'`` or ``diff_method='adjoint'`` would reduce the number of
 # circuit evaluations significantly, they are based on tricks that are only suitable for simulators,

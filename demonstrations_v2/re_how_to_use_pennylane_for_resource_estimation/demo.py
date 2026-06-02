@@ -414,9 +414,9 @@ print(resources_est)
 # quantum resource :mod:`estimator <pennylane.estimator>` is,
 # go try it out yourself!
 # See how convenient it is to estimate the resources of powerful algorithms like
-# `DQI <https://pennylane.ai/qml/demos/tutorial_dqi>`__,
-# `XAS <https://pennylane.ai/qml/demos/tutorial_xas>`__,
-# or `Shor's algorithm <https://pennylane.ai/qml/demos/tutorial_shors_algorithm_catalyst>`__.
+# :doc:`DQI <demos/tutorial_dqi>`,
+# :doc:`XAS <demos/tutorial_xas>`,
+# or :doc:`Shor's algorithm <demos/tutorial_shors_algorithm_catalyst>`.
 # :mod:`estimator <pennylane.estimator>` includes a host of resource operators, templates, and Hamiltonians
 # which serve to make resource estimation a breeze for a wide variety of algorithms.
 # If you're also interested in exact resource tracking of programs compiled for *execution*,

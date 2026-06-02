@@ -425,7 +425,7 @@ print(f"Optimized cost function value: {new_loss}")
 #
 # Now that you’ve used PennyLane, every road in the wonderful world of quantum programming SDKs is
 # open with no set speed limits 🏎️. Explore our website to see
-# the latest and greatest `PennyLane features </features/>`__, `Demos </qml/demonstrations/>`__ and our `blog posts </blog/>`__, and follow us on
+# the latest and greatest `PennyLane features </features/>`__, `Demos </demonstrations/>`__ and our `blog posts </blog/>`__, and follow us on
 # `LinkedIn <https://www.linkedin.com/company/pennylaneai/>`__ or `X (formerly
 # Twitter) <https://twitter.com/PennyLaneAI>`__ to stay updated!
 #

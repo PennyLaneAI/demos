@@ -200,7 +200,7 @@ print(
 #
 # Now, let's turn to the cost function itself. The most important ingredient
 # is the Classical Fisher Information Matrix, which we compute using a separate
-# function that uses the explicit `parameter-shift rule <https://pennylane.ai/qml/glossary/parameter_shift.html>`_
+# function that uses the explicit `parameter-shift rule <https://pennylane.ai/glossary/parameter_shift>`_
 # to enable differentiation.
 def CFIM(weights, phi, gamma):
     p = experiment(weights, phi, gamma=gamma)

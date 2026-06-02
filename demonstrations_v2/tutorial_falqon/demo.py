@@ -32,7 +32,7 @@ combine FALQON with QAOA to create a powerful optimization procedure.
 
 .. note::
     If you are not familiar with QAOA, we recommend checking out the
-    `Intro to QAOA tutorial <https://pennylane.ai/qml/demos/tutorial_qaoa_intro>`__,
+    :doc:`Intro to QAOA tutorial <demos/tutorial_qaoa_intro>`,
     since many of the same ideas carry over and will be used throughout this demonstration.
 
 Theory

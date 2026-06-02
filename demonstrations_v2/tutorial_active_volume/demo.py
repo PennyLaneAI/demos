@@ -560,7 +560,7 @@ other order without worrying about data dependencies between them. So do we *eve
 the quantum state using the information from measurements and Pauli corrections?
 
 To answer this question, we need to consider non-Clifford operations. As mentioned further up,
-these are implemented via `magic state injection <https://pennylane.ai/qml/glossary/what-are-magic-states>`__.
+these are implemented via `magic state injection <https://pennylane.ai/glossary/what-are-magic-states>`__.
 As a general rule, operations implemented via
 Pauli measurements require a correction that is one level lower in the Clifford hierarchy.
 So Clifford gates require a Pauli correction (similar to our corrections in the teleportation

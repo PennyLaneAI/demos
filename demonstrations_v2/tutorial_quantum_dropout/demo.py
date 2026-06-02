@@ -39,7 +39,7 @@ r"""Dropout for Quantum Neural Networks
 # Recently, it has been shown that the use of overparametrized QNN models
 # changes the optimization landscape by removing lots of local minima [#Kiani2020]_, [#Larocca2023]_. On the one hand, this increased number of
 # parameters leads to faster and easier training, but on the other hand, it may drive
-# the model to overfit the data. This is also strictly related to the `repeated encoding <https://pennylane.ai/qml/demos/tutorial_expressivity_fourier_series/>`__ of classical
+# the model to overfit the data. This is also strictly related to the :doc:`repeated encoding <demos/tutorial_expressivity_fourier_series>` of classical
 # data to achieve nonlinearity in the computation. This is why, inspired from classical DNNs, one
 # can think of applying some sort of dropout to QNNs. This would correspond to randomly dropping some
 # (groups of) parameterized gates during training to achieve better generalization.
@@ -71,7 +71,7 @@ np.random.seed(seed=seed)
 # Just In Time (JIT) compilation. The drawback is that the definition of the variational ansatz becomes a
 # little elaborated, since JAX has its own language for conditional statements. For this purpose we
 # define two functions ``true_cond`` and ``false_cond`` to work with ``jax.lax.cond```, which is the JAX
-# conditional statement. See this `demo <https://pennylane.ai/qml/demos/tutorial_How_to_optimize_QML_model_using_JAX_and_JAXopt/>`__
+# conditional statement. See this :doc:`demo <demos/tutorial_How_to_optimize_QML_model_using_JAX_and_JAXopt>`
 # for additional insights on how to optimize QNNs with JAX.
 #
 # Practically speaking, rotation dropout will be performed by passing a list to the ansatz.

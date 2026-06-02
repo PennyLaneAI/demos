@@ -419,7 +419,7 @@ print(qp.grad(circuit_adjoint)(x))
 # With adjoint differentiation on ``"lightning.qubit"``, you can get the best of both worlds: fast and
 # memory efficient.
 #
-# But how fast? The provided script `here <https://pennylane.ai/qml/demos/adjoint_diff_benchmarking>`__
+# But how fast? The provided script :doc:`here <demos/adjoint_diff_benchmarking>`
 # generated the following images on a mid-range laptop.
 # The backpropagation times were produced with the Python simulator ``"default.qubit"``, while parameter-shift
 # and adjoint differentiation times were calculated with ``"lightning.qubit"``.

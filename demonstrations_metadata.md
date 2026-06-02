@@ -61,7 +61,7 @@ Below is given an example of a complete metadata file for a demonstration.
     "hardware": [
         {
             "id": "aws",
-            "link": "https://pennylane.ai/qml/demos/tutorial_quantum_transfer_learning",
+            "link": "https://pennylane.ai/demos/tutorial_quantum_transfer_learning",
             "logo": "/_static/hardware_logos/aws.png"
         }
     ]
