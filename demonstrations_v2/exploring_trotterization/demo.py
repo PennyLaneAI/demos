@@ -232,6 +232,52 @@ for r in R:
 #
 # Higher-Order Trotterizations
 # ----------------------------
+# As was mentioned, this demonstration takes the first-order Trotterization of the target Hamiltonian. While this approach is sufficient for simple, short time scale problems (ex. systems with weak interaction), ignoring higher order terms and, therefore, reducing precision can result in ignorance of important system characteristics. It is well stated by Childs et al. that "[taking the first-order approximation] implicitly assumes that the high-order terms are dominated by the lowest-order term" [#Childs2021]_ which, when put this way, is clearly problematic. Thus, the use of higher-order Trotterizations is often necessary to achieve realistic simulation.
+#
+# Higher-order Trotter error is a complex and developping field of study. A simple, baseline approach to achieving high-order Trotterizations is introducing symmetries into the system that move the simulation closer to the reality of the system. Revisiting the analogy used above, the first-order Trotterization alternates between two non-commuting operators and incrementally steps each term in alternating time slices, resulting in an approximate interaction. In a second-order approach, one of the operator terms would be further divided into two half-steps and applied before and after the other, not split operator. In the case of our Hamiltonian, the second-order Trotterization would be
+# 
+# .. math::
+#    e^{-i\alpha Xt}e^{i\beta Zt}=(e^{-i\alpha Xt/2r}e^{-i\beta Zt/r}e^{-i\alpha Xt/2r})
+#
+# Which can be realized as
+#
+# .. math::
+#    S_2(t)=R_X(\alpha t)R_Z{2\beta t}R_X{\alpha t}.
+#
+# Altering the TrotterStepper() function to a second-order Trotterization shows the impact this symmetry has on the error.
+
+@qp.qnode(dev)
+def TrotterStepperSO(t,r,coeffs):
+    del_t = t/r
+
+    #Apply the rotation r times
+    for i in range(r):
+        U_A_half = qp.RX(coeffs[0]*del_t, wires=0)
+        U_B = qp.RZ(2*coeffs[1]*del_t, wires=0)
+        U_A_half = qp.RX(coeffs[0]*del_t, wires=0)
+
+    return [qp.expval(qp.PauliX(0)), qp.expval(qp.PauliY(0)), qp.expval(qp.PauliZ(0))]
+
+for r in R:
+    resultSO = TrotterStepperSO(t,r,coeffs)
+    X_errorSO = abs(resultSO[0]-exact_exp_X)
+    Y_errorSO = abs(resultSO[1]-exact_exp_Y)
+    Z_errorSO = abs(resultSO[2]-exact_exp_Z)
+    total_errorSO = np.sqrt(X_errorSO**2+Y_errorSO**2+Z_errorSO**2)
+    print(f"{r:>5} | {X_errorSO:>8.5f} | {Y_errorSO:>8.5f} | {Z_errorSO:>8.5f} | {total_errorSO:>11.5f}")
+#############################################################################################################
+# Comparing to the first-order results in which, for example, the error when :math:`r=10` is approximately 20%. Updating to the second-order Trotterization reduces this error to approximately 12% for :math:`r=10`, not too shabby! The following plot demonstrates the improved performance of the second-order Trotterization, in which low error rates are achieved in much fewer time steps. Thus, even though additional resources are required to implement the additional unitary, the reduction in required steps also implies improved cost.
+#
+# .. figure:: ../demonstrations_v2/exploring_trotterization/HigherOrderComp.png
+#   :align: center
+#   :width: 700px
+#
+# Beyond second-order, higher-order Trotterizations can be achieved via the nested application of the second-order Trotterization sequence. A well known expression for the fourth-order Trotterization is, for example,
+#
+# .. math::
+#    S_4(t)=S_2(s_1 t)S_2((1-4s_1)t)S_2(s_1 t).
+#
+# Where :math:`s_1=(4-4^{1/3})^{-1}` is the first-order suzuki constant. Adding additional orders results in higher resource requirements, so consideration must, once again, be given to the needs and limitations of the system. Some approaches allow the selective application of high-order Trotter products to dominant terms in a simulation, allowing for resources to be allocated to only the instances they are justified. 
 #
 # Conclusion
 # ----------
@@ -248,4 +294,6 @@ for r in R:
 #
 # .. [#Cirstoiu2020] C.\ Cîrstoiu, Z. Holmes, J. Iosue, L. Cincio, P. J. Coles, and A. Sornborger, "Variational fast forwarding for quantum simulation beyond the coherence time," *npj Quantum Inf.*, vol. 6, no. 1, p. 82, Sep. 2020, arXiv: `1910.04292 <https://arxiv.org/abs/1910.04292>`_ [quant-ph].
 #
-# # .. [#Gidney2018] C.\ Gidney, "Halving the cost of quantum addition," *Quantum*, vol. 2, p. 74, Jun. 2018. `doi: 10.22331/q-2018-06-18-74 <https://quantum-journal.org/papers/q-2018-06-18-74/>`_`.
+# .. [#Gidney2018] C.\ Gidney, "Halving the cost of quantum addition," *Quantum*, vol. 2, p. 74, Jun. 2018. `doi: 10.22331/q-2018-06-18-74 <https://quantum-journal.org/papers/q-2018-06-18-74/>`_`.
+#
+# .. [#Childs2021] A.\ M. Childs, Y. Su, M. C. Tran, N. Wiebe, and S. Zhu, "Theory of Trotter Error with Commutator Scaling," *Phys. Rev.*, vol. 1, no. 1, Feb. 2021, doi: 10.1103/PhysRevX.11.011020.
