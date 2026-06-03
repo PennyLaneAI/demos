@@ -232,19 +232,19 @@ for r in R:
 #
 # Higher-Order Trotterizations
 # ----------------------------
-# As was mentioned, this demonstration takes the first-order Trotterization of the target Hamiltonian. While this approach is sufficient for simple, short time scale problems (ex. systems with weak interaction), ignoring higher order terms and, therefore, reducing precision can result in ignorance of important system characteristics. It is well stated by Childs et al. that "[taking the first-order approximation] implicitly assumes that the high-order terms are dominated by the lowest-order term" [#Childs2021]_ which, when put this way, is clearly problematic. Thus, the use of higher-order Trotterizations is often necessary to achieve realistic simulation.
+# As was mentioned, this demonstration takes the first-order Trotterization approach to simulate the target Hamiltonian. While this approach is sufficient for simple, short time scale problems (ex. systems with weak interaction), ignoring higher order terms and, therefore, reducing precision can result in ignorance of important system characteristics and unnecessarily high error that requires increased resources to account for [#Childs2021]. Thus, the use of higher-order Trotterizations is often necessary to achieve realistic simulation.
 #
-# Higher-order Trotter error is a complex and developping field of study. A simple, baseline approach to achieving high-order Trotterizations is introducing symmetries into the system that move the simulation closer to the reality of the system. Revisiting the analogy used above, the first-order Trotterization alternates between two non-commuting operators and incrementally steps each term in alternating time slices, resulting in an approximate interaction. In a second-order approach, one of the operator terms would be further divided into two half-steps and applied before and after the other, not split operator. In the case of our Hamiltonian, the second-order Trotterization would be
+# Higher-order Trotter products and the associated Trotter error is a complex and developping field of study. A simple, baseline approach to achieving high-order Trotterizations is introducing symmetries into the system that move the simulation closer to the reality of the system. Revisiting the analogy used above, the first-order Trotterization alternates between two non-commuting operators and incrementally steps each term in alternating time slices, resulting in an approximate interaction. In a second-order approach, one of the operator terms would be further divided into two half-steps to be applied before and after the other operator. In the case of our Hamiltonian, the second-order Trotter product would be
 # 
 # .. math::
 #    e^{-i\alpha Xt}e^{i\beta Zt}=(e^{-i\alpha Xt/2r}e^{-i\beta Zt/r}e^{-i\alpha Xt/2r})
 #
-# Which can be realized as
+# which can be implemented as
 #
 # .. math::
 #    S_2(t)=R_X(\alpha t)R_Z(2\beta t)R_X(\alpha t).
 #
-# Altering the TrotterStepper() function to a second-order Trotterization shows the impact this symmetry has on the error.
+# Altering the TrotterStepper() function to a second-order Trotterization shows the impact this symmetry has on the Trotter error.
 
 @qp.qnode(dev)
 def TrotterStepperSO(t,r,coeffs):
@@ -257,6 +257,9 @@ def TrotterStepperSO(t,r,coeffs):
         U_A_half = qp.RX(coeffs[0]*del_t, wires=0)
 
     return [qp.expval(qp.PauliX(0)), qp.expval(qp.PauliY(0)), qp.expval(qp.PauliZ(0))]
+
+print(f"{'r':>5} | {'X error':>8} | {'Y error':>8} | {'Z error':>8} | {'Total error':>11}")
+print("-" * 51)
 
 for r in R:
     resultSO = TrotterStepperSO(t,r,coeffs)
@@ -295,6 +298,6 @@ for r in R:
 #
 # .. [#Cirstoiu2020] C.\ Cîrstoiu, Z. Holmes, J. Iosue, L. Cincio, P. J. Coles, and A. Sornborger, "Variational fast forwarding for quantum simulation beyond the coherence time," *npj Quantum Inf.*, vol. 6, no. 1, p. 82, Sep. 2020, arXiv: `1910.04292 <https://arxiv.org/abs/1910.04292>`_ [quant-ph].
 #
-# .. [#Gidney2018] C.\ Gidney, "Halving the cost of quantum addition," *Quantum*, vol. 2, p. 74, Jun. 2018. `doi: 10.22331/q-2018-06-18-74 <https://quantum-journal.org/papers/q-2018-06-18-74/>`_`.
+# .. [#Gidney2018] C.\ Gidney, "Halving the cost of quantum addition," *Quantum*, vol. 2, p. 74, Jun. 2018. `doi: 10.22331/q-2018-06-18-74 <https://quantum-journal.org/papers/q-2018-06-18-74/>`_.
 #
 # .. [#Childs2021] A.\ M. Childs, Y. Su, M. C. Tran, N. Wiebe, and S. Zhu, "Theory of Trotter Error with Commutator Scaling," *Phys. Rev.*, vol. 1, no. 1, Feb. 2021, doi: 10.1103/PhysRevX.11.011020.
