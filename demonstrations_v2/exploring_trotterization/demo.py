@@ -242,7 +242,7 @@ for r in R:
 # Which can be realized as
 #
 # .. math::
-#    S_2(t)=R_X(\alpha t)R_Z{2\beta t}R_X{\alpha t}.
+#    S_2(t)=R_X(\alpha t)R_Z(2\beta t)R_X(\alpha t).
 #
 # Altering the TrotterStepper() function to a second-order Trotterization shows the impact this symmetry has on the error.
 
@@ -281,6 +281,7 @@ for r in R:
 #
 # Conclusion
 # ----------
+# There is a phenomenon that is renewed over and over again in which the field of mathematics is continually years ahead of physics (especially applied physics). The use of product formulas as tools for time evolution in Hamiltonian simulation is a beautiful example of this, in which a purely mathematical description of how to exponentiate non-commuting operators has become a defining method for time-evolution simulation in today's quantum pursuits. Understanding the basics of how Trotter products can be used and optimized for various applications of quantum simulation opens the door to not only increased utility but a heightened awareness of how the input of many fields is required to achieve viable outcomes. Keep calm and Trotter on!
 #
 # .. _references:
 #
