@@ -63,7 +63,8 @@ print(qre.estimate(circuit_baseline)())
 # .. math::
 #    \begin{aligned}
 #    |\Psi\rangle|\nabla_b\rangle &= \alpha|0\rangle|\nabla_b\rangle+\beta|1\rangle|\nabla_b\rangle \\
-#    C(Add_n)|\Psi\rangle|\nabla_b\rangle &= \alpha|0\rangle|\nabla_b\rangle+\beta|1\rangle Add_k |\nabla_b\rangle \\ 
+#    C(Add_n)|\Psi\rangle|\nabla_b\rangle &= \alpha|0\rangle|\nabla_b\rangle+\beta|1\rangle Add_k |\nabla_b\rangle.
+#    \end{aligned}
 #
 # .. figure:: ../demonstrations_v2/efficient_rotations_with_phase_gradient_states/PhaseShiftCircuitDiagram.png
 #        :align: center
@@ -87,7 +88,7 @@ print(qre.estimate(circuit_baseline)())
 #    \end{aligned}
 #
 # .. admonition:: Phase Gradient Rotation Algorithm
-#    :class: tip
+#    :class: note
 #
 #    1. A phase gradient state is encoded onto a register composed of :math:`b` qubits.
 #    2. A semi-adder operation is performed between a data register and the gradient register.
