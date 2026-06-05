@@ -137,7 +137,7 @@ jobs:
           python-version: '3.11'
 
       - name: Install dependencies
-        run: pip install . && poetry config warnings.export false
+        run: pip install .
 
       - name: Build all demos in HTML format
         run: |

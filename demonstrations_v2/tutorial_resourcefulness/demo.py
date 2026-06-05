@@ -12,8 +12,7 @@ these measures of complexity often relate to the "effort" or cost associated wit
 It turns out that the resourcefulness of quantum states can be investigated with tools from *generalised Fourier analysis*.
 *Fourier analysis* here refers to the well-known technique of computing Fourier coefficients of a function, or in our case,
 the amplitudes of a quantum state. *Generalised* indicates that we don't use the
-standard Fourier transform, but a generalisation of its group-theoretic definition (more about this in our demo on `quantum Fourier transforms
-and groups <https://pennylane.ai/qml/demos/tutorial_qft_and_groups>`__).
+standard Fourier transform, but a generalisation of its group-theoretic definition (more about this in our demo on :doc:`quantum Fourier transforms and groups <demos/tutorial_qft_and_groups>`).
 `Bermejo, Braccia et al. (2025) <https://arxiv.org/abs/2506.19696>`__ [#Bermejo_Braccia]_ suggest using generalised Fourier analysis to
 compute a quantity that they call the **Generalised Fourier Decomposition (GFD) Purity**,
 and use it as a "fingerprint" of a state's resource profile.

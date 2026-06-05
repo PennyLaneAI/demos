@@ -281,7 +281,7 @@ sections.
 # ^^^^^^^^^^^^^^^^^^
 # We now map the effective Hamiltonian to the qubit basis. Note that the two-electron integrals obtained
 # before are represented in Chemists' notation and need to be converted to a notation
-# that is compatible with PennyLane. Here's how to construct the `qubit Hamiltonian <https://pennylane.ai/qml/demos/tutorial_fermionic_operators>`__:
+# that is compatible with PennyLane. Here's how to construct the :doc:`qubit Hamiltonian <demos/tutorial_fermionic_operators>`:
 #
 # .. code-block:: python
 #
@@ -303,7 +303,7 @@ sections.
 #
 #       Qubit Hamiltonian:  (2.40331309905556+0j) * I(0) + (-0.12208093833046951+0j) * Z(0) + (-0.12208093833046951+0j) * Z(1) + (-0.003330743747901097+0j) * (Y(0) @ Z(1) @ Y(2)) +  ...
 #
-# We can use this Hamiltonian in a quantum algorithm such as `quantum phase estimation (QPE) <https://pennylane.ai/qml/demos/tutorial_qpe>`__.
+# We can use this Hamiltonian in a quantum algorithm such as :doc:`quantum phase estimation (QPE) <demos/tutorial_qpe>`.
 # You can compare the results and verify that the computed energies from quantum algorithm
 # match those that we obtained before.
 #
@@ -322,7 +322,7 @@ sections.
 # of QDET is the ease with which it can be used with quantum computers in a hybrid framework [#Baker]_.
 # Given its ability to access excited states and its hybrid quantum compatibility, potential future extensions
 # could involve applying QDET to the wider field of spectroscopy, such as investigating
-# core-level excited states relevant to `X-ray Absorption Spectroscopy (XAS) <https://pennylane.ai/qml/demos/tutorial_xas>`__.
+# core-level excited states relevant to :doc:`X-ray Absorption Spectroscopy (XAS) <demos/tutorial_xas>`.
 # In conclusion, QDET is a powerful embedding approach for simulating complex quantum systems.
 #
 # References

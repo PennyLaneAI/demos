@@ -13,7 +13,7 @@ Generalization in QML from few training data
     tutorial_local_cost_functions Alleviating barren plateaus with local cost functions
 
 In this tutorial, we dive into the generalization capabilities of quantum machine learning models.
-For the example of a `Quantum Convolutional Neural Network (QCNN) <https://pennylane.ai/qml/glossary/qcnn.html>`_, we show how its generalization error behaves as a
+For the example of a `Quantum Convolutional Neural Network (QCNN) <https://pennylane.ai/glossary/qcnn>`_, we show how its generalization error behaves as a
 function of the number of training samples. This demo is based on the paper
 *"Generalization in quantum machine learning from few training data"*. by Caro et al. [#CaroGeneralization]_.
 
@@ -82,7 +82,7 @@ is the number of parametrized gates and :math:`N` is the number of training samp
 #
 # We see that this scaling is in line with our intuition that the generalization error scales inversely with the number
 # of training samples and increases with the number of parametrized gates. However, as is the case for
-# `quantum convolutional neural networks (QCNNs) <https://pennylane.ai/qml/glossary/qcnn.html>`_, it is possible to get a more fine-grained bound by including knowledge on the number of gates :math:`M` which have been reused (i.e. whose parameters are shared across wires). Naively, one could suspect that the generalization error scales as
+# `quantum convolutional neural networks (QCNNs) <https://pennylane.ai/glossary/qcnn>`_, it is possible to get a more fine-grained bound by including knowledge on the number of gates :math:`M` which have been reused (i.e. whose parameters are shared across wires). Naively, one could suspect that the generalization error scales as
 # :math:`\tilde{\mathcal{O}}(\sqrt{MT/N})` by directly applying the above result (and where
 # :math:`\tilde{\mathcal{O}}` includes logarithmic factors). However, the authors of Ref. [#CaroGeneralization]_ found
 # that such models actually adhere to the better scaling
