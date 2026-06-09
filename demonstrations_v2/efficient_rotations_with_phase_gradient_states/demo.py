@@ -116,7 +116,7 @@ def circuit_phase_grad():
 print(qre.estimate(circuit_phase_grad)())
 
 ###############################################################################
-# Note that there are different ways to translate Toffoli gates into T gate counts, but here we will take Gidney's approximation of 1 Toffoli gate = 4 T gates [#Gidney2018]_, meaning this implementation requires an estimated 44 T gates. So, for the same task with the same goal, this operation has now reduced in T gate cost by an order of magnitude. Not too shabby! 
+# Note that there are different ways to translate Toffoli gates into T gate counts, but here we will take Gidney's approximation of 1 Toffoli gate = 4 T gates [#Gidney2018]_, meaning this implementation requires an estimated 148 T gates. So, for the same task with the same goal, this operation has now reduced in T gate cost by more than half. Not too shabby! 
 #
 # The scale of these savings becomes increasingly clear as the size of the data register that stores the input state (and, therefore, the size of the system as a whole) increases. The plot below shows how drastically the resource requirements scale in the first case with even a small increase in system size.
 #
