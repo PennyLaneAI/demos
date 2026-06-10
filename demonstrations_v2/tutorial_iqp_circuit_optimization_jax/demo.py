@@ -156,7 +156,7 @@ def penn_iqp_circuit(params: np.ndarray, gates: list, op: np.ndarray, n_qubits: 
     Returns:
         qp.measurements.ExpectationMP: PennyLane circuit with an expectation value.
     """
-    qp.IQP(weights=params, num_wires=n_qubits, pattern=gates)
+    qp.IQP(weights=params, wires=list(range(n_qubits)), pattern=gates)
     obs = penn_obs(op)
     return qp.expval(obs)
 
