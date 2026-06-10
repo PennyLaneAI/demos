@@ -212,7 +212,8 @@ def qaoa_circuit(params, n_qubits, depth):
     gammas = params[0]
     alphas = params[1]
     # stack building blocks for depth times.
-    qp.layer(qaoa_layer, depth, gammas, alphas)
+    for i in range(depth):
+        qaoa_layer(gammas[i], alphas[i])
 
 
 # define ansatz and loss function

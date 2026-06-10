@@ -192,7 +192,7 @@ for p, q, r, s in itertools.product(range(n), repeat=4):
 # We then simplify the Hamiltonian to remove terms with negligible coefficients and then map it to
 # the qubit basis.
 
-h.simplify()
+h.prune()
 h = jordan_wigner(h)
 
 ##############################################################################
