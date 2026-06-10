@@ -77,7 +77,7 @@ print(qre.estimate(circuit_baseline)())
 #
 # .. figure:: ../demonstrations_v2/efficient_rotations_with_phase_gradient_states/PhaseKickback.gif
 #      :align: center
-#      :width: 500px
+#      :width: 700px
 #
 #      *Phase kickback can be imagined as a change in the relative phase between the data register and the phase gradient register. As depicted, a controlled addition between the two registers will result in the positional displacement of the phase gradient state which, in turn, causes the phase difference that can be associated with either state. Even though the gradient register shifts, the data register can "pick up" the relative phase difference*.
 #
@@ -96,9 +96,9 @@ print(qre.estimate(circuit_baseline)())
 #
 # .. figure:: ../demonstrations_v2/efficient_rotations_with_phase_gradient_states/Multiplexer.png
 #    :align: center
-#    :width: 500px
+#    :width: 700px
 #    
-#    *Simple multiplexed phase gradient addition [#OBrien2025]*
+#    *Simple multiplexed phase gradient addition [#OBrien2025]_*
 #
 
 from pennylane.labs.transforms import select_pauli_rot_phase_gradient
