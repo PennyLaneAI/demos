@@ -94,7 +94,11 @@ print(qre.estimate(circuit_baseline)())
 #
 # This structure can be easily extended to the multiplexer case that we discussed at the beginning of this demonstration. In this case, we can use a `quantum read only memory (QROM) <https://pennylane.ai/demos/tutorial_intro_qrom>`_ to store each :math:`k` value in parallel. These states can be uploaded onto a data register and, using a single addition operator, rotated. This reduces the complexity bound to :math:`\mathcal{O}(2^n+\log_2(1/\epsilon))`. This reduction in complexity combined with the catalytic nature of the phase gradient state makes this approach to grid synthesis highly resource efficient.
 #
-# CIRCUIT DIAGRAM
+# .. figure:: ../demonstrations_v2/efficient_rotations_with_phase_gradient_states/Multiplexer.png
+#    :align: center
+#    :width: 500px
+#    
+#    *Simple multiplexed phase gradient addition [#OBrien2025]*
 #
 
 from pennylane.labs.transforms import select_pauli_rot_phase_gradient
@@ -169,3 +173,5 @@ print(qre.estimate(circuit_phase_grad)())
 # .. [#Kliuchnikov2015] V.\ Kliuchnikov, A. Bocharov, M. Roetteler, and J. Yard, "A Framework for Approximating Qubit Unitaries," 2015, `arXiv: 1510.03888 [quant-ph] <https://arxiv.org/pdf/1510.03888>`_.
 #
 # .. [#Kliuchnikov2022] V.\ Kliuchnikov, K. Lauter, R. Minko, A. Paetznick, and C. Petit, "Shorter quantum circuits via single-qubit gate approximation," 2022, `arXiv: 2203.10064 <https://arxiv.org/abs/2203.10064>`_.
+#
+# .. [#OBrien2025] O.\ O'Brien and C. Sunderhauf, "Quantum State Preparation via Piecewise QSVT," 2025, `arXiv: 2409.07332 <https://arxiv.org/pdf/2409.07332>`_.
