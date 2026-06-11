@@ -19,7 +19,7 @@ jax==0.7.1
 jaxlib==0.7.1
 jaxopt==0.8.5
 
-torch==2.9.0+cpu ; sys_platform != 'darwin'
+torch==2.12.0 ; sys_platform != 'darwin'
 torch==2.9.0 ; sys_platform == 'darwin'
 torchvision==0.24.0+cpu ; sys_platform != 'darwin'
 torchvision==0.24.0 ; sys_platform == 'darwin'
