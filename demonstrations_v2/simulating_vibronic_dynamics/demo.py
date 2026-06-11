@@ -10,7 +10,7 @@ Classical simulations are well poised to handle things that, for the most part, 
 
 Whether or not we make the approximation, a molecule composed of :math:`N` atoms will have access to :math:`3N-6` vibrational degrees of freedom (DOFs). When we begin to go beyond Born-Oppenheimer, though, it is no longer possible to isolate electronic DOFs from nuclear DOFs, meaning their paths cannot be simulated seperately. Long story short, if we want to capture the realistic dynamics of entangled electronic and nuclear DOFs, we lose access to approximations that allow for simplification and, as a result, the size of the system will very quickly exceed standard computational resources. So, what comes to mind when we want to simulate realistic atomic system dynamics that scales exponentially in resource requirements and requires nuanced modelling of phenomena such as tunnelling and entanglement? Certainly that this might be an ideal problem for a quantum computer to solve.
 
-In `"Quantum Algorithm for Vibronic Dynamics" <https://arxiv.org/abs/2411.13669>`_ Motlagh et al. propose a novel, quantum-based algorithm for carrying out vibronic simulations. This algorithm leverages several quantum-specific tools (such as `phase gradient states <https://pennylane.ai/compilation/phase-gradient>`, `Trotterization <https://pennylane.ai/challenges/a_simple_trotterization>`, and multiplexing via `QROM loading <https://pennylane.ai/demos/tutorial_intro_qrom>`, which are relevant background topics to this demonstration). This paper lays out an approach that can be generalized to various vibronic Hamiltonians with arbitrary diabatic states and mode interaction specifications, which is particularly notable for its ability to handle beyond two electronic states [#Motlagh2025]_. The generality of this method is emphacized in `"Quantum Algorithm for Simulating Non-Adiabatic Dynamics at Metallic Surfaces" <https://arxiv.org/pdf/2601.16264>`_, which applies the same algorithmic structure to a completely different Hamiltonian. The following demo will explore the implementations carried out in each of these papers by first exploring the general vibronics algorithm, then diving into the nuances of each application to illustrate how the central approach can be generalized. By the end of this, you will be so excited to simulate vibronic dynamics that you won't be able to sit still!
+In `"Quantum Algorithm for Vibronic Dynamics" <https://arxiv.org/abs/2411.13669>`_ Motlagh et al. propose a novel, quantum-based algorithm for carrying out vibronic simulations. This algorithm leverages several quantum-specific tools (such as `phase gradient states <https://pennylane.ai/compilation/phase-gradient>`_, `Trotterization <https://pennylane.ai/challenges/a_simple_trotterization>`_, and multiplexing via `QROM loading <https://pennylane.ai/demos/tutorial_intro_qrom>`_, which are relevant background topics to this demonstration). This paper lays out an approach that can be generalized to various vibronic Hamiltonians with arbitrary diabatic states and mode interaction specifications, which is particularly notable for its ability to handle beyond two electronic states [#Motlagh2025]_. The generality of this method is emphasized in `"Quantum Algorithm for Simulating Non-Adiabatic Dynamics at Metallic Surfaces" <https://arxiv.org/pdf/2601.16264>`_, which applies the same algorithmic structure to a completely different Hamiltonian. The following demo will explore the implementations carried out in each of these papers by first exploring the general vibronics algorithm, then diving into the nuances of each application to illustrate how the central approach can be generalized. By the end of this, you will be so excited to simulate vibronic dynamics that you won't be able to sit still!
 
 The General Vibronics Algorithm
 ===============================
@@ -221,8 +221,82 @@ def PotentialStepQuadratic(time_step, mode1, mode2, time_coeffs, state_wires, el
 # .. math::
 #    e^{-iH_1 t}e^{-iH_2 t} = (e^{-iH_1 \Delta t/2r}e^{iH_2 \Delta t}e^{-iH_1 \Delta t/2r})^r
 #
-# where :math:`H_1` and :math:`H_2` are non-commuting Hamiltonian fragments, :math:`\Delta t` is a time step, and :math:`r` is the total number of Trotter steps taken.
+# where :math:`H_1` and :math:`H_2` are non-commuting Hamiltonian fragments, :math:`\Delta t` is a time step, and :math:`r` is the total number of Trotter steps taken. Taking the position/momentum operator consideration, this approach can be understood as taking half a time step forward in kinetic energy, a full time step forward in potential energy, and another half step forward in kinetic energy. Taking this approach (or a higher-order approach in general) rather than a full step-full step approach reduces the `Trotter error <https://simons.berkeley.edu/sites/default/files/docs/15639/trottererrortheorysimons.pdf>`_ substantially.
 #
+# Before we can assemble our Trotter step, though, we are missing a crucial piece. In order to carry out a Trotterization of a fragmented Hamiltonian, each fragment must be exponentiated. In order to do this efficiently and to maintain compatibility with the QROM architecture, this means that each fragment must be *diagonal*. In a vibronic system, we are heavily concerned with coupling between atoms and, therefore, must consider off diagonal terms to fully capture our system. As such, protocol must be put in place to *diagonalize* off-diagonal fragments. This can typically done using cheap `Clifford gates <https://pennylane.ai/demos/tutorial_clifford_circuit_simulations>`_, but the exact method required to diagonalized a given Hamiltonian varies. Space should be build into the general Trotter step function for a diagonalization step to take place. Thus, ``TrotterStep()`` should:
+#
+# 1. Perform a kinetic half-step,
+# 2. Diagonalize each fragment,
+# 3. Perform a full potential step for each fragment,
+# 4. Uncompute the diagonalization step,
+# 5. Perform another kinetic half-step.
+#
+# Since we have so diligently built up our resources, we can assemble this function simply.
+
+def TrotterStep(k, n, frag_list, num_modes, mode_list, coeff_data, dt, omega, coupler, PotentialStep, state_wires, gradient_wires, coeff_wires, scratch_wires, cache_wires, electron_wires):
+    K = 2**k
+
+    half_dt = dt/2
+    
+    KineticStep(half_dt, omega, num_modes, K, state_wires, gradient_wires, coeff_wires, scratch_wires, cache_wires)
+
+    for fragment in frag_list:
+
+        #Diagonalization function
+        coupler(fragment, electron_wires)
+
+        #Pass a function that can handle the potential step in the linear or quadratic case
+        PotentialStep(fragment, coeff_data)
+
+        qp.adjoint(coupler)(fragment,electron_wires)
+
+    KineticStep(half_dt, omega, num_modes, K, state_wires, gradient_wires, coeff_wires, scratch_wires, cache_wires)
+###############################################################################
+# Before we jump into specific examples, one final generalizable step that will keep our lives simple and organized is the wire preparation stage. Using :func:`~qp.registers`, we can build our wires according to the resource requirements of functions we built.
+#
+
+def WirePrep(num_modes, k, n, delta):
+
+    precision_qubits = int(math.ceil(np.log2(1/delta)))
+    
+    nuclear_modes = {f"mode_{i}": k for i in range(num_modes)} #Account for linear vs quadratic
+    
+    registers = {
+        "electrons": n,
+        "states": nuclear_modes,
+        "gradient": precision_qubits,
+        "coefficients": precision_qubits,
+        "scratch": precision_qubits + 1,
+        "cache": 2*k
+    }
+
+    return qp.registers(registers)
+###############################################################################
+# With the foundation laid, it's time to turn to some specific examples of vibronic simulation.
+#
+# The Köppel-Domcke-Cederbaum Hamiltonian
+# =======================================
+# A simple example of a vibronic Hamiltonian is the Köppel-Domcke-Cederbaum (KDC) Hamiltonian. The KDC Hamiltonian represents a simple vibronic coupling between a nuclear state and an electronic state, making it an ideal candidate for this algorithm. It takes the general form
+# 
+# .. math::
+#    H = \mathcal{I}_{el} \otimes (T_{nuc}+V_0)+\textbf{W}
+#
+# Where :math:`T_{nuc}=\frac{1}{2}\sum_r \omega_r P_r^2` is the vibrational kinetic operator, :math:`V_0 = \frac{1}{2}\sum_r \omega_r Q_r^2`, and :math:`\textbf{W}` is the "diabatic potential", which is, essentially, a coupling matrix. 
+#
+# Carrying out a time evolution of the KDC Hamiltonian is useful for spectroscopy and energy transfer dynamics, among other things. For this demonstration, we will aim to simulate electron population evolution for a small, simple system. This specific observable will not be relevant until the end of this implementation though, and we can broadly build up a multi-use skeleton for this implementation as well. 
+#
+# Initial State Definition
+# ------------------------
+# 
+#
+# Diagonalization
+# ---------------
+# 
+# Fragmentation
+# -------------
+#
+# Time Evolution of Electronic State Population
+# ---------------------------------------------
 # .. _references:
 #
 # References
