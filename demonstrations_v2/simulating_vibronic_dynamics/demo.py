@@ -75,6 +75,12 @@ def GridPrep(k):
 # 4. If the number of wires is not 1, perform a controlled Semi-Out-of-Place addition, between the required state wires and required gradient wires, controlled by squared state wires.
 #
 # The result of this procedure should be a set of electron states that have accumulated phase gradient invoked rotations as a function of their state and experienced a time step as a result of the uniform kinetic energy operator. This is carried out in the function ``KineticStep()``.
+#
+# .. figure::
+#    :align: center
+#    :width: 700px
+#    
+#    *Kinetic energy step circuit diagram*
 
 def KineticStep(time_step, omega, num_modes, K, state_wires, gradient_wires, coeff_wires, scratch_wires, cache_wires):
     k_val = len(state_wires[0])
