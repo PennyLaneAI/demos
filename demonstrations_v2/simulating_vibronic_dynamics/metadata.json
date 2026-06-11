@@ -14,7 +14,7 @@
   "previewImages": [
     {
       "type": "thumbnail",
-      "uri": "/_static\\demo_thumbnails\\regular_demo_thumbnails\\thumbnail_placeholder.png"
+      "uri": "/_static/demo_thumbnails/regular_demo_thumbnails/thumbnail_placeholder.png"
     }
   ],
   "seoDescription": "A lot of interesting science occurs when systems become dynamic. Simulating these systems, which often involve excited states, high energy, and fast motion, is very difficult for classical computers to achieve. Quantum computing, however, shows promise to address these limitations.",
