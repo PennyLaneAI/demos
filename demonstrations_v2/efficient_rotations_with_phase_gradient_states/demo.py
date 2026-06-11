@@ -98,7 +98,7 @@ print(qre.estimate(circuit_baseline)())
 #    :align: center
 #    :width: 700px
 #    
-#    *Simple multiplexed phase gradient addition [#OBrien2025]_*
+#    *Simple multiplexed phase gradient addition* [#OBrien2025]_
 #
 
 from pennylane.labs.transforms import select_pauli_rot_phase_gradient
