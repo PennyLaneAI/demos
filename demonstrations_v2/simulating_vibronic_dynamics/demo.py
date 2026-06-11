@@ -36,7 +36,7 @@ where :math:`Delta=\sqrt{2\pi/K}` is the grid spacing term and :math:`x` is a sp
 .. math::
    Q|x\rangle = \Delta \cdot x |x\rangle,
 
-letting :math:`x \in \{-\frac{K}{2}, -\frac{K}{2}+1, ..., \frac{K}{2}-1}`. This discretization method will be kept in mind throughout the implementation, but is concretely illustrated in ``GridPrep()``.
+letting :math:`x \in \{-\frac{K}{2}, -\frac{K}{2}+1, ..., \frac{K}{2}-1\}`. This discretization method will be kept in mind throughout the implementation as we define our parameters, but is concretely illustrated in ``GridPrep()``.
 
 """
 def GridPrep(k):
@@ -45,25 +45,183 @@ def GridPrep(k):
     Q = np.diag(Delta*x)
     return Q
 ###############################################################################
-# Since position and momentum are non-commuting operators, as stated, they must be seperated into different fragments for Trotterization. The fact that :math:`P` and :math:`Q` do not share a common basis immediately indicates that each operator will require different treatment to carry out time evolution. More nuance can be discerned but considering the specific representations of a position and momentum case. The conventional representation of the kinetic energy term is given as :math:`T=\frac{P^2}{2m}`, where :math:`m` is mass. 
+# Since position and momentum are non-commuting operators, as stated, they must be seperated into different fragments for Trotterization. To briefly review, Trotterization is a method used in Hamiltonian simulation to carry out time evolution in a complex system. It addresses the fact that if a Hamiltonian is constructed from non-commuting operators, the time evolution operator :math:`e^{iHt}` cannot be realized since the entire Hamiltonian cannot be simultaneously exponentiated. As such, the Hamiltonian can be seperated into groups of non-commuting operators called *fragments* which can be individually exponentiated and interleaved in partial time steps to simulate simultaneous time evolution.
 #
-# The Potential Step
-# ------------------
-#
+# The fact that :math:`P` and :math:`Q` do not share a common basis immediately indicates that each operator will require different treatment to carry out this iterative time evolution step since each will need to be evolved in its own basis. More nuance can be discerned but considering the specific representations of a position and momentum case. The coefficients of the kinetic energy term is always proportional to :math:`T=\frac{P^2}{2}`, implying these coefficients are uniform constants that have no dependence on electronic state. Potential term coefficients, on the other hand, are electron state dependent, meaning each state will have a unique set of coefficients. This implies that the coefficient values cannot be calculated in-situ and must be externally introduced to the exponentiated potential operator step. All this to say, we need different strategies for the time evolution of each operator. 
 #
 # The Kinetic Step
 # ----------------
+# The kinetic energy Hamiltonian fragment is, comparatively, simple to establish and evolve in time. Cutting to the chase, the kinetic step should:
+#
+# 1. Perform a basis switch on the input state to momentum space,
+# 2. Square the state values in the momentum state representation to obtain :math:`\hat{P}^2`,
+# 3. Add the squared term to the phase gradient register,
+# 4. Uncompute. 
+#
+# Since the coefficients do not depend on electron state, the global coefficient can be computed in the kinetic evolution step. These coefficients should take on the form
+#
+# .. math::
+#    C_{kin} = \frac{2^b \omega_m \Delta t }{2K}
+#
+# in the computational basis, where :math:`b = \lfloor \log_2(1/\epsilon) \rfloor` is the size of the gradient register and :math:`\omega_m` is the frequency of mode :math:`m`. These states can be written in binary representation and encoded on the state register using ``qp.X()`` gates. An inituive way to understand these coefficients is to take them as describing the motion of the nuclear states. If :math:`C_{kin}=0`, the nuclear state is understood to be frozen and, therefore, there is nothing vibronic to simulate in this step! 
+#
+# Executing the kinetic energy step is, at this point, merely a question of detemining which tools are ideal to carry out our desired procedure. The first step is low hanging fruit; switching between position and momentum space can be achieved by applying a `quantum fourier transform (QFT) <https://pennylane.ai/demos/tutorial_qft>`_ to each state component. Once that switch takes place, the coefficients can be encoded on the state register as aforementioned and an :func:`~qp.OutPoly` operation targeting :math:`f(x)=(x-K/2)^2` (which is equivalent to :math:`x^2` in the signed-integer picture) can be used to carry out the squaring operation.
+#
+# Next, the phase gradient addition step can be carried out using a :func:`~qp.SemiAdder` function operating between the register holding the squared state and the phase gradient register. To carry this out properly, a "slicing" step is required to determine how many wires in the allocated registers are actually required to carry out the addition step due to the weighted binary representation used in this implementation. This is, essentially, equivalent to carrying out a `logical left shift <https://en.wikipedia.org/wiki/Logical_shift>`_ in classical computing. The procedure is as follows for each index in the simulation grid:
+#
+# 1. Determine the current iteration weight by computing the difference between the total grid points and the current index,
+# 2. Compute the number of wires needed to carry out the addition step by finding the difference between the gradient register size and the current weight (since Python indexes at 0, also subtract an extra 1),
+# 3. If the number of wires is 1, perform a :func:`~qp.CNOT` operation between the squared state and the phase gradient register,
+# 4. If the number of wires is not 1, perform a controlled Semi-Out-of-Place addition, between the required state wires and required gradient wires, controlled by squared state wires.
+#
+# The result of this procedure should be a set of electron states that have accumulated phase gradient invoked rotations as a function of their state and experienced a time step as a result of the uniform kinetic energy operator. This is carried out in the function ``KineticStep()``.
+
+def KineticStep(time_step, omega, num_modes, K, state_wires, gradient_wires, coeff_wires, scratch_wires, cache_wires):
+    k_val = len(state_wires[0])
+    b = len(gradient_wires)
+
+    #Set function to be executed by OutPoly()
+    def f(x):
+        return (x - K//2)**2 #Signed Integer Representation
+
+    #Perform basis transformation
+    for mode in range(num_modes):
+        qp.QFT(wires = state_wires[mode])
+
+    #Loop full computational procedure over all modes
+    for i in range(num_modes):
+
+        #Compute coefficients
+        KinCoeffRaw = (omega[mode]*time_step*(2**b)/(2*K))
+        C = int(np.floor(KinCoeffRaw+0.5))
+
+        #Flag if the nucleus if frozen
+        if C == 0:
+            print(f"WARNING: kinetic underflow (raw={KinCoeffRaw:.3f}); nuclei frozen. Raise b or dt.")
+        C_binary = format(C, f'0{len(coeff_wires)}b')
+
+        #Encode coefficients
+        for j, bit in enumerate(reversed(C_binary)):
+            if bit == '1':
+                qp.X(wires=coeff_wires[j])
+
+        #Square state
+        qp.OutPoly(f, input_registers = [state_wires[i]], output_wires = cache_wires)
+
+        #Add the squared state to the phase gradient register
+        for point in range(2*k_val):
+            #Index to the current position in the register
+            weight = 2*k_val-1-point
+            target_length = len(gradient_wires) - weight
+            
+            if target_length <= 0:
+                continue
+                
+            x_wire_current = coeff_wires[:target_length]
+            y_wire_current = gradient_wires[:target_length]
+        
+            ctrl_wire = [cache_wires[point]]
+            if target_length == 1:
+                qp.ctrl(qp.CNOT, control = ctrl_wire)(wires = [x_wire_current[0], y_wire_current[0]])
+            elif target_length >= 2:
+                qp.ctrl(qp.SemiAdder, control = ctrl_wire)(x_wires = x_wire_current, y_wires = y_wire_current, work_wires = scratch_wires)
+
+    #Uncompute
+        qp.adjoint(qp.OutPoly)(f, input_registers = [state_wires[i]], output_wires = cache_wires)
+
+    for mode in range(num_modes):
+        qp.adjoint(qp.QFT)(wires=state_wires[mode])
+
+    for i, bit in enumerate(reversed(C_binary)):
+        if bit == '1':
+            qp.X(wires=coeff_wires[i])
+###############################################################################
+# With this defined, the potential energy step can now be tackled.
+#
+# The Potential Step
+# ------------------
+# The goal of the potential energy step as a component of the complete Trotter step is to construct the full potential energy operator (with coefficients) for each electron state. The operations that will need to be carried out by this function are:
+#
+# 1. Upload the electron state-dependent coefficient terms using a QROM controlled by the electronic state register,
+# 2. If there are multiple vibrational mode states involved in this step, multiply them together,
+# 3. Multiply the full mode state (either a single mode or the product of multiple modes, depending on step 2) with the coefficient register,
+# 4. Add the product of the mode state and coefficient register to the phase gradient register,
+# 5. Uncompute,
+#
+# Okay, we can do that! Lucky for us, PennyLane has a build in :func:`~qp.QROM` function that can be used to load the coefficients into the system. As previously mentioned, the potential energy state coefficients are necessarily dependent on electron state. As such, these coefficients are determined prior to Trotterization with methods that vary depending on the target Hamiltonian. For now, we can imagine this as an array of integer coefficient values carrying state information and time dependence that should be translated to a binary string to interface with the QROM. For now, we will assume this has been handled and the prepared coefficients have been properly passed to us for loading. 
+#
+# As stipulated in step 2, the structure of our potential step depends on the dimensions of the mode state being passed to us. For now, we will focus on two scenarios: the linear case (in which a single mode state is being passed to us) and the quadratic case (in which two mode states are being passed to us). If our system is quadratic, we simply need to apply an :func:`~qp.OutPoly` operator that multiplies the two mode registers together, just like we did in the kinetic step. If our system is linear, we don't need to worry about this and can skip right to the addition!
+#
+# The addition step must be carried out using the same shifting procedure outlined in the kinetic step to ensure proper dimensionality. In the linear case, the adder should be controlled by the mode state register and target the register containing the product of the mode state and the loaded coefficient and the phase gradient register. In the quadratic case, the adder should be controlled by the product between the two mode states and target the register containing the product of the mode state produce and the loaded coefficient and the phase gradient register. Feel free to take a second to digest that, or glance down at the diagram that (hopefully) makes that a bit clearer. After this is carried out, we can safely uncompute and move on with our day.
+#
+def PotentialStepLinear(time_step, mode, time_coeffs, state_wires, electron_wires, gradient_wires, coeff_wires, scratch_wires):
+    
+    k_grid = len(state_wires[mode])
+
+    #Load pre-determined, electron state dependent coefficients
+    qp.QROM(time_coeffs, control_wires = electron_wires, target_wires = coeff_wires, work_wires = scratch_wires)
+
+    for point in range(k_grid):
+        #Control on the spatial state register
+        ctrl_wire = [state_wires[mode][point]]
+
+        #Index to the current position in the register
+        weight = k_grid - 1 - point
+        target_length = len(gradient_wires) - weight
+
+        #Bit-wise shifts
+        x_wire_current = coeff_wires[:target_length]
+        y_wire_current = gradient_wires[:target_length]
+
+        if target_length == 1:
+            qp.ctrl(qp.CNOT, control = ctrl_wire)(wires = [x_wire_current[0], y_wire_current[0]])
+        elif target_length >= 2:
+            qp.ctrl(qp.SemiAdder, control = ctrl_wire)(x_wires = x_wire_current, y_wires = y_wire_current, work_wires = scratch_wires)
+
+    qp.adjoint(qp.QROM)(time_coeffs, control_wires = electron_wires, target_wires = coeff_wires, work_wires = scratch_wires)
+
+
+def PotentialStepQuadratic(time_step, mode1, mode2, time_coeffs, state_wires, electron_wires, gradient_wires, coeff_wires, cache_wires, scratch_wires):
+    
+    k_grid = len(state_wires[mode1])
+
+    qp.QROM(time_coeffs, control_wires = electron_wires, target_wires = coeff_wires, work_wires = scratch_wires)
+    
+    qp.OutPoly(lambda x0,x1: (x0-K//2)*(x1-K//2), input_registers = [state_wires[mode1], state_wires[mode2]], output_wires = cache_wires)
+        
+    for point in range(2*k_grid):
+        #Control on the product of the spatial states 
+        ctrl_wire = cache_wires[point]
+
+        #Index to the current position in the register
+        weight = 2*k_grid - 1 - point
+        target_length = len(gradient_wires) - weight
+        
+        #Bit-wise shifts
+        x_wire_current = coeff_wires[:target_length]
+        y_wire_current = gradient_wires[:target_length]
+
+        if target_length == 1:
+            qp.ctrl(qp.CNOT, control = ctrl_wire)(wires = [x_wire_current[0], y_wire_current[0]])
+        elif target_length >= 2:
+            qp.ctrl(qp.SemiAdder, control = ctrl_wire)(x_wires = x_wire_current, y_wires = y_wire_current, work_wires = scratch_wires)
+
+    #Uncompute
+    qp.adjoint(qp.OutPoly)(lambda x0,x1: (x0-K//2)*(x1-K//2), input_registers = [state_wires[mode1], state_wires[mode2]], output_wires = cache_wires)
+    
+    qp.adjoint(qp.QROM)(time_coeffs, control_wires = electron_wires, target_wires = coeff_wires, work_wires = scratch_wires)
+
+###############################################################################
+# Now that we have the tools we need to carry out a system-wide time evolution, how exactly can we execute this?
 #
 # Assembling the Trotter Step
 # ---------------------------
-
-
-print("Hello")
-
-###############################################################################
+# In [#Motlagh2025]_, it is specified that a second-order Trotterization approach is taken. In the general sense, a second order trotterization structure is given by
 #
-# Add comment blocks to separate code blocks
+# .. math::
+#    e^{-iH_1 t}e^{-iH_2 t} = (e^{-iH_1 \Delta t/2r}e^{iH_2 \Delta t}e^{-iH_1 \Delta t/2r})^r
 #
+# where :math:`H_1` and :math:`H_2` are non-commuting Hamiltonian fragments, :math:`\Delta t` is a time step, and :math:`r` is the total number of Trotter steps taken.
 #
 # .. _references:
 #
