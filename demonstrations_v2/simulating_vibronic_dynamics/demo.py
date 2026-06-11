@@ -281,13 +281,26 @@ def WirePrep(num_modes, k, n, delta):
 # .. math::
 #    H = \mathcal{I}_{el} \otimes (T_{nuc}+V_0)+\textbf{W}
 #
-# Where :math:`T_{nuc}=\frac{1}{2}\sum_r \omega_r P_r^2` is the vibrational kinetic operator, :math:`V_0 = \frac{1}{2}\sum_r \omega_r Q_r^2`, and :math:`\textbf{W}` is the "diabatic potential", which is, essentially, a coupling matrix. 
+# Where :math:`T_{nuc}=\frac{1}{2}\sum_r \omega_r P_r^2` is the vibrational kinetic operator, :math:`V_0 = \frac{1}{2}\sum_r \omega_r Q_r^2`, and :math:`\textbf{W}` is the "diabatic potential", which is, essentially, a coupling matrix [#Motlagh2025]_. The source paper gives the expansion
+#
+# .. math::
+#    \textbf{W}^'_{ij}(\vec{Q})=\lambda^{(i,j)}+\sum_r a_r^{(i,j)}Q_r+\sum_{rr'}b_{rr'}^{(i,j)}Q_rQ_r^'
+#
+# which looks quite intimidating but, in reality, we have already dealt with it! Taking :math:`\lambda^{(i,j)}`, :math:`a_r^{(i,j)}`, and :math:`b_{rr'}^{(i,j)}` are coupling coefficients and :math:`\vec{Q}` are vibrational mode coordinates [#Motlagh2025]_. In this truncation, we deal with only the linear and quadratic coordinate terms, whis is exactly what we handled in the position step function! As expected, the Hamiltonian can be fragmented into terms dependent on :math:`P` (kinetic terms) and terms dependent on :math:`Q` (potential terms).
 #
 # Carrying out a time evolution of the KDC Hamiltonian is useful for spectroscopy and energy transfer dynamics, among other things. For this demonstration, we will aim to simulate electron population evolution for a small, simple system. This specific observable will not be relevant until the end of this implementation though, and we can broadly build up a multi-use skeleton for this implementation as well. 
 #
 # Initial State Definition
 # ------------------------
-# 
+# In [#Motlagh2025]_, the initial state of the KDC system is taken to be a simple vertical excitation represented in product form as 
+#
+# .. math::
+#    |\psi_0\rangle = |j\rangle_{el} \bigotimes_{r=0}^{M-1}|\chi_0\rangle.
+#
+# Here,
+#
+# .. math:: 
+#    |\chi_0\rangle = \frac{1}{Z}\sum_{x=0}^{K-1} \text{exp}\left(\frac{-\pi \cdot (x-\frac{K}{2})^2}{K}\right) |x\rangle
 #
 # Diagonalization
 # ---------------
