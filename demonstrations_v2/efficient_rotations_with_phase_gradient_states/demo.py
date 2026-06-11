@@ -136,21 +136,21 @@ print(qre.estimate(circuit_phase_grad)())
 # --------------------------------
 # The importance of cheaply decomposing arbitrary rotations has been known to the industry for some time. As a result, the phase gradient approach is not the only gate-synthesis strategy available in the quantum algorithmic toolkit. There are many nuances involved in asserting the ideal applications of each algorithm, but a full exploration will not be included here. Instead, comparing the per-rotation gate cost reveals the relative cost of each strategy, which must be weighed against the nuance of the specific application.
 #
-# +-----------------------------------+------------------------------+-----------------------------------------------------+
-# |             Algorithm             |        Setup Cost (T)        |             Gate Cost Per Rotation (T)              |
-# +===================================+==============================+=====================================================+
-# |          Solovay-Kitaev           |              0               |   :math:`\log^{3.97}(1/\epsilon)` [#Dawson2006]_    |
-# +-----------------------------------+------------------------------+-----------------------------------------------------+
-# |          Phase Gradient           |  :math:`\log_2(1/\epsilon)`  |     :math:`4\log_2(1/\epsilon)` [#Gidney2018]_      |
-# +-----------------------------------+------------------------------+-----------------------------------------------------+
-# |             GridSynth             |              0               |      :math:`3\log_2(1/\epsilon)` [#Ross2016]_       |
-# +-----------------------------------+------------------------------+-----------------------------------------------------+
-# |    Repeat Until Success (RUS)     |              0               |   :math:`2.4\log_2(1/\epsilon)` [#Paetznick2014]_   |
-# +-----------------------------------+------------------------------+-----------------------------------------------------+
-# |            Kliuchnikov            |              0               |    :math:`2\log(1/\epsilon)` [#Kliuchnikov2015]_    |
-# +-----------------------------------+------------------------------+-----------------------------------------------------+
-# |  Single Qubit Gate Approximation  |              0               |  :math:`0.56\log_2(1/\epsilon)` [#Kliuchnikov2022]_ |
-# +-----------------------------------+------------------------------+-----------------------------------------------------+
+# +---------------------------------+----------------------------+----------------------------------------------------+--------------------------------------------------------------+-----------------------------------------------------------------+
+# |            Algorithm            |       Setup Cost (T)       |           Marginal Cost Per Rotation (T)           |            Total Cost for :math:`R` Rotations (T)            | Cost to Execute a QFT for :math:`N=10` (:math:`R=N^2/2=50`) (T) |
+# +=================================+============================+====================================================+==============================================================+=================================================================+
+# |         Solovay-Kitaev          |             0              |   :math:`\log^{3.97}(1/\epsilon)` [#Dawson2006]_   |             :math:`R \log_2^{3.97}(1/\epsilon)`              |                   :math:`3.61 \times 10^{7}`                    |
+# +---------------------------------+----------------------------+----------------------------------------------------+--------------------------------------------------------------+-----------------------------------------------------------------+
+# |         Phase Gradient          | :math:`\log_2(1/\epsilon)` |    :math:`4\log_2(1/\epsilon)` [#Gidney2018]_      | :math:`\log_2(1/\epsilon) + \frac{4R}{N} \log_2(1/\epsilon)` |                   :math:`6.28 \times 10^{2}`                    |
+# +---------------------------------+----------------------------+----------------------------------------------------+--------------------------------------------------------------+-----------------------------------------------------------------+
+# |            GridSynth            |             0              |      :math:`3\log_2(1/\epsilon)` [#Ross2016]_      |                :math:`3R \log_2(1/\epsilon)`                 |                   :math:`4.48 \times 10^{3}`                    |
+# +---------------------------------+----------------------------+----------------------------------------------------+--------------------------------------------------------------+-----------------------------------------------------------------+
+# |   Repeat Until Success (RUS)    |             0              |  :math:`2.4\log_2(1/\epsilon)` [#Paetznick2014]_   |               :math:`2.4R \log_2(1/\epsilon)`                |                   :math:`3.59 \times 10^{3}`                    |
+# +---------------------------------+----------------------------+----------------------------------------------------+--------------------------------------------------------------+-----------------------------------------------------------------+
+# |           Kliuchnikov           |             0              |    :math:`2\log(1/\epsilon)` [#Kliuchnikov2015]_   |                  :math:`2R \log(1/\epsilon)`                 |                   :math:`2.99 \times 10^{2}`                    |
+# +---------------------------------+----------------------------+----------------------------------------------------+--------------------------------------------------------------+-----------------------------------------------------------------+
+# | Single Qubit Gate Approximation |             0              | :math:`0.56\log_2(1/\epsilon)` [#Kliuchnikov2022]_ |               :math:`0.56R \log_2(1/\epsilon)`               |                   :math:`8.37 \times 10^{2}`                    |
+# +---------------------------------+----------------------------+----------------------------------------------------+--------------------------------------------------------------+-----------------------------------------------------------------+
 # 
 # At first glance, this comparison seems to contradict everything we have worked for. How can the phase gradient method be said to be efficient? The answer, again, lies in the architecture of the multiplexing scheme. To apply rotations to each state loaded to a data register, only one addition operation was needed to carry out all required rotations. This parallel application means we only spend resources *twice* for a given data set: once to initiate the phase gradient register and once to execute the controlled addition (multiplexer) step, which can be interpreted as a single rotation despite being executed across the data register. Though QROM is not only compatible with phase gradients, the fact that the phase gradient state is catalytic and accessible in a pre-configured register is what makes this possible, meaning the overall cost of the phase gradient approach is much cheaper than comparable methods. 
 #
