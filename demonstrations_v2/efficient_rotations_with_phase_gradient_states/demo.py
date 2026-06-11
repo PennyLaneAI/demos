@@ -141,7 +141,9 @@ print(qre.estimate(circuit_phase_grad)())
 # --------------------------------
 # The importance of cheaply decomposing arbitrary rotations has been known to the industry for some time. As a result, the phase gradient approach is not the only gate-synthesis strategy available in the quantum algorithmic toolkit. There are many nuances involved in asserting the ideal applications of each algorithm, but a full exploration will not be included here. Instead, comparing the per-rotation gate cost reveals the relative cost of each strategy, which must be weighed against the nuance of the specific application.
 #
-# .. rst-class:: center-table-block
+# .. table::
+#    :align: center
+#    :widths: 18 12 22 24 28
 #
 # +---------------------------------+----------------------------+----------------------------------------------------+--------------------------------------------------------------+-----------------------------------------------------------------+
 # |            Algorithm            |       Setup Cost (T)       |           Marginal Cost Per Rotation (T)           |            Total Cost for :math:`R` Rotations (T)            | Cost to Execute a QFT for :math:`N=10` (:math:`R=N^2/2=50`) (T) |
