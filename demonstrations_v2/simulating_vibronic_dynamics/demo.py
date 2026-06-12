@@ -39,6 +39,10 @@ where :math:`Delta=\sqrt{2\pi/K}` is the grid spacing term and :math:`x` is a sp
 letting :math:`x \in \{-\frac{K}{2}, -\frac{K}{2}+1, ..., \frac{K}{2}-1\}`. This discretization method will be kept in mind throughout the implementation as we define our parameters, but is concretely illustrated in ``GridPrep()``.
 
 """
+import pennylane as qp
+import numpy as np
+import math
+
 def GridPrep(k):
     Delta = np.sqrt(2*np.pi/K)
     x = np.arange(-K//2,K//2)
