@@ -118,7 +118,7 @@ The macroscopic world is inherently nonlinear. From the complex dynamics of fina
 # subtler: :math:`U` is not modified. Instead, an auxiliary unitary :math:`U_\Psi` is engineered so
 # that the amplitudes :math:`\psi_i` appear as the diagonal entries of the encoded operator. In the
 # constructions of [#ntca]_,
-# `4 <https://arxiv.org/abs/2309.09839>`__], this requires only a constant number of controlled
+# [#importancesampling]_, this requires only a constant number of controlled
 # invocations of :math:`U` and :math:`U^\dagger`. For the purposes of this demo, we treat
 # :math:`U_\Psi` as a primitive and focus on what it enables. The construction idea is intuitionally
 # similar to building a quantum walk operator, and interested readers are encouraged to read original
