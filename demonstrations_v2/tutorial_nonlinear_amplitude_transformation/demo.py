@@ -7,12 +7,11 @@ The macroscopic world is inherently nonlinear. From the complex dynamics of fina
 """
 
 ######################################################################
-# As also described in previous demos, :doc:`block
+# The "gold standard" methods to implement matrix transformations are :doc:`block
 # encoding <demos/tutorial_block_encoding>`
-# [#blockencoding]_ and :doc:`quantum singular value
+# [`1 <https://arxiv.org/abs/1804.01973>`__] and :doc:`quantum singular value
 # transformation <demos/tutorial_intro_qsvt>`
-# [#qsvt]_ have become the “gold standard” for implementing matrix
-# functions. However, these techniques primarily transform the singular values (or eigenvalues) of an
+# [`2 <https://arxiv.org/abs/1806.01838>`__]. However, these techniques primarily transform the singular values (or eigenvalues) of an
 # operator. In many quantum machine learning settings - especially amplitude encoding - the data isn’t
 # stored in an operator at all. Instead, it lives directly in the amplitudes of a quantum state.
 # 
