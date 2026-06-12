@@ -16,7 +16,7 @@ The macroscopic world is inherently nonlinear. From the complex dynamics of fina
 # stored in an operator at all. Instead, it lives directly in the amplitudes of a quantum state.
 # 
 # To transform these amplitudes nonlinearly, we need a generalized approach. The Nonlinear Amplitude
-# Transformation framework [`3 <https://arxiv.org/abs/2107.10764>`__,
+# Transformation framework [#ntca]_,
 # `4 <https://arxiv.org/abs/2309.09839>`__] enable us to map an input state
 # :math:`|\psi\rangle = \sum x_i |i\rangle` to a target state
 # :math:`|\phi\rangle \propto \sum f(x_i) |i\rangle`, using only unitary operations, ancillas, and
