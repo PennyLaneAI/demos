@@ -76,7 +76,7 @@ def GridPrep(k):
 #
 # The result of this procedure should be a set of electron states that have accumulated phase gradient invoked rotations as a function of their state and experienced a time step as a result of the uniform kinetic energy operator. This is carried out in the function ``KineticStep()``.
 #
-# .. figure::
+# .. figure:: ../demonstrations_v2/simulating_vibronic_dynamics/KineticStepCircuit.png
 #    :align: center
 #    :width: 700px
 #    
@@ -294,11 +294,23 @@ def WirePrep(num_modes, k, n, delta):
 #
 # which looks quite intimidating but, in reality, we have already dealt with it! Taking :math:`\lambda^{(i,j)}`, :math:`a_r^{(i,j)}`, and :math:`b_{rr'}^{(i,j)}` are coupling coefficients and :math:`\vec{Q}` are vibrational mode coordinates [#Motlagh2025]_. In this truncation, we deal with only the linear and quadratic coordinate terms, whis is exactly what we handled in the position step function! As expected, the Hamiltonian can be fragmented into terms dependent on :math:`P` (kinetic terms) and terms dependent on :math:`Q` (potential terms).
 #
+# This is made somewhat more clear by taking the following operator fragmentation into consideration,
+#
+# .. math::
+#    T=\mathcal{I}_{el} \otimes \sum_{r=0}^{M-1}\frac{\omega_r}{2}P_r^2
+#
+# and
+#
+# .. math::
+#    V = (\mathcal{I}_{el}\otimes V_0+\textbf{W'})=\sum_{i,j=0}^{N-1}|j\rangle\langle j| \otimes V_{ji},
+#
+# where :math:`V_{ij}` represents the expansion of :math:`\textbf{W'}` in coefficient form, which will be detailed later.
+#
 # Carrying out a time evolution of the KDC Hamiltonian is useful for spectroscopy and energy transfer dynamics, among other things. For this demonstration, we will aim to simulate electron population evolution for a small, simple system. This specific observable will not be relevant until the end of this implementation though, and we can broadly build up a multi-use skeleton for this implementation as well. 
 #
 # Initial State Definition
 # ------------------------
-# In [#Motlagh2025]_, the initial state of the KDC system is taken to be a simple vertical excitation represented in product form as 
+# In [#Motlagh2025]_, the initial state of the KDC system is taken to be a simple vertical excitation represented in product form in relation to electron state :math:`j` as 
 #
 # .. math::
 #    |\psi_0\rangle = |j\rangle_{el} \bigotimes_{r=0}^{M-1}|\chi_0\rangle.
@@ -308,14 +320,160 @@ def WirePrep(num_modes, k, n, delta):
 # .. math:: 
 #    |\chi_0\rangle = \frac{1}{Z}\sum_{x=0}^{K-1} \text{exp}\left(\frac{-\pi \cdot (x-\frac{K}{2})^2}{K}\right) |x\rangle
 #
+# is the Hermite-Gauss function representation of the harmonic oscillator ground state, where :math:`Z` is a normalization constant and :math:`x` is, again, a vibrational mode number. It is stated in the source paper that one can choose to begin with a superposition state to enable functionalities such as spectroscopy. For an electronic state population evaluation, this is not necessary. This state can be generated using ``KDCStatePrep()``.
+
+def KDCStatePrep(k):
+    K = 2**k
+    x = np.arange(K)
+
+    amplitudes = np.exp((-np.pi*((x-(K/2))**2))/(K))
+    norm_factor = np.linalg.norm(amplitudes)
+
+    chi0 = amplitudes/norm_factor
+
+    return chi0
+###############################################################################
 # Diagonalization
 # ---------------
-# 
-# Fragmentation
-# -------------
+# As previously stated, it is necessary for this algorithm that each fragment of the Hamiltonian is diagonal at the time of exponentiation. Since we are dealing with systems involving coupling, it is inevitable that some fragments will involve non-diagonal configurations. In [#Motlagh2025], Motlagh et al. lay out a Clifford gate based scheme for `block-diagonalization <https://pennylane.ai/compilation/diagonal-unitary-decomp/details>`_ that enables uniform exponentiation. To understand the scheme, we must first take each Hamiltonian fragment to be given as
 #
+# .. math::
+#    H_m = \sum_{j=0}^{N-1}|j\rangle \langlem \oplus j|\otimes V_{j,m\oplus j},
+#
+# recalling :math:`V_{ji}` holds the position operator expansion term, :math:`m` is the fragment index, and :math:`j` is the electronic state index. Since :math:`|j\rangle \langlem \oplus j|\otimes` constructs the matrix geometry of the fragment, the difference between :math:`j` and :math:`m\oplus j` (representing the `Hamming weight <https://en.wikipedia.org/wiki/Hamming_weight>` in this case) will dictate how the block should be treated. The logic is as follows:
+#
+# 1. IF :math:`m=0`, we are dealing with a diagonal fragment. Our work here is done!
+# 2. IF :math:`j` and :math:`m\oplus j` differ by 1, we can achieve diagonalization by sandwiching the fragments between Hadamard gates.
+# 3. ELSE, we must construct a unitary operation that uses a qubit that satisfies option 2 as a control for a CNOT operation applied to all other qubits in the fragment to bring the Hamming weight down to 1, enabling diagonalization via Hadamard sandwich.
+#
+# This logic can be implemented simply by comparing the two focus indices and applying the gates as follows
+
+#Diagonalization Scheme
+def KDCDiag(m, electron_wires):
+    bits = []
+    weight = 0
+    
+    for j in range(len(electron_wires)):
+        if (m >> j) & 1:
+            weight += 1
+            bits.append(j)
+
+    if weight == 1:
+        qp.Hadamard(electron_wires[bits[0]])
+    elif weight > 1:
+        ctrl_wire = electron_wires[bits[0]]
+        for bit in bits[1:]:
+            qp.CNOT([ctrl_wire, electron_wires[bit]])
+        qp.Hadamard(wires=ctrl_wire)
+###############################################################################
+# We're almost there!
+#
+# Deciding the Potential Step
+# ---------------------------
+# Previously, we defined two functions to be used for the potential energy evolution step in our Trotterization scheme, one that addresses the linear case and one that addresses the quadratic case. The way in which these cases are applied will vary by application, but we can take a relatively simple approach for the KDC Hamiltonian. Given an input of mode states, we can evaluate if an entry is a singular integar value, a list containing a single entry, or a list containing two entries. The first two scenarios will be taken as equivalent to a linear case while the second requires the multiplication step of the quadratic function. ``KDCFrag`` handles this using simple evaluation logic.
+
+#Fragmentation Scheme
+def KDCFrag(fragment, coeff_data):
+    for entry in mode_list:
+                if isinstance(entry, int):
+                    PotentialStepLinear(dt, mode_list[0], coeff_data, state_wires, electron_wires, gradient_wires, coeff_wires, scratch_wires)
+                if isinstance(entry, tuple) and len(entry) == 1:
+                    PotentialStepLinear(dt, mode_list[0], coeff_data, state_wires, electron_wires, gradient_wires, coeff_wires, scratch_wires)
+                if isinstance(entry, tuple) and len(entry) == 2:
+                    for mode_pair in mode_list:
+                        mode1 = mode_pair[0]
+                        mode2 = mode_pair[1]
+                        PotentialStepQuadratic(dt, mode1, mode2, coeff_data, state_wires, electron_wires, gradient_wires, coeff_wires, cache_wires, scratch_wires)
+###############################################################################
 # Time Evolution of Electronic State Population
 # ---------------------------------------------
+# Finally, we have adequately built up the structure of the KDC Hamiltonian, we can combine our previously constructed tools to carry out a Trotterization of this system and observe the population dynamics for a short time scale. 
+#
+# To keep things simple, we will define :math:`n=2` and :math:`k=2`, pass in a list of hard coded coupling constants, and focus on a single mode example. 
+
+#Trotterization
+time_steps = 10
+k = 2
+n = 2
+Delta = np.sqrt(2*np.pi/(2**k))
+num_modes = 1
+delta = 0.1
+mode_list = [0]
+omega = [1]
+coeff_data = [1, -1.3, 0.4, -2]
+dt = 0.7
+###############################################################################
+# Our next administrative tasks is to call upon ``WirePrep()` to initialize our registers and assign names that can be referenced in our Trotter function.
+
+#Initialize and label registers
+regs = WirePrep(num_modes, k, n, delta)
+total_wires = n+(num_modes*k)+(3*int(math.ceil(np.log2(1/delta))))+1+(2*k)
+
+electron_wires = regs["electrons"]
+state_wires = [regs[f"mode_{i}"] for i in range(num_modes)]
+gradient_wires = regs["gradient"]
+coeff_wires = regs["coefficients"]
+scratch_wires = regs["scratch"]
+cache_wires = regs["cache"]
+###############################################################################
+# One additional computational consideration that we must make is how our coefficient data will interface with the QROMs used in the potential energy step. As specified in the PennyLane docs, :func:`~qp.QROM` expects the input state to be represented as bit strings in the form of lists. Since the coupling coefficients are realistically described by integers, we must convert these inputs into the expected format. Thus can be done using Python and Numpy tools.
+
+#Reformat coefficients for compatibility with QROM
+max_binary = 2**(len(coeff_wires))
+ints = np.round(np.array(coeff_data) * dt * max_binary).astype(int) % max_binary
+time_coeffs = (ints[:, None] >> np.arange(width - 1, -1, -1)) & 1
+################################################################################
+# Now, at long last, we can carry out our time evolution. Our implementation function should achieve the following:
+#
+# 1. Prepare the phase gradient state in the gradient register,
+# 2. Prepare the initial state on the electronic state register,
+# 3. Carry out the Trotterization protocol for the specified number of time steps,
+# 4. Return probability measurements of the electronic state register.
+#
+# Since we so diligently built up our functionality under the guidance of Motlagh et al.'s innovations, we are well equipped to carry this out smoothly! 
+
+def ElectronPopVibronicsSimulation(steps):
+
+    #Prepare the phase gradient state in the appropriate register
+    for wire in gradient_wires:
+        qp.Hadamard(wires = wire)
+    qp.QFT(wires=gradient_wires)
+
+    #Prepare the initial state
+    initial_state = KDCStatePrep(k)
+    for wire in state_wires:
+        qp.StatePrep(state = initial_state, wires = wire)
+
+    #Trotterize
+    for t in range(steps):
+        TrotterStep(
+            k = k,
+            n = n,
+            frag_list = range(2**n),
+            num_modes = num_modes,
+            mode_list = mode_list,
+            coeff_data = time_coeffs,
+            dt = dt,
+            omega = omega,
+            coupler = KDCDiag,
+            PotentialStep = KDCFrag,
+            state_wires = state_wires,
+            gradient_wires = gradient_wires,
+            coeff_wires = coeff_wires,
+            scratch_wires = scratch_wires,
+            cache_wires = cache_wires,
+            electron_wires = electron_wires
+        )
+    
+    return qp.probs(wires=electron_wires)
+################################################################################
+# Running this function with our defined parameters yields the following outcome.
+#
+# .. figure:: ../demonstrations_v2/simulating_vibronic_dynamics/ElectronicStatePopulationPlot.png
+#    :align: center
+#    :width: 700px
+# 
+#
 # .. _references:
 #
 # References
