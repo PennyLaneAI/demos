@@ -425,7 +425,7 @@ cache_wires = regs["cache"]
 #Reformat coefficients for compatibility with QROM
 max_binary = 2**(len(coeff_wires))
 ints = np.round(np.array(coeff_data) * dt * max_binary).astype(int) % max_binary
-time_coeffs = (ints[:, None] >> np.arange(width - 1, -1, -1)) & 1
+time_coeffs = (ints[:, None] >> np.arange(len(coeff_wires) - 1, -1, -1)) & 1
 ################################################################################
 # Now, at long last, we can carry out our time evolution. Our implementation function should achieve the following:
 #
