@@ -53,7 +53,7 @@ The macroscopic world is inherently nonlinear. From the complex dynamics of fina
 # From amplitude encoding to an operator QSVT can transform
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # 
-# Recall the notion of a block encoding [`1 <https://arxiv.org/abs/1804.01973>`__]. A unitary
+# Recall the notion of a block encoding [#blockencoding]_. A unitary
 # :math:`U_A` block-encodes an operator :math:`A` if its top-left block equals :math:`A`:
 # 
 # .. math::
