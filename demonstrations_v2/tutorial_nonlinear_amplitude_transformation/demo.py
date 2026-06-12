@@ -17,7 +17,7 @@ The macroscopic world is inherently nonlinear. From the complex dynamics of fina
 # 
 # To transform these amplitudes nonlinearly, we need a generalized approach. The Nonlinear Amplitude
 # Transformation framework [#ntca]_,
-# `4 <https://arxiv.org/abs/2309.09839>`__] enable us to map an input state
+# [#importancesampling]_ enable us to map an input state
 # :math:`|\psi\rangle = \sum x_i |i\rangle` to a target state
 # :math:`|\phi\rangle \propto \sum f(x_i) |i\rangle`, using only unitary operations, ancillas, and
 # (typically) postselection. The key conceptual move is to convert “amplitudes-as-data” into a form
