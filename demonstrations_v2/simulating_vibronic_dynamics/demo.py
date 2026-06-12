@@ -164,6 +164,12 @@ def KineticStep(time_step, omega, num_modes, K, state_wires, gradient_wires, coe
 #
 # The addition step must be carried out using the same shifting procedure outlined in the kinetic step to ensure proper dimensionality. In the linear case, the adder should be controlled by the mode state register and target the register containing the product of the mode state and the loaded coefficient and the phase gradient register. In the quadratic case, the adder should be controlled by the product between the two mode states and target the register containing the product of the mode state produce and the loaded coefficient and the phase gradient register. Feel free to take a second to digest that, or glance down at the diagram that (hopefully) makes that a bit clearer. After this is carried out, we can safely uncompute and move on with our day.
 #
+# .. figure:: ../demonstrations_v2/simulating_vibronic_dynamics/PotentialEnergyStep.png
+#    :align: center
+#    :width: 700px
+#    
+#    *Potential energy step circuit diagram*
+#
 def PotentialStepLinear(time_step, mode, time_coeffs, state_wires, electron_wires, gradient_wires, coeff_wires, scratch_wires):
     
     k_grid = len(state_wires[mode])
@@ -349,6 +355,12 @@ def KDCStatePrep(k):
 # 1. IF :math:`m=0`, we are dealing with a diagonal fragment. Our work here is done!
 # 2. IF :math:`j` and :math:`m\oplus j` differ by 1, we can achieve diagonalization by sandwiching the fragments between Hadamard gates.
 # 3. ELSE, we must construct a unitary operation that uses a qubit that satisfies option 2 as a control for a CNOT operation applied to all other qubits in the fragment to bring the Hamming weight down to 1, enabling diagonalization via Hadamard sandwich.
+#
+# .. figure:: ../demonstrations_v2/simulating_vibronic_dynamics/Diagonalization.png
+#    :align: center
+#    :width: 700px
+#    
+#    *Potential energy step circuit diagram*
 #
 # This logic can be implemented simply by comparing the two focus indices and applying the gates as follows
 
