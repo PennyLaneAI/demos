@@ -11,7 +11,7 @@ The macroscopic world is inherently nonlinear. From the complex dynamics of fina
 # encoding <demos/tutorial_block_encoding>`
 # [#blockencoding]_ and :doc:`quantum singular value
 # transformation <demos/tutorial_intro_qsvt>`
-# [`2 <https://arxiv.org/abs/1806.01838>`__] have become the “gold standard” for implementing matrix
+# [#qsvt]_ have become the “gold standard” for implementing matrix
 # functions. However, these techniques primarily transform the singular values (or eigenvalues) of an
 # operator. In many quantum machine learning settings - especially amplitude encoding - the data isn’t
 # stored in an operator at all. Instead, it lives directly in the amplitudes of a quantum state.
