@@ -436,6 +436,9 @@ time_coeffs = (ints[:, None] >> np.arange(width - 1, -1, -1)) & 1
 #
 # Since we so diligently built up our functionality under the guidance of Motlagh et al.'s innovations, we are well equipped to carry this out smoothly! 
 
+dev = qp.device("lightning.qubit", wires=total_wires)
+
+@qp.qnode(dev)
 def ElectronPopVibronicsSimulation(steps):
 
     #Prepare the phase gradient state in the appropriate register
