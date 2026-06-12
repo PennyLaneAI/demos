@@ -117,7 +117,7 @@ The macroscopic world is inherently nonlinear. From the complex dynamics of fina
 # This is in sense equivalent to “encoding the first column into a diagonal,” but the key point is
 # subtler: :math:`U` is not modified. Instead, an auxiliary unitary :math:`U_\Psi` is engineered so
 # that the amplitudes :math:`\psi_i` appear as the diagonal entries of the encoded operator. In the
-# constructions of [`3 <https://arxiv.org/abs/2107.10764>`__,
+# constructions of [#ntca]_,
 # `4 <https://arxiv.org/abs/2309.09839>`__], this requires only a constant number of controlled
 # invocations of :math:`U` and :math:`U^\dagger`. For the purposes of this demo, we treat
 # :math:`U_\Psi` as a primitive and focus on what it enables. The construction idea is intuitionally
