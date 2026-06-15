@@ -622,7 +622,7 @@ def pi_pulse(distance, coupling, wires=[0]):
 ##############################################################################
 #
 # When acting on individual atoms, these pulses have the net effect of adding a phase of :math:`-1` to the state. But the presence
-# of the Rydberg blocakde changes this outcome.
+# of the Rydberg blockade changes this outcome.
 # Then, let's see the effect the sequence of pulses has on the :math:`\vert 00 \rangle` state when the atoms are close enough.
 #
 
