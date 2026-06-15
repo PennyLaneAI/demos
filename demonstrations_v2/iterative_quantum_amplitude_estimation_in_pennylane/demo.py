@@ -228,12 +228,12 @@ def FindNextK(k_i,theta_min, theta_max, HalfPlane_bool):
 # Implementing the IQAE Algorithm
 # -------------------------------
 #
-# With ``FindNextK()`` defined, the IQAE algorithm can now be implemented! The main objective of this function is to apply the :math:`k` value returned by FindNextK() to the previously defined quantum circuit, obtain a measurement, and determine if this measurement is adequately accurate with respect to a defined tolerance or if the confidence interval should be updated and passed back into the classical function for another iteration. The logic is as follows: 
+# With ``FindNextK()`` defined, the IQAE algorithm can now be implemented! The main objective of this function is to apply the :math:`k` value returned by ``FindNextK()`` to the previously defined quantum circuit, obtain a measurement, and determine if this measurement is adequately accurate with respect to a defined tolerance or if the confidence interval should be updated and passed back into the classical function for another iteration. The logic is as follows: 
 #
-# 1. Call circuit() after FindNextK() outputs a guess for :math:`k` and take a probability measurement. 
+# 1. Call ``circuit()`` after ``FindNextK()`` outputs a guess for :math:`k` and take a probability measurement. 
 # 2. Use this value to update the confidence interval, in which both the upper and lower bound on the angles and probabilities are computed from the measured amplitude. 
 # 3. Compute the overlap between the previous confidence interval and the new confidence interval, taking this to be your final upper and lower bound definition. 
-# 4. Check to see if the difference between the new upper and lower bounds is smaller than :math:`\epsilon`, which represents a chosen accuracy parameter. If not, pass the final upper and lower bounds back into FindNextK() and repeat. If yes, return the probability amplitudes associated with the upper and lower amplitudes. 
+# 4. Check to see if the difference between the new upper and lower bounds is smaller than :math:`\epsilon`, which represents a chosen accuracy parameter. If not, pass the final upper and lower bounds back into ``FindNextK()`` and repeat. If yes, return the probability amplitudes associated with the upper and lower amplitudes. 
 #
 # There are several well-known statistical methods used to update confidence intervals. A simple, iterative approach is the Chernoff-Hoeffding method, which shifts the interval bounds up and down, respectively, by :math:`\epsilon_{a_i}`. From [#Grinko2021]_, according to the Chernoff-Hoeffding algorithm
 #
@@ -308,7 +308,7 @@ def IQAE(eps, alpha, N):
 ##############################################################################
 # For the purposes of this demonstration and to emphasize the bare bones of the IQAE algorithm, a few aspects of the full implementation presented in [#Grinko2021]_ were omitted. For example, the explicit overshooting condition was not translated here since it is not necessary to achieve the search outcome but required to obtain the performance guarantees (ex. analytical bounds) derived by Grinko et al. Full exploration of these additional components can be found in the source paper. 
 #
-# Upon calling IQAE(), the output will consist of the upper and lower bounds between which the true amplitude lies. To compare the confidence interval obtained by the IQAE algorithm, the :math:`\mathcal{A}` state can be taken as the analytic probability yielded by the simulator, though this is not a realistic analogy to a physical system and is used here only for comparison. 
+# Upon calling ``IQAE()``, the output will consist of the upper and lower bounds between which the true amplitude lies. To compare the confidence interval obtained by the IQAE algorithm, the :math:`\mathcal{A}` state can be taken as the analytic probability yielded by the simulator, though this is not a realistic analogy to a physical system and is used here only for comparison. 
 #
 
 dev_exact = qp.device("default.qubit", wires=num_qubits+1)
