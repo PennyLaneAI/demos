@@ -54,7 +54,7 @@ import numpy as np
 R = 1.2
 # create the H3+ molecule
 mol = gto.M(atom=[["H", (0, 0, 0)], ["H", (0, 0, R)], ["H", (0, 0, 2 * R)]], charge=1)
-# perfrom restricted Hartree-Fock and then CISD
+# perform restricted Hartree-Fock and then CISD
 myhf = scf.RHF(mol).run()
 myci = ci.CISD(myhf).run()
 wf_cisd = import_state(myci, tol=1e-1)

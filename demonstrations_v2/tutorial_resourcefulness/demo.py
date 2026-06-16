@@ -7,7 +7,7 @@ measure of complexity. For example, using the resource of *entanglement*, we can
 resources are: *Clifford stabilizerness*, which measures how close a state is from being preparable by a
 classically simulatable *Clifford circuit*, and *Gaussianity*, which quantifies the distance of a state from simple *Gaussian states*.
 As the name "resourceful" suggests,
-these measures of complexity often relate to the "effort" or cost associated with states, wether that be the complexity of classical simulation or the difficulty of preparation in the lab.
+these measures of complexity often relate to the "effort" or cost associated with states, whether that be the complexity of classical simulation or the difficulty of preparation in the lab.
 
 It turns out that the resourcefulness of quantum states can be investigated with tools from *generalised Fourier analysis*.
 *Fourier analysis* here refers to the well-known technique of computing Fourier coefficients of a function, or in our case,

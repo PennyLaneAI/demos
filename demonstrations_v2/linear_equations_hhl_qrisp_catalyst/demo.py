@@ -420,7 +420,7 @@ main()
 # .. math:: \begin{align}|x\rangle&=A^{-1}|b\rangle\\&=\bigg(\sum_{i=0}^{N-1}\lambda_i^{-1}|u_i\rangle\langle u_i|\bigg)\sum_j\beta_j|u_j\rangle\\&=\sum_{i=0}^{N-1}\lambda_i^{-1}\beta_i|u_i\rangle\end{align}
 #
 # You might wonder why we can’t just apply :math:`A^{-1}` directly to :math:`|b\rangle`? This is
-# because, in general, the matix :math:`A` is not unitary. However, we will circumnavigate this by
+# because, in general, the matrix :math:`A` is not unitary. However, we will circumnavigate this by
 # exploiting that the Hamiltonian evolution :math:`U=e^{itA}` is unitary for a Hermitian matrix
 # :math:`A`. And this brings us to the HHL algorithm.
 #
@@ -570,7 +570,7 @@ def HHL_encoding(b, hamiltonian_evolution, n, precision):
 #
 # Finally, we put all things together into the ``HHL`` function.
 #
-# This function takes the follwoing arguments:
+# This function takes the following arguments:
 #
 # - ``b``: The vector :math:`b`.
 # - ``hamiltonian_evolution``: A function performing hamiltonian_evolution :math:`e^{itA}`.

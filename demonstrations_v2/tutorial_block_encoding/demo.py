@@ -41,7 +41,7 @@ Block encoding structured matrices
 -----------------------------------
 In order to better understand the oracle access framework, let us first define :math:`U_A` and :math:`U_B`
 for the exact block-encoding of :math:`A.` The :math:`U_A` oracle is responsible for encoding the 
-matrix entries of :math:`A` into the amplitude of an auxilary qubit :math:`|0\rangle_{\text{anc}}:`
+matrix entries of :math:`A` into the amplitude of an auxiliary qubit :math:`|0\rangle_{\text{anc}}:`
 
 .. math::
 
@@ -103,7 +103,7 @@ thetas = compute_theta(alphas)
 ##############################################################################
 # The next step is to identify and prepare the qubit registers used in the oracle access framework.
 # There are three registers :code:`"ancilla"`, :code:`"wires_i"`, :code:`"wires_j"`. The
-# :code:`"ancilla"` register will always contain a single qubit, this is the auxilary qubit where we
+# :code:`"ancilla"` register will always contain a single qubit, this is the auxiliary qubit where we
 # apply the rotation gates mentioned above. The :code:`"wires_i"` and :code:`"wires_j"` registers are
 # the same size for this algorithm and need to be able to encode :math:`A` itself, so they will both
 # have :math:`2` qubits for our matrix.

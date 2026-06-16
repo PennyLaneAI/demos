@@ -42,7 +42,7 @@ computer, enabling the gate optimization through analytical and numerical techni
 developing such accurate models requires an exhaustive characterization of the hardware, and it
 can be challenging to account for all the relevant interactions in practice.
 
-An alternative promissing approach is through the direct interaction with the device, refraining
+An alternative promising approach is through the direct interaction with the device, refraining
 from deriving any explicit model of the system. Here, we frame qubit calibration as a reinforcement
 learning problem, drawing inspiration from the experimentally-friendly method proposed in reference
 [#BaumPRXQ21]_. In this setting, a reinforcement learning agent learns to calibrate the gates by
@@ -53,7 +53,7 @@ most relevant noise sources. This makes the resulting agent an excellent calibra
 to these phenomena.
 
 The procedure that we present below is entirely agnostic to the quantum hardware.
-Among all the possibilities, we will ilustrate it using coupled-transmon superconducting quantum
+Among all the possibilities, we will illustrate it using coupled-transmon superconducting quantum
 computers simulated with PennyLane. This will allow us to focus on the method itself, skipping some
 of the nuances associated with the execution on real devices, while ensuring that the resulting
 code can be easily adapted to run in a quantum computer using the PennyLane plugins, as shown in
@@ -248,7 +248,7 @@ state_size = 2 ** len(wires)
 
 import jax.numpy as jnp
 
-jax.config.update("jax_enable_x64", True)  # Coment this line for a faster execution
+jax.config.update("jax_enable_x64", True)  # Comment this line for a faster execution
 
 values_phase = jnp.linspace(-jnp.pi, jnp.pi, 9)[1:]  # 8 phase values
 values_ampl = jnp.linspace(0.0, 0.2, 11)  # 11 amplitude values
@@ -614,7 +614,7 @@ def compute_baseline(episodes):
     )
     # Expected product: E[G_t*sf**2]
     exp_r_sq_sf = jax.tree_util.tree_map(lambda rsqsf: rsqsf.sum(0, keepdims=True) / total_actions, r_sq_sf)
-    # Ratio of espectation values: E[G_t*sf**2] / E[sf**2]  (avoid dividing by zero)
+    # Ratio of expectation values: E[G_t*sf**2] / E[sf**2]  (avoid dividing by zero)
     return jax.tree_util.tree_map(lambda ersq, esq: ersq / jnp.where(esq, esq, 1.0), exp_r_sq_sf, exp_sq_sfs)
 
 

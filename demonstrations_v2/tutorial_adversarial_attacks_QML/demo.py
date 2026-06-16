@@ -310,7 +310,7 @@ visualize_data(x_vis, y_vis, benign_class_output)
 # data samples. Using these gradients, we find the direction of ascent in the loss function (as we
 # want to force high losses, i.e. bad model performance for the specific samples). Finally, we clip
 # the delta (perturbations), such that they lie within the epsilon boundary we set beforehand (this is
-# just some hyperparameter wich limits the attack strength). All of these steps can be seen in the
+# just some hyperparameter which limits the attack strength). All of these steps can be seen in the
 # code below:
 #
 

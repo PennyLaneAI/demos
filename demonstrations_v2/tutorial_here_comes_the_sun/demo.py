@@ -282,7 +282,7 @@ def stochastic_parshift_grad(theta, num_samples):
     grad = 0
     splitting_times = np.random.random(size=num_samples)
     for tau in splitting_times:
-        # Evaluate the two-term parameter-shift rule of the auxiliar circuit
+        # Evaluate the two-term parameter-shift rule of the auxiliary circuit
         grad += aux_circuit(theta, tau, 1.0) - aux_circuit(theta, tau, -1.0)
     return grad / num_samples
 

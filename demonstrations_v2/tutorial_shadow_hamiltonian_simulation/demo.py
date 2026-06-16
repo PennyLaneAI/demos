@@ -293,7 +293,7 @@ print(O_t_shadow)
 # :math:`M \leq 2^{n_S}` values. In the absolute worst case we have :math:`\mathfrak{su}(2^n)` with a dimension of 
 # :math:`2^{2n}-1,` so :math:`n_S = 2n` and thus it is just doubling the number of qubits.
 #
-# The biggest potential to this new persepctive on Hamiltonian simulation most likely lies in finding interesting applications like [#Babbush]_ or [#Barthe]_
+# The biggest potential to this new perspective on Hamiltonian simulation most likely lies in finding interesting applications like [#Babbush]_ or [#Barthe]_
 # that naturally encode the problem and allow for efficient retrieval of all the relevant information.
 #
 
