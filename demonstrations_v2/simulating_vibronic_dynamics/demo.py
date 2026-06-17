@@ -300,7 +300,7 @@ def WirePrep(num_modes, k, n, delta):
 # Where :math:`T_{nuc}=\frac{1}{2}\sum_r \omega_r P_r^2` is the vibrational kinetic operator, :math:`V_0 = \frac{1}{2}\sum_r \omega_r Q_r^2`, and :math:`\textbf{W}` is the "diabatic potential", which is, essentially, a coupling matrix [#Motlagh2025]_. The source paper gives the expansion
 #
 # .. math::
-#    \textbf{W}^'_{ij}(\vec{Q})=\lambda^{(i,j)}+\sum_r a_r^{(i,j)}Q_r+\sum_{rr'}b_{rr'}^{(i,j)}Q_rQ_r^'
+#    \textbf{W'}_{ij}(\vec{Q})=\lambda^{(i,j)}+\sum_r a_r^{(i,j)}Q_r+\sum_{rr'}b_{rr'}^{(i,j)}Q_rQ_r'
 #
 # which looks quite intimidating but, in reality, we have already dealt with it! Taking :math:`\lambda^{(i,j)}`, :math:`a_r^{(i,j)}`, and :math:`b_{rr'}^{(i,j)}` are coupling coefficients and :math:`\vec{Q}` are vibrational mode coordinates [#Motlagh2025]_. In this truncation, we deal with only the linear and quadratic coordinate terms, whis is exactly what we handled in the position step function! As expected, the Hamiltonian can be fragmented into terms dependent on :math:`P` (kinetic terms) and terms dependent on :math:`Q` (potential terms).
 #
@@ -348,9 +348,9 @@ def KDCStatePrep(k):
 # As previously stated, it is necessary for this algorithm that each fragment of the Hamiltonian is diagonal at the time of exponentiation. Since we are dealing with systems involving coupling, it is inevitable that some fragments will involve non-diagonal configurations. In [#Motlagh2025], Motlagh et al. lay out a Clifford gate based scheme for `block-diagonalization <https://pennylane.ai/compilation/diagonal-unitary-decomp/details>`_ that enables uniform exponentiation. To understand the scheme, we must first take each Hamiltonian fragment to be given as
 #
 # .. math::
-#    H_m = \sum_{j=0}^{N-1}|j\rangle \langlem \oplus j|\otimes V_{j,m\oplus j},
+#    H_m = \sum_{j=0}^{N-1}|j\rangle \langle m \oplus j|\otimes V_{j,m\oplus j},
 #
-# recalling :math:`V_{ji}` holds the position operator expansion term, :math:`m` is the fragment index, and :math:`j` is the electronic state index. Since :math:`|j\rangle \langlem \oplus j|\otimes` constructs the matrix geometry of the fragment, the difference between :math:`j` and :math:`m\oplus j` (representing the `Hamming weight <https://en.wikipedia.org/wiki/Hamming_weight>` in this case) will dictate how the block should be treated. The logic is as follows:
+# recalling :math:`V_{ji}` holds the position operator expansion term, :math:`m` is the fragment index, and :math:`j` is the electronic state index. Since :math:`|j\rangle \langle m \oplus j|\otimes` constructs the matrix geometry of the fragment, the difference between :math:`j` and :math:`m\oplus j` (representing the `Hamming weight <https://en.wikipedia.org/wiki/Hamming_weight>`_ in this case) will dictate how the block should be treated. The logic is as follows:
 #
 # 1. IF :math:`m=0`, we are dealing with a diagonal fragment. Our work here is done!
 # 2. IF :math:`j` and :math:`m\oplus j` differ by 1, we can achieve diagonalization by sandwiching the fragments between Hadamard gates.
