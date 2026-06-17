@@ -79,6 +79,10 @@ The result of this procedure should be a set of electron states that have accumu
     
    *Kinetic energy step circuit diagram*
 """
+import pennylane as qp
+import numpy as np
+import pennylane.estimator as qre
+import math
 
 def KineticStep(time_step, kinetic_coeffs, num_modes, state_wires, gradient_wires, coeff_wires, scratch_wires, cache_wires):
     k = len(state_wires[0])
@@ -600,13 +604,6 @@ def ElectronPopVibronicsSimulation(steps, gradient_wires, StatePrepFunc, Coupler
         )
     return qp.probs(wires=electron_wires)
 ################################################################################
-# Running this function with our defined parameters yields the following outcome.
-#
-# .. figure:: ../demonstrations_v2/simulating_vibronic_dynamics/ElectronicStatePopulationPlot.png
-#    :align: center
-#    :width: 700px
-# 
-#
 # .. _references:
 #
 # References
