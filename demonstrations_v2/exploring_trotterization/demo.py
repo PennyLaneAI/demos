@@ -57,7 +57,7 @@ So, by slicing the total time the simulation is trying to emulate, the dependenc
    :align: center
    :width: 700px
 
-By splitting the Hamiltonian into fragments :math:`H_j`, we are generating a new *effective* Hamiltonian that becomes an approximation of the initial Hamiltonian (a true perspective is that :math:`e^{-i(A_B)t}\approx e^{-iAt}e^{-iBt}`). By carrying out the above Trotterization, we are able to extract an *exact* solution from an *approximate* representation!
+By splitting the Hamiltonian into fragments :math:`H_j`, we are generating a new *effective* Hamiltonian that becomes an approximation of the initial Hamiltonian (a true perspective is that :math:`e^{-i(A_B)t}\approx e^{-iAt}e^{-iBt}`). Carrying out the above Trotterization allows us to carry out an *exact* simulation of an *approximate* representation!
 
 Returning to the example of position and momentum also raises the question of dealing with operators that exist in different bases. Indeed, if the non-commuting operators do not exist in the same basis, a basis change step (such as a `quantum Fourier transform (QFT) <https://pennylane.ai/demos/tutorial_qft>`_) will need to be added between each operator application. This increases the resources required to carry out a step, but further opens the door to simulating realistic systems.
 
