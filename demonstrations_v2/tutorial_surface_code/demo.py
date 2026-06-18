@@ -3,24 +3,21 @@ r"""
 Introducing the Surface Code
 ============================
 
-abstract
+The surface code is the gold standard when it comes to quantum error correction (QEC).
+Despite its early inception in the 90s, it is still relevant in many modern quantum computing architectures today.
+During that timespan, it has evolved quite a bit. We shall give a modern overview of its basic components and principles
+These principles are ubiquitous in modern QEC codes, so this should be a perfect point to start your QEC journey.
 
-Hero image:
+Hero image: (@David Ren please replace here)
 
 .. figure:: _static/hero_illustrations/pennylane-demo-lattice-surgery-hero.png
     :align: center
     :width: 50%
     :target: javascript:void(0)
     
-Text image:
 
-.. figure:: ../_static/demonstration_assets/lattice_surgery/surface_code_qubit1.png
-    :align: center
-    :width: 25%
-    :target: javascript:void(0)
-
-Intro
------
+Introduction
+------------
 
 We are going to take a look at the `planar, two-dimensional, rotated surface code <https://errorcorrectionzoo.org/c/rotated_surface>`__. This is a modern
 variant of the `Kitaev surface code <https://errorcorrectionzoo.org/c/surface>`__ [#kitaev1997]_ [#bravyi1998]_ and not to be confused
@@ -47,7 +44,7 @@ We have :math:`X`- and :math:`Z`-stabilizers with either four or two operators o
     :target: javascript:void(0)
 
 These stabilizers are measured by entangling the data qubits via :math:`\text{CNOT}` gates with the corresponding syndrome qubit and then
-measuring that (see `Fig. 1` in [#surfacecode]_ for the detailed circuits). The measurement result :math:`\pm 1` of a stabilizer measurement indicates whether or not an error has occurred.
+measuring that (see `Fig. 1 <https://arxiv.org/abs/1208.0928>`__ in [#surfacecode]_ for the detailed circuits). The measurement result :math:`\pm 1` of a stabilizer measurement indicates whether or not an error has occurred.
 A :math:`d \times d` surface code qubit can detect up to :math:`d-1` errors, and correct up to :math:`\left\lfloor \tfrac{d-1}{2} \right\rfloor`.
 When more errors occur, they may go unnoticed or corrected in the wrong way, as we will see later.
 
@@ -59,7 +56,8 @@ Before that, we want to stress the difference of the *rotated* surface code (lef
     :width: 80%
     :target: javascript:void(0)
     
-In the central image we see their correspondences.
+In the central image we see their correspondences. Note that the solid pink lines are merely a guide to the eye and do not represent physical connectivity. 
+They are typically used in this way to discern vertex plaquettes operators of :math:`Z` stabilizers, and face plaquette operators of :math:`X` stabilizers.
 They are very similar, but the rotated surface code effectively halves the required qubits from 
 :math:`4d^2 - 4d + 1` to :math:`2d^2-1` for a given code-distance :math:`d`.
 
@@ -70,14 +68,14 @@ Stabilizers
 
 The surface code is a stabilizer code, which means that quantum information is encoded in the joint :math:`+1` eigenspace
 of a set of commuting observables :math:`\mathcal{S}` called *stabilizers*. These stabilizers :math:`S_i \in \mathcal{S}` 
-are faces of four or two :math:`Z` or :math:`X` observables, arranged in a checkerboard formation:
+are faces of four or two :math:`Z` or :math:`X` observables, arranged in a checkerboard formation: (the stabilizer operators are their product)
 
 .. figure:: ../_static/demonstration_assets/surface_code/surface_code_with_stabilizers.png
     :align: center
     :width: 50%
     :target: javascript:void(0)
     
-All these stabilizers commute with each other - that is one of the defining properties. 
+All these stabilizers commute with each other - that is one of their defining properties. 
 That all stabilizers in the surface code depicted here commute can be seen from the fact that generally two unequal and non-trivial Pauli words commute iff they anticommute on an even number of sites.
 Take for example the most simple case, two sites ``[0, 1]``, such that we have :math:`[X_0 X_1, Z_0 Z_1] = 0`.
 
@@ -104,13 +102,15 @@ On top of that, they of course need to satisfy the fundamental anti-commutation 
 On the rotated surface code, a logical :math:`X_L` operator is a string of measurements of data qubits that connects the two
 edges with :math:`X` arches (left and right here). And vice versa for a logical :math:`Z_L` operator, as indicated below.
 
+Multiplying a logical operator by a stabilizer does not change the logical state, 
+so the string on the right hand side is an equivalent logical operator (recall that :math:`Z^2=\mathbb{1}`).
+
 .. figure:: ../_static/demonstration_assets/surface_code/Z_string.png
     :align: center
     :width: 50%
     :target: javascript:void(0)
+    
 
-Multiplying a logical operator by a stabilizer does not change the logical state, 
-so the string on the right hand side is an equivalent logical operator (recall that :math:`Z^2=\mathbb{1}`).
 We can continue to deform the string to arrive at a logical :math:`Z_L` operator that goes along the right edge.
 
 .. figure:: ../_static/demonstration_assets/surface_code/Z_edge.png
@@ -133,8 +133,9 @@ E.g., if a :math:`X` error occurred on the top left data qubit, only the top lef
 Quantum computation via lattice surgery
 ---------------------------------------
 
-There are different variants of how to perform quantum computation with the surface code. Most modern approaches use
-:doc:`lattice surgery </demos/tutorial_lattice_surgery>`.
+There are different variants of how to perform quantum computation with the surface code.
+Braiding is an older approach [#braiding]_, but most modern approaches use
+:doc:`lattice surgery <demos/tutorial_lattice_surgery>` [#Fowler]_ [#latticesurgery]_.
 The concept is relatively simple: To measure :math:`Z_L \otimes Z_L` between two surface code qubits, 
 simply connect them via their :math:`Z` edge (lattice merging), 
 perform a round of error correction, and destructively measure in between the two patches to split them again (lattice splitting).
@@ -148,7 +149,7 @@ This is important because most modern surface code constructions are targeting
 `Pauli based computation <https://pennylane.ai/compilation/pauli-based-computation>`__, where all
 logical operations can be reduced to such Pauli product measurements.
 
-In fact, in :doc:`the Game of Surface Codes </demos/tutorial_game_of_surface_codes>`, a popular framework for thinking about
+In fact, in :doc:`the Game of Surface Codes <demos/tutorial_game_of_surface_codes>` [#Litinski]_, a popular framework for thinking about
 fault tolerant quantum computers, we forget about everything but the :math:`X` and :math:`Z` edges of our qubit patches.
 This results in rectangular boxes with solid (:math:`Z`) and dotted (:math:`X`) edges. 
 The same :math:`Z_L \otimes Z_L` measurement from above can be portrayed as
@@ -158,7 +159,7 @@ The same :math:`Z_L \otimes Z_L` measurement from above can be portrayed as
     :width: 50%
     :target: javascript:void(0)
 
-This diagram simply says, we measure qubits :math:`|q_1\rangle` and :math:`|q_2\rangle` along their :math:`Z` edges via an intermediate auxiliary qubit region.
+This diagram simply says, we measure qubits :math:`|q_1\rangle` and :math:`|q_2\rangle` along their :math:`Z` edges via an intermediate auxiliary qubit region, indicated by the blue connection.
 
 
 Error correction
@@ -187,22 +188,22 @@ This scenario is, however, exponentially more unlikely. A common decoding algori
 that looks for the shortest (and thus most likely) error string and corrects that. In this scenario, the (by far) most likely
 error string is simply the central :math:`Z` error.
 
-Consider the next following situation, where two different weight-2 error strings lead to the same error syndrome.
+Consider the following situation, where two different weight-2 error strings lead to the same error syndrome.
 
 .. figure:: ../_static/demonstration_assets/surface_code/same_weight_two.png
     :align: center
-    :width: 50%
+    :width: 80%
     :target: javascript:void(0)
 
 Here, both errors have the same minimum distance, so the choice for an MWPM decoder is ambiguous. Luckily, it does not matter
-which error we correct, as they are logically equivalent because they are the same error up to a :math:`Z` stabilizer (on the surface between the two defects).
+which error we correct, as they are logically equivalent: they are the same error up to a :math:`Z` stabilizer, in particular the one on the surface between the two defects.
 
-In the following scenario however, we will run into a real problem though.
+In the following scenario, however, we will run into a real problem.
 Both error strings again lead to the same defect syndrome.
 
 .. figure:: ../_static/demonstration_assets/surface_code/fatal_error.png
     :align: center
-    :width: 50%
+    :width: 80%
     :target: javascript:void(0)
 
 Now, if the (less likely) error with three errors occurs, but we correct for the (more likely) second scenario, we overall
@@ -226,7 +227,9 @@ Instead of actually performing the corrective Pauli strings, one typically track
 # Conclusion
 # ----------
 #
-# Conclusion
+# In this demo, we have learned about the basic of modern rotated surface codes from qubit definition, stabilizers, logical operators, computation to error decoding.
+# Most modern quantum error correction codes such as :doc:`qLDPC codes <demos/tutorial_qldpc_codes>`__ work under the same principles, so you should be well-prepared
+# for continueing your QEC journey down this path.
 # 
 #
 # References
@@ -245,32 +248,6 @@ Instead of actually performing the corrective Pauli strings, one typically track
 #     Sergey B. Bravyi, A. Yu. Kitaev,
 #     "Quantum codes on a lattice with boundary",
 #     `arXiv:quant-ph/9811052 <https://arxiv.org/abs/quant-ph/9811052>`__, 1998
-# 
-# .. [#dennis2002]
-#
-#     Eric Dennis, Alexei Kitaev, Andrew Landahl, John Preskill,
-#     "Topological quantum memory",
-#     `arXiv:quant-ph/0110143 <https://arxiv.org/abs/quant-ph/0110143>`__, 2002
-# 
-# .. [#fowler2012]
-#
-#     Austin G. Fowler, Matteo Mariantoni, John M. Martinis, Andrew N. Cleland,
-#     "Surface codes: Towards practical large-scale quantum computation",
-#     `arXiv:1208.0928 <https://arxiv.org/abs/1208.0928>`__, 2012
-# 
-# .. [#acharya2022]
-#
-#     Rajeev Acharya, Igor Aleiner, Richard Allen, et al. (Google Quantum AI),
-#     "Suppressing quantum errors by scaling a surface code logical qubit",
-#     `arXiv:2207.06431 <https://arxiv.org/abs/2207.06431>`__, 2022
-# 
-# .. [#acharya2024]
-#
-#     Rajeev Acharya, Leyla Aghababaie-Beni, Igor Aleiner, et al. (Google Quantum AI),
-#     "Quantum error correction below the surface code threshold",
-#     `arXiv:2408.13687 <https://arxiv.org/abs/2408.13687>`__, 2024
-#
-# My old references:
 #
 # .. [#surfacecode]
 #
@@ -278,13 +255,11 @@ Instead of actually performing the corrective Pauli strings, one typically track
 #     "Surface codes: Towards practical large-scale quantum computation",
 #     `arXiv:1208.0928 <https://arxiv.org/abs/1208.0928>`__, 2012
 #
-#
 # .. [#braiding]
 #
 #     Robert Raussendorf, Jim Harrington, Kovid Goyal,
 #     "Topological fault-tolerance in cluster state quantum computation",
 #     `arXiv:quant-ph/0703143 <https://arxiv.org/abs/quant-ph/0703143>`__, 2007
-#
 #
 # .. [#latticesurgery]
 #
@@ -292,32 +267,16 @@ Instead of actually performing the corrective Pauli strings, one typically track
 #     "Surface code quantum computing by lattice surgery",
 #     `arXiv:1111.4022 <https://arxiv.org/abs/1111.4022>`__, 2011
 #
-#
 # .. [#Fowler]
 #
 #     Austin G. Fowler, Craig Gidney
 #     "Low overhead quantum computation using lattice surgery"
 #     `arXiv:1808.06709 <https://arxiv.org/abs/1808.06709>`__, 2018.
 #
-#
 # .. [#Litinski]
 #
 #     Daniel Litinski
 #     "A Game of Surface Codes: Large-Scale Quantum Computing with Lattice Surgery"
 #     `arXiv:1808.02892 <https://arxiv.org/abs/1808.02892v3>`__, 2018.
-#
-#
-# .. [#Chamberland]
-#
-#     Christopher Chamberland, Earl T. Campbell
-#     "Universal quantum computing with twist-free and temporally encoded lattice surgery",
-#     `arXiv:2109.02746 <https://arxiv.org/abs/2109.02746>`__, 2021
-#
-#
-# .. [#Litinski2]
-#
-#     Daniel Litinski, Felix von Oppen
-#     "Lattice Surgery with a Twist: Simplifying Clifford Gates of Surface Codes",
-#     `arXiv:1709.02318 <https://arxiv.org/abs/1709.02318>`__, 2017
-#
+# 
 #
