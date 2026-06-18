@@ -281,7 +281,7 @@ circuit(x)  # Executing the quantum circuit
 # of simulation efficiency, so choosing the optimal cut reduces post-processing
 # overhead and improves simulation efficiency.
 #
-# Automatic cut placment is a PennyLane functionality that aids us in
+# Automatic cut placement is a PennyLane functionality that aids us in
 # finding the optimal cut that fragments a circuit such that
 # the classical post-processing overhead is minimized. The main algorithm
 # behind automatic cut placement is `graph partitioning <https://kahypar.org/>`__

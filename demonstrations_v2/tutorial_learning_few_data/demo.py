@@ -29,7 +29,7 @@ perfectly fit the training data admit a low bias at the cost of a higher varianc
 test data. In the classical machine learning community, this trade-off has been extensively
 studied and has led to optimization techniques that favour generalization, for example, by regularizing models via
 their variance [#NamkoongVariance]_.
-Below, we see a canoncial example of this trade-off, with a model having low bias, but high variance
+Below, we see a canonical example of this trade-off, with a model having low bias, but high variance
 and therefore high generalization error. The low variance model, on the other hand, has a higher 
 bias but generalizes better.
 

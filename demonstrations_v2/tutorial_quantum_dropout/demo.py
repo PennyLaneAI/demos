@@ -129,7 +129,7 @@ def var_ansatz(
     - keep_rotation: list of lists. There is one list per each `inner_layer`. 
                     In each list there are indexes of the rotations that we want to apply. 
                     Some of these values may be substituted by -1 value 
-                    which means that the rotation gate wont be applied (dropout). 
+                    which means that the rotation gate won't be applied (dropout). 
     """
 
     # the length of `rotations` defines the number of inner layers
@@ -140,7 +140,7 @@ def var_ansatz(
     counter = 0
     # keep_rotations contains a list per each inner_layer
     for rots in keep_rotation:
-        # we cicle over the elements of the lists inside keep_rotation
+        # we cycle over the elements of the lists inside keep_rotation
         for qb, keep_or_drop in enumerate(rots):
             rot = rotations[counter]  # each inner layer can have a different rotation
 
@@ -266,7 +266,7 @@ def make_dropout(key):
     for lay in range(layers):
         # each layer has prob p_L=layer_drop_rate of being dropped
         # according to that for every layer we sample
-        # if we have to appy dropout in it or not
+        # if we have to apply dropout in it or not
         out = jax.random.choice(
             key, jnp.array(range(2)), p=jnp.array([1 - layer_drop_rate, layer_drop_rate])
         )
@@ -279,7 +279,7 @@ def make_dropout(key):
     # we make list of indexes corresponding to the rotations gates
     # that are kept in the computation during a single train step
     for i in range(layers):
-        # each list is divded in layers and then in "inner layers"
+        # each list is divided in layers and then in "inner layers"
         # this is strictly related to the QNN architecture that we use
         keep_rot_layer = [list(range((n_qubits))) for j in range(1, inner_layers + 1)]
 
@@ -484,7 +484,7 @@ for layer_drop_rate, rot_drop_rate in drop_rates:
         assert len(y.shape) == 1  # y must be an array
         assert X.shape[0] == y.shape[0]  # compatibility check
 
-        # parameters initialization with gaussian ditribution
+        # parameters initialization with gaussian distribution
         initial_params = jax.random.normal(key, shape=(layers * params_per_layer,))
         # update the random key
         key = jax.random.split(key)[0]

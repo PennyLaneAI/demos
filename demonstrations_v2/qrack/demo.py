@@ -383,7 +383,7 @@ def bench(n, results):
 
     return results
 
-# Make sure OpenCL has been initalized in PyQrack:
+# Make sure OpenCL has been initialized in PyQrack:
 bench(6, results)
 
 results = {}

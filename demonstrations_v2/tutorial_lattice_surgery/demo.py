@@ -63,7 +63,7 @@ of each logical qubit patch, indicated here by the red line exemplarily for one 
 
 This is called a transversal operation because the logical operation just corresponds to performing the physical operation on each qubit.
 For a two-qubit gate, this is problematic on hardware with only local (physical) connectivity (like those built of :doc:`superconducting qubits <demos/tutorial_sc_qubits>`).
-In that case, we want to perform CNOT gates non-transversally to accomodate the connectivity constraints of such hardware platforms.
+In that case, we want to perform CNOT gates non-transversally to accommodate the connectivity constraints of such hardware platforms.
 In the early days, this was achieved via braiding [#braiding]_, 
 a concept commonly encountered in algebraic topology.
 In this setting, qubits are encoded by defects in the code, and operations via continuous deformations of the code.

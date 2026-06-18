@@ -139,7 +139,7 @@ def add_4_6qubit_uniforms():
     for reg in regs:
         for j in range(6):
             qp.Hadamard(reg[-j-1])
-    # calcualte sum
+    # calculate sum
     draper_adder(regs[0], regs[3][-6:], kind="half")
     draper_adder(regs[1], regs[3][-7:], kind="half", include_iqft=False)
     draper_adder(regs[2], regs[3], include_qft=False) # skip I=QFT+iQFT, a small optimization

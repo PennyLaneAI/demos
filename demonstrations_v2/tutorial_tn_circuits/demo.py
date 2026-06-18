@@ -185,7 +185,7 @@ def circuit(template_weights):
 # To ensure that the weights of the block and ``template_weights``
 # sent to the :class:`~pennylane.MPS` template are compatible, we use
 # the :class:`~pennylane.StronglyEntanglingLayers.shape` function and
-# replicate the elemnts for the number of expected blocks. Since this example
+# replicate the elements for the number of expected blocks. Since this example
 # will have three blocks, we replicate the elements three times using ``[list]*3``.
 # The resulting circuit is illustrated in the figure below the code.
 # Note that this circuit retains the layout of an MPS,

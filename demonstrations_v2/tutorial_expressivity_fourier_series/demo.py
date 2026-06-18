@@ -797,7 +797,7 @@ plt.show()
 #
 # Ref. [#schuld2020]_ mentions that a phase rotation in
 # continuous-variable quantum computing has a spectrum that supports *all*
-# Fourier frequecies. To play with this model, we finally show you the
+# Fourier frequencies. To play with this model, we finally show you the
 # code for a continuous-variable circuit. For example, to see its Fourier
 # coefficients run the cell below, and then re-run the two cells above.
 #

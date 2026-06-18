@@ -3,7 +3,7 @@ Learning to learn with quantum neural networks
 ==============================================
 
 .. meta::
-    :property="og:description": Use a classical recurrent neural network to initilize the parameters of a variational quatum algorithm.
+    :property="og:description": Use a classical recurrent neural network to initialize the parameters of a variational quatum algorithm.
     :property="og:image": ../_static/demonstration_assets/learning2learn/thumbnail.png
 
 .. related::

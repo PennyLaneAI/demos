@@ -3,7 +3,7 @@ An equivariant graph embedding
 ==============================
 
 .. meta::
-    :property="og:description": Find out more about how to embedd graphs into quantum states.
+    :property="og:description": Find out more about how to embed graphs into quantum states.
     :property="og:image": https://pennylane.ai/qml/_static/demonstration_assets/thumbnail_tutorial_equivariant_graph_embedding.png
 
 .. related::
@@ -25,7 +25,7 @@ An equivariant graph embedding
 # For example, the graph in the image above is represented by each of the two equivalent adjacency matrices.
 # The top matrix can be transformed into the bottom matrix
 # by swapping the first row with the third row, then swapping the third column with the first column, then the
-# new first row with the second, and finally the first colum with the second.
+# new first row with the second, and finally the first column with the second.
 #
 # But the number of such permutations grows factorially with the number of nodes in the graph, which
 # is even worse than an exponential growth!
@@ -213,7 +213,7 @@ import pennylane as qp
 
 def perm_equivariant_embedding(A, betas, gammas):
     """
-    Ansatz to embedd a graph with node and edge weights into a quantum state.
+    Ansatz to embed a graph with node and edge weights into a quantum state.
     
     The adjacency matrix A contains the edge weights on the off-diagonal, 
     as well as the node attributes on the diagonal.
