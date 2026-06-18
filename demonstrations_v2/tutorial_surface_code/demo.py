@@ -52,13 +52,14 @@ A :math:`d \times d` surface code qubit can detect up to :math:`d-1` errors, and
 When more errors occur, they may go unnoticed or corrected in the wrong way, as we will see later.
 
 We now want to go into more detail and expand on each of these components. 
-Before that, we want to stress the difference of the *rotated* surface code to the original planar surface code:
+Before that, we want to stress the difference of the *rotated* surface code (left) to the original planar surface code (right):
 
-.. figure:: ../_static/demonstration_assets/lattice_surgery/surface_code_qubit2.png
+.. figure:: ../_static/demonstration_assets/surface_code/rotated.png
     :align: center
     :width: 50%
     :target: javascript:void(0)
-
+    
+In the central image we see their correspondences.
 They are very similar, but the rotated surface code effectively halves the required qubits from 
 :math:`4d^2 - 4d + 1` to :math:`2d^2-1` for a given code-distance :math:`d`.
 
