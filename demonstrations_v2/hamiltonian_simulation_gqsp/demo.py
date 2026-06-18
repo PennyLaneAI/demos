@@ -242,7 +242,6 @@ plt.show()
 # its :math:`\lambda t`, then floors at machine precision; larger :math:`\lambda t` needs a larger
 # :math:`K` to reach the same accuracy.
 #
-###############################################################################
 # What we found
 # -------------
 #
