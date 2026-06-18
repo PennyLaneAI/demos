@@ -527,48 +527,6 @@ for fragment_data in coeff_data:
 #
 # Since we so diligently built up our functionality under the guidance of Motlagh et al.'s innovations, we are well equipped to carry this out smoothly! 
 
-#Trotterization
-time_steps = 10
-k = 2
-n = 1
-num_modes = 1
-delta = 0.05
-mode_list = [0]
-omega = [1]
-coeff_data = [
-    #  |0>    |1>
-    [ 1.0,   0.0 ],   # Fragment 0: Diagonal potential energy terms
-    [-1.3,   1.3 ]    # Fragment 1: Off-diagonal electronic coupling terms
-]
-dt = 0.5
-#time_steps = int(total_time/dt)
-
-#Initialize and label registers
-regs = WirePrepKDC(num_modes, k, n, delta)
-print("hey")
-total_wires = n+(num_modes*k)+(3*int(math.ceil(np.log2(1/delta))))+1+(2*k)
-
-electron_wires = regs["electrons"]
-state_wires = [regs[f"mode_{i}"] for i in range(num_modes)]
-gradient_wires = regs["gradient"]
-coeff_wires = regs["coefficients"]
-scratch_wires = regs["scratch"]
-cache_wires = regs["cache"]
-
-#Introduce scaling factor and reformat for compatibility with QROM
-width = len(coeff_wires)
-max_binary = 2**width
-Delta = np.sqrt(2*np.pi/(2**k))
-scale = Delta/(2*np.pi) 
-
-time_coeffs = []
-for fragment_data in coeff_data:
-    fragment_row = []
-    for power, val in enumerate(fragment_data):
-        v = int(np.round(val * dt * max_binary * (Delta**power) / (2*np.pi))) % max_binary
-        fragment_row.append(format(v, f"0{width}b"))   
-    time_coeffs.append(fragment_row)                    
-
 #Define argument lists
 kinetic_args = [omega, num_modes, state_wires, gradient_wires, coeff_wires, scratch_wires, cache_wires]
 potential_args = [LoadCoeffsKDC, mode_list, time_coeffs, state_wires, electron_wires, gradient_wires, coeff_wires, cache_wires, scratch_wires]
@@ -588,7 +546,7 @@ def ElectronPopVibronicsSimulation(steps, gradient_wires, StatePrepFunc, Coupler
     initial_state = StatePrepFunc(k)
     for wire in state_wires:
         qp.StatePrep(state = initial_state, wires = wire)
-        
+
     #Trotterize
     for t in range(steps):
         TrotterStepKDC(
