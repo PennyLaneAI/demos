@@ -226,7 +226,7 @@ Instead of actually performing the corrective Pauli strings, one typically track
 # ----------
 #
 # In this demo, we have learned about the basic of modern rotated surface codes from qubit definition, stabilizers, logical operators, computation to error decoding.
-# Most modern quantum error correction codes such as :doc:`qLDPC codes <demos/tutorial_qldpc_codes>`__ work under the same principles, so you should be well-prepared
+# Most modern quantum error correction codes such as :doc:`qLDPC codes <demos/tutorial_qldpc_codes>` work under the same principles, so you should be well-prepared
 # for continueing your QEC journey down this path.
 # 
 #
