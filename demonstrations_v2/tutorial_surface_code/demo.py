@@ -120,6 +120,15 @@ We can continue to deform the string to arrive at a logical :math:`Z_L` operator
 This is why the left and right edge are called :math:`Z` edges, which may be confusing because they contain :math:`X` arches.
 The opposite is true for the top and bottom :math:`X` edges with :math:`Z` arches.
 
+These arches define the logical operators, but they are also crucial from a mathematical point of view and restrict our
+:math:`d \times d` patch to exactly one logical qubit. That is because the number of encoded qubits :math:`k` is given by
+the difference of data qubits :math:`n` and independent stabilizers :math:`s`, so :math:`k = n - s`. 
+For the :math:`5 \times 5` patch we are considering, we have :math:`n=25` data qubits and :math:`16` weight-4 stabilizers.
+Together with the :math:`8` arches we get :math:`k = 25 - 16 - 8 = 1`.
+
+The arches are also important for coverage of all possible errors. 
+E.g., if a :math:`X` error occured on the top left data qubit, only the top left :math:`Z` arch would catch it.
+
 Quantum computation via lattice surgery
 ---------------------------------------
 
@@ -154,13 +163,57 @@ This diagram simply says, we measure qubits :math:`|q_1\rangle` and :math:`|q_2\
 Error correction
 ----------------
 
-decoding
 
-FTQC with the Surface Code
---------------------------
+Let us first consider what actually happens if a single :math:`X` or :math:`Z` error occurs on one of the data qubits.
+Before the error, each stabilizer measurement returns :math:`+1`, confirming the underlying state is in the correct code space.
+Now let us assume the central data qubit experiences a :math:`Z` error. The surrounding :math:`Z` stabilizers are unaffected by it, but
+the two :math:`X` stabilizers yield a :math:`-1` measurement - a *defect*.
 
-lattice surgery
+.. figure:: ../_static/demonstration_assets/surface_code/Z_error.png
+    :align: center
+    :width: 50%
+    :target: javascript:void(0)
 
+The tricky part about error correction is that we are only ever given the information of the syndrome measurements and do not
+know what *actually* has physically happened. The same error syndromes could have also occured due to, e.g., the following error pattern.
+
+.. figure:: ../_static/demonstration_assets/surface_code/unlikely_error.png
+    :align: center
+    :width: 50%
+    :target: javascript:void(0)
+
+This scenario is, however, exponentially more unlikely. A common decoding algorithm is minimum-weight perfect matching (MWPM),
+that looks for the shortest (and thus most likely) error string and corrects that. In this scenario, the (by far) most likely
+error string is simply the central :math:`Z` error.
+
+Consider the next following situation, where two different weight-2 error strings lead to the same error syndrome.
+
+.. figure:: ../_static/demonstration_assets/surface_code/same_weight_two.png
+    :align: center
+    :width: 50%
+    :target: javascript:void(0)
+
+Here, both errors have the same minimum distance, so the choice for an MWPM decoder is ambiguous. Luckily, it does not matter
+which error we correct, as they are logically equivalent because they are the same error up to a :math:`Z` stabilizer (on the surface between the two defects).
+
+In the following scenario however, we will run into a real problem though.
+Both error strings again lead to the same defect syndrome.
+
+.. figure:: ../_static/demonstration_assets/surface_code/fatal_error.png
+    :align: center
+    :width: 50%
+    :target: javascript:void(0)
+
+Now, if the (less likely) error with three errors occurs, but we correct for the (more likely) second scenario, we overall
+perform a logical :math:`Z_L` operation, and introduce an undetected error in our computation.
+This is a manifestation of the fact that a distance :math:`d=5` rotated surface code qubit can only correct
+
+.. math:: t = \left\lfloor \frac{n-1}{2} \right\rfloor = 2
+
+errors deterministically.
+
+Error correction is continuously performed during computation with one clock cycle corresponding to measuring all stabilizers once.
+Instead of actually performing the corrective Pauli strings, one typically tracks them in software and multiplies them retrospectively with the final measurement results.
 
 
 """
