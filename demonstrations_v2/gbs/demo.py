@@ -75,7 +75,7 @@ This property can be observed in simple interference experiments such as the
 If two single photons are interfered on a balanced beamsplitter, they will both emerge at
 the same output port—there is zero probability that they will emerge at separate outputs.
 This is a simple but notable quantum property of light; if electrons were brought
-together in a similar experiement, they would always appear at separate output ports.
+together in a similar experiment, they would always appear at separate output ports.
 
 Gaussian Boson Sampling [#hamilton2017]_ is, in fact, a member of a larger family of
 "Boson Sampling" algorithms,

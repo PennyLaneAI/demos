@@ -97,7 +97,7 @@ class MMD:
 
 
 ######################################################################
-# Defining classes helps in caching the kernel instead of calculating it everytime to find the
+# Defining classes helps in caching the kernel instead of calculating it every time to find the
 # expectation value. Next up, the ``QCBM`` holds the definition for the quantum circuit born machine
 # and the objective function to minimize.
 #

@@ -130,8 +130,7 @@ print(a)
 # QuantumFloat ``a``, and the corresponding values are the measurement probabilities. By applying the
 # Hadamard to ``a``, we create a superposition of all the values our QuantumFloat can hold.
 #
-# Recalling the demo on `How to use quantum arithmetic
-# operators <https://pennylane.ai/qml/demos/tutorial_how_to_use_quantum_arithmetic_operators>`__, here
+# Recalling the demo on :doc:`How to use quantum arithmetic operators <demos/tutorial_how_to_use_quantum_arithmetic_operators>`, here
 # is how you can do simple arithmetic operations (and gates) out of the gate:
 
 
@@ -248,7 +247,7 @@ print(comparison.qs.statevector())
 #     computation, while the quantum computer stays in superposition. This computation has to happen much
 #     faster than the coherence time, so performing that computation by waiting for the Python interpreter
 #     is impossible. Real-time computations are essential for many techniques in error correction, such as
-#     syndrome decoding or `magic state distillation <https://pennylane.ai/qml/demos/tutorial_magic_state_distillation>`__. On the algorithmic level, real-time computations have also
+#     syndrome decoding or :doc:`magic state distillation <demos/tutorial_magic_state_distillation>`. On the algorithmic level, real-time computations have also
 #     become more popular since they are so much cheaper than the quantum equivalent. Examples are
 #     Gidney’s adder or repeat until success protocols like HHL.
 #
@@ -265,8 +264,7 @@ print(comparison.qs.statevector())
 # QPE in Qrisp
 # ~~~~~~~~~~~~
 #
-# For deepening your understanding of QPE, we would like to refer you to the `Intro
-# to Quantum Phase Estimation demo <https://pennylane.ai/qml/demos/tutorial_qpe>`__, and instead focus on how QPE is implemented
+# For deepening your understanding of QPE, we would like to refer you to the :doc:`Intro to Quantum Phase Estimation demo <demos/tutorial_qpe>`, and instead focus on how QPE is implemented
 # in Qrisp, and later showcase how to use it in the HHL implementation.
 #
 # .. admonition:: Quantum Phase Estimation (QPE)
@@ -422,7 +420,7 @@ main()
 # .. math:: \begin{align}|x\rangle&=A^{-1}|b\rangle\\&=\bigg(\sum_{i=0}^{N-1}\lambda_i^{-1}|u_i\rangle\langle u_i|\bigg)\sum_j\beta_j|u_j\rangle\\&=\sum_{i=0}^{N-1}\lambda_i^{-1}\beta_i|u_i\rangle\end{align}
 #
 # You might wonder why we can’t just apply :math:`A^{-1}` directly to :math:`|b\rangle`? This is
-# because, in general, the matix :math:`A` is not unitary. However, we will circumnavigate this by
+# because, in general, the matrix :math:`A` is not unitary. However, we will circumnavigate this by
 # exploiting that the Hamiltonian evolution :math:`U=e^{itA}` is unitary for a Hermitian matrix
 # :math:`A`. And this brings us to the HHL algorithm.
 #
@@ -567,12 +565,12 @@ def HHL_encoding(b, hamiltonian_evolution, n, precision):
 
 
 ######################################################################
-# The probability of success could be further increased by oblivious `amplitude amplification <https://pennylane.ai/qml/demos/tutorial_intro_amplitude_amplification>`__ to achieve
+# The probability of success could be further increased by oblivious :doc:`amplitude amplification <demos/tutorial_intro_amplitude_amplification>` to achieve
 # optimal asymptotic scaling.
 #
 # Finally, we put all things together into the ``HHL`` function.
 #
-# This function takes the follwoing arguments:
+# This function takes the following arguments:
 #
 # - ``b``: The vector :math:`b`.
 # - ``hamiltonian_evolution``: A function performing hamiltonian_evolution :math:`e^{itA}`.

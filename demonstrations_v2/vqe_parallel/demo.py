@@ -368,7 +368,7 @@ plt.plot(
     linewidth=2.2,
     marker="d",
     color="blue",
-    label="paralell and optimized",
+    label="parallel and optimized",
 )
 plt.legend(fontsize=12)
 plt.title("Potential energy surface for molecular hydrogen", fontsize=12)

@@ -38,7 +38,7 @@ Notice that this state is obtained by applying a T gate to the :math:`|+\rangle`
 (the +1 eigenstate of the Pauli X operator).  
 Using **magic state injection** (see the circuit illustration below), we can apply a T operation to an 
 arbitrary single-qubit state :math:`|\psi\rangle` (wire 0 in the code). A step-by-step breakdown of this process 
-can be found in this PennyLane `glossary page <https://pennylane.ai/qml/glossary/what-are-magic-states>`__.
+can be found in this PennyLane `glossary page <https://pennylane.ai/glossary/what-are-magic-states>`__.
 
 .. figure:: _static/demonstration_assets/magic_states/magic-state-injection.png
     :alt: Magic state injection protocol for an H magic state
@@ -119,7 +119,7 @@ print(magic_state_injection_circuit(np.pi / 3))
 #    operations and Pauli-based measurements to obtain the same states in an encoded form.  
 # 2. **Encoding:** Process several copies of these logical qubits using Clifford operations to map them onto an 
 #    error-correcting (outer) code.
-# 3. **Check:** Perform a syndrome measurement by measuring certain `stabilizers <https://pennylane.ai/qml/demos/tutorial_stabilizer_codes>`__
+# 3. **Check:** Perform a syndrome measurement by measuring certain :doc:`stabilizers <demos/tutorial_stabilizer_codes>`
 #    across this multi-block structure.
 # 4. **Results:** Decide whether to keep or discard the state based on the check results, which indicate 
 #    if the state remains in the "clean" codespace.
@@ -133,7 +133,7 @@ print(magic_state_injection_circuit(np.pi / 3))
 # protected by an inner surface code---are further encoded into a single block of a Reed-Muller 
 # code (outer code) to distill just one improved magic state.
 #
-# See this `demo <https://pennylane.ai/qml/demos/tutorial_magic_state_distillation>`__ 
+# See this :doc:`demo <demos/tutorial_magic_state_distillation>` 
 # for an implementation of a distillation protocol using Catalyst. 
 #
 # Magic state cultivation
@@ -148,7 +148,7 @@ print(magic_state_injection_circuit(np.pi / 3))
 # specific fidelities required for large-scale quantum computations as efficiently as possible; 
 # this technique prioritizes engineering efficiency over theoretical elegance or asymptotic behavior.
 # The authors state that their MSC protocol achieves error rates ranging from :math:`10^{-4}`
-# to :math:`10^{-9}` reducing the `spacetime <https://pennylane.ai/qml/demos/tutorial_active_volume>`__ 
+# to :math:`10^{-9}` reducing the :doc:`spacetime <demos/tutorial_active_volume>` 
 # costs by a factor of ten compared to previous preparation methods. 
 #
 # The protocol consists of four primary stages:
@@ -163,7 +163,7 @@ print(magic_state_injection_circuit(np.pi / 3))
 #    To preserve this high fidelity, the state needs to *escape*
 #    into a much larger code as quickly as possible, typically via `grafting <https://arxiv.org/abs/2409.17595>`__, 
 #    `code morphing <https://arxiv.org/abs/2112.01446>`__ or 
-#    `lattice surgery <https://pennylane.ai/qml/demos/tutorial_lattice_surgery>`__.
+#    :doc:`lattice surgery <demos/tutorial_lattice_surgery>`.
 # 4. **Decoding:** Determine whether to accept the final state using standard error correction. Since the circuit 
 #    is now too large for efficient post-selection, a decoder computes a `complementary gap <https://arxiv.org/abs/2312.04522>`__. 
 #    This metric acts as a confidence score for the final state, allowing the system to accept or discard the state accordingly.

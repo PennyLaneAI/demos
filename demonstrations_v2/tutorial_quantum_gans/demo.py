@@ -35,7 +35,7 @@ Quantum GANs
 ######################################################################
 # The goal of generative adversarial networks (GANs) [#goodfellow2014]_ is to generate
 # data that resembles the original data used in training. To achieve this,
-# we train two neural networks simulatenously: a generator and a
+# we train two neural networks simultaneously: a generator and a
 # discriminator. The job of the generator is to create fake data which
 # imitates the real training dataset. On the otherhand, the discriminator
 # acts like a detective trying to discern real from fake data. During the
@@ -100,14 +100,14 @@ Quantum GANs
 # by Huang et al. [#huang2020]_: the patch method. This method uses several quantum
 # generators, with each sub-generator, :math:`G^{(i)},` responsible for
 # constructing a small patch of the final image. The final image is
-# contructed by concatenting all of the patches together as shown below.
+# constructed by concatenting all of the patches together as shown below.
 #
 # .. figure:: ../_static/demonstration_assets/quantum_gans/patch.jpeg
 #   :width: 90% 
 #   :alt: quantum_patch_method
 #   :align: center
 #
-# The main advantage of this method is that it is particulary suited to
+# The main advantage of this method is that it is particularly suited to
 # situations where the number of available qubits are limited. The same
 # quantum device can be used for each sub-generator in an iterative
 # fashion, or execution of the generators can be parallelised across
@@ -316,7 +316,7 @@ class Discriminator(nn.Module):
 #
 # where :math:`U_{G}(\theta)` represents the overall unitary of the
 # parameterised layers. Let us inspect the state when we take a partial
-# measurment, :math:`\Pi,` and trace out the ancillary subsystem,
+# measurement, :math:`\Pi,` and trace out the ancillary subsystem,
 # :math:`\mathcal{A},`
 #
 # .. math:: \rho(\boldsymbol{z}) = \frac{\text{Tr}_{\mathcal{A}}(\Pi \otimes \mathbb{I} |\Psi(z)\rangle \langle \Psi(\boldsymbol{z})|) }{\text{Tr}(\Pi \otimes \mathbb{I} |\Psi(\boldsymbol{z})\rangle \langle \Psi(\boldsymbol{z})|))} = \frac{\text{Tr}_{\mathcal{A}}(\Pi \otimes \mathbb{I} |\Psi(\boldsymbol{z})\rangle \langle \Psi(\boldsymbol{z})|) }{\langle \Psi(\boldsymbol{z})| \Pi \otimes \mathbb{I} |\Psi(\boldsymbol{z})\rangle}
@@ -337,7 +337,7 @@ class Discriminator(nn.Module):
 # **4) Post Processing**
 # 
 #
-# Due to the normalisation constraint of the measurment, all elements in 
+# Due to the normalisation constraint of the measurement, all elements in 
 # :math:`\boldsymbol{g}^{(i)}` must sum to one. This is
 # a problem if we are to use :math:`\boldsymbol{g}^{(i)}` as the pixel
 # intensity values for our patch. For example, imagine a hypothetical
@@ -495,7 +495,7 @@ while True:
         data = data.reshape(-1, image_size * image_size)
         real_data = data.to(device)
 
-        # Noise follwing a uniform distribution in range [0,pi/2)
+        # Noise following a uniform distribution in range [0,pi/2)
         noise = torch.rand(batch_size, n_qubits, device=device) * math.pi / 2
         fake_data = generator(noise)
 

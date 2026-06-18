@@ -45,7 +45,7 @@ statistics of mid-circuit measurements <demos/tutorial_how_to_collect_mcm_stats>
 # performed within quantum circuits, i.e., mid-circuit measurements, and how to realize
 # them in PennyLane.
 #
-# Bear with us, we will briefly look at a mathematicaly definition for
+# Bear with us, we will briefly look at a mathematically definition for
 # measurements but then turn to practical examples and hands-on calculations.
 #
 # Mathematical description
@@ -458,7 +458,7 @@ print(f"<X₀> with initial state |->: {test_t_gadget('-'):4.1f}")
 #
 #     Daniel Gottesman
 #     "Theory of fault-tolerant quantum computation", Physical Review A, **57**, 127,
-#     `open acces at Caltech <https://authors.library.caltech.edu/3850/1/GOTpra98.pdf>`__, 1998.
+#     `open access at Caltech <https://authors.library.caltech.edu/3850/1/GOTpra98.pdf>`__, 1998.
 #
 # .. [#zhou]
 #

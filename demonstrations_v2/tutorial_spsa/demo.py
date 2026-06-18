@@ -34,7 +34,7 @@ Background
 ----------
 
 In PennyLane, quantum gradients on hardware are commonly computed using
-`parameter-shift rules <https://pennylane.ai/qml/glossary/parameter_shift.html>`_.
+`parameter-shift rules <https://pennylane.ai/glossary/parameter_shift>`_.
 Computing quantum gradients involves evaluating the partial derivative of the quantum
 function with respect to every free parameter. These partial derivatives are then used
 to apply the chain rule to compute the gradient of the quantum circuit. For qubit

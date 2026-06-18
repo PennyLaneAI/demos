@@ -30,7 +30,7 @@ Post-variational quantum neural networks
 # computer. :doc:`Variational algorithms </glossary/variational_circuit/>` are a prerequisite to this article.
 #
 # However, many ansätze in the variational strategy face the barren plateau problem [#mcclean2018barren]_, which leads to difficulty in convergence
-# using :doc:`gradient-based </glossary/quantum_gradient/>` optimization techniques. Due to the general difficulty and lack of training gurantees
+# using :doc:`gradient-based </glossary/quantum_gradient/>` optimization techniques. Due to the general difficulty and lack of training guarantees
 # of variational algorithms, here we will develop an alternative training strategy that does not involve tuning
 # the quantum circuit parameters. However, we continue to use the variational method as the
 # theoretical basis for optimisation.
@@ -668,7 +668,7 @@ for order in range(1, 4):
 
 ######################################################################
 # Upon obtaining our hybrid results, we may now combine these results with that of the observable
-# construction and ansatz expansion menthods, and plot all the post-variational strategies together on
+# construction and ansatz expansion methods, and plot all the post-variational strategies together on
 # a heatmap.
 #
 

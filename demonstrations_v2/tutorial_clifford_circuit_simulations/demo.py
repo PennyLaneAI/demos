@@ -370,7 +370,7 @@ snapshots = qp.snapshots(state_at_each_step(circuit))()
 # from :math:`+Z_0` to :math:`-Z_0,` while keeping the destabilizer generators the same.
 #
 
-print("Intial State: ", tableau_to_pauli_rep(snapshots[0]))
+print("Initial State: ", tableau_to_pauli_rep(snapshots[0]))
 print("Applying X(0): ", tableau_to_pauli_rep(snapshots[1]))
 
 ######################################################################

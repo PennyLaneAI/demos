@@ -39,7 +39,7 @@ r"""Dropout for Quantum Neural Networks
 # Recently, it has been shown that the use of overparametrized QNN models
 # changes the optimization landscape by removing lots of local minima [#Kiani2020]_, [#Larocca2023]_. On the one hand, this increased number of
 # parameters leads to faster and easier training, but on the other hand, it may drive
-# the model to overfit the data. This is also strictly related to the `repeated encoding <https://pennylane.ai/qml/demos/tutorial_expressivity_fourier_series/>`__ of classical
+# the model to overfit the data. This is also strictly related to the :doc:`repeated encoding <demos/tutorial_expressivity_fourier_series>` of classical
 # data to achieve nonlinearity in the computation. This is why, inspired from classical DNNs, one
 # can think of applying some sort of dropout to QNNs. This would correspond to randomly dropping some
 # (groups of) parameterized gates during training to achieve better generalization.
@@ -71,7 +71,7 @@ np.random.seed(seed=seed)
 # Just In Time (JIT) compilation. The drawback is that the definition of the variational ansatz becomes a
 # little elaborated, since JAX has its own language for conditional statements. For this purpose we
 # define two functions ``true_cond`` and ``false_cond`` to work with ``jax.lax.cond```, which is the JAX
-# conditional statement. See this `demo <https://pennylane.ai/qml/demos/tutorial_How_to_optimize_QML_model_using_JAX_and_JAXopt/>`__
+# conditional statement. See this :doc:`demo <demos/tutorial_How_to_optimize_QML_model_using_JAX_and_JAXopt>`
 # for additional insights on how to optimize QNNs with JAX.
 #
 # Practically speaking, rotation dropout will be performed by passing a list to the ansatz.
@@ -129,7 +129,7 @@ def var_ansatz(
     - keep_rotation: list of lists. There is one list per each `inner_layer`. 
                     In each list there are indexes of the rotations that we want to apply. 
                     Some of these values may be substituted by -1 value 
-                    which means that the rotation gate wont be applied (dropout). 
+                    which means that the rotation gate won't be applied (dropout). 
     """
 
     # the length of `rotations` defines the number of inner layers
@@ -140,7 +140,7 @@ def var_ansatz(
     counter = 0
     # keep_rotations contains a list per each inner_layer
     for rots in keep_rotation:
-        # we cicle over the elements of the lists inside keep_rotation
+        # we cycle over the elements of the lists inside keep_rotation
         for qb, keep_or_drop in enumerate(rots):
             rot = rotations[counter]  # each inner layer can have a different rotation
 
@@ -266,7 +266,7 @@ def make_dropout(key):
     for lay in range(layers):
         # each layer has prob p_L=layer_drop_rate of being dropped
         # according to that for every layer we sample
-        # if we have to appy dropout in it or not
+        # if we have to apply dropout in it or not
         out = jax.random.choice(
             key, jnp.array(range(2)), p=jnp.array([1 - layer_drop_rate, layer_drop_rate])
         )
@@ -279,7 +279,7 @@ def make_dropout(key):
     # we make list of indexes corresponding to the rotations gates
     # that are kept in the computation during a single train step
     for i in range(layers):
-        # each list is divded in layers and then in "inner layers"
+        # each list is divided in layers and then in "inner layers"
         # this is strictly related to the QNN architecture that we use
         keep_rot_layer = [list(range((n_qubits))) for j in range(1, inner_layers + 1)]
 
@@ -484,7 +484,7 @@ for layer_drop_rate, rot_drop_rate in drop_rates:
         assert len(y.shape) == 1  # y must be an array
         assert X.shape[0] == y.shape[0]  # compatibility check
 
-        # parameters initialization with gaussian ditribution
+        # parameters initialization with gaussian distribution
         initial_params = jax.random.normal(key, shape=(layers * params_per_layer,))
         # update the random key
         key = jax.random.split(key)[0]
