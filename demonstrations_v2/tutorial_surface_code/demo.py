@@ -47,11 +47,11 @@ We have :math:`X`- and :math:`Z`-stabilizers with either four or two operators o
     :target: javascript:void(0)
 
 These stabilizers are measured by entangling the data qubits via :math:`\text{CNOT}` gates with the corresponding syndrome qubit and then
-measuring that. The measurement result :math:`\pm 1` of a stabilizer measurement indicates whether or not an error has occured.
-A :math:`d \times d` surface code qubit has code distance :math:`d`, meaning that it can correct up to :math:`d` errors. When more errors occur,
-it may go unnoticed as all stabilizers give a false positive result.
+measuring that (see `Fig. 1` in [#surfacecode]_ for the detailed circuits). The measurement result :math:`\pm 1` of a stabilizer measurement indicates whether or not an error has occurred.
+A :math:`d \times d` surface code qubit can detect up to :math:`d-1` errors, and correct up to :math:`\left\lfloor \tfrac{d-1}{2} \right\rfloor`.
+When more errors occur, they may go unnoticed or corrected in the wrong way, as we will see later.
 
-We now want to go into more detail an expand on each of these components. 
+We now want to go into more detail and expand on each of these components. 
 Before that, we want to stress the difference of the *rotated* surface code to the original planar surface code:
 
 .. figure:: ../_static/demonstration_assets/lattice_surgery/surface_code_qubit2.png
@@ -76,9 +76,9 @@ are faces of four or two :math:`Z` or :math:`X` observables, arranged in a check
     :width: 50%
     :target: javascript:void(0)
     
-All these stabilizers commute with each other - that is one the defining properties. 
-That all stabilizers in the surface code depicted here commute can be seen from the fact that generally Pauli words commute when
-they overlap on an equal number of sites. Take for example the most simple case, two sites ``[0, 1]``, we have :math:`[X_0 X_1, Z_0 Z_1] = 0`.
+All these stabilizers commute with each other - that is one of the defining properties. 
+That all stabilizers in the surface code depicted here commute can be seen from the fact that generally two unequal and non-trivial Pauli words commute iff they anticommute on an even number of sites.
+Take for example the most simple case, two sites ``[0, 1]``, such that we have :math:`[X_0 X_1, Z_0 Z_1] = 0`.
 
 The measurement outcome of such a stabilizer is binary :math:`\pm 1` and we assume that the underlying quantum state
 :math:`|\psi\rangle` that is encoded by the qubit of the surface code is in the so-called code (sub)space - the joint 
@@ -87,7 +87,7 @@ That means that the action of any stabilizer :math:`S_i \in \mathcal{S}` on a st
 is equal to the identity, :math:`S_i |\psi\rangle = + 1 |\psi\rangle`.
 
 By continuously measuring all stabilizers we can ensure that the state is not leaving the code space. 
-If, however, we do measure :math:`-1` somewhere, we know that an error has occured. In that case, we need to perform
+If, however, we do measure :math:`-1` somewhere, we know that an error has occurred. In that case, we need to perform
 error correction, which we are discussing later.
 
 Logical operators: Z and X edges
@@ -97,8 +97,8 @@ You may have noticed that we have weight-2 stabilizers (arches) at the edges of 
 defining logical operators on the surface code patch.
 
 Logical operators :math:`Z_L` or :math:`X_L` need to commute with all stabilizers so they don't move our state outside the code space.
-At the same they, they must not be stabilizers (or products thereof) themselves. 
-On top of that, they of course need to satisfy the fundamental andi-commutation relation :math:`X_L Z_L = -Z_L X_L`.
+At the same time, they must not be stabilizers (or products thereof) themselves. 
+On top of that, they of course need to satisfy the fundamental anti-commutation relation :math:`X_L Z_L = -Z_L X_L`.
 
 On the rotated surface code, a logical :math:`X_L` operator is a string of measurements of data qubits that connects the two
 edges with :math:`X` arches (left and right here). And vice versa for a logical :math:`Z_L` operator, as indicated below.
@@ -127,7 +127,7 @@ For the :math:`5 \times 5` patch we are considering, we have :math:`n=25` data q
 Together with the :math:`8` arches we get :math:`k = 25 - 16 - 8 = 1`.
 
 The arches are also important for coverage of all possible errors. 
-E.g., if a :math:`X` error occured on the top left data qubit, only the top left :math:`Z` arch would catch it.
+E.g., if a :math:`X` error occurred on the top left data qubit, only the top left :math:`Z` arch would catch it.
 
 Quantum computation via lattice surgery
 ---------------------------------------
@@ -175,7 +175,7 @@ the two :math:`X` stabilizers yield a :math:`-1` measurement - a *defect*.
     :target: javascript:void(0)
 
 The tricky part about error correction is that we are only ever given the information of the syndrome measurements and do not
-know what *actually* has physically happened. The same error syndromes could have also occured due to, e.g., the following error pattern.
+know what *actually* has physically happened. The same error syndromes could have also occurred due to, e.g., the following error pattern.
 
 .. figure:: ../_static/demonstration_assets/surface_code/unlikely_error.png
     :align: center
@@ -208,7 +208,7 @@ Now, if the (less likely) error with three errors occurs, but we correct for the
 perform a logical :math:`Z_L` operation, and introduce an undetected error in our computation.
 This is a manifestation of the fact that a distance :math:`d=5` rotated surface code qubit can only correct
 
-.. math:: t = \left\lfloor \frac{n-1}{2} \right\rfloor = 2
+.. math:: t = \left\lfloor \frac{d-1}{2} \right\rfloor = 2
 
 errors deterministically.
 
