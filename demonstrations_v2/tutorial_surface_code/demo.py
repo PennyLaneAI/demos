@@ -8,9 +8,7 @@ Despite its early inception in the 90s, it is still relevant in many modern quan
 During that timespan, it has evolved quite a bit. We shall give a modern overview of its basic components and principles
 These principles are ubiquitous in modern QEC codes, so this should be a perfect point to start your QEC journey.
 
-Hero image: (@David Ren please replace here)
-
-.. figure:: _static/hero_illustrations/pennylane-demo-lattice-surgery-hero.png
+.. figure:: _static/demo_thumbnails/large_demo_thumbnails/pennylane-demo-surface-code-large-thumbnail.png
     :align: center
     :width: 50%
     :target: javascript:void(0)
