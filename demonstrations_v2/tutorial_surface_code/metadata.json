@@ -16,14 +16,14 @@
     "previewImages": [
         {
             "type": "thumbnail",
-            "uri": "/_static/demo_thumbnails/regular_demo_thumbnails/pennylane-demo-lattice-surgery-thumbnail.png"
+            "uri": "/_static/demo_thumbnails/regular_demo_thumbnails/pennylane-demo-surface-code-thumbnail.png"
         },
         {
             "type": "large_thumbnail",
-            "uri": "/_static/demo_thumbnails/large_demo_thumbnails/pennylane-demo-lattice-surgery-large-thumbnail.png"
+            "uri": "/_static/demo_thumbnails/large_demo_thumbnails/pennylane-demo-surface-code-large-thumbnail.png"
         }
     ],
-    "seoDescription": "Learn about lattice surgery for fault tolerant quantum computing with topological codes such as the surface code.",
+    "seoDescription": "Learn about lattice surgery for fault-tolerant quantum computing with topological codes such as the surface code.",
     "doi": "",
     "references": [
     {
