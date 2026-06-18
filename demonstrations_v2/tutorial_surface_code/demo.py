@@ -90,11 +90,66 @@ By continuously measuring all stabilizers we can ensure that the state is not le
 If, however, we do measure :math:`-1` somewhere, we know that an error has occured. In that case, we need to perform
 error correction, which we are discussing later.
 
-Logical operators
------------------
+Logical operators: Z and X edges
+--------------------------------
 
-Logical operators :math:`Z_L` or :math:`X_L` need to commute with all stabilizers but must not be stabilizers (or products thereof) 
-themselves. On top of that, they of course need to satisfy the fundamental andi-commutation relation :math:`X_L Z_L = -Z_L X_L`.
+You may have noticed that we have weight-2 stabilizers (arches) at the edges of our surface code patch. These are crucial for
+defining logical operators on the surface code patch.
+
+Logical operators :math:`Z_L` or :math:`X_L` need to commute with all stabilizers so they don't move our state outside the code space.
+At the same they, they must not be stabilizers (or products thereof) themselves. 
+On top of that, they of course need to satisfy the fundamental andi-commutation relation :math:`X_L Z_L = -Z_L X_L`.
+
+On the rotated surface code, a logical :math:`X_L` operator is a string of measurements of data qubits that connects the two
+edges with :math:`X` arches (left and right here). And vice versa for a logical :math:`Z_L` operator, as indicated below.
+
+.. figure:: ../_static/demonstration_assets/surface_code/Z_string.png
+    :align: center
+    :width: 50%
+    :target: javascript:void(0)
+
+Multiplying a logical operator by a stabilizer does not change the logical state, 
+so the string on the right hand side is an equivalent logical operator (recall that :math:`Z^2=\mathbb{1}`).
+We can continue to deform the string to arrive at a logical :math:`Z_L` operator that goes along the right edge.
+
+.. figure:: ../_static/demonstration_assets/surface_code/Z_edge.png
+    :align: center
+    :width: 50%
+    :target: javascript:void(0)
+
+This is why the left and right edge are called :math:`Z` edges, which may be confusing because they contain :math:`X` arches.
+The opposite is true for the top and bottom :math:`X` edges with :math:`Z` arches.
+
+Quantum computation via lattice surgery
+---------------------------------------
+
+There are different variants of how to perform quantum computation with the surface code. Most modern approaches use
+:doc:`lattice surgery </demos/tutorial_lattice_surgery>`.
+The concept is relatively simple: To measure :math:`Z_L \otimes Z_L` between two surface code qubits, 
+simply connect them via their :math:`Z` edge (lattice merging), 
+perform a round of error correction, and destructively measure in between the two patches to split them again (lattice splitting).
+
+.. figure:: ../_static/demonstration_assets/surface_code/lattice_surgery.png
+    :align: center
+    :width: 50%
+    :target: javascript:void(0)
+
+This is important because most modern surface code constructions are targeting 
+`Pauli based computation <https://pennylane.ai/compilation/pauli-based-computation>`__, where all
+logical operations can be reduced to such Pauli product measurements.
+
+In fact, in :doc:`the Game of Surface Codes </demos/tutorial_game_of_surface_codes>`, a popular framework for thinking about
+fault tolerant quantum computers, we forget about everything but the :math:`X` and :math:`Z` edges of our qubit patches.
+This results in rectangular boxes with solid (:math:`Z`) and dotted (:math:`X`) edges. 
+The same :math:`Z_L \otimes Z_L` measurement from above can be portrayed as
+
+.. figure:: ../_static/demonstration_assets/surface_code/gosc.png
+    :align: center
+    :width: 50%
+    :target: javascript:void(0)
+
+This diagram simply says, we measure qubits :math:`|q_1\rangle` and :math:`|q_2\rangle` along their :math:`Z` edges via an intermediate auxiliary qubit region.
+
 
 Error correction
 ----------------
