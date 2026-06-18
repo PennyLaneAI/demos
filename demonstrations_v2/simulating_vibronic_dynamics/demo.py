@@ -112,7 +112,7 @@ def KineticStep(time_step, kinetic_coeffs, num_modes, state_wires, gradient_wire
         C_binary = format(C, f'0{len(coeff_wires)}b')
 
         #Encode coefficients
-        for j, bit in enumerate(reversed(C_binary)):
+        for j, bit in enumerate(C_binary):
             if bit == '1':
                 qp.X(wires=coeff_wires[j])
 
@@ -123,21 +123,21 @@ def KineticStep(time_step, kinetic_coeffs, num_modes, state_wires, gradient_wire
         for point in range(2*k):
         #Control on the spatial state register
             ctrl_wire = [cache_wires[point]]
-    
+
             #Index to the current position in the register
             weight = 2*k - 1 - point
             target_length = len(gradient_wires) - weight
-    
+
             if target_length <= 0:
                 continue
-    
+
             #Index the coefficient wires to the required size
             x_wire_current = coeff_wires
             if len(x_wire_current)>target_length:
                 x_wire_current = coeff_wires[(len(coeff_wires)-target_length):]
-    
+
             y_wire_current = gradient_wires[:target_length]
-    
+
             #Apply addition operator based on the size of the numbers being added
             if target_length == 1:
                 qp.ctrl(qp.CNOT, control = ctrl_wire)(wires=[x_wire_current[-1], y_wire_current[0]])
@@ -147,7 +147,7 @@ def KineticStep(time_step, kinetic_coeffs, num_modes, state_wires, gradient_wire
     #Uncompute
         qp.adjoint(qp.OutPoly)(f, input_registers = [state_wires[i]], output_wires = cache_wires)
 
-        for j, bit in enumerate(reversed(C_binary)):
+        for j, bit in enumerate(C_binary):
             if bit == '1':
                 qp.X(wires=coeff_wires[j])
 
@@ -182,7 +182,7 @@ def KineticStep(time_step, kinetic_coeffs, num_modes, state_wires, gradient_wire
 #    *Potential energy step circuit diagram*
 #
 def PotentialStepLinear(fragment, load_coeffs, mode, time_coeffs, state_wires, electron_wires, gradient_wires, coeff_wires, cache_wires, scratch_wires):
-    
+
     k = len(state_wires[mode])
     K = 2**k
 
@@ -190,7 +190,7 @@ def PotentialStepLinear(fragment, load_coeffs, mode, time_coeffs, state_wires, e
 
     #Load pre-determined, electron state dependent coefficients
     load_coeffs(fragment, time_coeffs, electron_wires, coeff_wires, scratch_wires)
-    
+
     qp.OutPoly(lambda x: (x-K//2), input_registers = [state_wires[mode]], output_wires = cache_wires)
 
     for point in range(2*k):
@@ -221,23 +221,23 @@ def PotentialStepLinear(fragment, load_coeffs, mode, time_coeffs, state_wires, e
                 qp.ctrl(qp.CNOT, control = ctrl_wire)(wires=[x_wire_current[-1], y_wire_current[0]])
             elif target_length >= 2:
                 qp.ctrl(qp.SemiAdder, control = ctrl_wire)(x_wires = x_wire_current, y_wires = y_wire_current, work_wires = scratch_wires)
-        
+
     qp.adjoint(qp.OutPoly)(lambda x: (x-K//2), input_registers = [state_wires[mode]], output_wires = cache_wires)
 
     qp.adjoint(load_coeffs)(fragment, time_coeffs, electron_wires, coeff_wires, scratch_wires)
 
 
 def PotentialStepQuadratic(fragment, load_coeffs, mode1, mode2, time_coeffs, state_wires, electron_wires, gradient_wires, coeff_wires, cache_wires, scratch_wires):
-    
+
     k = len(state_wires[mode1])
     K = 2**k
 
     AdjointSemiAdder = qp.adjoint(qp.SemiAdder)
 
     load_coeffs(fragment, time_coeffs, electron_wires, coeff_wires, scratch_wires)
-    
+
     qp.OutPoly(lambda x0,x1: (x0-K//2)*(x1-K//2), input_registers = [state_wires[mode1], state_wires[mode2]], output_wires = cache_wires)
-        
+
     for point in range(2*k):
         #Control on the spatial state register
         ctrl_wire = [cache_wires[point]]
@@ -266,10 +266,10 @@ def PotentialStepQuadratic(fragment, load_coeffs, mode1, mode2, time_coeffs, sta
                 qp.ctrl(qp.CNOT, control = ctrl_wire)(wires=[x_wire_current[-1], y_wire_current[0]])
             elif target_length >= 2:
                 qp.ctrl(qp.SemiAdder, control = ctrl_wire)(x_wires = x_wire_current, y_wires = y_wire_current, work_wires = scratch_wires)
-        
+
     #Uncompute
     qp.adjoint(qp.OutPoly)(lambda x0,x1: (x0-K//2)*(x1-K//2), input_registers = [state_wires[mode1], state_wires[mode2]], output_wires = cache_wires)
-    
+
     qp.adjoint(load_coeffs)(fragment, time_coeffs, electron_wires, coeff_wires, scratch_wires)
 
 ###############################################################################
@@ -375,7 +375,7 @@ def KDCStatePrep(k):
 def KDCDiag(fragment, electron_wires):
     bits = []
     weight = 0
-    
+
     for j in range(len(electron_wires)):
         if (fragment >> j) & 1:
             weight += 1
@@ -427,13 +427,17 @@ def TrotterStepKDC(k, dt, frag_list, coupler, PotentialStep, KineticStep, kineti
     KineticStep(half_dt, *kinetic_args)
 
     for fragment in frag_list:
-
         #Diagonalization function
         coupler(fragment, *coupler_args)
-
         #Pass a function that can handle the potential step in the linear or quadratic case
         PotentialStep(fragment, *potential_args)
+        qp.adjoint(coupler)(fragment, *coupler_args)
 
+    #Second-order, reversed potential step
+    for fragment in reversed(frag_list):
+        #Diagonalization function
+        coupler(fragment, *coupler_args)
+        PotentialStep(fragment, *potential_args)
         qp.adjoint(coupler)(fragment, *coupler_args)
 
     KineticStep(half_dt, *kinetic_args)
@@ -444,9 +448,9 @@ def WirePrepKDC(num_modes, k, n, delta):
     precision_qubits = int(math.ceil(np.log2(1/delta)))
     precision_qubits_fixed = 5
     print(precision_qubits)
-    
+
     nuclear_modes = {f"mode_{i}": k for i in range(num_modes)} #Account for linear vs quadratic
-    
+
     registers = {
         "electrons": n,
         "states": nuclear_modes,
@@ -465,19 +469,21 @@ def WirePrepKDC(num_modes, k, n, delta):
 # To keep things simple (and computationally feasible), we will begin by defining a small, single-mode system with 2 electron states and 1 nuclear state. The coefficients will be taken here to be a simple array of values that will soon be scaled by the required factors.
 
 #Trotterization
+qp.decomposition.enable_graph()
+
 time_steps = 10
 k = 2
 n = 1
 num_modes = 1
-delta = 0.05
+delta = 0.03
 mode_list = [0]
 omega = [1]
 coeff_data = [
     #  |0>    |1>
     [ 1.0,   0.0 ],   # Fragment 0: Diagonal potential energy terms
-    [-1.3,   1.3 ]    # Fragment 1: Off-diagonal electronic coupling terms
+    [ -1.3,   1.3 ]    # Fragment 1: Off-diagonal electronic coupling terms
 ]
-dt = 0.5
+dt = 0.4
 ###############################################################################
 # Our next administrative tasks is to call upon ``WirePrep()` to initialize our registers and assign names that can be referenced in our Trotter function.
 
@@ -508,15 +514,15 @@ cache_wires = regs["cache"]
 width = len(coeff_wires)
 max_binary = 2**width
 Delta = np.sqrt(2*np.pi/(2**k))
-scale = Delta/(2*np.pi) 
+scale = Delta/(2*np.pi)
 
 time_coeffs = []
 for fragment_data in coeff_data:
     fragment_row = []
     for power, val in enumerate(fragment_data):
-        v = int(np.round(val * dt * max_binary * (Delta**power) / (2*np.pi))) % max_binary
-        fragment_row.append(format(v, f"0{width}b"))   
-    time_coeffs.append(fragment_row)       
+        v = int(np.round(val * (dt/2) * max_binary * (Delta**1) / (2*np.pi))) % max_binary
+        fragment_row.append(format(v, f"0{width}b"))
+    time_coeffs.append(fragment_row)      
 ################################################################################
 # Now, at long last, we can carry out our time evolution. Our implementation function should achieve the following:
 #
@@ -535,8 +541,6 @@ coupler_args = [electron_wires]
 dev = qp.device("lightning.qubit", wires=total_wires)
 @qp.qnode(dev)
 def ElectronPopVibronicsSimulation(steps, gradient_wires, StatePrepFunc, CouplerFunc, PotentialFunc, KineticFunc, kinetic_args, potential_args, coupler_args):
-    print('hi')
-
     #Prepare the phase gradient state in the appropriate register
     for wire in gradient_wires:
         qp.X(wires = wire)
