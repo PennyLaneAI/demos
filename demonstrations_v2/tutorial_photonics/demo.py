@@ -202,7 +202,7 @@ dev_exact = qp.device("default.gaussian", wires=1)  # No explicit shots gives an
 
 @qp.qnode(dev_exact)
 def vacuum_mean_x():
-    return qp.expval(qp.QuadX(0))  # Returns exact expecation value of x
+    return qp.expval(qp.QuadX(0))  # Returns exact expectation value of x
 
 
 @qp.qnode(dev_exact)
@@ -354,7 +354,7 @@ plt.show()
 # How would we, for example, change the mean :math:`\bar{x}` of the :math:`x`-quadrature
 # without changing anything else about the state? This can be done
 # via the *displacement operator*, implemented in PennyLane via :class:`~pennylane.Displacement`.
-# Let's see the effect of this operation on an intial coherent state.
+# Let's see the effect of this operation on an initial coherent state.
 
 
 @qp.set_shots(1000)

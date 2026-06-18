@@ -500,7 +500,7 @@ z_exp = [
 h, J, zoffset = from_Q_to_Ising(QT, offset)  # Eq.13 for our problem
 energy = energy_Ising(
     z_exp, h, J, zoffset
-)  # Caluclating the energy (Should be the same that for the QUBO)
+)  # Calculating the energy (Should be the same that for the QUBO)
 print(f"Minimum energy:{energy}")
 
 samples_slack = samples_dict(qaoa_circuit(gammas, betas, h, J, num_qubits=len(QT)), n_qubits)

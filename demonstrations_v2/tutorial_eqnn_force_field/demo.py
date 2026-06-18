@@ -449,7 +449,7 @@ def inference(loss_data, opt_state):
 #################################
 # **Parameter initialization:**
 #
-# We initiliase the model at the identity by setting the initial parameters to 0, except the first one which is chosen uniformly.
+# We initialise the model at the identity by setting the initial parameters to 0, except the first one which is chosen uniformly.
 # This ensures that the circuit is shallow at the beginning and has less chance of suffering from the barren plateau phenomenon. Moreover,
 # we disable the symmetry-breaking strategy, as it is mainly useful for larger systems.
 np.random.seed(42)

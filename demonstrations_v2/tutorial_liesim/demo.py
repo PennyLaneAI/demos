@@ -206,7 +206,7 @@ e_in = np.zeros(dim_g, dtype=float)
 for i, h_i in enumerate(dla):
     # initial state |0x0| = (I + Z)/2, note that trace function
     # below already normalizes by the dimension,
-    # so we can ommit the explicit factor /2
+    # so we can omit the explicit factor /2
     rho_in = qp.prod(*(I(i) + Z(i) for i in h_i.wires))
     rho_in = rho_in.pauli_rep
 

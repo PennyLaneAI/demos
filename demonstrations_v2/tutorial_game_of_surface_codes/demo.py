@@ -60,7 +60,7 @@ This is shown in the figure below.
     Image source: Daniel Litinski [1].
 
 Every operation in the game has an associated time cost that we measure in units of code cycles 🕒.
-There are some discrepancies to actual surface code cycles, but the correspondance is close enough to weigh out space-time trade-offs in architecture designs.
+There are some discrepancies to actual surface code cycles, but the correspondence is close enough to weigh out space-time trade-offs in architecture designs.
 We are not going to give an exhaustive overview of all possible operations, but focus on a few important ones and fill the remaining gaps necessary for the architecture designs in the respective sections below.
 
 
@@ -78,7 +78,7 @@ At the cost of 0🕒 we can measure patches in the X and Z basis. If two patches
     Image source: Daniel Litinski [1].
 
 In particular, if the shared edge contains both Z and X edges, we can measure in the Y basis. In the following example, the upper qubit A has both operator edges :math:`Z_A` and :math:`X_A` exposed.
-Measuring it together with the auxillary qubit B, initialized in the :math:`|0\rangle` state below, we measure :math:`(Z_A X_A) \otimes Z_B \propto Y_A \otimes Z_B` alltogether.
+Measuring it together with the auxiliary qubit B, initialized in the :math:`|0\rangle` state below, we measure :math:`(Z_A X_A) \otimes Z_B \propto Y_A \otimes Z_B` all together.
 
 .. figure:: ../_static/demonstration_assets/game_of_surface_codes/Y_measurement.png
     :align: center
@@ -96,7 +96,7 @@ The entire protocol costs 2🕒 and is shown below:
     :width: 50%
     :target: javascript:void(0)
 
-    The protocol for measuring a single qubit in the Y basis involves deforming the patch (Step 2, 1🕒), initializing an auxillary qubit in :math:`|0\rangle` (0🕒), simultaneously measuring both patches (1🕒) and deforming the qubit back again (0🕒).
+    The protocol for measuring a single qubit in the Y basis involves deforming the patch (Step 2, 1🕒), initializing an auxiliary qubit in :math:`|0\rangle` (0🕒), simultaneously measuring both patches (1🕒) and deforming the qubit back again (0🕒).
     Image source: Daniel Litinski [1].
 
 Auxiliary qubits play an important role as they allow measuring products of Pauli operators on different qubits, 
@@ -296,7 +296,7 @@ These magic states need to be distilled in separate blocks, which can in princip
 the blocks are used for a fixed protocol, this knowledge can be used for simplifications.
 
 There are different approaches to perform magic state distillation. We consider the case where we can prepare a magic state with infidelity :math:`p`.
-The distillation protocol is then such that this infidelity is decreased to an acceptable level. All other operations of the protocol are Clifford, so we can measure if an error has occured.
+The distillation protocol is then such that this infidelity is decreased to an acceptable level. All other operations of the protocol are Clifford, so we can measure if an error has occurred.
 This then determines the success probability of the protocol, which in the case below is roughly :math:`(1-p)^n` for an :math:`n`-qubit protocol.
 We are going to go through the simplest protocol in a 15-to-1 distillation block.
 
@@ -352,7 +352,7 @@ For example, assume we tolerate a T infidelity of :math:`10^{-10}` and have :mat
 the 15-to-1 protocol would suffice as it yields an infidelity of :math:`35p^3 = 3.5 \times 10^{-11} < 10^{-10}`.
 
 Another consideration is to combine data and distillation blocks that match in their maximum time requirements.
-Since the 15-to-1 distillation above takes 11🕒 to procude a magic state, there is no point in using the fast or intermediate data blocks, and we can just resort to the compact one.
+Since the 15-to-1 distillation above takes 11🕒 to produce a magic state, there is no point in using the fast or intermediate data blocks, and we can just resort to the compact one.
 
 A minimal setup can be seen below. It consists of 100 logical qubits on 153 tiles in a compact block, as well as a 15-to-1 distillation block using another 11 tiles.
 

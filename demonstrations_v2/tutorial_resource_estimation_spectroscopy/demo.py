@@ -1,6 +1,6 @@
 r"""Resource estimation for X-ray absorption and photodynamic therapy
 =====================================================================
-Spectroscopy is an indispensible measurement technique in chemistry and physics,
+Spectroscopy is an indispensable measurement technique in chemistry and physics,
 providing fundamental insights into the structure and dynamics of molecules and materials. However,
 to extract these insights, it is often necessary to use simulations to interpret the experimentally
 measured spectra. In practice, this requires exciting the system with an external electromagnetic

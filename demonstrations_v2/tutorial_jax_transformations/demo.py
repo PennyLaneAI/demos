@@ -82,7 +82,7 @@ print("\nGradient Descent")
 print("---------------")
 
 # We use jax.grad here to transform our circuit method into one
-# that calcuates the gradient of the output relative to the input.
+# that calculates the gradient of the output relative to the input.
 
 grad_circuit = jax.grad(circuit)
 print(f"grad_circuit(jnp.pi / 2): {grad_circuit(jnp.pi / 2):0.3f}")

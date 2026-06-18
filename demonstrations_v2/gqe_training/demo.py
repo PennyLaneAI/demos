@@ -367,7 +367,7 @@ opt = gpt.configure_optimizers(
 # 
 #    - Calculate the true energies using PennyLane
 # 
-#    - Calculate the mean absolute error as a metric to track the learning progress and save the GPT model everytime the metric gets better
+#    - Calculate the mean absolute error as a metric to track the learning progress and save the GPT model every time the metric gets better
 # 
 
 # %%time 
