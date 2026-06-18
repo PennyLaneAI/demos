@@ -56,7 +56,7 @@ Before that, we want to stress the difference of the *rotated* surface code (lef
 
 .. figure:: ../_static/demonstration_assets/surface_code/rotated.png
     :align: center
-    :width: 50%
+    :width: 80%
     :target: javascript:void(0)
     
 In the central image we see their correspondences.
