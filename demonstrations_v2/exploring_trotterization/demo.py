@@ -44,10 +44,12 @@ Luckily for us, the problem of exponentiating non-commuting equations is not new
 .. math::
    e^{A+B}=\lim_{r \to \infty}(e^{A/r}e^{B/r})^r.
 
-Turning back to the Hamiltonian picture, if we take a large, finite :math:`r`, letting :math:`r` represent the number of time steps taken in the desired time evolution, we can approximate the Lie-Trotter formula to
+Turning back to the Hamiltonian picture, if we take a large, finite :math:`r`, letting :math:`r` represent the number of time steps taken in the desired time evolution, we can approximate the Lie-Trotter formula to the first order Trotterization expression
 
 .. math::
-   e^{-iHt}=(\prod_j e^{-iH_j t/r})^r.
+   e^{-iHt}=(\prod_j e^{-iH_j t/r})^r,
+
+which was discovered simultaneously by Strang [#Strang1968]_ and Verlet [#Verlet1967]_.
 
 So, by slicing the total time the simulation is trying to emulate, the dependency shared by non-commuting properties can be integrated via alternating applications of each operator within each time step. So, instead of taking one complete :math:`A` step and one complete :math:`B` step, we are now alternating small, partial steps in :math:`A` and :math:`B`, approximating simultaneity to the best of our ability. 
 
@@ -274,7 +276,7 @@ for r in R:
 #   :align: center
 #   :width: 700px
 #
-# Beyond second-order, higher-order Trotterizations can be achieved via the nested application of the second-order Trotterization sequence. A well known example is the Suzuki five-step ladder, which achieves a fourth-order implementation and is implemented as
+# Beyond second-order, higher-order Trotterizations can be achieved via the nested application of the second-order Trotterization sequence. A well known example is the Suzuki five-step ladder [#Suzuki1990]_, which achieves a fourth-order implementation represented as
 #
 # .. math::
 #    S_4(t)=S_2(s_1 t)S_2(s_1 t)S_2((1-4s_1)t)S_2(s_1 t)S_2(s_1 t).
@@ -299,4 +301,10 @@ for r in R:
 #
 # .. [#Gidney2018] C.\ Gidney, "Halving the cost of quantum addition," *Quantum*, vol. 2, p. 74, Jun. 2018. `doi: 10.22331/q-2018-06-18-74 <https://quantum-journal.org/papers/q-2018-06-18-74/>`_.
 #
-# .. [#Childs2021] A.\ M. Childs, Y. Su, M. C. Tran, N. Wiebe, and S. Zhu, "Theory of Trotter Error with Commutator Scaling," *Phys. Rev.*, vol. 1, no. 1, Feb. 2021, doi: 10.1103/PhysRevX.11.011020.
+# .. [#Childs2021] A.\ M. Childs, Y. Su, M. C. Tran, N. Wiebe, and S. Zhu, "Theory of Trotter Error with Commutator Scaling," *Phys. Rev. X*, vol. 11, no. 1, Feb. 2021, doi: `10.1103/PhysRevX.11.011020 <https://doi.org/10.1103/PhysRevX.11.011020>`_.
+#
+# .. [#Strang1968] G.\ Strang, "On the Construction and Comparison of Difference Schemes," *SIAM Journal on Numerical Analysis*, vol. 5, no. 3, Sept. 1968, doi: `10.1137/0705041 <https://doi.org/10.1137/0705041>`_.
+#
+# .. [#Verlet1967] L.\ Verlet, "Computer "Experiments" on Classical Fluids. I. Thermodynamical Properties of Lennard-Jones Molecules," *Phys. Rev.*, vol. 159, no. 1, pp. 98-103, Jul. 1967, doi: `10.1103/PhysRev.159.98 <https://doi.org/10.1103/PhysRev.159.98>`_.
+#
+# .. [#Suzuki1990] M.\ Suzuki, "Fractal decomposition of exponential operators to many-body theories and Monte Carlo simulations," *Phys. Lett. A*, vol. 146, no. 6, pp. 319-323, Jun. 1990, doi:`10.1016/0375-9601(90)90962-N <https://doi.org/10.1016/0375-9601(90)90962-N>`_.
