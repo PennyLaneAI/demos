@@ -25,30 +25,33 @@ that generalize it.
 
 The rotated surface code consists of alternating X (blue) and Z (orange) squares that make up a lattice.
 The so-called data qubits sit on the vertices (highlighted in pink). These will be the qubits that encode 
-the quantum information of the 5x5 patch that is making up a single qubit:
+the quantum information of a :math:`d \times d` surface code patch, that is making up a single qubit: (we will use :math:`d=5` throughout for simplicity)
 
 .. figure:: ../_static/demonstration_assets/surface_code/surface_code_syndrome.png
     :align: center
     :width: 50%
     :target: javascript:void(0)
     
-We additionally have syndrome qubits (in light blue) that sit in the middle of the squares. 
-These syndrome qubits are used to continuously perform measurements on the surrounding data qubits in a non-destructive way:
-stabilizers.
-We have :math:`X`- and :math:`Z`-stabilizers with either four or two operators on the edges.
+We additionally have so-called syndrome qubits (in light gray) that sit in the middle of the squares. 
+These syndrome qubits are used to continuously perform measurements on the surrounding data qubits in a non-destructive way.
+These measurements are called stabilizers and make up the backbone of almost all modern QEC codes.
+In the rotated surface code, they are alternating squares with a product of four :math:`X` or :math:`Z` operators.
+Additionally, there are weight-2 :math:`X` and :math:`Z` arches on the edges (more on that later).
 
 .. figure:: ../_static/demonstration_assets/surface_code/surface_code_with_stabilizers.png
     :align: center
     :width: 50%
     :target: javascript:void(0)
 
-These stabilizers are measured by entangling the data qubits via :math:`\text{CNOT}` gates with the corresponding syndrome qubit and then
-measuring that (see `Fig. 1 <https://arxiv.org/abs/1208.0928>`__ in [#surfacecode]_ for the detailed circuits). The measurement result :math:`\pm 1` of a stabilizer measurement indicates whether or not an error has occurred.
+These stabilizers on the data qubits are measured indirectly via the syndrom qubits. 
+This is done by entangling the data qubits with the corresponding syndrome qubit and then
+measuring that (see `Fig. 1 <https://arxiv.org/abs/1208.0928>`__ in [#surfacecode]_ for the detailed circuits). 
+The measurement result (:math:`\pm 1`) of a stabilizer measurement indicates whether or not an error has occurred.
 A :math:`d \times d` surface code qubit can detect up to :math:`d-1` errors, and correct up to :math:`\left\lfloor \tfrac{d-1}{2} \right\rfloor`.
-When more errors occur, they may go unnoticed or corrected in the wrong way, as we will see later.
+When more errors occur, they may go unnoticed or get corrected in the wrong way, as we will see later.
 
-We now want to go into more detail and expand on each of these components. 
-Before that, we want to stress the difference of the *rotated* surface code (left) to the original planar surface code (right):
+In this demo, we are going to go into more detail and expand on each of these components. 
+Before that, we want to stress the difference between the *rotated* surface code (left) to the original planar surface code (right):
 
 .. figure:: ../_static/demonstration_assets/surface_code/rotated.png
     :align: center
