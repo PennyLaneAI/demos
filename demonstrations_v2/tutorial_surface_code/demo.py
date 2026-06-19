@@ -161,7 +161,9 @@ The same :math:`Z_L \otimes Z_L` measurement from above can be portrayed as
     :width: 50%
     :target: javascript:void(0)
 
-This diagram simply says, we measure qubits :math:`|q_1\rangle` and :math:`|q_2\rangle` along their :math:`Z` edges via an intermediate auxiliary qubit region, indicated by the blue connection.
+This diagram simply says, we measure qubits :math:`|q_1\rangle` and :math:`|q_2\rangle` 
+along their :math:`Z` edges via an intermediate auxiliary qubit region, indicated by the blue connection.
+So overall, this is just the joint measurement of :math:`Z_{q_1} \otimes Z_{q_2}` via their :math:`Z` edges.
 
 
 Error correction
