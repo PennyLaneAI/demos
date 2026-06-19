@@ -117,7 +117,7 @@ def A(state):
 #
 # These operators can be used to build the final, iterative circuit in which the number of Grover operator applications will vary per iteration.
 #
-# .. figure:: ../demonstrations_v2/iterative_quantum_amplitude_estimation_in_pennylane/Final_Circuit_Drawing.png
+# .. figure:: ../demonstrations_v2/iterative_quantum_amplitude_estimation_in_pennylane/Full_Circuit_Drawing.png
 #    :align: center
 #    :width: 50%
 #
@@ -166,8 +166,7 @@ circuit = circuit_builder(catalyst_bool)
 ##############################################################################
 # Digesting the FindNextK Function
 # --------------------------------
-#
-# As shown, the iteration variable :math:`k` is directly tied to the total angle of the state since the Grover operator invokes a deterministic rotation each time it is applied. The :math:`sin^2(x)` function adds complexity to the probability calculations, so standard trigonometric identities can be employed to achieve
+# As shown, the iteration variable :math:`k` is directly tied to the total angle of the state (which can be achieve via measurement of the quantum circuit) since the Grover operator invokes a deterministic rotation each time it is applied. The :math:`\sin^2(x)` function adds complexity to the probability calculations, so standard trigonometric identities can be employed to achieve
 #
 # .. math::
 #    \mathbb{P}(|1\rangle)=\frac{1-\cos((4k+2)\theta_a)}{2}=\frac{1-\cos(K_i\theta_a)}{2}.
@@ -312,7 +311,7 @@ def IQAE(eps, alpha, N):
 ##############################################################################
 # For the purposes of this demonstration and to emphasize the bare bones of the IQAE algorithm, a few aspects of the full implementation presented in [#Grinko2021]_ were omitted. For example, the explicit overshooting condition was not translated here since it is not necessary to achieve the search outcome but required to obtain the performance guarantees (ex. analytical bounds) derived by Grinko et al. Full exploration of these additional components can be found in the source paper. 
 #
-# Upon calling ``IQAE()``, the output will consist of the upper and lower bounds between which the true amplitude lies. To compare the confidence interval obtained by the IQAE algorithm, the :math:`\mathcal{A}` state can be taken as the analytic probability yielded by the simulator, though this is not a realistic analogy to a physical system and is used here only for comparison. 
+# Upon calling ``IQAE()``, the output will consist of the upper and lower bounds between which the true amplitude lies. 
 #
 
 dev_exact = qp.device("default.qubit", wires=num_qubits+1)
