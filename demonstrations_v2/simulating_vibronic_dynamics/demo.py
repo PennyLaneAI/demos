@@ -52,7 +52,7 @@ The kinetic energy Hamiltonian fragment is, comparatively, simple to establish a
 4. Apply a rotation to the state register,
 5. Uncompute. 
 
-It is specified in [#Motlagh2026]_ that the basis transformation should take place via the sequence
+It is specified in [#Motlagh2025]_ that the basis transformation should take place via the sequence
 
 .. math::
    P = QFT^\dagger X_{k-1} Q X_{k-1} QFT
@@ -368,7 +368,7 @@ def KDCStatePrep(k):
 #    :align: center
 #    :width: 700px
 #    
-#    *Clifford gate diagonalization scheme [#Motlagh2025]_*
+#    *Clifford gate diagonalization scheme* [#Motlagh2025]_
 #
 # This logic can be implemented simply by comparing the two focus indices and applying the required gates.
 
@@ -503,7 +503,7 @@ coeff_wires = regs["coefficients"]
 scratch_wires = regs["scratch"]
 cache_wires = regs["cache"]
 ###############################################################################
-# Not too long ago, we mentioned that our potential coefficient values need to be processed to accurately match the needs of the system. In addition, we need to ensure that our coefficients are compatible with the QROM that will be used in the KDC potential step. In [#Moltagh2025], the full coefficient representation is given as
+# Not too long ago, we mentioned that our potential coefficient values need to be processed to accurately match the needs of the system. In addition, we need to ensure that our coefficients are compatible with the QROM that will be used in the KDC potential step. In [#Moltagh2025]_, the full coefficient representation is given as
 #
 # .. math::
 #    \Delta^{\alpha}c^{(j,j)}_\alpha
