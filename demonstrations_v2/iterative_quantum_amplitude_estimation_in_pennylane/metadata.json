@@ -11,14 +11,10 @@
   "dateOfLastModification": "2026-05-07T00:00:00+00:00",
   "categories": ["Algorithms"],
   "tags": [],
-  "previewImages": [
+   "previewImages": [
     {
       "type": "thumbnail",
       "uri": "/_static/demo_thumbnails/regular_demo_thumbnails/thumbnail_placeholder.png"
-    },
-     {
-      "type": "large_thumbnail",
-      "uri": "/_static/demo_thumbnails/large_demo_thumbnails/thumbnail_placeholder.png"
     }
   ],
   "seoDescription": "Quantum computers are uniquely poised to carry out highly efficient search and estimation algorithms. Iterative quantum amplitude estimation is one such example, in which quantum-classical hybrid methods are used to estimate the probability of a certain state being measured in a data set. This demo explores the methodology and implementation of this method in PennyLane",
