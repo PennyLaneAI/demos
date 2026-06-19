@@ -7,7 +7,7 @@ version = "0.3.0"
 description = "Introductions to key concepts in quantum computing, as well as tutorials and implementations from cutting-edge quantum computing research."
 readme = "README.md"
 license = "Apache-2.0"
-requires-python = ">=3.11.0,<3.15.0"
+requires-python = ">=3.12.0,<3.15.0"
 authors = [
   { name = "PennyLaneAI", email = "info@pennylane.ai" }
 ]
