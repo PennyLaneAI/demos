@@ -20,13 +20,13 @@ The **CLI tool** streamlines the creation, testing, and building of PennyLane de
 
 ## Installation
 
-To install the CLI, you will need Python version `3.11` or later. We highly recommend using a virtual environment to install the CLI tool to manage dependencies effectively.
+To install the CLI, you will need Python version `3.12` or later. We highly recommend using a virtual environment to install the CLI tool to manage dependencies effectively.
 
 ### MacOS/Linux Installation Steps
 
 ```bash
 # Step 1. Create a virtual environment (optional but highly recommended)
-python3.11 -m venv .venv
+python3.12 -m venv .venv
 
 # Step 2. Activate the virtual environment
 source .venv/bin/activate
