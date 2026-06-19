@@ -32,7 +32,12 @@
     },
     {
       "type": "demonstration",
-      "id": "tutorial_intro_amplitude_estimation",
+      "id": "tutorial_grovers_algorithm",
+      "weight": 1.0
+    },
+    {
+      "type": "demonstration",
+      "id": "tutorial_amplitude_amplification",
       "weight": 1.0
     }
   ]

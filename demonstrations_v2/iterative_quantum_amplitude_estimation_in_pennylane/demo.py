@@ -88,7 +88,7 @@ MCX_wires = [num_qubits-3,num_qubits-2,num_qubits-1,num_qubits]
 #
 # .. figure:: ../demonstrations_v2/iterative_quantum_amplitude_estimation_in_pennylane/A_Operator.png
 #    :align: center
-#    :width: 50%
+#    :width: 70%
 #
 
 #Define A operator
@@ -113,7 +113,7 @@ def A(state):
 #
 # .. figure:: ../demonstrations_v2/iterative_quantum_amplitude_estimation_in_pennylane/Q_Operator.png
 #    :align: center
-#    :width: 50%
+#    :width: 70%
 #
 # These operators can be used to build the final, iterative circuit in which the number of Grover operator applications will vary per iteration.
 #
