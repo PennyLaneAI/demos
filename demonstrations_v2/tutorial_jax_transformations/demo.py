@@ -136,7 +136,7 @@ vcircuit = jax.vmap(circuit)
 
 # Now, we call the ``vcircuit`` with multiple parameters at once and get back a
 # batch of expectations.
-# This example runs 3 quantum circuits in parallel.
+# This examples runs 3 quantum circuits in parallel.
 batch_params = jnp.array([1.02, 0.123, -0.571])
 
 batched_results = vcircuit(batch_params)
