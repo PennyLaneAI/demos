@@ -657,7 +657,7 @@ plt.show()
 # duration and phase allow for arbitrary superpositions between phonon
 # states. This freedom to act on the motional states gives us the
 # necessary tools to implement two-qubit gates. We will see two examples
-# and use one of them to build a CNOT gate which, as it is well-known, allows
+# and use one of them to build a CNOT gate which, as is well-known, allows
 # for universal computations when combined with single-qubit gates.
 #
 # .. note::

@@ -120,7 +120,7 @@ M = qp.PauliX(wires=1)
 # The internal functions ``create_initial_state`` and ``apply_operation``
 # make additional assumptions about their inputs, and will fail or give incorrect results
 # if those assumptions are not met. To work with these simulation tools, all operations should provide
-# a matrix, and all wires must be corresponding to dimensions of the statevector. This means all wires must already
+# a matrix, and all wires must be correspond to dimensions of the statevector. This means all wires must already
 # be integers starting from ``0``, and not exceed the number of dimensions in the state vector.
 #
 
