@@ -35,7 +35,7 @@ To carry this search out, we will define an operator :math:`\mathcal{A}` that ma
 In IQAE, the goal is not to identify all "good" results in one sweep. Instead, several iterations will be carried out in which the Grover operator is applied :math:`k` times with the goal of extracting a probability amplitude by refining the interval within which the solution is likely to lie. In doing this, we avoid the expensive QPE procedure used in QAE. To do this, each iteration will yield the general result
 
 .. math::
-   \mathcal{Q}^k\mathcal{A}|0\rangle_(bits)|0\rangle_{eval} = \cos((2k+1)\theta_a)|\psi_0\rangle_n|0\rangle_{eval}+\sin((2k+1)\theta_a)|\psi_1\rangle_n|1\rangle_{eval}
+   \mathcal{Q}^k\mathcal{A}|0\rangle_{bits}|0\rangle_{eval} = \cos((2k+1)\theta_a)|\psi_0\rangle_n|0\rangle_{eval}+\sin((2k+1)\theta_a)|\psi_1\rangle_n|1\rangle_{eval}
 
 where :math:`\mathcal{Q}` is the Grover operator and :math:`\theta_a` is related to the angle that the state is rotated by Grover's operator (note :math:`a=\sin^2(\theta_a)`), and :math:`k` is the number of times that the Grover operator is applied to the state in a single IQAE iteration. The specifications of this equation are covered thoroughly in [#Brassard2000]_, but the important result is that the probability of measuring a "good" state at the end of an iteration is given by
 
