@@ -290,7 +290,7 @@ def max_clique_falqon(graph, n, beta_1, delta_t, dev):
 # for each step.
 #
 # We can now run FALQON for our MaxClique problem! It is important that we choose :math:`\Delta t` small enough
-# such that the approximate time evolution is close enough to the real time evolution, otherwise we the expectation
+# such that the approximate time evolution is close enough to the real time evolution, otherwise the expectation
 # value of :math:`H_c` may not strictly decrease. For this demonstration, we set :math:`\Delta t = 0.03,`
 # :math:`n = 40,` and :math:`\beta_1 = 0.` These are comparable to the hyperparameters chosen in the original paper.
 

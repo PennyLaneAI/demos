@@ -48,7 +48,7 @@ For long-running hybrid jobs, Braket automatically uses the updated calibration 
 Getting started with PennyLane
 ------------------------------
 
-Let’s setup an algorithm that makes use of both classical and quantum resources. We adapt the :doc:`PennyLane qubit rotation tutorial<demos/tutorial_qubit_rotation>`.
+Let’s set up an algorithm that makes use of both classical and quantum resources. We adapt the :doc:`PennyLane qubit rotation tutorial<demos/tutorial_qubit_rotation>`.
 
 .. warning::
 
@@ -239,7 +239,7 @@ job.result()
 #       {'result': [0.036420360224358496, 3.1008192940506736]}
 
 ######################################################################
-# Any objects in the return statement will be returned in the hybrid job results. Note that the objects
+# Any objects in the return statement will be returned to the hybrid job results. Note that the objects
 # returned by the function must be a tuple with each element being serializable.
 # serializable.
 #

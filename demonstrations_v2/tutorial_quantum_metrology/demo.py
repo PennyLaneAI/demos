@@ -335,7 +335,7 @@ plt.show()
 # that has a better noise resilience than standard Ramsey spectroscopy!
 #
 # This tutorial shows that variational methods are useful for quantum metrology.
-# The are numerous avenues open for further research: one could study more intricate
+# There are numerous avenues open for further research: one could study more intricate
 # sensing problems, different noise models, and other platforms like optical systems.
 #
 # For more intricate noise models that can't be realized on quantum hardware, Ref. [#meyer2020]_

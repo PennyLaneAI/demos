@@ -1,7 +1,7 @@
 r"""Quantum Chebyshev Transform
 =============================================================
 
-Looking for ways to leverage the speed of the :doc:`quantum Fourier transform <demos/tutorial_qft>` is a common way to design quantum algorithms with exponential speed ups over classical algorithms. 
+Looking for ways to leverage the speed of the :doc:`quantum Fourier transform <demos/tutorial_qft>` is a common way to design quantum algorithms with exponential speed-ups over classical algorithms. 
 Working in the Fourier basis can be a more natural choice than the standard basis for some computations. 
 Swapping bases is feasible due to the efficiency of the quantum Fourier transform.
 In the paper `"Quantum Chebyshev transform: mapping, embedding, learning and sampling distributions" <https://arxiv.org/abs/2306.17026>`__ [#williams2023]_, the authors describe a different basis, the *Chebyshev basis*, and its associated transformation, the *quantum Chebyshev transform*. 

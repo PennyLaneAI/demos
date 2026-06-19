@@ -245,7 +245,7 @@ plt.show()
 # most dynamical simulations, as is showcased in the paper.
 # 
 # `It can be argued <https://twitter.com/gppcarleo/status/1669251392156860418>`_ that there are better suited 
-# classical algorithms for these kind of dynamical simulations, 
+# classical algorithms for these kinds of dynamical simulations, 
 # `with neural quantum states being one of them <https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.125.100503>`_.
 # Further, tensor network methods in two and higher dimensions are extremely difficult to implement. The employed methods
 # are not well suited for the problem and do not grasp the full breadth of possibilities of

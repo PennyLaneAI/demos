@@ -426,7 +426,7 @@ _ = qp.draw_mpl(sequential_circuit)(N, g)
 # where we used that :math:`\sum_{j,\ell} |j\rangle B^k_{j\ell}\langle\ell|=B^k.`
 # We now can measure the two bond qudits and will know that for a given measurement
 # outcome :math:`k,` we obtained the MPS state on :math:`K+L` qubits, up to
-# a defect, namely the matrix :math:`B^k` that depends to the outcome.
+# a defect, namely the matrix :math:`B^k` that depends on the outcome.
 #
 # In full generality, the fusion strategy may seem complicated, but it can take
 # a very simple form, as we will now see in our example.
