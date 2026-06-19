@@ -574,7 +574,7 @@ def adapt_shape(array, reference):
 # score function. Thus, this baseline has the same shape as the gradient. You can find a proof in
 # Chapter 6.3.1 in [#Dawid22]_. Reducing the variance of our
 # estimates significantly speeds up the training process by providing better gradient updates with
-# less samples.
+# fewer samples.
 #
 
 

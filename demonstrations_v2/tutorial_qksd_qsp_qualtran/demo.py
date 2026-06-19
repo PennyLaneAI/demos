@@ -326,7 +326,7 @@ for gate, count in sigma.items():
 # increase the Krylov subspace dimension by increasing the number of terms in our Chebyshev polynomial,
 # captured in this demo via the angles variables. Let's try :math:`D=20`
 # by setting the number of terms in these angles to 20. As the resource estimation is independent of
-# the exact angle values, we are able to set them randomly instead of recomputing the formally:
+# the exact angle values, we are able to set them randomly instead of recomputing them formally:
 
 even_real = even_imag = odd_real = odd_imag = np.random.random(20)
 

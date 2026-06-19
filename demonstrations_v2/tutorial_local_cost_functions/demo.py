@@ -73,7 +73,7 @@ np.random.seed(42)
 #
 # First we define a number of wires we want to train on. The work by
 # Cerezo et al. shows that circuits are trainable under certain regimes, so
-# how many qubits we train on will effect our results.
+# how many qubits we train on will affect our results.
 
 wires = 6
 dev = qp.device("lightning.qubit", wires=wires)
