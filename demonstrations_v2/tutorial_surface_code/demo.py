@@ -5,8 +5,9 @@ Introducing the Surface Code
 
 The surface code is the gold standard when it comes to quantum error correction (QEC).
 Despite its early inception in the 90s, it is still relevant in many modern quantum computing architectures today.
-During that timespan, it has evolved quite a bit. We shall give a modern overview of its basic components and principles
-These principles are ubiquitous in modern QEC codes, so this should be a perfect point to start your QEC journey.
+During that timespan, it has evolved quite a bit. In this demo, we will give an overview of the inner workings of the surface
+code to perform quantum error correction.
+These principles are ubiquitous in modern QEC codes, so this demo should serve as a good starting point to get into QEC in 2026.
 
 .. figure:: _static/demo_thumbnails/large_demo_thumbnails/pennylane-demo-surface-code-large-thumbnail.png
     :align: center
