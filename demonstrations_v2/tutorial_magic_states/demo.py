@@ -130,7 +130,7 @@ print(magic_state_injection_circuit(np.pi / 3))
 # several smaller inner codes. As such, the main operations in a distillation protocol are 
 # logical, executed across multiple error-correcting blocks, resulting in a significant resource overhead. 
 # For instance, in a 15-to-1 distillation protocol [#Fowler]_, fifteen logical qubits---each already
-# protected by an inner surface code---are further encoded into a single block of a Reed-Muller 
+# protected by an inner :doc:`surface code <demos/tutorial_surface_code>`---are further encoded into a single block of a Reed-Muller 
 # code (outer code) to distill just one improved magic state.
 #
 # See this :doc:`demo <demos/tutorial_magic_state_distillation>` 

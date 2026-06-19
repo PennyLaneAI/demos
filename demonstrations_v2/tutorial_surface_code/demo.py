@@ -169,11 +169,11 @@ So overall, this is just the joint measurement of :math:`Z_{q_1} \otimes Z_{q_2}
 Error correction
 ----------------
 
-
-Let us first consider what actually happens if a single :math:`X` or :math:`Z` error occurs on one of the data qubits.
-Before the error, each stabilizer measurement returns :math:`+1`, confirming the underlying state is in the correct code space.
+Let us first consider what actually happens if a single :math:`Z` error occurs on one of the data qubits.
+The story work equivalently for :math:`X` errors.
+Before the :math:`Z` error, each stabilizer measurement returns :math:`+1`, confirming the underlying state is in the correct code space.
 Now let us assume the central data qubit experiences a :math:`Z` error. The surrounding :math:`Z` stabilizers are unaffected by it, but
-the two :math:`X` stabilizers yield a :math:`-1` measurement - a *defect*.
+the two :math:`X` stabilizers yield a :math:`-1` measurement - a *defect*, indicated by :math:`-1` on the stabilizer square.
 
 .. figure:: ../_static/demonstration_assets/surface_code/Z_error.png
     :align: center
@@ -218,8 +218,16 @@ This is a manifestation of the fact that a distance :math:`d=5` rotated surface 
 
 errors deterministically.
 
-Error correction is continuously performed during computation with one clock cycle corresponding to measuring all stabilizers once.
-Instead of actually performing the corrective Pauli strings, one typically tracks them in software and multiplies them retrospectively with the final measurement results.
+Intuitively, this makes sense. In a code with distance :math:`d`, logical operators are (at least) of weight :math:`d`. 
+Logical operators change the logical state of the qubit without being noticed by any stabilizer. So The best we can do is detect
+errors up to :math:`d-1`. 
+And we can only deterministically correct errors up to half the distance, 
+because a wrong correction will make the total operation (error + correction) a logical operator that goes unnoticed.
+
+Error correction is continuously performed during computation with one clock cycle corresponding to measuring all :math:`\mathcal{O}(d^2)` stabilizers once.
+It is worth noting that the actual error *correction* typically happens in software, and no correction terms are actively applied.
+Instead, one typically tracks all detected errors based on their syndromes and then multiplies 
+them retrospectively with the final measurement results at the end of the computation.
 
 
 """
