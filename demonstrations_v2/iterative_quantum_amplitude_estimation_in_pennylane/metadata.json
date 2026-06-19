@@ -1,5 +1,5 @@
 {
-  "title": "Iterative Quantum Amplitude Estimation in Pennylane",
+  "title": "Iterative Quantum Amplitude Estimation",
   "authors": [
     {
       "username": "emgem"
@@ -15,12 +15,29 @@
     {
       "type": "thumbnail",
       "uri": "/_static/demo_thumbnails/regular_demo_thumbnails/thumbnail_placeholder.png"
+    },
+     {
+      "type": "large_thumbnail",
+      "uri": "/_static/demo_thumbnails/large_demo_thumbnails/thumbnail_placeholder.png"
     }
   ],
-  "seoDescription": "Created for the 2026 Xanadu summer residency bootcamp. This piece explores the implementation of iterative quantum amplitude estimation using Pennylane tools and compares functionality and results to other, comparable methods (ie. Grover's, Quantum Amplitude Estimation).",
+  "seoDescription": "Quantum computers are uniquely poised to carry out highly efficient search and estimation algorithms. Iterative quantum amplitude estimation is one such example, in which quantum-classical hybrid methods are used to estimate the probability of a certain state being measured in a data set. This demo explores the methodology and implementation of this method in PennyLane",
   "doi": "",
   "references": [],
-  "basedOnPapers": [],
+  "basedOnPapers": [
+    "1912.05559"
+  ],
   "referencedByPapers": [],
-  "relatedContent": []
+  "relatedContent": [
+    {
+      "type":"demonstration",
+      "id": "tutorial_qpe",
+      "weight": 1.0
+    },
+    {
+      "type": "demonstration",
+      "id": "tutorial_intro_amplitude_estimation",
+      "weight": 1.0
+    }
+  ]
 }
