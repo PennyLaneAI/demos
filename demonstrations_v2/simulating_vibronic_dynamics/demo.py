@@ -577,12 +577,12 @@ def ElectronPopVibronicsSimulation(steps, gradient_wires, StatePrepFunc, Coupler
 # .. figure:: ../demonstrations_v2/simulating_vibronic_dynamics/10StepVibePlot.png
 #    :align: center
 #    :width: 700px
-    
+#  
 #    *Electronic state population time evolution after 10 steps with dt=0.4*
 # 
 # Conclusion
 # ----------
-# 
+# Preparing to make the most out of quantum technologies is important as we continue to move toward accessible, useful quantum devices. Identifying areas of interest that are known to be useful to researchers, companies, and individuals is an important first step. Vibronic simulation has the potential to expand our capacity for material discovery, renewable energy expansion, and drug exploration. Opening this door using the advantages of quantum computation is an important step toward an ever expanding, quantum enabled future.
 #
 # .. _references:
 #
