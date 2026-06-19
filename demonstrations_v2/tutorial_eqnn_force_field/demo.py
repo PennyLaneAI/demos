@@ -396,7 +396,7 @@ data_train, data_test = (
 )
 
 #################################
-# We will know define the cost function and how to train the model using Jax. We will use the mean-square-error loss function.
+# We will now define the cost function and how to train the model using Jax. We will use the mean-square-error loss function.
 # To speed up the computation, we use the decorator ``@jax.jit`` to do just-in-time compilation for this execution. This means the first execution will typically take a little longer with the
 # benefit that all following executions will be significantly faster, see the `Jax docs on jitting <https://jax.readthedocs.io/en/latest/jax-101/02-jitting.html>`_.
 

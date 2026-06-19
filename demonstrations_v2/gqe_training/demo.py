@@ -36,7 +36,7 @@ state. And lastly, we discuss the results, potential ways optimizing the code, a
 # classical machine learning (ML) algorithms for large problems. To bypass this, the GQE algorithm was 
 # proposed. Specifically, GQE uses a classical generative model where quantum circuits are sampled as a
 # sequence of unitaries from a given operator pool. This generative model is then trained so that it learns to
-# predict quantum circuits that evolves an initial state to the states better approximating the ground state. 
+# predict quantum circuits that evolve an initial state to the states better approximating the ground state. 
 # 
 # The main difference between the two approaches is where the tunable parameters are embedded.
 # That is, it is the classical GQE model that is being optimized as opposed to the variable

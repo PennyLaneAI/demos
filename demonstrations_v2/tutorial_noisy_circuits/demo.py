@@ -154,7 +154,7 @@ for p in ps:
 
 ######################################################################
 # The circuit behaves quite differently in the presence of noise! This will be familiar to anyone
-# that has run an algorithm on quantum hardware. It is also highlights why error
+# that has run an algorithm on quantum hardware. It also highlights why error
 # mitigation and error correction are so important. We can use PennyLane to look under the hood and
 # see the output state of the circuit for the largest noise parameter
 

@@ -385,7 +385,7 @@ Z0 = np.diag(eigenvals)
 #
 # The main work of our algorithm will be to implement the time evolution of the Hamiltonian fragments by using a Trotter product formula.
 #
-# The trick when time evolving a compressed double-factorized Hamiltonian is to use `Thouless’s theorem <https://joshuagoings.com/assets/Thouless_theorem.pdf>`__ [#Thouless1960]_ to construct a size :math:`2^{n_\mathrm{cas}} \times 2^{n_\mathrm{cas}}` unitary :math:`{\bf U}^{(\ell)}` that is induced by a the single-particle basis transformation :math:`U^{(\ell)}` (of size :math:`n_\mathrm{cas} \times n_\mathrm{cas}`). 
+# The trick when time evolving a compressed double-factorized Hamiltonian is to use `Thouless’s theorem <https://joshuagoings.com/assets/Thouless_theorem.pdf>`__ [#Thouless1960]_ to construct a size :math:`2^{n_\mathrm{cas}} \times 2^{n_\mathrm{cas}}` unitary :math:`{\bf U}^{(\ell)}` that is induced by the single-particle basis transformation :math:`U^{(\ell)}` (of size :math:`n_\mathrm{cas} \times n_\mathrm{cas}`). 
 # The Jordan-Wigner transform can then turn the number operators :math:`a^\dagger_p a_p = n_{p}` into Pauli :math:`Z` rotations, via :math:`n_p = (1-\sigma_{z,p})/2`. 
 # Note the :math:`1/2` term will affect the global phase, and we will have to keep track of that carefully. 
 # The resulting Hamiltonian looks like the following (for a derivation see Appendix A of Ref. [#Fomichev2025]_)

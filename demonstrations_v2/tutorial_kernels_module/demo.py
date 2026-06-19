@@ -391,7 +391,7 @@ print(f"The accuracy of the kernel with random parameters is {accuracy_init:.3f}
 
 ##############################################################################
 # We are also interested in seeing what the decision boundaries in this
-# classification look like. This could help us spotting overfitting issues
+# classification look like. This could help us to spot overfitting issues
 # visually in more complex data sets. To this end we will introduce a
 # second helper method.
 

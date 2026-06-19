@@ -352,7 +352,7 @@ efficient level of theory.
 # Now, we have defined all the ingredients of DMET. We can set up the self-consistency loop to get
 # the final results.
 #
-# We set up the loop by defining the maximum number of iterations and a convergence criteria. We use
+# We set up the loop by defining the maximum number of iterations and a convergence criterion. We use
 # both energy and correlation potential as our convergence parameters, so we define the initial
 # values and convergence tolerance for both. Also, since dividing the system into multiple impurities
 # might lead to the wrong number of electrons, we define and check the chemical potential :math:`\mu`
