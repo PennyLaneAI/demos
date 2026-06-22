@@ -14,11 +14,11 @@
    "previewImages": [
     {
       "type": "thumbnail",
-      "uri": "_static/demo_thumbnails/regular_demo_thumbnails/pennylane-demo-iterative-quantum-amplitude-estimation-thumbnail.png"
+      "uri": "/_static/demo_thumbnails/regular_demo_thumbnails/pennylane-demo-iterative-quantum-amplitude-estimation-thumbnail.png"
     },
     {
       "type": "large_thumbnail",
-      "uri": "_static/demo_thumbnails/large_demo_thumbnails/pennylane-demo-iterative-quantum-amplitude-estimation-large-thumbnail.png"
+      "uri": "/_static/demo_thumbnails/large_demo_thumbnails/pennylane-demo-iterative-quantum-amplitude-estimation-large-thumbnail.png"
     }
   ],
   "seoDescription": "Quantum computers are uniquely poised to carry out highly efficient search and estimation algorithms. Iterative quantum amplitude estimation is one such example, in which quantum-classical hybrid methods are used to estimate the probability of a certain state being measured in a data set. This demo explores the methodology and implementation of this method in PennyLane",
@@ -32,14 +32,14 @@
             "year": "2021",
             "journal": "npj Quantum Information",
             "doi": "10.1038/s41534-021-00379-1",
-            "url": "https://doi.org/10.1038/s41534-021-00379-13"
+            "url": "https://doi.org/10.1038/s41534-021-00379-1"
         },
      {
             "id": "Brassard2000",
             "type": "article",
             "title": "Quantum Amplitude Amplification and Estimation",
             "authors": "Brassard, Høyer, Mosca, and Tapp",
-            "year": "2000",
+            "year": "2002",
             "journal": "Contemporary Mathematics",
             "doi": "10.1090/conm/305/05215",
             "url": "https://doi.org/10.1090/conm/305/05215"
