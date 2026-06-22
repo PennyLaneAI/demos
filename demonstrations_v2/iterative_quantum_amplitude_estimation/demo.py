@@ -86,7 +86,7 @@ MCX_wires = [num_qubits-3,num_qubits-2,num_qubits-1,num_qubits]
 # 3. Implement :func:`~qp.MultiControlledX` such that wire :math:`n+1` takes on the :math:`|1\rangle` state if the success criteria is met.
 # 4. Flip the state of the 3 final qubits back to the original. 
 #
-# .. figure:: ../demonstrations_v2/iterative_quantum_amplitude_estimation_in_pennylane/A_Operator.png
+# .. figure:: ../demonstrations_v2/iterative_quantum_amplitude_estimation/A_Operator.png
 #    :align: center
 #    :width: 70%
 #
@@ -111,13 +111,13 @@ def A(state):
 ##############################################################################
 # Since the "good" state is marked by a :math:`|1\rangle_{eval}`, the :math:`\mathcal{S}_{\psi_1}` operator (also known as the oracle) can be constructed simply using a :func:`~qp.PauliZ()` gate, which will flip the phase of any state that has this marker and allow any state marked by :math:`|0\rangle_{eval}` to pass unchanged. The :math:`\mathcal{S}_0` operator is analogous to a simple :func:`~qp.FlipSign` operation defined to act on the :math:`|0\rangle` state. When designing the operator, the global phase term can be neglected since it does not impact the final measurement in IQAE. It should be noted that this is not the case in canonical QAE, where global phase does make a difference in the final result [#Brassard2000]_.
 #
-# .. figure:: ../demonstrations_v2/iterative_quantum_amplitude_estimation_in_pennylane/Q_Operator.png
+# .. figure:: ../demonstrations_v2/iterative_quantum_amplitude_estimation/Q_Operator.png
 #    :align: center
 #    :width: 70%
 #
 # These operators can be used to build the final, iterative circuit in which the number of Grover operator applications will vary per iteration.
 #
-# .. figure:: ../demonstrations_v2/iterative_quantum_amplitude_estimation_in_pennylane/Full_Circuit_Drawing.png
+# .. figure:: ../demonstrations_v2/iterative_quantum_amplitude_estimation/Full_Circuit_Drawing.png
 #    :align: center
 #    :width: 50%
 #
@@ -175,7 +175,7 @@ circuit = circuit_builder(catalyst_bool)
 #
 # In [#Grinko2021]_, the authors define ``FindNextK()`` to determine the number of times :math:`\mathcal{Q}` is implemented per iteration. The goal of ``FindNextK()`` is to identify the largest possible :math:`k` that adheres to what is called the **half-plane condition**. The core principle of IQAE is the narrowing of a range of potential amplitudes to, eventually, home in on an accurate estimate of the "good" state probability. To do this, each iteration of the algorithm must operate between an upper and lower bound that make up the function's **confidence interval**, which corresponds to the range of probabilities within which the final probability amplitude will exist. Since the calculation involves a :math:`\arcsin(x)` calculation, it is possible that this confidence interval could yield uninterpretable results if one angle falls in the upper half of the unit circle (i.e. between 0 and :math:`\pi`) and the other falls in the lower half of the unit circle (i.e. between :math:`\pi` and :math:`2\pi`) since information about the measurement's position on the probability curve would be lost. So, having both bounds of the confidence interval on the same half-plane of the unit circle will result in unambiguous knowledge on which branch of :math:`\arcsin(x)` should be used. Thus, valid results should always fall in either the upper or lower half-plane of the unit circle.
 #
-# .. figure:: ../demonstrations_v2/iterative_quantum_amplitude_estimation_in_pennylane/Half_Plane_Illustration.png
+# .. figure:: ../demonstrations_v2/iterative_quantum_amplitude_estimation/Half_Plane_Illustration.png
 #    :align: center
 #    :width: 80%
 #
