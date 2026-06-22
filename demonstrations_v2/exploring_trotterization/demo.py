@@ -47,9 +47,7 @@ Luckily for us, the problem of exponentiating non-commuting equations is not new
 Turning back to the Hamiltonian picture, if we take a large, finite :math:`r`, letting :math:`r` represent the number of time steps taken in the desired time evolution, we can approximate the Lie-Trotter formula to the first order Trotterization expression
 
 .. math::
-   e^{-iHt}=(\prod_j e^{-iH_j t/r})^r,
-
-which was discovered simultaneously by Strang [#Strang1968]_ and Verlet [#Verlet1967]_.
+   e^{-iHt}=(\prod_j e^{-iH_j t/r})^r.
 
 So, by slicing the total time the simulation is trying to emulate, the dependency shared by non-commuting properties can be integrated via alternating applications of each operator within each time step. So, instead of taking one complete :math:`A` step and one complete :math:`B` step, we are now alternating small, partial steps in :math:`A` and :math:`B`, approximating simultaneity to the best of our ability. 
 
@@ -96,7 +94,7 @@ from pennylane.transforms.rz_phase_gradient import rz_phase_gradient
 #Define System Parameters
 coeffs = [0.2, 1.3] #Define Hamiltonian coefficients
 observables = [qp.PauliX(0), qp.PauliZ(0)] #Define observables
-t = 10 #Define time in seconds
+t = 10
 R = [10, 20, 30, 40, 50, 100, 200, 400] #Trotter steps
 
 dev = qp.device("lightning.qubit", wires=1)
@@ -233,7 +231,7 @@ for r in R:
 # ----------------------------
 # To this point we have taken the first-order Trotterization approach, in which the root equation is truncated to the first order term. While this approach is sufficient for simple, short time scale problems (ex. systems with weak interaction), ignoring higher order terms and, therefore, reducing precision can result in ignorance of important system characteristics and unnecessarily high error that requires increased resources to account for [#Childs2021]_. Thus, the use of higher-order Trotterizations is often necessary to achieve realistic simulation.
 #
-# Higher-order Trotter products and the associated Trotter error is a complex and developing field of study. A simple, baseline approach to achieving high-order Trotterizations is introducing symmetries into the system that move the simulation closer to reality. Revisiting the analogy used above, the first-order Trotterization alternates between two non-commuting operators and incrementally steps each term in alternating time slices, resulting in an approximate interaction. In a second-order approach, one of the operator terms would be further divided into two half-steps to be applied before and after the other operator. In the case of our Hamiltonian, the second-order Trotter product would be
+# Higher-order Trotter products and the associated Trotter error is a complex and developing field of study. A simple, baseline approach to achieving high-order Trotterizations is introducing symmetries into the system that move the simulation closer to reality. Revisiting the analogy used above, the first-order Trotterization alternates between two non-commuting operators and incrementally steps each term in alternating time slices, resulting in an approximate interaction. In a second-order approach, one of the operator terms would be further divided into two half-steps to be applied before and after the other operator. In the case of our Hamiltonian, the second-order Trotter product, discovered simultaneously by Strang [#Strang1968]_ and Verlet [#Verlet1967]_, would be
 # 
 # .. math::
 #    e^{-i\alpha Xt}e^{-i\beta Zt}=(e^{-i\alpha Xt/2r}e^{-i\beta Zt/r}e^{-i\alpha Xt/2r})
