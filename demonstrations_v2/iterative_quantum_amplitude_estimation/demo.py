@@ -1,6 +1,6 @@
 r"""
 Iterative Quantum Amplitude Estimation
-================================================================
+======================================
 
 .. tip::
     Though some description is provided here, it may be useful to brush up on :doc:`amplitude amplification <demos/tutorial_intro_amplitude_amplification>` and :doc:`quantum phase estimation <demos/tutorial_qpe>` if needed. Then come right back!
