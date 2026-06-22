@@ -357,6 +357,6 @@ else:
 #
 # .. [#Grinko2021] Grinko, D., Gacon, J., Zoufal, C., & Woerner, S. (2021). Iterative quantum amplitude estimation. *npj Quantum Information*, vol. 7, no. 52. https://doi.org/10.1038/s41534-021-00379-1
 #
-# .. [#Brassard2000] Brassard, G., Høyer, P., Mosca, M., & Tapp, A. (2002). Quantum Amplitude Amplification and Estimation. *Contemporary Mathematics*, 305, 53-74. https://doi.org/10.1090/conm/305/05215. `(open access) <https://arxiv.org/abs/quant-ph/0005055>`_
+# .. [#Brassard2000] Brassard, G., Høyer, P., Mosca, M., & Tapp, A. (2002). Quantum Amplitude Amplification and Estimation. *Contemporary Mathematics*, 305, 53-74. https://doi.org/10.1090/conm/305/05215.
 #
-# .. [#Fukuzawa2023] Shion Fukuzawa, Christopher Ho, Sandy Irani, and Jasen Zion. "Modified Iterative Quantum Amplitude Estimation is Asymptotically Optimal." *Symposium on Algorithm Engineering and Experiments*, https://doi.org/10.1137/1.9781611977561.ch12
+# .. [#Fukuzawa2023] Fukuzawa, S., Ho, C., Irani, S., and Zion, J. (2023). "Modified Iterative Quantum Amplitude Estimation is Asymptotically Optimal." *Symposium on Algorithm Engineering and Experiments*, https://doi.org/10.1137/1.9781611977561.ch12
