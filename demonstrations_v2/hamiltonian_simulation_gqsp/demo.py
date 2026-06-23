@@ -7,58 +7,75 @@ applies an arbitrary complex polynomial :math:`P` of a unitary :math:`U` using a
 control qubit. Its flagship application is **Hamiltonian simulation**: implementing the
 time-evolution operator :math:`e^{-iHt}`.
 
-PennyLane provides ``qml.GQSP`` as a runnable circuit primitive, and a resource-estimation demo,
+Hamiltonian simulation is the original motivation for quantum signal processing, and GQSP is a
+modern variant of it: a single ancilla qubit and one complex polynomial of the block-encoded
+Hamiltonian are enough, with no need to split the target into separate cosine and sine parts as
+plain QSVT requires. This keeps the angle-finding step simple while still reaching :math:`e^{-iHt}`
+with a query cost that grows favourably in the evolution time and the target accuracy.
+
+PennyLane provides :func:`~qp.GQSP` as a runnable circuit primitive, and a
+resource-estimation demo,
 :doc:`Resource estimation for Hamiltonian simulation with GQSP <demos/tutorial_estimator_hamiltonian_simulation_gqsp>`
 [#estimator]_, which counts gates for cost analysis. This demo is the **executable
-counterpart**: we build and run the GQSP circuit and verify :math:`e^{-iHt}` against
+counterpart**. We build and run the GQSP circuit and verify :math:`e^{-iHt}` against
 ``scipy.linalg.expm``, spelling out the recipe end to end.
 
-By the end you will be able to build the qubitization walk for a Pauli Hamiltonian, derive the
-GQSP polynomial for :math:`e^{-iHt}` from the Jacobi-Anger expansion, run ``qml.GQSP`` and
-recover the evolution, and confirm that the error converges with the polynomial degree. The three
-pieces are:
+By the end of this demo, you will be able to carry out a
+:doc:`qubitization <demos/tutorial_qubitization>` [#qubitization]_ walk for a Pauli Hamiltonian,
+derive the GQSP polynomial for :math:`e^{-iHt}` from the Jacobi-Anger expansion, run
+:func:`~qp.GQSP` and recover the evolution, and confirm that the error converges with the
+polynomial degree. The three pieces are:
 
-1. **Block-encode** :math:`H` as a qubitization walk :math:`W` whose eigenvalues are
-   :math:`e^{\pm i\arccos(E/\lambda)}` for each eigenvalue :math:`E` of :math:`H`
-   (:math:`\lambda` the :math:`\ell_1`-norm of the coefficients). For an introduction to this
-   block encoding, see the
-   :doc:`introduction to qubitization <demos/tutorial_qubitization>` [#qubitization]_.
-2. **Choose the polynomial** :math:`P` so that :math:`P(W) = e^{-iHt}`. Writing a walk
+1. **Block-encode** :math:`H` as a qubitization walk operator :math:`W` whose eigenvalues are
+
+   .. math::
+
+       e^{\pm i\arccos(E/\lambda)}
+
+   for each eigenvalue :math:`E` of :math:`H`, with :math:`\lambda` the :math:`\ell_1`-norm of
+   the coefficients.
+
+2. **Choose your target polynomial** :math:`P` so that :math:`P(W) = e^{-iHt}`. Writing a walk
    eigenvalue as :math:`z=e^{i\theta}` with :math:`\cos\theta = E/\lambda`, we need
-   :math:`P(e^{i\theta}) = e^{-i\lambda t\cos\theta} = e^{-iEt}`. The Jacobi-Anger expansion
-   gives this as a Laurent series in :math:`z`.
-3. **Run** ``qml.GQSP`` with the angles from ``qml.poly_to_angles(..., "GQSP")``, undo the
+
+   .. math::
+
+       P(e^{i\theta}) = e^{-i\lambda t\cos\theta} = e^{-iEt},
+
+   which the Jacobi-Anger expansion gives as a Laurent series in :math:`z`.
+
+3. **Run** :func:`~qp.GQSP` with the angles from ``qp.poly_to_angles(..., "GQSP")``, undo the
    Laurent shift, and read :math:`e^{-iHt}` from the top-left block.
 """
 
 ###############################################################################
-# The Hamiltonian and the exact target
+# The Hamiltonian and the Exact Target
 # -------------------------------------
 #
-# We use a small two-qubit Heisenberg-type Hamiltonian. It is a convenient choice for this
-# demo: it is already a sum of Pauli terms (the form
-# ``qml.Qubitization`` block-encodes directly), its terms do not all commute (so :math:`e^{-iHt}`
-# is genuinely non-trivial), and it is small enough that we can form the full matrix
-# :math:`e^{-iHt}` and compare against it directly. The method itself is agnostic to this choice
-# and works for any Pauli
-# Hamiltonian. :math:`\lambda=\sum_k|c_k|` is the normalization used by the qubitization walk.
+# We will use a small two-qubit Heisenberg-type Hamiltonian. It is a convenient choice for this
+# demo since it is already a sum of Pauli terms (the form
+# :func:`~qp.Qubitization` block-encodes directly), its terms do not all commute (so :math:`e^{-iHt}`
+# is non-trivial), and it is small enough that we can form the full matrix
+# :math:`e^{-iHt}` and compare against it directly. In general, though, the methods in this demo
+# work for any Pauli Hamiltonian. :math:`\lambda=\sum_k|c_k|` is the normalization used by the
+# qubitization walk.
 
 import warnings
 
 warnings.filterwarnings("ignore", message=".*JAX.*")  # JAX is unused here
 import numpy as np
-import pennylane as qml
+import pennylane as qp
 from scipy.linalg import expm
 from scipy.special import jv  # Bessel functions of the first kind
 import matplotlib.pyplot as plt
 
 coeffs = [0.5, 0.3, 0.4, 0.2]
-obs = [qml.X(0) @ qml.X(1), qml.Y(0) @ qml.Y(1), qml.Z(0) @ qml.Z(1), qml.Z(0)]
-H = qml.Hamiltonian(coeffs, obs)
+obs = [qp.X(0) @ qp.X(1), qp.Y(0) @ qp.Y(1), qp.Z(0) @ qp.Z(1), qp.Z(0)]
+H = qp.Hamiltonian(coeffs, obs)
 lam = sum(abs(c) for c in coeffs)  # l1-norm of the coefficients
 t = 0.7  # evolution time
 
-H_matrix = qml.matrix(H, wire_order=[0, 1])
+H_matrix = qp.matrix(H, wire_order=[0, 1])
 U_exact = expm(-1j * H_matrix * t)
 
 # show the Hamiltonian explicitly
@@ -68,19 +85,19 @@ print("H as a matrix:")
 print(np.round(H_matrix, 3))
 
 ###############################################################################
-# Step 1: the qubitization walk
+# Step 1: The Qubitization Walk
 # ------------------------------
 #
-# ``qml.Qubitization(H, control)`` builds the Low and Chuang [#low]_ qubitization walk operator
+# ``qp.Qubitization(H, control)`` builds the Low and Chuang [#low]_ qubitization walk operator
 # :math:`W = \text{Prep}^\dagger\,\text{Sel}\,\text{Prep}\,(2|0\rangle\langle 0| - I)`, a block
 # encoding of :math:`H/\lambda` followed by a reflection about the control :math:`|0\rangle`.
 # Its eigenphases are :math:`\pm\arccos(E/\lambda)` for each eigenvalue :math:`E` of :math:`H`,
 # so a walk eigenvalue :math:`z = e^{i\theta}` satisfies :math:`\cos\theta = E/\lambda`. The
 # control register needs :math:`\lceil \log_2 L \rceil` qubits for :math:`L` Hamiltonian terms.
 #
-# The printout below confirms this: every :math:`\arccos(E/\lambda)` appears among the walk's
+# The printout below confirms this since every :math:`\arccos(E/\lambda)` appears among the walk's
 # eigenphases. The walk also carries a few extra phases (here :math:`0` and :math:`\pi`) coming
-# from the complementary subspace where the control ancillas are not :math:`|0\rangle`; these
+# from the complementary subspace where the control ancillas are not :math:`|0\rangle`. These
 # encode no information about :math:`H` and are projected out when we read off the top-left block
 # in Step 3.
 
@@ -88,13 +105,13 @@ n_ctrl = int(np.ceil(np.log2(len(coeffs))))
 anc = [f"a{i}" for i in range(n_ctrl)]
 
 
-@qml.qnode(qml.device("default.qubit"))
+@qp.qnode(qp.device("default.qubit"))
 def walk():
-    qml.Qubitization(H, control=anc)
-    return qml.state()
+    qp.Qubitization(H, control=anc)
+    return qp.state()
 
 
-W = qml.matrix(walk, wire_order=anc + [0, 1])()
+W = qp.matrix(walk, wire_order=anc + [0, 1])()
 walk_phases = np.sort(np.unique(np.round(np.abs(np.angle(np.linalg.eigvals(W))), 4)))
 arccos_E = np.sort(
     np.unique(np.round(np.arccos(np.clip(np.linalg.eigvalsh(H_matrix) / lam, -1, 1)), 4))
@@ -103,24 +120,24 @@ print("walk eigenphases   :", walk_phases)
 print("arccos(E / lambda) :", arccos_E)
 
 ###############################################################################
-# Step 2: the Jacobi-Anger polynomial
+# Step 2: The Jacobi-Anger Polynomial
 # ------------------------------------
 #
 # We need a polynomial :math:`P` with :math:`P(e^{i\theta}) = e^{-i\lambda t\cos\theta}`. The
-# Jacobi-Anger expansion provides exactly this, as a Laurent series in :math:`z=e^{i\theta}`:
+# Jacobi-Anger expansion provides exactly this, as the Laurent series in :math:`z=e^{i\theta}`:
 #
 # .. math::
 #
 #     e^{-i a\cos\theta} = \sum_{k=-\infty}^{\infty} (-i)^k J_k(a)\, e^{ik\theta},
 #     \qquad a = \lambda t,
 #
-# with :math:`J_k` the Bessel functions of the first kind. The series converges
+# with :math:`J_k` being the Bessel functions of the first kind. The series converges
 # super-exponentially once :math:`K \gtrsim a`, so we truncate at :math:`|k|\le K`.
 #
 # Two practical points that the GQSP machinery requires:
 #
-# - ``qml.poly_to_angles`` needs a polynomial in **non-negative** powers, so we shift the
-#   Laurent series by :math:`z^{K}` (we undo this shift on the circuit later).
+# - :func:`~qp.poly_to_angles` needs a polynomial in **non-negative** powers, so we shift the
+#   Laurent series by :math:`z^{K}` (we undo this shift in the circuit later).
 # - It also requires :math:`|P(e^{i\theta})|\le 1`, so we rescale the coefficients by a
 #   constant :math:`s<1` (and divide it back out at the end).
 
@@ -139,11 +156,11 @@ poly, s = jacobi_anger_poly(lam * t, K)
 print(f"K = {K}: polynomial degree {len(poly) - 1}, scale s = {s:.4f}")
 
 ###############################################################################
-# Step 3: run ``qml.GQSP`` and recover :math:`e^{-iHt}`
-# -----------------------------------------------------
+# Step 3: Run :func:`~qp.GQSP` and Recover :math:`e^{-iHt}`
+# ---------------------------------------------------------
 #
-# ``qml.GQSP(U, angles, control)`` applies the single polynomial :math:`P(U)` with ``angles``
-# from ``qml.poly_to_angles(poly, "GQSP")``. Recall how we built that polynomial in Step 2: the
+# ``qp.GQSP(U, angles, control)`` applies the single polynomial :math:`P(U)` with ``angles``
+# from ``qp.poly_to_angles(poly, "GQSP")``. Recall how we built that polynomial in Step 2: the
 # truncated Jacobi-Anger series already approximates :math:`e^{-iHt}` on the walk eigenvalues, and
 # we made two changes to it -- multiplying by :math:`z^{K}` to remove the negative powers, and
 # scaling by :math:`s` to enforce :math:`|P|\le 1`. So the coefficients in ``poly`` are those of
@@ -164,16 +181,16 @@ print(f"K = {K}: polynomial degree {len(poly) - 1}, scale s = {s:.4f}")
 def gqsp_evolution(K):
     # recovered exp(-iH t) on the system, read from the GQSP top-left block.
     poly, s = jacobi_anger_poly(lam * t, K)
-    angles = qml.poly_to_angles(poly, "GQSP")
+    angles = qp.poly_to_angles(poly, "GQSP")
 
-    @qml.qnode(qml.device("default.qubit"))
+    @qp.qnode(qp.device("default.qubit"))
     def circuit():
-        qml.GQSP(qml.Qubitization(H, control=anc), angles, control="g")
+        qp.GQSP(qp.Qubitization(H, control=anc), angles, control="g")
         for _ in range(K):  # undo the z^K Laurent shift
-            qml.adjoint(qml.Qubitization(H, control=anc))
-        return qml.state()
+            qp.adjoint(qp.Qubitization(H, control=anc))
+        return qp.state()
 
-    M = qml.matrix(circuit, wire_order=["g"] + anc + [0, 1])()
+    M = qp.matrix(circuit, wire_order=["g"] + anc + [0, 1])()
     block = M[:4, :4] / s  # all-ancilla-zero (top-left) block
     return block
 
@@ -199,16 +216,16 @@ print(
 def gqsp_error(K, t_val):
     "spectral-norm error of the GQSP evolution at order K and time t_val."
     poly, s = jacobi_anger_poly(lam * t_val, K)
-    angles = qml.poly_to_angles(poly, "GQSP")
+    angles = qp.poly_to_angles(poly, "GQSP")
 
-    @qml.qnode(qml.device("default.qubit"))
+    @qp.qnode(qp.device("default.qubit"))
     def circuit():
-        qml.GQSP(qml.Qubitization(H, control=anc), angles, control="g")
+        qp.GQSP(qp.Qubitization(H, control=anc), angles, control="g")
         for _ in range(K):  # undo the z^K Laurent shift
-            qml.adjoint(qml.Qubitization(H, control=anc))
-        return qml.state()
+            qp.adjoint(qp.Qubitization(H, control=anc))
+        return qp.state()
 
-    M = qml.matrix(circuit, wire_order=["g"] + anc + [0, 1])()
+    M = qp.matrix(circuit, wire_order=["g"] + anc + [0, 1])()
     block = M[:4, :4] / s
     U = expm(-1j * H_matrix * t_val)
     ph = np.exp(-1j * np.angle(block[0, 0] / U[0, 0]))
@@ -242,16 +259,16 @@ plt.show()
 # its :math:`\lambda t`, then floors at machine precision; larger :math:`\lambda t` needs a larger
 # :math:`K` to reach the same accuracy.
 #
-# What we found
-# -------------
+# Understanding the Results
+# -------------------------
 #
-# Running ``qml.GQSP`` on the qubitization walk reproduced :math:`e^{-iHt}` to within
+# Running :func:`~qp.GQSP` on the qubitization walk reproduced :math:`e^{-iHt}` to within
 # :math:`\sim 10^{-8}` at polynomial degree :math:`K=8`, matching ``scipy.linalg.expm`` to
 # machine precision. Because of the fast Bessel decay seen in the convergence plot, useful
 # accuracy needs only :math:`K = \mathcal{O}(\lambda t + \log(1/\varepsilon))` queries to the
 # walk.
 #
-# Two practical points worth keeping:
+# There are two practical things to keep in mind:
 #
 # - **One control qubit, one polynomial.** GQSP needs a single ancilla and a single complex
 #   polynomial, with no cosine/sine split, which is what makes its angle synthesis simpler and
@@ -260,6 +277,16 @@ plt.show()
 #   application of the walk :math:`W`; the
 #   :doc:`resource-estimation demo <demos/tutorial_estimator_hamiltonian_simulation_gqsp>`
 #   [#estimator]_ turns that count into fault-tolerant gate estimates.
+#
+# In practice, this makes GQSP a natural choice when you need an accurate :math:`e^{-iHt}` over a
+# longer evolution time :math:`t`: the super-exponential convergence means the degree :math:`K`
+# (and hence the number of walk applications) grows only mildly as you tighten the error, so the
+# cost stays close to the :math:`\lambda t` set by the evolution itself. This is the regime where
+# block-encoding methods like this one can be more efficient than product-formula (Trotter)
+# approaches, whose step count typically grows faster as the target accuracy improves. For very
+# short evolutions or coarse approximations, however, a few Trotter steps are simpler and may be
+# cheaper -- the block-encoding and ancilla overhead of qubitization mostly pays off once high
+# accuracy or longer times are required.
 #
 # References
 # ----------
