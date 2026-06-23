@@ -7,11 +7,11 @@ Iterative Quantum Amplitude Estimation
 
 It is expensive to guess. 
 
-If, for example, you want to find a specific element in a list of length N, basic classical, unstructured search techniques require individual guesses to be evaluated sequentially. This implies a :math:`\mathcal{0}(N)` cost. Though not necessarily prohibitive, this cost behaviour implies that large lists will be difficult to search through as resource limits are reached. :doc:`Grover's algorithm <demos/tutorial_grovers_algorithm>` improved on these techniques by taking advantage of quantum information processing methods, improving cost to :math:`\mathcal{O}(\sqrt{N})`.
+If, for example, you want to find a specific element in a list of length N, basic classical, unstructured search techniques require individual guesses to be evaluated sequentially. This implies a :math:`\mathcal{O}(N)` cost. Though not necessarily prohibitive, this cost behaviour implies that large lists will be difficult to search through as resource limits are reached. :doc:`Grover's algorithm <demos/tutorial_grovers_algorithm>` improved on these techniques by taking advantage of quantum information processing methods, improving cost to :math:`\mathcal{O}(\sqrt{N})`.
 
 In 2000, the quantum amplitude estimation (QAE) algorithm was put forward as a method to estimate the fraction of states that satisfy a given criterion, if it exists in the set at all [#Brassard2000]_. Here, a superposition state is operated on by the Grover operator :math:`2^n` times in a controlled ladder approach, where :math:`n` is the size of the evaluation register. The rotation and amplification induced by the Grover operator encodes an amplitude in an evaluation register indicating the fraction of "good" states that meet the target criterion in a data set, which is obtained through quantum processing via :doc:`quantum Fourier transform (QFT) <demos/tutorial_qft>` to carry out quantum phase estimation (QPE).
 
-Though QAE is a major improvement on the classical case, its reliance on QPE makes it too resource-intensive to run on near-term hardware. This is because QPE depends on QFT, whose circuit width and depth increase rapidly thanks to the Grover operator needing a large number of qubits. If we want to, therefore, employ QAE using near-term hardware, we need to find a way to avoid using QPE. 
+Though QAE is a major improvement on the classical case, its reliance on QPE makes it too resource-intensive to run on near-term hardware. This is because QPE depends on QFT, whose circuit width and depth increase rapidly with the intended precision. If we want to, therefore, employ QAE using near-term hardware, we need to find a way to avoid using QPE.
 
 In 2021, an alternative, more efficient method was proposed: Iterative Quantum Amplitude Estimation (IQAE) [#Grinko2021]_. Essentially, IQAE is a quantum-classical hybrid algorithm that breaks down the very deep, very wide circuit approach used in QAE into a series of simpler circuits that execute the Grover operator :math:`k` times sequentially, with the value of :math:`k` changing via classical optimization in each sequential circuit to iteratively "zoom in" on the solution. So, rather than trying to take a single-shot approach that requires resources to be allocated to auxiliary registers and controlled applications of the Grover operator, IQAE carries out several oscillations between classical optimizations of :math:`k` and quantum circuit execution and measurement, using the outcome of each quantum iteration to inform the classical step. 
 
@@ -19,7 +19,7 @@ The goal of this demo is to introduce the IQAE algorithm and implement a simple 
 
 What Are We Looking For?
 ------------------------
-IQAE, like QAE, is specifically focused on analyzing data sets composed of "good" and "bad" states that appear with unequal probability. In order to make this state searchable, each component must be assigned a marker that indicates which of the two categories it falls in. Taking :math:`|0\rangle` to be a "bad" marker and :math:`|1\rangle` to be a "good" marker, the general IQAE state can be defined as
+IQAE, like QAE, is specifically focused on analyzing data sets composed of "good" and "bad" states. We can assign each of the subspaces a marker that indicates which of the two categories it falls in. Taking :math:`|0\rangle` to be a "bad" marker and :math:`|1\rangle` to be a "good" marker, the general IQAE state can be defined as
 
 .. math::
    |\Psi_{IQAE}\rangle = \sqrt{1-a}|\psi_0\rangle|0\rangle+\sqrt{a}|\psi_1\rangle|1\rangle,
@@ -28,11 +28,11 @@ where :math:`a` is the probability of measuring a "good" state, :math:`|\psi_0\r
 
 In this implementation, the goal of the IQAE algorithm will be to estimate the fraction of states that are multiples of 8. When encoded in binary, multiples of 8 will always have 0 in the three least significant positions, which serves as a simple success criterion for the algorithm (i.e. a "good" state will always have 0s in the 3 least significant positions). 
 
-To carry this search out, we will define an operator :math:`\mathcal{A}` that maps a set of input qubits onto the problem space, meaning the structure of :math:`\mathcal{A}` will differ depending on the application. :math:`\mathcal{A}` should impose a unitary operation on the input states that invokes a superposition state that is identical to :math:`|\Psi_{IQAE}\rangle`. In other words, the operator should be a unitary satisfying :math:`\mathcal{A}|0\rangle^{\otimes n}=|\Psi_{QAE}\rangle`, where :math:`n` is the total number of qubits in the system. 
+To carry this search out, we define an operator :math:`\mathcal{A}` satisfying :math:`\mathcal{A}|0\rangle^{\otimes n}=|\Psi_{QAE}\rangle`, where :math:`n` is the total number of qubits in the system. This operator is determined by the application. 
 
-:math:`\mathcal{A}` needs needs to be tailored to the specific search parameters. In this case, it should handle the chosen input state of a random superposition of all combinations of the input qubits and check (via an `oracle <https://pennylane.ai/challenges/the_oracle_of_the_exact_distance>`_) the 3 least significant bits for adherence to the success criteria (i.e. are they all zero?) via a multi-controlled CNOT gate. If the logic gate is triggered, a single-qubit evaluation register will be flipped to :math:`|1\rangle`, indicating a "good" result. 
+In this case, :math:`\mathcal{A}` prepares a random state and flips an auxiliary qubit via a multi-controlled CNOT gate if the 3 least significant bits adhere to the success criteria (i.e. are they all zero?). If the logic gate is triggered, this single-qubit evaluation register will be flipped to :math:`|1\rangle`, indicating a "good" result. 
 
-In IQAE, the goal is not to identify all "good" results in one sweep. Instead, several iterations will be carried out in which the Grover operator is applied :math:`k` times with the goal of extracting a probability amplitude by refining the interval within which the solution is likely to lie. In doing this, we avoid the expensive QPE procedure used in QAE. To do this, each iteration will yield the general result
+In IQAE, the goal is not to estimate the number of "good" results in one sweep. Instead, several iterations will be carried out in which the Grover operator is applied :math:`k` times with the goal of extracting a probability amplitude by refining the interval within which the solution is likely to lie. In doing this, we avoid the expensive QPE procedure used in QAE. To do this, each iteration will yield the general result
 
 .. math::
    \mathcal{Q}^k\mathcal{A}|0\rangle_{bits}|0\rangle_{eval} = \cos((2k+1)\theta_a)|\psi_0\rangle_n|0\rangle_{eval}+\sin((2k+1)\theta_a)|\psi_1\rangle_n|1\rangle_{eval}
@@ -238,17 +238,17 @@ def FindNextK(k_i,theta_min, theta_max, HalfPlane_bool):
 # 3. Compute the overlap between the previous confidence interval and the new confidence interval, taking this to be your final upper and lower bound definition. 
 # 4. Check to see if the difference between the new upper and lower bounds is smaller than :math:`\epsilon`, which represents a chosen accuracy parameter. If not, pass the final upper and lower bounds back into ``FindNextK()`` and repeat. If yes, return the probability amplitudes associated with the upper and lower amplitudes. 
 #
-# There are several well-known statistical methods used to update confidence intervals. A simple, iterative approach is the Chernoff-Hoeffding method, which shifts the interval bounds up and down, respectively, by :math:`\epsilon_{a_i}`. From [#Grinko2021]_, according to the Chernoff-Hoeffding algorithm
+# The confidence intervals can be determined using the Chernoff-Hoeffding bound, where the margin of error is given by :math:`\epsilon_{a_i}`. From [#Grinko2021]_.
 #
 # .. math::
 #    \epsilon_{a_i}=\sqrt{\frac{1}{2N}\log{\frac{2T}{\alpha}}}.
 #
-# Where :math:`\epsilon_{a_i}` is change between the previous amplitude estimation and current amplitude estimation and :math:`T` defines the maximum number of iterations required to achieve a precision of :math:`\epsilon_{a_i}` and
+# Where :math:`\epsilon_{a_i}` is the margin of error and :math:`T` defines the maximum number of iterations required to achieve a precision of :math:`\epsilon_{a_i}` and
 #
 # .. math::
 #    T = \lceil \log_{2}{\frac{\pi}{8\epsilon}} \rceil.
 #
-# Which can be used to estimate the upper and lower bounds of the probability interval estimate.
+# We can then estimate the upper and lower bounds of the probability interval estimate.
 #
 # .. math::
 #    p_{max} = \min(1,a_i+\epsilon_{a_i})
@@ -348,7 +348,7 @@ else:
 ##############################################################################
 # Conclusion
 # ----------
-# QAE was put forward as a generalized adaptation of quantum search methods, which hinted at the viability of quantum computers as a notable improvement on existing technologies early on. IQAE pushed forward with this task, showing not only that quantum hardware has the potential to provide advantages in estimation algorithms but that existing, established classical feedback loops can be employed to reduce implementation limitations. The implementation shown here does not achieve full quadratic speedup compared to classical estimation methods, but advancements have been subsequently made ([#Fukuzawa2023]_) to meet this metric. As alluded to, IQAE has the potential to make notable impacts in various applications, such as in the calculation of expectation values in applications like quantum chemistry. Proposals have also been put forward to employ IQAE in areas such as risk analysis, financial portfolio modelling and optimization, and power grid analysis. The true feasibility of using IQAE (and, really, any other quantum algorithm) in these applications will become clearer as quantum hardware advances in capability and usability. There are, of course, limitations to IQAE's feasibility, particularly that the circuit depth grows with the number of iterations, albeit not as quickly as in QAE. Despite this, IQAE shows an example of how quantum-classical hybrid approaches can be used to achieve speedup compared to classical methods and resource requirement reduction compared to quantum methods. 
+# QAE was put forward as a generalized adaptation of quantum search methods, which hinted at the viability of quantum computers as a notable improvement on existing technologies early on. IQAE pushed forward with this task, showing not only that quantum hardware has the potential to provide advantages in estimation algorithms but that classical feedback loops can be employed to reduce implementation limitations. The implementation shown here does not achieve full quadratic speedup compared to classical estimation methods, but advancements have been subsequently made ([#Fukuzawa2023]_) to meet this metric. As alluded to, IQAE has the potential to make notable impacts in various applications, such as in the calculation of expectation values in applications like quantum chemistry. Proposals have also been put forward to employ IQAE in areas such as risk analysis, financial portfolio modelling and optimization, and power grid analysis. The true feasibility of using IQAE (and, really, any other quantum algorithm) in these applications will become clearer as quantum hardware advances in capability and usability. There are, of course, limitations to IQAE's feasibility, particularly that the circuit depth grows with the number of iterations. Despite this, IQAE shows an example of how quantum-classical hybrid approaches can be used to achieve speedup compared to classical methods and resource requirement reduction compared to classical methods. 
 #
 # .. _references:
 #
