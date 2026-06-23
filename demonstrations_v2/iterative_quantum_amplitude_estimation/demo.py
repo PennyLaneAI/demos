@@ -28,9 +28,9 @@ where :math:`a` is the probability of measuring a "good" state, :math:`|\psi_0\r
 
 In this implementation, the goal of the IQAE algorithm will be to estimate the fraction of states that are multiples of 8. When encoded in binary, multiples of 8 will always have 0 in the three least significant positions, which serves as a simple success criterion for the algorithm (i.e. a "good" state will always have 0s in the 3 least significant positions). 
 
-To carry this search out, we define an operator :math:`\mathcal{A}` satisfying :math:`\mathcal{A}|0\rangle^{\otimes n}=|\Psi_{QAE}\rangle`, where :math:`n` is the total number of qubits in the system. This operator is determined by the application. 
+To carry this search out, we define an operator :math:`\mathcal{A}` satisfying :math:`\mathcal{A}|0\rangle^{\otimes n}=|\Psi_{IQAE}\rangle`, where :math:`n` is the total number of qubits in the system. This operator is determined by the application. 
 
-In this case, :math:`\mathcal{A}` prepares a random state and flips an auxiliary qubit via a multi-controlled CNOT gate if the 3 least significant bits adhere to the success criteria (i.e. are they all zero?). If the logic gate is triggered, this single-qubit evaluation register will be flipped to :math:`|1\rangle`, indicating a "good" result. 
+In this case, :math:`\mathcal{A}` prepares a random state and flips an auxiliary qubit via a multi-controlled CNOT gate if the 3 least significant bits adhere to the success criterion (i.e. are they all zero?). If the logic gate is triggered, this single-qubit evaluation register will be flipped to :math:`|1\rangle`, indicating a "good" result. 
 
 In IQAE, the goal is not to estimate the number of "good" results in one sweep. Instead, several iterations will be carried out in which the Grover operator is applied :math:`k` times with the goal of extracting a probability amplitude by refining the interval within which the solution is likely to lie. In doing this, we avoid the expensive QPE procedure used in QAE. To do this, each iteration will yield the general result
 
@@ -60,12 +60,12 @@ import catalyst
 from catalyst import for_loop
 
 #Define system parameters
-N = 10000 #Number of shots
+shots = 10000 #Number of shots
 num_qubits = 5
-n = 2**num_qubits #Number of possible states
+N = 2**num_qubits #Number of possible states
 
 #Generate a random list of probabilities to be assigned to the initial state
-random_vector = np.sqrt(np.random.rand(n))
+random_vector = np.sqrt(np.random.rand(N))
 distribution = random_vector/np.linalg.norm(random_vector)
 
 #Define which indices should be checked for success criteria
@@ -83,7 +83,7 @@ MCX_wires = [num_qubits-3,num_qubits-2,num_qubits-1,num_qubits]
 #
 # 1. Generate :math:`n` qubits with amplitudes according to the previously generated random probability distribution using :func:`~qp.StatePrep`.
 # 2. Flip the state of the 3 final qubits in the string so that :func:`~qp.MultiControlledX` is triggered by a :math:`|111\rangle` state.
-# 3. Implement :func:`~qp.MultiControlledX` such that wire :math:`n+1` takes on the :math:`|1\rangle` state if the success criteria is met.
+# 3. Implement :func:`~qp.MultiControlledX` such that wire :math:`n+1` takes on the :math:`|1\rangle` state if the success criterion is met.
 # 4. Flip the state of the 3 final qubits back to the original. 
 #
 # .. figure:: ../demonstrations_v2/iterative_quantum_amplitude_estimation/A_Operator.png
@@ -96,7 +96,7 @@ MCX_wires = [num_qubits-3,num_qubits-2,num_qubits-1,num_qubits]
 def A(state):
   qp.StatePrep(state,wires=range(num_qubits)) #Randomly weighted superposition
 
-  #Flip monitored qubits to so that MCX is triggered by |111>
+  #Flip monitored qubits so that MCX is triggered by |111>
   qp.PauliX(wires=num_qubits-3)
   qp.PauliX(wires=num_qubits-2)
   qp.PauliX(wires=num_qubits-1)
@@ -121,7 +121,7 @@ def A(state):
 #    :align: center
 #    :width: 50%
 #
-# Due to the repeated applications of the Grover operator (the exact number of which, as will be explored soon, grows quickly between iterations), the computational demand of this algorithm can become quickly unmanageable. To mitigate this, `PennyLane's Catalyst compiler <https://pennylane.ai/blog/2023/03/introducing-catalyst-quantum-just-in-time-compilation>`_ can be used to compile the :math:`\mathcal{Q}` loop and reduce the demand. For small systems (like, for example, a 5 qubit example), the difference is negligible but becomes more apparent as the system grows.
+# Due to the repeated applications of the Grover operator (the exact number of which, as will be explored soon, grows quickly between iterations), the computational demand of this algorithm can become quickly unmanageable. To mitigate this, `PennyLane's Catalyst compiler <https://pennylane.ai/blog/2023/03/introducing-catalyst-quantum-just-in-time-compilation>`_ can be used to compile the :math:`\mathcal{Q}` loop and reduce the demand. For small systems (like, for example, 5 qubits), the difference is negligible but becomes more apparent as the system grows.
 
 k_i = 0
 dev = qp.device("lightning.qubit", wires=num_qubits+1)
@@ -132,7 +132,7 @@ catalyst_bool = True
 #Build the circuit Q^kA|0>n|0>
 def circuit_builder(catalyst_bool):
   if catalyst_bool:
-    @qp.qnode(dev, shots=N)
+    @qp.qnode(dev, shots=shots)
     def circuit(state, k_i):
       A(state)
       k_int = jnp.int64(k_i)
@@ -148,7 +148,7 @@ def circuit_builder(catalyst_bool):
     circuit = catalyst.qjit(circuit)
 
   else:
-    @qp.qnode(dev, shots=N, interface=None)
+    @qp.qnode(dev, shots=shots, interface=None)
     def circuit(state, k_i):
       A(state)
       for i in range(int(k_i)):
@@ -166,7 +166,7 @@ circuit = circuit_builder(catalyst_bool)
 ##############################################################################
 # Digesting the FindNextK Function
 # --------------------------------
-# As shown, the iteration variable :math:`k` is directly tied to the total angle of the state (which can be achieve via measurement of the quantum circuit) since the Grover operator invokes a deterministic rotation each time it is applied. The :math:`\sin^2(x)` function adds complexity to the probability calculations, so standard trigonometric identities can be employed to achieve
+# As shown, the iteration variable :math:`k` is directly tied to the total angle of the state (which can be achieved via measurement of the quantum circuit) since the Grover operator invokes a deterministic rotation each time it is applied. The :math:`\sin^2(x)` function adds complexity to the probability calculations, so standard trigonometric identities can be employed to achieve
 #
 # .. math::
 #    \mathbb{P}(|1\rangle)=\frac{1-\cos((4k+2)\theta_a)}{2}=\frac{1-\cos(K_i\theta_a)}{2}.
@@ -201,7 +201,7 @@ circuit = circuit_builder(catalyst_bool)
 #
 # or
 #
-# 2. The bounds of the confidence interval fall in different half-planes, indicating the current guess is too large. If an adequate guess is not reached while the While loop runs, the previous guess is returned. 
+# 2. The bounds of the confidence interval fall in different half-planes, indicating the current guess is too large. If an adequate guess is not reached as the while loop runs, the previous guess is returned. 
 # 
 
 def FindNextK(k_i,theta_min, theta_max, HalfPlane_bool):
@@ -266,7 +266,7 @@ HalfPlane_Bool = False
 
 #Actually implement IQAE!
 #Pre-selecting the use of Chernoff-Hoeffding to determine confidence interval
-def IQAE(eps, alpha, N):
+def IQAE(eps, alpha, shots):
   k_current = 0
   theta_lower = 0
   theta_upper = math.pi/2 #Begin search in the first quadrant
@@ -280,7 +280,7 @@ def IQAE(eps, alpha, N):
     #Call circuit
     a_estimate = (circuit(distribution,k_i)[1])
 
-    eps_ai = ((1/(2*N))*math.log(2*T/alpha))**0.5
+    eps_ai = ((1/(2*shots))*math.log(2*T/alpha))**0.5
 
     p_max = (np.clip(a_estimate+eps_ai, 0, 1))
     p_min = (np.clip(a_estimate-eps_ai, 0, 1))
@@ -309,7 +309,7 @@ def IQAE(eps, alpha, N):
   return a_lower, a_upper
 
 ##############################################################################
-# For the purposes of this demonstration and to emphasize the bare bones of the IQAE algorithm, a few aspects of the full implementation presented in [#Grinko2021]_ were omitted. For example, the explicit overshooting condition was not translated here since it is not necessary to achieve the search outcome but required to obtain the performance guarantees (ex. analytical bounds) derived by Grinko et al. Full exploration of these additional components can be found in the source paper. 
+# For the purposes of this demonstration and to emphasize the bare bones of the IQAE algorithm, a few aspects of the full implementation presented in [#Grinko2021]_ were omitted. For example, the explicit overshooting condition was not translated here since it is not necessary to achieve the search outcome but required to obtain the performance guarantees (e.g., analytical bounds) derived by Grinko et al. Full exploration of these additional components can be found in the source paper. 
 #
 # Upon calling ``IQAE()``, the output will consist of the upper and lower bounds between which the true amplitude lies. 
 #
@@ -327,7 +327,7 @@ alpha = 0.01 #Confidence
 HalfPlane_Bool = True
 
 t0 = time.time()
-a_lower, a_upper = IQAE(eps, alpha, N)
+a_lower, a_upper = IQAE(eps, alpha, shots)
 t1 = time.time()
 true_a = circuit_exact()[1]
 
@@ -348,7 +348,7 @@ else:
 ##############################################################################
 # Conclusion
 # ----------
-# QAE was put forward as a generalized adaptation of quantum search methods, which hinted at the viability of quantum computers as a notable improvement on existing technologies early on. IQAE pushed forward with this task, showing not only that quantum hardware has the potential to provide advantages in estimation algorithms but that classical feedback loops can be employed to reduce implementation limitations. The implementation shown here does not achieve full quadratic speedup compared to classical estimation methods, but advancements have been subsequently made ([#Fukuzawa2023]_) to meet this metric. As alluded to, IQAE has the potential to make notable impacts in various applications, such as in the calculation of expectation values in applications like quantum chemistry. Proposals have also been put forward to employ IQAE in areas such as risk analysis, financial portfolio modelling and optimization, and power grid analysis. The true feasibility of using IQAE (and, really, any other quantum algorithm) in these applications will become clearer as quantum hardware advances in capability and usability. There are, of course, limitations to IQAE's feasibility, particularly that the circuit depth grows with the number of iterations. Despite this, IQAE shows an example of how quantum-classical hybrid approaches can be used to achieve speedup compared to classical methods and resource requirement reduction compared to classical methods. 
+# QAE was put forward as a generalized adaptation of quantum search methods, which hinted at the viability of quantum computers as a notable improvement on existing technologies early on. IQAE pushed forward with this task, showing not only that quantum hardware has the potential to provide advantages in estimation algorithms but that classical feedback loops can be employed to reduce implementation limitations. The implementation shown here does not achieve full quadratic speedup compared to classical estimation methods, but advancements have been subsequently made ([#Fukuzawa2023]_) to meet this metric. As alluded to, IQAE has the potential to make notable impacts in various applications, such as in the calculation of expectation values in applications like quantum chemistry. Proposals have also been put forward to employ IQAE in areas such as risk analysis, financial portfolio modelling and optimization, and power grid analysis. The true feasibility of using IQAE (and, really, any other quantum algorithm) in these applications will become clearer as quantum hardware advances in capability and usability. There are, of course, limitations to IQAE's feasibility, particularly that the circuit depth grows with the number of iterations. Despite this, IQAE shows an example of how quantum-classical hybrid approaches can be used to achieve speedup compared to classical methods and resource requirement reduction compared to other quantum methods. 
 #
 # .. _references:
 #
