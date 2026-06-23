@@ -242,7 +242,7 @@ them retrospectively with the final measurement results at the end of the comput
 #
 # In this demo, we have learned about the basics of modern rotated surface codes from qubit definition, stabilizers, logical operators, computation to error decoding.
 # Most modern quantum error correction codes such as :doc:`qLDPC codes <demos/tutorial_qldpc_codes>` work under the same principles, so you should be well-prepared
-# for continueing your QEC journey down this path.
+# for continuing your QEC journey down this path.
 # 
 #
 # References
