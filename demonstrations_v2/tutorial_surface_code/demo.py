@@ -59,7 +59,7 @@ Before that, we want to stress the difference between the *rotated* surface code
     :target: javascript:void(0)
     
 In the central image we see their correspondences. Note that the solid pink lines are merely a guide to the eye and do not represent physical connectivity. 
-They are typically used in this way to discern vertex plaquettes operators of :math:`Z` stabilizers, and face plaquette operators of :math:`X` stabilizers.
+They are typically used in this way to discern face plaquette operators of :math:`Z` stabilizers, and vertex or star operators of :math:`X` stabilizers.
 They are very similar, but the rotated surface code effectively halves the required qubits from 
 :math:`4d^2 - 4d + 1` to :math:`2d^2-1` for a given code-distance :math:`d`.
 
