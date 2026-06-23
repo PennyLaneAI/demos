@@ -141,9 +141,9 @@ Braiding is an older approach [#braiding]_, but most modern approaches use
 :doc:`lattice surgery <demos/tutorial_lattice_surgery>` [#Fowler]_ [#latticesurgery]_.
 The concept is relatively simple: To measure :math:`Z_L \otimes Z_L` between two surface code qubits, 
 simply connect them via their :math:`Z` edge (lattice merging), 
-perform a round of error correction, and destructively measure in between the two patches to split them again (lattice splitting).
-The logical :math:`Z_L \otimes Z_L` measurement is implicitly determined via the stabilizers that have been measured during the 
-intermediate round of error correction. Note that this is different from terminal measurements where data qubits are measured directly.
+perform :math:`d` rounds of measuring all stabilizers, including the intermediary ones, and finally destructively measure in between the two patches to split them again (lattice splitting).
+The logical :math:`Z_L \otimes Z_L` measurement is indirectly determined via the product of the stabilizers that have been measured during the 
+intermediate rounds of error correction. Note that this is different from terminal measurements where data qubits are measured directly.
 
 .. figure:: ../_static/demonstration_assets/surface_code/lattice_surgery.png
     :align: center
