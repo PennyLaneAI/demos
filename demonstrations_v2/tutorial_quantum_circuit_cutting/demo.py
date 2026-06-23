@@ -405,7 +405,7 @@ circuit(x)
 # 2-designs can be a source of considerable speedups. A good test case
 # where one may care about accurately estimating an observable is the
 # :doc:`Quantum Approximate Optimization Algorithm <demos/tutorial_qaoa_intro>`
-# (QAOA). In its simplest form, QAOA concerns itself with finding a
+# (QAOA). In its simplest form, QAOA concerns itself with finding the
 # lowest energy state of a *cost Hamiltonian* :math:`H_{\mathcal{C}}:`
 #
 # .. math::   H_\mathcal{C} = \frac{1}{|E|} \sum _{(i, j) \in E} Z_i Z_j

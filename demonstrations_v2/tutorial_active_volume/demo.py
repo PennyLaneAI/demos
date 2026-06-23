@@ -652,7 +652,7 @@ of information only. This compression of quantum circuits reduces the cost of th
 dramatically.
 For details on the abstraction of the active volume computer, many additional
 compilation examples, and details about the implementation in a photonic quantum computer,
-we recommend to read the original paper as well.
+we recommend reading the original paper as well.
 Additionally, you may want to
 
 - dive into the background of :doc:`lattice surgery <demos/tutorial_lattice_surgery>`,
