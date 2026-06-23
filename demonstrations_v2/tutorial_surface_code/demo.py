@@ -43,7 +43,7 @@ Additionally, there are weight-2 :math:`X` and :math:`Z` arches on the edges (mo
     :width: 50%
     :target: javascript:void(0)
 
-These stabilizers on the data qubits are measured indirectly via the syndrom qubits. 
+These stabilizers on the data qubits are measured indirectly via the syndrome qubits. 
 This is done by entangling the data qubits with the corresponding syndrome qubit and then
 measuring that (see `Fig. 1 <https://arxiv.org/abs/1208.0928>`__ in [#surfacecode]_ for the detailed circuits). 
 The measurement result (:math:`\pm 1`) of a stabilizer measurement indicates whether or not an error has occurred.
@@ -78,7 +78,8 @@ are faces of four or two :math:`Z` or :math:`X` observables, arranged in a check
     :target: javascript:void(0)
     
 All these stabilizers commute with each other - that is one of their defining properties. 
-That all stabilizers in the surface code depicted here commute can be seen from the fact that generally two unequal and non-trivial Pauli words commute iff they anticommute on an even number of sites.
+That all stabilizers in the surface code depicted here commute can be seen from the fact that generally two 
+Pauli words commute iff they anticommute on an even number of sites.
 Take for example the most simple case, two sites ``[0, 1]``, such that we have :math:`[X_0 X_1, Z_0 Z_1] = 0`.
 
 The measurement outcome of such a stabilizer is binary :math:`\pm 1` and we assume that the underlying quantum state
@@ -170,7 +171,7 @@ Error correction
 ----------------
 
 Let us first consider what actually happens if a single :math:`Z` error occurs on one of the data qubits.
-The story work equivalently for :math:`X` errors.
+The story works equivalently for :math:`X` errors.
 Before the :math:`Z` error, each stabilizer measurement returns :math:`+1`, confirming the underlying state is in the correct code space.
 Now let us assume the central data qubit experiences a :math:`Z` error. The surrounding :math:`Z` stabilizers are unaffected by it, but
 the two :math:`X` stabilizers yield a :math:`-1` measurement - a *defect*, indicated by :math:`-1` on the stabilizer square.
@@ -219,7 +220,7 @@ This is a manifestation of the fact that a distance :math:`d=5` rotated surface 
 errors deterministically.
 
 Intuitively, this makes sense. In a code with distance :math:`d`, logical operators are (at least) of weight :math:`d`. 
-Logical operators change the logical state of the qubit without being noticed by any stabilizer. So The best we can do is detect
+Logical operators change the logical state of the qubit without being noticed by any stabilizer. So the best we can do is detect
 errors up to :math:`d-1`. 
 And we can only deterministically correct errors up to half the distance, 
 because a wrong correction will make the total operation (error + correction) a logical operator that goes unnoticed.
@@ -239,7 +240,7 @@ them retrospectively with the final measurement results at the end of the comput
 # Conclusion
 # ----------
 #
-# In this demo, we have learned about the basic of modern rotated surface codes from qubit definition, stabilizers, logical operators, computation to error decoding.
+# In this demo, we have learned about the basics of modern rotated surface codes from qubit definition, stabilizers, logical operators, computation to error decoding.
 # Most modern quantum error correction codes such as :doc:`qLDPC codes <demos/tutorial_qldpc_codes>` work under the same principles, so you should be well-prepared
 # for continueing your QEC journey down this path.
 # 
@@ -247,7 +248,6 @@ them retrospectively with the final measurement results at the end of the comput
 # References
 # ----------
 #
-# Gemini references:
 #
 # .. [#kitaev1997]
 #
