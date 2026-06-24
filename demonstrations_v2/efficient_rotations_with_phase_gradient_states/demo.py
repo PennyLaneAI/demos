@@ -119,10 +119,8 @@ regs = qp.registers({"angle":b, "gradient":b, "work":3*b})
 def circuit_phase_grad():
   for wire in data_wires:
     qp.Hadamard(wire)
-  qp.SelectPauliRot(angles, data_wires, target_wire, rot_axis="Y")
+  qp.SelectPauliRot(regs["angle"], data_wires, target_wire, rot_axis="Y")
   return qp.probs(target_wire)
-
-print(qre.estimate(circuit_phase_grad)())
 
 ###############################################################################
 # Note that there are different ways to translate Toffoli gates (which are continuous) into T gate counts, but here we will take Gidney's approximation of 1 Toffoli gate = 4 T gates [#Gidney2018]_, meaning this implementation requires an estimated 148 T gates. So, for the same task with the same goal, this operation has now reduced in T gate cost by more than half. Not too shabby!
