@@ -122,6 +122,8 @@ def circuit_phase_grad():
   qp.SelectPauliRot(regs["angle"], data_wires, target_wire, rot_axis="Y")
   return qp.probs(target_wire)
 
+print(qre.estimate(circuit_phase_grad)())
+
 ###############################################################################
 # Note that there are different ways to translate Toffoli gates (which are continuous) into T gate counts, but here we will take Gidney's approximation of 1 Toffoli gate = 4 T gates [#Gidney2018]_, meaning this implementation requires an estimated 148 T gates. So, for the same task with the same goal, this operation has now reduced in T gate cost by more than half. Not too shabby!
 #
@@ -135,7 +137,7 @@ def circuit_phase_grad():
 #
 # Sizing Up Other Optimizations
 # --------------------------------
-# The importance of cheaply decomposing arbitrary rotations has been known to the industry for some time. As a result, the phase gradient approach is not the only gate-synthesis strategy available in the quantum algorithmic toolkit. There are many nuances involved in asserting the ideal applications of each algorithm, but a full exploration will not be included here. Instead, comparing the per-rotation gate cost reveals the relative cost of each strategy, which must be weighed against the nuance of the specific application.
+# The importance of cheaply decomposing arbitrary rotations has been known to the industry for some time. As a result, the phase gradient approach is not the only gate-synthesis strategy available in the quantum algorithmic toolkit. There are many nuances involved in asserting the ideal applications of each algorithm, but a full exploration will not be included here. Instead, comparing the per-rotation gate cost reveals the relative cost of each strategy, which must be weighed against the nuance of the specific application. Note that, for a QFT, :math:`R=N^2/2`.
 #
 # .. table::
 #    :align: center
