@@ -78,7 +78,7 @@ def pip_install(
                 "pip",
                 "install",
                 "--index-strategy",
-                "unsafe-best-match",
+                "unsafe-first-match",
             ]
         )
     else:
@@ -121,7 +121,7 @@ def pip_compile(
         "pip",
         "compile",
         "--index-strategy",
-        "unsafe-best-match",
+        "unsafe-first-match",
         "--no-header",
         "--no-strip-extras",
         "--no-strip-markers",
