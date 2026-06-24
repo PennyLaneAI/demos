@@ -44,12 +44,12 @@ print(qre.estimate(circuit_baseline)())
 # ------------------------
 # What if, instead of having to apply an individual, expensive rotation for each bit value to achieve the desired outcome, we could simply add a pre-defined phase state to the qubits as needed?
 #
-# `Phase gradient states <https://pennylane.ai/compilation/phase-gradient>`_ are a type of catalytic resource state that can be used to facilitate rotations additively. For clarity, a state is "catalytic" if it is unchanged by a process that it plays a role in facilitating. To (aptly) borrow from the language of chemistry, it exists to catalyze (assist) a specific process (operation). The phase gradient state can be interpreted as a catalyst for phase shifts, invoking phase accumulation on other qubits without sacrificing its own properties. The state can be represented as
+# `Phase gradient states <https://pennylane.ai/compilation/phase-gradient>`_ are a type of catalytic resource state that can be used to facilitate rotations additively. For clarity, a state is "catalytic" if it is unchanged by a process that it plays a role in facilitating. To borrow (aptly) from the language of chemistry, it exists to catalyze (assist) a specific process (operation). The phase gradient state can be interpreted as a catalyst for phase shifts, invoking phase accumulation on other qubits without sacrificing its own properties. The state can be represented as
 #
 # .. math::
 #    |\nabla_b\rangle=\frac{1}{\sqrt{B}}\sum_{k=0}^{B-1}e^{-2\pi i \frac{k}{B}}|k\rangle
 #
-# or, in product state form,
+# where :math:`k` represents a target computational basis state, which one can interpret as an address marker that dictates what rotation angle is applied. In product state form,
 #
 # .. math::
 #    |\nabla_b\rangle=\otimes_{j=1}^b\frac{1}{\sqrt{2}}(|0\rangle+e^{-i\frac{2\pi}{2^j}}|1\rangle).
@@ -60,9 +60,9 @@ print(qre.estimate(circuit_baseline)())
 #    :align: center
 #    :width: 900px
 #
-#    *Equivalent circuits for executing a phase shift, in which the phase shift operator can be replaced with an addition step between a state :math:`k` and the phase gradient register*
+#    *Equivalent circuits for executing a phase shift, in which the phase shift operator can be replaced with an addition step between a state and the phase gradient register*
 #
-# The phase gradient state can be interpreted as acting as a pre-defined plane of stored angles that can be accessed and invoked on a target state as desired. This state can be prepared once, stored in an auxiliary register, and reused. To induce a rotation, an integer :math:`k` simply needs to be added to the gradient register, which is done most commonly using a controlled `addition gate <https://docs.pennylane.ai/en/stable/code/api/pennylane.SemiAdder.html>`_ step, to invoke a phase shift on the target state. This procedure is summarized as
+# The phase gradient state can be interpreted as acting as a pre-defined plane of stored angles that can be accessed and invoked on a target state as desired. This state can be prepared once, stored in an auxiliary register, and reused. To induce a rotation, an the integer value of state :math:`k` simply needs to be added to the gradient register, which is done most commonly using a controlled `addition gate <https://docs.pennylane.ai/en/stable/code/api/pennylane.SemiAdder.html>`_ step, to invoke a phase shift on the target state corresponding to the "address marker" mentioned above. This procedure is summarized as
 #
 # .. math::
 #    \begin{aligned}
@@ -76,7 +76,7 @@ print(qre.estimate(circuit_baseline)())
 #      :align: center
 #      :width: 700px
 #
-#      *Phase kickback can be imagined as a change in the relative phase between the data register and the phase gradient register. As depicted, a controlled addition between the two registers will result in the positional displacement of the phase gradient state which, in turn, causes the phase difference that can be associated with either state. Even though the gradient register shifts, the states in the data register can "pick up" the relative phase difference*.
+#      *The phase gradient register addition process can be imagined as a change in the relative phase between the data register and the phase gradient register. As depicted, a controlled addition between the two registers will result in the positional displacement of the phase gradient state which, in turn, causes the phase difference that can be associated with either state. Even though the gradient register shifts, the states in the data register can "pick up" the relative phase difference*.
 #
 # Since phase is relative, it can be said without issue that the data register has accumulated a phase equivalent to this shift. This process is referred to as `phase kickback <https://pennylane.ai/qml/demos/tutorial_phase_kickback>`_. Again thanks to the relative nature of this shift, the properties of the gradient register are globally unchanged, solidifying it as a catalytic resource.
 #
@@ -92,18 +92,18 @@ print(qre.estimate(circuit_baseline)())
 #    :class: note
 #
 #    1. A phase gradient state is encoded onto a register composed of :math:`b` qubits.
-#    2. A semi-adder operation is performed between a data register and the gradient register.
+#    2. An adder operation is performed between a data register and the gradient register.
 #    3. The phase gradient register shifts proportionally to the weight of the data qubit added to it.
 #    4. The shift in the gradient register causes the data register to accumulate a relative phase via phase kickback.
 #    5. Since position shifts are relative and do not alter structure, the catalytic phase gradient state remains unchanged and can be reused as desired.
 #
-# This structure can be easily extended to the more commonly used multiplexed case that we discussed at the beginning of this demonstration. In this case, we can use a `quantum read only memory (QROM) <https://pennylane.ai/demos/tutorial_intro_qrom>`_ to store each :math:`k` value in parallel. These states can be uploaded onto a data register and, using a single addition operator, rotated. This reduces the complexity bound to :math:`\mathcal{O}(2^n+\log_2(1/\epsilon))`. This reduction in complexity combined with the catalytic nature of the phase gradient state makes this approach to gate synthesis highly resource efficient.
+# This structure can be easily extended to the more commonly used multiplexed case that we discussed at the beginning of this demonstration. In this case, we can use a `quantum read only memory (QROM) <https://pennylane.ai/demos/tutorial_intro_qrom>`_ to store each :math:`k` value in parallel in a quantum register. To carry out the rotation, it is best practice to carry out a semi-out-of-place addition using a :func:`~qp.SemiAdder` to add this quantum register to the phase gradient register. This reduces the complexity bound to :math:`\mathcal{O}(2^n+\log_2(1/\epsilon))`. This reduction in complexity combined with the catalytic nature of the phase gradient state makes this approach to gate synthesis highly resource efficient.
 #
 # .. figure:: ../demonstrations_v2/efficient_rotations_with_phase_gradient_states/Multiplexer.png
 #    :align: center
 #    :width: 700px
 #    
-#    *Simple multiplexed phase gradient addition* [#OBrien2025]_
+#    *Simple multiplexed phase gradient addition* [#OBrien2025]_.
 #
 
 from pennylane.labs.transforms import select_pauli_rot_phase_gradient
@@ -112,12 +112,10 @@ prec = 1e-9 #Desired Accuracy
 b = int(np.ceil(np.log2(1/prec))) #Gradient Register Size
 
 #Define Auxiliary Wires for Phase Gradient Transformation
-angle_wires = list(range(n+1,n+1+b))
-gradient_wires = list(range(n+1+b,n+1+2*b))
-work_wires = list(range(n+1+2*b,n+1+2*b+(3*b)))
+regs = qp.registers({"angle":b, "gradient":b, "work":3*b})
 
 @qp.qnode(dev)
-@select_pauli_rot_phase_gradient(angle_wires,gradient_wires,work_wires)
+@select_pauli_rot_phase_gradient(regs["angle"], regs["gradient"], regs["work"])
 def circuit_phase_grad():
   for wire in data_wires:
     qp.Hadamard(wire)
@@ -146,7 +144,7 @@ print(qre.estimate(circuit_phase_grad)())
 #    :widths: 18 12 22 24 28
 #
 # +---------------------------------+----------------------------+----------------------------------------------------+--------------------------------------------------------------+-----------------------------------------------------------------+
-# |            Algorithm            |       Setup Cost (T)       |           Marginal Cost Per Rotation (T)           |            Total Cost for :math:`R` Rotations (T)            | Cost to Execute a QFT for :math:`N=10` (:math:`R=N^2/2=50`) (T) |
+# |            Algorithm            |       Setup Cost (T)       |           Marginal Cost Per Rotation (T)           |            Total Cost for :math:`R` Rotations (T)            |             Cost to Execute a QFT for :math:`N=10` (T)          |
 # +=================================+============================+====================================================+==============================================================+=================================================================+
 # |         Solovay-Kitaev          |             0              |   :math:`\log_2^{3.97}(1/\epsilon)` [#Dawson2006]_ |             :math:`R \log_2^{3.97}(1/\epsilon)`              |                   :math:`3.61 \times 10^{7}`                    |
 # +---------------------------------+----------------------------+----------------------------------------------------+--------------------------------------------------------------+-----------------------------------------------------------------+
@@ -161,7 +159,7 @@ print(qre.estimate(circuit_phase_grad)())
 # | Single Qubit Gate Approximation |             0              | :math:`0.56\log_2(1/\epsilon)` [#Kliuchnikov2022]_ |               :math:`0.56R \log_2(1/\epsilon)`               |                   :math:`8.37 \times 10^{2}`                    |
 # +---------------------------------+----------------------------+----------------------------------------------------+--------------------------------------------------------------+-----------------------------------------------------------------+
 # 
-# Though this comparison shows the comparatively low cost of the mumtiplexed phase gradient approach, it leaves a hanging question: why not just multiplex every method? QROM can, of course, be used to load states into a register in any computationally compatible scenario, but the fact that the phase gradient state is catalytic and accessible in a pre-configured register is what makes this efficient multiplexing approach possible. If the phase gradient state were destroyed each time it was applied to a state, it would be impossible to effectively carry out a simultaneous rotation on a register. Trying to multiplex a GridSynth process, for example, would require the simultaneous execution of gate sequences that vary with the control qubit states. This would cause the depth of the multiplexed operation to explode, eliminating any potential advantage. So, while phase gradients are expensive to prepare, they give us the luxury of a simple look-up table style approach.
+# Though this comparison shows the comparatively low cost of the multiplexed  phase gradient approach, it leaves a hanging question: why not just multiplex every method? QROM can, of course, be used to load states into a register in any computationally compatible scenario, but the fact that the phase gradient state is catalytic and accessible in a pre-configured register is what makes this efficient multiplexing approach possible. If the phase gradient state were destroyed each time it was applied to a state, it would be impossible to effectively carry out a simultaneous rotation on a register. Trying to multiplex a GridSynth process, for example, would require the simultaneous execution of gate sequences that vary with the control qubit states. This would cause the depth of the multiplexed operation to explode, eliminating any potential advantage. So, while phase gradients are expensive to prepare, they give us the luxury of a simple look-up table style approach.
 #
 # Conclusion
 # ----------
