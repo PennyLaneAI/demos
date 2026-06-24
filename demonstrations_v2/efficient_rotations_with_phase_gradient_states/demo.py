@@ -112,7 +112,7 @@ prec = 1e-9 #Desired Accuracy
 b = int(np.ceil(np.log2(1/prec))) #Gradient Register Size
 
 #Define Auxiliary Wires for Phase Gradient Transformation
-regs = qp.registers({"angle":b, "gradient":b, "work":3*b})
+regs = qp.registers({"angle":b, "gradient":b, "work":b})
 
 @qp.qnode(dev)
 @select_pauli_rot_phase_gradient(regs["angle"], regs["gradient"], regs["work"])
