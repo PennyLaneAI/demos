@@ -4,20 +4,21 @@ Hamiltonian simulation with Generalized Quantum Signal Processing
 
 Generalized Quantum Signal Processing (GQSP), introduced by Motlagh and Wiebe [#motlagh]_,
 applies an arbitrary complex polynomial :math:`P` of a unitary :math:`U` using a single extra
-control qubit. Its flagship application is **Hamiltonian simulation**: implementing the
-time-evolution operator :math:`e^{-iHt}`.
+control qubit. Its flagship application is **Hamiltonian simulation**, which is mainly concerned
+with implementing the time-evolution operator :math:`e^{-iHt}`.
 
 Hamiltonian simulation is the original motivation for quantum signal processing, and GQSP is a
-modern variant of it: a single ancilla qubit and one complex polynomial of the block-encoded
-Hamiltonian are enough, with no need to split the target into separate cosine and sine parts as
-plain QSVT requires. This keeps the angle-finding step simple while still reaching :math:`e^{-iHt}`
-with a query cost that grows favourably in the evolution time and the target accuracy.
+modern variant of it. For GQSP, a single ancilla qubit and one complex polynomial of the
+qubitization walk :math:`W` (the block encoding of :math:`H`) are enough: the complex target is
+applied directly, with no need to build its real and imaginary parts separately as ordinary QSP
+requires. This keeps the angle-finding step simple while still reaching :math:`e^{-iHt}` with a
+query cost that grows
+favourably in the evolution time and the target accuracy.
 
-PennyLane provides :func:`~qp.GQSP` as a runnable circuit primitive, and a
-resource-estimation demo,
-:doc:`Resource estimation for Hamiltonian simulation with GQSP <demos/tutorial_estimator_hamiltonian_simulation_gqsp>`
-[#estimator]_, which counts gates for cost analysis. This demo is the **executable
-counterpart**. We build and run the GQSP circuit and verify :math:`e^{-iHt}` against
+PennyLane provides :func:`~qp.GQSP` as a runnable circuit primitive, and a resource-estimation demo
+(:doc:`Resource estimation for Hamiltonian simulation with GQSP <demos/tutorial_estimator_hamiltonian_simulation_gqsp>`
+[#estimator]_), which counts gates for cost analysis. This demo is the **executable
+counterpart**. We will build and run the GQSP circuit and verify :math:`e^{-iHt}` against
 ``scipy.linalg.expm``, spelling out the recipe end to end.
 
 By the end of this demo, you will be able to carry out a
@@ -89,13 +90,23 @@ print(np.round(H_matrix, 3))
 # ------------------------------
 #
 # ``qp.Qubitization(H, control)`` builds the Low and Chuang [#low]_ qubitization walk operator
-# :math:`W = \text{Prep}^\dagger\,\text{Sel}\,\text{Prep}\,(2|0\rangle\langle 0| - I)`, a block
-# encoding of :math:`H/\lambda` followed by a reflection about the control :math:`|0\rangle`.
-# Its eigenphases are :math:`\pm\arccos(E/\lambda)` for each eigenvalue :math:`E` of :math:`H`,
-# so a walk eigenvalue :math:`z = e^{i\theta}` satisfies :math:`\cos\theta = E/\lambda`. The
-# control register needs :math:`\lceil \log_2 L \rceil` qubits for :math:`L` Hamiltonian terms.
 #
-# The printout below confirms this since every :math:`\arccos(E/\lambda)` appears among the walk's
+# .. math::
+#
+#     W = \text{Prep}^\dagger\,\text{Sel}\,\text{Prep}\,(2|0\rangle\langle 0| - I),
+#
+# which is a block encoding of :math:`H/\lambda` followed by a reflection about the control
+# :math:`|0\rangle`. Its eigenphases are
+#
+# .. math::
+#
+#     \pm\arccos(E/\lambda)
+#
+# for each eigenvalue :math:`E` of :math:`H`, so a walk eigenvalue :math:`z = e^{i\theta}` satisfies
+# :math:`\cos\theta = E/\lambda`. The control register needs :math:`\lceil \log_2 L \rceil` qubits
+# for :math:`L` Hamiltonian terms.
+#
+# The printout below confirms this, since every :math:`\arccos(E/\lambda)` appears among the walk's
 # eigenphases. The walk also carries a few extra phases (here :math:`0` and :math:`\pi`) coming
 # from the complementary subspace where the control ancillas are not :math:`|0\rangle`. These
 # encode no information about :math:`H` and are projected out when we read off the top-left block
@@ -132,7 +143,8 @@ print("arccos(E / lambda) :", arccos_E)
 #     \qquad a = \lambda t,
 #
 # with :math:`J_k` being the Bessel functions of the first kind. The series converges
-# super-exponentially once :math:`K \gtrsim a`, so we truncate at :math:`|k|\le K`.
+# super-exponentially once :math:`K \gtrsim a`, so we truncate at :math:`|k|\le K`, where
+# :math:`K` is the **truncation order** (the highest power of :math:`z` we keep).
 #
 # Two practical points that the GQSP machinery requires:
 #
@@ -160,9 +172,9 @@ print(f"K = {K}: polynomial degree {len(poly) - 1}, scale s = {s:.4f}")
 # ---------------------------------------------------------
 #
 # ``qp.GQSP(U, angles, control)`` applies the single polynomial :math:`P(U)` with ``angles``
-# from ``qp.poly_to_angles(poly, "GQSP")``. Recall how we built that polynomial in Step 2: the
+# from ``qp.poly_to_angles(poly, "GQSP")``. Recall how we built that polynomial in Step 2. The
 # truncated Jacobi-Anger series already approximates :math:`e^{-iHt}` on the walk eigenvalues, and
-# we made two changes to it -- multiplying by :math:`z^{K}` to remove the negative powers, and
+# we made two changes to it: multiplying by :math:`z^{K}` to remove the negative powers, and
 # scaling by :math:`s` to enforce :math:`|P|\le 1`. So the coefficients in ``poly`` are those of
 # :math:`P(z) = s\, z^{K}\, [\text{Jacobi-Anger series}]`, and GQSP applies this one polynomial of
 # :math:`W` in a single step, giving
@@ -265,28 +277,31 @@ plt.show()
 # Running :func:`~qp.GQSP` on the qubitization walk reproduced :math:`e^{-iHt}` to within
 # :math:`\sim 10^{-8}` at polynomial degree :math:`K=8`, matching ``scipy.linalg.expm`` to
 # machine precision. Because of the fast Bessel decay seen in the convergence plot, useful
-# accuracy needs only :math:`K = \mathcal{O}(\lambda t + \log(1/\varepsilon))` queries to the
+# accuracy needs only :math:`K = \mathcal{O}(\lambda t + \log(1/\varepsilon))` queries of the
 # walk.
 #
 # There are two practical things to keep in mind:
 #
 # - **One control qubit, one polynomial.** GQSP needs a single ancilla and a single complex
-#   polynomial, with no cosine/sine split, which is what makes its angle synthesis simpler and
-#   more stable than ordinary QSP for this task.
-# - **Where the cost lives.** The accuracy knob is the degree :math:`K`, and each degree is one
-#   application of the walk :math:`W`; the
+#   polynomial, applied directly rather than as separate real and imaginary parts, which is what
+#   makes its angle synthesis simpler and more stable than ordinary QSP for this task.
+# - **Where the cost lives.** The accuracy knob is the degree :math:`K`, and we can interpret each
+#   degree as one application of the walk :math:`W`. This correlation causes the circuit depth to
+#   increase quickly with increasing degree. The
 #   :doc:`resource-estimation demo <demos/tutorial_estimator_hamiltonian_simulation_gqsp>`
-#   [#estimator]_ turns that count into fault-tolerant gate estimates.
+#   [#estimator]_ is a good reference to explore this cost.
 #
 # In practice, this makes GQSP a natural choice when you need an accurate :math:`e^{-iHt}` over a
 # longer evolution time :math:`t`: the super-exponential convergence means the degree :math:`K`
 # (and hence the number of walk applications) grows only mildly as you tighten the error, so the
-# cost stays close to the :math:`\lambda t` set by the evolution itself. This is the regime where
-# block-encoding methods like this one can be more efficient than product-formula (Trotter)
-# approaches, whose step count typically grows faster as the target accuracy improves. For very
-# short evolutions or coarse approximations, however, a few Trotter steps are simpler and may be
-# cheaper -- the block-encoding and ancilla overhead of qubitization mostly pays off once high
-# accuracy or longer times are required.
+# cost stays close to the :math:`\lambda t` set by the evolution itself. This points to an
+# accuracy-versus-resource trade-off rather than one method dominating: GQSP (and block-encoding
+# methods generally) reach high accuracy with a query count that grows only mildly as the error
+# shrinks, while product-formula (Trotter) approaches are often cheaper in qubit and gate counts
+# for a coarse target but need rapidly more steps to reach the same accuracy. Within the
+# block-encoding / quantum-signal-processing family, GQSP's particular appeal is economy of
+# ancillas: a single control qubit carries one complex polynomial applied directly, instead of
+# building the polynomial's real and imaginary parts separately as ordinary QSP must.
 #
 # References
 # ----------
