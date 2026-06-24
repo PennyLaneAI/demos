@@ -10,7 +10,8 @@
     "dateOfPublication": "2025-12-17T00:00:00+00:00",
     "dateOfLastModification": "2026-01-22T00:00:00+00:00",
     "categories": [
-        "Quantum Computing"
+        "Quantum Computing",
+        "FTQC"
     ],
     "tags": [],
     "previewImages": [
