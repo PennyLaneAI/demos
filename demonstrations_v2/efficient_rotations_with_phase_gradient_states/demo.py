@@ -23,20 +23,9 @@ n = 3 #Control Qubits
 np.random.seed(35)
 angles = np.random.rand(2**n)*2*np.pi
 
-#Define circuit registers
-reg = qp.registers({
-    "data":     n,
-    "target":   1,
-    "angle":    b,
-    "gradient": b,
-    "work":     3*b,
-})
-
-data_wires     = reg["data"]
-target_wire    = reg["target"]
-angle_wires    = reg["angle"]
-gradient_wires = reg["gradient"]
-work_wires     = reg["work"]
+#Define Circuit Wires
+data_wires = range(n)
+target_wire = n
 
 dev = qp.device("default.qubit")
 
@@ -121,6 +110,17 @@ from pennylane.labs.transforms import select_pauli_rot_phase_gradient
 
 prec = 1e-9 #Desired Accuracy
 b = int(np.ceil(np.log2(1/prec))) #Gradient Register Size
+
+#Define Auxiliary Wires for Phase Gradient Transformation
+reg = qp.registers({
+    "_reserved": n + 1,   #Don't overwrite the previously defined wires!
+    "angle":     b,
+    "gradient":  b,
+    "work":      3 * b,
+})
+angle_wires    = reg["angle"]
+gradient_wires = reg["gradient"]
+work_wires     = reg["work"]
 
 @qp.qnode(dev)
 @select_pauli_rot_phase_gradient(angle_wires,gradient_wires,work_wires)
