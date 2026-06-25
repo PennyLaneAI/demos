@@ -595,7 +595,7 @@ plt.show()
 # As a broader perspective, the same “linear mixing + elementwise nonlinearity” motif underpins more
 # advanced architectures. Recent work has explored the feasibility of quantum implementations of
 # transformer-style inference under various access models and resource assumptions
-# [`6 <https://arxiv.org/abs/2402.16714>`__]. The QMLP here should be viewed as a minimal instance of
+# [#qtransformer]_. The QMLP here should be viewed as a minimal instance of
 # that design pattern, focused on making the role of a nonlinear activation layer explicit.
 # 
 
