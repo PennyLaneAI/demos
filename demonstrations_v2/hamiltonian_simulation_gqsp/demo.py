@@ -1,6 +1,6 @@
 r"""
-Hamiltonian simulation with Generalized Quantum Signal Processing
-=================================================================
+How to do Hamiltonian Simulation with Generalized Quantum Signal Processing
+===========================================================================
 
 Generalized Quantum Signal Processing (GQSP), introduced by Motlagh and Wiebe [#motlagh]_,
 applies an arbitrary complex polynomial :math:`P` of a unitary :math:`U` using a single extra
@@ -15,7 +15,7 @@ requires. This keeps the angle-finding step simple while still reaching :math:`e
 query cost that grows
 favourably in the evolution time and the target accuracy.
 
-PennyLane provides :func:`~qp.GQSP` as a runnable circuit primitive, and a resource-estimation demo
+PennyLane provides :func:`~qp.GQSP` as a runnable circuit primitive and a resource-estimation demo
 (:doc:`Resource estimation for Hamiltonian simulation with GQSP <demos/tutorial_estimator_hamiltonian_simulation_gqsp>`
 [#estimator]_), which counts gates for cost analysis. This demo is the **executable
 counterpart**. We will build and run the GQSP circuit and verify :math:`e^{-iHt}` against
@@ -53,7 +53,7 @@ polynomial degree. The three pieces are:
 # The Hamiltonian and the Exact Target
 # -------------------------------------
 #
-# We will use a small two-qubit Heisenberg-type Hamiltonian. It is a convenient choice for this
+# We will use a small two-qubit Heisenberg-type Hamiltonian. This is a convenient choice for this
 # demo since it is already a sum of Pauli terms (the form
 # :func:`~qp.Qubitization` block-encodes directly), its terms do not all commute (so :math:`e^{-iHt}`
 # is non-trivial), and it is small enough that we can form the full matrix
@@ -175,16 +175,16 @@ print(f"K = {K}: polynomial degree {len(poly) - 1}, scale s = {s:.4f}")
 # from ``qp.poly_to_angles(poly, "GQSP")``. Recall how we built that polynomial in Step 2. The
 # truncated Jacobi-Anger series already approximates :math:`e^{-iHt}` on the walk eigenvalues, and
 # we made two changes to it: multiplying by :math:`z^{K}` to remove the negative powers, and
-# scaling by :math:`s` to enforce :math:`|P|\le 1`. So the coefficients in ``poly`` are those of
-# :math:`P(z) = s\, z^{K}\, [\text{Jacobi-Anger series}]`, and GQSP applies this one polynomial of
-# :math:`W` in a single step, giving
+# scaling by :math:`s` to enforce :math:`|P|\le 1`. So, the coefficients in ``poly`` are those of
+# :math:`P(z) = s\, z^{K}\, [\text{Jacobi-Anger series}]`, and GQSP applies this single polynomial
+# of :math:`W` in one step, giving
 #
 # .. math::
 #
 #     P(W) \approx s\, W^{K}\, e^{-iHt}.
 #
-# The :math:`s` and :math:`W^{K}` are not separate circuits we multiply on afterwards -- they are
-# the two corrections already baked into the polynomial, which we now simply undo. We cancel the
+# The :math:`s` and :math:`W^{K}` terms are not separate circuits we multiply on afterwards -- they
+# are the two corrections already baked into the polynomial, which we now simply undo. We cancel the
 # :math:`W^{K}` factor by applying the **adjoint walk** :math:`W^\dagger` a total of :math:`K`
 # times after the GQSP block, and we divide out :math:`s` at read-out. The evolution then sits in
 # the all-ancilla-zero block (the top-left :math:`\dim\times\dim` corner), up to a global phase.
