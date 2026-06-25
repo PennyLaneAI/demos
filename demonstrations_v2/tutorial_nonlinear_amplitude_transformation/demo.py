@@ -392,7 +392,7 @@ qp.draw_mpl(be_circuit)(feature_vector, main_wires, ancilla_wires)
 # :math:`\frac{1}{\sqrt{N}}\sum_i |i\rangle`, which applies :math:`P_d(\psi_i)` to every basis
 # component. However, this may introduce a dependency on the dimension :math:`N`, which can be
 # prohibitively expensive for large systems. Another method, as outlined by Rattew and Rebentrost
-# [`4 <https://arxiv.org/abs/2309.09839>`__], is to use the equivalent of importance sampling in this
+# [#importancesampling]_, is to use the equivalent of importance sampling in this
 # context and to start from the prepared state itself,
 # 
 # .. math::
