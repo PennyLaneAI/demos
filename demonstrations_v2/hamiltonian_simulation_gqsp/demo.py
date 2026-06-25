@@ -9,7 +9,7 @@ with implementing the time-evolution operator :math:`e^{-iHt}`.
 
 Hamiltonian simulation is the original motivation for quantum signal processing, and GQSP is a
 modern variant of it. For GQSP, a single ancilla qubit and one complex polynomial of the
-qubitization walk :math:`W` (the block encoding of :math:`H`) are enough: the complex target is
+qubitization walk :math:`W` (the block encoding of :math:`H`) are enough; the complex target is
 applied directly, with no need to build its real and imaginary parts separately as ordinary QSP
 requires. This keeps the angle-finding step simple while still reaching :math:`e^{-iHt}` with a
 query cost that grows
@@ -150,8 +150,8 @@ print("arccos(E / lambda) :", arccos_E)
 #
 # - :func:`~qp.poly_to_angles` needs a polynomial in **non-negative** powers, so we shift the
 #   Laurent series by :math:`z^{K}` (we undo this shift in the circuit later).
-# - It also requires :math:`|P(e^{i\theta})|\le 1`, so we rescale the coefficients by a
-#   constant :math:`s<1` (and divide it back out at the end).
+# - :func:`~qp.poly_to_angles` also requires :math:`|P(e^{i\theta})|\le 1`, so we rescale the
+#   coefficients by a constant :math:`s<1` (and divide it back out at the end).
 
 
 def jacobi_anger_poly(a, K):
@@ -292,7 +292,7 @@ plt.show()
 #   [#estimator]_ is a good reference to explore this cost.
 #
 # In practice, this makes GQSP a natural choice when you need an accurate :math:`e^{-iHt}` over a
-# longer evolution time :math:`t`: the super-exponential convergence means the degree :math:`K`
+# longer evolution time :math:`t`. The super-exponential convergence means the degree :math:`K`
 # (and hence the number of walk applications) grows only mildly as you tighten the error, so the
 # cost stays close to the :math:`\lambda t` set by the evolution itself. This points to an
 # accuracy-versus-resource trade-off rather than one method dominating: GQSP (and block-encoding
@@ -300,7 +300,7 @@ plt.show()
 # shrinks, while product-formula (Trotter) approaches are often cheaper in qubit and gate counts
 # for a coarse target but need rapidly more steps to reach the same accuracy. Within the
 # block-encoding / quantum-signal-processing family, GQSP's particular appeal is economy of
-# ancillas: a single control qubit carries one complex polynomial applied directly, instead of
+# ancillas, since a single control qubit carries one complex polynomial applied directly, instead of
 # building the polynomial's real and imaginary parts separately as ordinary QSP must.
 #
 # References
