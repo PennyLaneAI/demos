@@ -701,7 +701,7 @@ accuracy(best_weight, data, labels)
 # violating linearity.
 # 
 # In this demo, we have implemented the nonlinear amplitude transformation described in Guo et
-# al. (2024) and Rattew and Rebentrost (2024) [`3 <https://arxiv.org/abs/2107.10764>`__,
+# al. (2024) and Rattew and Rebentrost (2024) [#ntca]_,
 # `4 <https://arxiv.org/abs/2309.09839>`__]. We verified the diagonal amplitude block encoding on a
 # toy example, applied a :math:`\tanh` nonlinearity via QSVT, and integrated the activation as a layer
 # inside a small quantum classifier trained on downscaled MNIST.
