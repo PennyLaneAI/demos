@@ -713,3 +713,42 @@ accuracy(best_weight, data, labels)
 # - Broad applicability: while we demonstrated :math:`\tanh`, the same workflow applies to many bounded functions that admit good polynomial approximations on :math:`[-1,1]`. 
 # - QML integration: NTCA can be used as an activation layer between trainable “linear” quantum layers, enabling MLP-style architectures in amplitude-based quantum pipelines.
 # 
+# 
+# References
+# ---------------------------------
+# .. [#blockencoding]
+# 
+#     Shantanav Chakraborty, András Gilyén, Stacey Jeffery
+#     "The power of block-encoded matrix powers: improved regression techniques via faster Hamiltonian simulation"
+#     `arXiv:1804.01973 <https://arxiv.org/abs/1804.01973>`__, 2018.
+# 
+# .. [#qsvt]
+# 
+#     András Gilyén, Yuan Su, Guang Hao Low, Nathan Wiebe
+#     "Quantum singular value transformation and beyond: exponential improvements for quantum matrix arithmetics"
+#     `arXiv:1806.01838 <https://arxiv.org/abs/1806.01838>`__, 2018.
+# 
+# .. [#ntca]
+# 
+#     Naixu Guo, Kosuke Mitarai, Keisuke Fujii
+#     "Nonlinear transformation of complex amplitudes via quantum singular value transformation"
+#     `arXiv:2107.10764 <https://arxiv.org/abs/2107.10764>`__, 2021.
+# 
+# .. [#importancesampling]
+# 
+#     Arthur G. Rattew, Patrick Rebentrost
+#     "Non-Linear Transformations of Quantum Amplitudes: Exponential Improvement, Generalization, and Applications"
+#     `arXiv:2309.09839 <https://arxiv.org/abs/2309.09839>`__, 2023.
+# 
+# .. [#qaae]
+# 
+#     Gilles Brassard, Peter Hoyer, Michele Mosca, Alain Tapp
+#     "Quantum Amplitude Amplification and Estimation"
+#     `arXiv:quant-ph/0005055 <https://arxiv.org/abs/quant-ph/0005055>`__, 2000.
+# 
+# .. [#qtransformer]
+# 
+#     Naixu Guo, Zhan Yu, Matthew Choi, Yizhan Han, Aman Agrawal, Kouhei Nakaji, Alán Aspuru-Guzik, Patrick Rebentrost
+#     "Quantum Transformer: Accelerating model inference via quantum linear algebra"
+#     `arXiv:2402.16714 <https://arxiv.org/abs/2402.16714>`__, 2024.
+# 
