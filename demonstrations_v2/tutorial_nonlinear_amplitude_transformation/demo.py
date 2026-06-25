@@ -386,7 +386,7 @@ qp.draw_mpl(be_circuit)(feature_vector, main_wires, ancilla_wires)
 # underlying state-preparation routine used to build :math:`U_{\Psi}`.
 # 
 # The constructed :math:`U_{P_d(\Psi)}` is then applied to the reference state and post-selection or
-# amplitude amplification [`5 <https://arxiv.org/abs/quant-ph/0005055>`__] is used to obtain the final
+# amplitude amplification [#qaae]_ is used to obtain the final
 # transformed state. The choice of the reference state significantly impacts the algorithm’s
 # efficiency. A direct way to “read out” the diagonal action is to start from a uniform superposition
 # :math:`\frac{1}{\sqrt{N}}\sum_i |i\rangle`, which applies :math:`P_d(\psi_i)` to every basis
