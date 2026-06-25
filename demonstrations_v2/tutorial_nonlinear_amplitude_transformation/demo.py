@@ -363,7 +363,7 @@ qp.draw_mpl(be_circuit)(feature_vector, main_wires, ancilla_wires)
 # ----------------------------------
 # 
 # With the diagonal block encoding :math:`U_{\Psi}` in place, QSVT
-# [`2 <https://arxiv.org/abs/1806.01838>`__] provides a systematic way to apply a polynomial map to
+# [#qsvt]_ provides a systematic way to apply a polynomial map to
 # the encoded amplitudes. Concretely, for a polynomial :math:`P_d` of degree :math:`d`, QSVT
 # constructs a new unitary whose top-left block encodes :math:`P_d(\Psi)`:
 # 
