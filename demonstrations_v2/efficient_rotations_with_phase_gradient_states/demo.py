@@ -10,7 +10,7 @@ Efficient Rotations?
 --------------------
 As it stands, quantum algorithmic efficiency tends to be quantified by the number of T gates required to execute the `non-Clifford <https://pennylane.ai/qml/demos/tutorial_clifford_circuit_simulations>`_ operations included in a system. Since each T gate represents a fixed :math:`\frac{\pi}{4}` rotation, generating arbitrary angles that deviate from this fixed point becomes increasingly resource intensive the more we vary from :math:`\frac{\pi}{4}`. Arbitrary rotations are very expensive and, at the same time, foundational to some of the most important tools we have in quantum algorithms and computing, such as the `quantum Fourier transform (QFT) <https://pennylane.ai/qml/demos/tutorial_qft>`_, `quantum phase estimation <https://pennylane.ai/demos/tutorial_qpe/>`_, and the `Trotterization algorithm <https://pennylane.ai/challenges/a_simple_trotterization>`_. As a result, optimizing these operations in the fault-tolerant picture is very important [#Gidney2018]_.
 
-To emphasize the benefit of T gate optimization, let us take the example of time evolution simulation on a computational grid. Here, a wavefunction discretized to :math:`N=2^n` grid points, where :math:`n` is the number of qubits required to represent the dimensions of the grid, can be effectively evolved in time via the application of a `multiplexed rotation <https://docs.pennylane.ai/en/stable/code/api/pennylane.SelectPauliRot.html>`_, which can be interpreted as a mesh of controlled rotations that apply position-dependent phases to all members of a given state. In the naïve approach, where each point on the grid is treated independently and recieves an isolated, individual rotation, the system's gate count will scale as :math:`\mathcal{O}(2^n\log_2(1/\epsilon))`, where :math:`\epsilon` is the desired precision. Yikes.
+To emphasize the benefit of T gate optimization, let us take the example of time evolution simulation on a computational grid. Here, a wavefunction discretized to :math:`N=2^n` grid points, where :math:`n` is the number of qubits required to represent the dimensions of the grid, can be effectively evolved in time via the application of a `multiplexed rotation <https://docs.pennylane.ai/en/stable/code/api/pennylane.SelectPauliRot.html>`_, which can be interpreted as a mesh of controlled rotations that apply position-dependent phases to all members of a given state. In the naïve approach, where each point on the grid is treated independently and receives an isolated, individual rotation, the system's gate count will scale as :math:`\mathcal{O}(2^n\log_2(1/\epsilon))`, where :math:`\epsilon` is the desired precision. Yikes.
 
 A quick resource estimation for a single pass of this procedure can be carried out using PennyLane and the `estimator tool <https://docs.pennylane.ai/en/stable/code/api/pennylane.estimator.estimate.estimate.html>`_. Note that, for an :math:`n`-qubit system, :func:`~qp.SelectPauliRot` (a PennyLane operator that represents the aforementioned multiplexed operation) will apply a total of :math:`R=2^n` rotations to address each possible state. Thus, for a 3-qubit system, 8 rotations will be applied in a single pass. The T count estimate here is made using the method outlined in [#Mottonen2005]_ for gate synthesis, which is the default approach taken by PennyLane's estimation function.
 
@@ -47,9 +47,9 @@ print(qre.estimate(circuit_baseline)())
 # `Phase gradient states <https://pennylane.ai/compilation/phase-gradient>`_ are a type of catalytic resource state that can be used to facilitate rotations additively. For clarity, a state is "catalytic" if it is unchanged by a process that it plays a role in facilitating. To borrow (aptly) from the language of chemistry, it exists to catalyze (assist) a specific process (operation). The phase gradient state can be interpreted as a catalyst for phase shifts, invoking phase accumulation on other qubits without sacrificing its own properties. The state can be represented as
 #
 # .. math::
-#    |\nabla_b\rangle=\frac{1}{\sqrt{B}}\sum_{k=0}^{B-1}e^{-2\pi i \frac{k}{B}}|k\rangle
+#    |\nabla_b\rangle=\frac{1}{\sqrt{B}}\sum_{x=0}^{B-1}e^{-2\pi i \frac{x}{B}}|x\rangle
 #
-# where :math:`k` represents a target computational basis state, which one can interpret as an address marker that dictates what rotation angle is applied. In product state form,
+# where :math:`x` represents a target computational basis state, which one can interpret as an address marker that dictates what rotation angle is applied. In product state form,
 #
 # .. math::
 #    |\nabla_b\rangle=\otimes_{j=1}^b\frac{1}{\sqrt{2}}(|0\rangle+e^{-i\frac{2\pi}{2^j}}|1\rangle).
@@ -62,7 +62,7 @@ print(qre.estimate(circuit_baseline)())
 #
 #    *Equivalent circuits for executing a phase shift, in which the phase shift operator can be replaced with an addition step between a state and the phase gradient register*
 #
-# The phase gradient state can be interpreted as acting as a pre-defined plane of stored angles that can be accessed and invoked on a target state as desired. This state can be prepared once, stored in an auxiliary register, and reused. To induce a rotation, an the integer value of state :math:`k` simply needs to be added to the gradient register, which is done most commonly using a controlled `addition gate <https://docs.pennylane.ai/en/stable/code/api/pennylane.SemiAdder.html>`_ step, to invoke a phase shift on the target state corresponding to the "address marker" mentioned above. This procedure is summarized as
+# The phase gradient state can be interpreted as acting as a pre-defined plane of stored angles that can be accessed and invoked on a target state as desired. This state can be prepared once, stored in an auxiliary register, and reused. To induce a rotation, an integer value :math:`k`, proportional to the rotation angle needs to be added to the gradient register, which is done most commonly using a controlled `addition gate <https://docs.pennylane.ai/en/stable/code/api/pennylane.SemiAdder.html>`_ step, to invoke a phase shift on the target state corresponding to the "address marker" mentioned above. This procedure is summarized as
 #
 # .. math::
 #    \begin{aligned}
@@ -92,12 +92,12 @@ print(qre.estimate(circuit_baseline)())
 #    :class: note
 #
 #    1. A phase gradient state is encoded onto a register composed of :math:`b` qubits.
-#    2. An adder operation is performed between a data register and the gradient register.
-#    3. The phase gradient register shifts proportionally to the weight of the data qubit added to it.
-#    4. The shift in the gradient register causes the data register to accumulate a relative phase via phase kickback.
+#    2. An adder operation is performed between a constant :math:`k` and the gradient register.
+#    3. The phase gradient register shifts proportionally to the :math:`k` value.
+#    4. The shift in the gradient register causes the target qubit to accumulate a relative phase via phase kickback.
 #    5. Since position shifts are relative and do not alter structure, the catalytic phase gradient state remains unchanged and can be reused as desired.
 #
-# This structure can be easily extended to the more commonly used multiplexed case that we discussed at the beginning of this demonstration. In this case, we can use a `quantum read only memory (QROM) <https://pennylane.ai/demos/tutorial_intro_qrom>`_ to store each :math:`k` value in parallel in a quantum register. To carry out the rotation, it is best practice to carry out a semi-out-of-place addition using a :func:`~qp.SemiAdder` to add this quantum register to the phase gradient register. This reduces the complexity bound to :math:`\mathcal{O}(2^n+\log_2(1/\epsilon))`. This reduction in complexity combined with the catalytic nature of the phase gradient state makes this approach to gate synthesis highly resource efficient.
+# This structure can be easily extended to the more commonly used multiplexed case that we discussed at the beginning of this demonstration. In this case, we can use a `quantum read only memory (QROM) <https://pennylane.ai/demos/tutorial_intro_qrom>`_ to store each :math:`k` value in parallel in a data register. To carry out the rotation, it is best practice to carry out a semi-out-of-place addition using a :func:`~qp.SemiAdder` to add this data register to the phase gradient register. This reduces the complexity bound to :math:`\mathcal{O}(2^n+\log_2(1/\epsilon))`. This reduction in complexity combined with the catalytic nature of the phase gradient state makes this approach to gate synthesis highly resource efficient.
 #
 # .. figure:: ../demonstrations_v2/efficient_rotations_with_phase_gradient_states/Multiplexer.png
 #    :align: center
@@ -167,7 +167,7 @@ print(qre.estimate(circuit_phase_grad)())
 # | Single Qubit Gate Approximation |             0              | :math:`0.56\log_2(1/\epsilon)` [#Kliuchnikov2022]_ |               :math:`0.56R \log_2(1/\epsilon)`               |                   :math:`8.37 \times 10^{2}`                    |
 # +---------------------------------+----------------------------+----------------------------------------------------+--------------------------------------------------------------+-----------------------------------------------------------------+
 # 
-# Though this comparison shows the comparatively low cost of the multiplexed  phase gradient approach, it leaves a hanging question: why not just multiplex every method? QROM can, of course, be used to load states into a register in any computationally compatible scenario, but the fact that the phase gradient state is catalytic and accessible in a pre-configured register is what makes this efficient multiplexing approach possible. If the phase gradient state were destroyed each time it was applied to a state, it would be impossible to effectively carry out a simultaneous rotation on a register. Trying to multiplex a GridSynth process, for example, would require the simultaneous execution of gate sequences that vary with the control qubit states. This would cause the depth of the multiplexed operation to explode, eliminating any potential advantage. So, while phase gradients are expensive to prepare, they give us the luxury of a simple look-up table style approach.
+# Though this comparison shows the comparatively low cost of the multiplexed phase gradient approach, it leaves a hanging question: why not just multiplex every method? QROM can, of course, be used to load states into a register in any computationally compatible scenario, but the fact that the phase gradient state is catalytic and accessible in a pre-configured register is what makes this efficient multiplexing approach possible. If the phase gradient state were destroyed each time it was applied to a state, it would be impossible to effectively carry out a simultaneous rotation on a register. Trying to multiplex a GridSynth process, for example, would require the simultaneous execution of gate sequences that vary with the control qubit states. This would cause the depth of the multiplexed operation to explode, eliminating any potential advantage. So, while phase gradients are expensive to prepare, they give us the luxury of a simple look-up table style approach.
 #
 # Conclusion
 # ----------
@@ -177,18 +177,18 @@ print(qre.estimate(circuit_phase_grad)())
 #
 # References
 # ----------
-# .. [#Gidney2018] C.\ Gidney, "Halving the cost of quantum addition," *Quantum*, vol. 2, p. 74, Jun. 2018. `doi: 10.22331/q-2018-06-18-74 <https://quantum-journal.org/papers/q-2018-06-18-74/>`_.
+# .. [#Gidney2018] C.\ Gidney, "Halving the cost of quantum addition," *Quantum*, vol. 2, p. 74, Jun. 2018. `doi: 10.22331/q-2018-06-18-74 <https://doi.org/10.22331/q-2018-06-18-74>`_.
 #
-# .. [#Ross2016] N.\ J. Ross and P. Selinger, "Optimal ancilla-free Clifford+T approximation of z-rotations," *Quantum Inf. Comput.*, vol. 16, no. 11-12, pp. 901–953, 2016, `arXiv: 1403.2975 <https://arxiv.org/abs/1403.2975>`_.
+# .. [#Ross2016] N.\ J. Ross and P. Selinger, "Optimal ancilla-free Clifford+T approximation of z-rotations," *Quantum Inf. Comput.*, vol. 16, no. 11-12, pp. 901–953, 2016, `doi: 10.26421/QIC16.11-12-1 <https://doi.org/10.26421/QIC16.11-12-1>`_.
 #
-# .. [#Paetznick2014] A.\ Paetznick and K. M. Svore, "Repeat-Until-Success: Non-deterministic decomposition of single-qubit unitaries," *Quantum Inf. Comput.*, vol. 14, no. 15-16, pp. 1277–1301, 2014, `arXiv: 1311.1074 <https://arxiv.org/pdf/1311.1074>`_.
+# .. [#Paetznick2014] A.\ Paetznick and K. M. Svore, "Repeat-Until-Success: Non-deterministic decomposition of single-qubit unitaries," *Quantum Inf. Comput.*, vol. 14, no. 15-16, pp. 1277–1301, 2014, `doi: 10.48550/arXiv.1311.1074 <https://doi.org/10.48550/arXiv.1311.1074>`_.
 #
-# .. [#Dawson2006] C.\ M. Dawson and M. A. Nielsen, "The Solovay-Kitaev algorithm," *Quantum Inf. Comput.*, vol. 6, no. 1, pp. 81–95, 2006, `arXiv: quant-ph/0505030 <https://arxiv.org/pdf/quant-ph/0505030>`_.
+# .. [#Dawson2006] C.\ M. Dawson and M. A. Nielsen, "The Solovay-Kitaev algorithm," *Quantum Inf. Comput.*, vol. 6, no. 1, pp. 81–95, 2006, `doi: 10.26421/QIC6.1-6 <https://doi.org/10.26421/QIC6.1-6>`_.
 #
-# .. [#Kliuchnikov2015] V.\ Kliuchnikov, A. Bocharov, M. Roetteler, and J. Yard, "A Framework for Approximating Qubit Unitaries," 2015, `arXiv: 1510.03888 [quant-ph] <https://arxiv.org/pdf/1510.03888>`_.
+# .. [#Kliuchnikov2015] V.\ Kliuchnikov, A. Bocharov, M. Roetteler, and J. Yard, "A Framework for Approximating Qubit Unitaries," 2015, `doi: 10.48550/arXiv.1510.03888 <https://arxiv.org/pdf/1510.03888>`_.
 #
-# .. [#Kliuchnikov2022] V.\ Kliuchnikov, K. Lauter, R. Minko, A. Paetznick, and C. Petit, "Shorter quantum circuits via single-qubit gate approximation," 2022, `arXiv: 2203.10064 <https://arxiv.org/abs/2203.10064>`_.
+# .. [#Kliuchnikov2022] V.\ Kliuchnikov, K. Lauter, R. Minko, A. Paetznick, and C. Petit, "Shorter quantum circuits via single-qubit gate approximation," *Quantum*, vol. 7, 2023, `doi: 10.22331/q-2023-12-18-1208 <https://doi.org/10.22331/q-2023-12-18-1208>`_.
 #
-# .. [#OBrien2025] O.\ O'Brien and C. Sunderhauf, "Quantum State Preparation via Piecewise QSVT," 2025, `arXiv: 2409.07332 <https://arxiv.org/pdf/2409.07332>`_.
+# .. [#OBrien2025] O.\ O'Brien and C. Sunderhauf, "Quantum State Preparation via Piecewise QSVT," *Quantum*, vol. 9, 2025, `doi: 10.22331/q-2025-07-03-1786 <https://doi.org/10.22331/q-2025-07-03-1786>`_.
 #
-# .. [#Mottonen2005] M.\ Mottonen and J. J. Vartiainen, "Decompositions of General Quantum Gates," 2005, `arXiv: 0504100 <https://arxiv.org/pdf/quant-ph/0504100>`_. 
+# .. [#Mottonen2005] M.\ Mottonen and J. J. Vartiainen, "Decompositions of General Quantum Gates," 2005, `doi: 10.48550/arXiv.quant-ph/0504100 <https://doi.org/10.48550/arXiv.quant-ph/0504100>`_. 
