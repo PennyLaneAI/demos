@@ -18,7 +18,7 @@
     },
     {
       "type": "large_thumbnail",
-      "uri": "/_static/demo_thumbnails/large_demo_thumbnails/pennylane-demo-phase-gradient-states-thumbnail.png"
+      "uri": "/_static/demo_thumbnails/large_demo_thumbnails/pennylane-demo-phase-gradient-states-large-thumbnail.png"
     }
   ],
   "seoDescription": "The ability to perform arbitrary rotations is essential for the realization of usable algorithms on quantum computers. To minimize gate costs, efficient gate synthesis methods should be selected for implementation, such as multiplexed phase gradient states!",
