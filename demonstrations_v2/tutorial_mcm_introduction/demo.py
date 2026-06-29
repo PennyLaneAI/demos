@@ -32,7 +32,7 @@ statistics of mid-circuit measurements <demos/tutorial_how_to_collect_mcm_stats>
 # Measurements are the subject of important questions in quantum mechanics:
 # What is a measurement? How does it affect the measured system? And how can we
 # describe a measurement process mathematically?
-# Given how fundamental those question are, there is a plethora of learning
+# Given how fundamental those questions are, there is a plethora of learning
 # resources on this topic, from textbooks [#mike_n_ike]_ and (video) lectures
 # [#feynman]_, [#zwiebach]_ to interactive studying material like
 # `the PennyLane Codebook </codebook/>`__
@@ -40,12 +40,12 @@ statistics of mid-circuit measurements <demos/tutorial_how_to_collect_mcm_stats>
 # Furthermore, discussing measurements quickly
 # leads to questions about the interpretation of quantum mechanics and philosophical,
 # if not metaphysical, discourse.
-# For these reasons, we will not aim at discussing those deep question in great detail,
+# For these reasons, we will not aim at discussing those deep questions in great detail,
 # but focus on understanding the basics that will help us understand measurements
 # performed within quantum circuits, i.e., mid-circuit measurements, and how to realize
 # them in PennyLane.
 #
-# Bear with us, we will briefly look at a mathematically definition for
+# Bear with us, we will briefly look at a mathematical definition for
 # measurements but then turn to practical examples and hands-on calculations.
 #
 # Mathematical description

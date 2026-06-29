@@ -312,7 +312,7 @@ print("QFTs over different groups coincide:", np.allclose(h_hat_state, h_hat_sta
 # These subgroups can sometimes be decomposed into even smaller subgroups, leading to a recursive "divide-and-conquer"
 # algorithm. This technique is always possible for Abelian groups, but also for some non-Abelian groups such as the symmetric
 # group of permutations. Even more
-# important for us, this recursive strategy can be parallelised on a quantum computer, and it is know that every
+# important for us, this recursive strategy can be parallelised on a quantum computer, and it is known that every
 # FFT gives rise to an efficient QFT [#Moore]_---but more on that later.
 #
 # We will illustrate the basic idea of the FFT using the cyclic group :math:`Z_{6}`. It will get a little dense, but
@@ -505,7 +505,7 @@ print("FFT and previous DFT implementation coincide:", np.allclose(f_hat_vec, f_
 #     Figure 3. Circuit of the standard QFT for 3 qubits.
 #
 #
-# To see this, consider that the most significant bit in a binary representations of the cyclic group,
+# To see this, consider that the most significant bit in a binary representation of the cyclic group,
 # say :math:`Z_{2^3}` of elements
 #
 # .. math::  \{0,...,7\}, \text{ (or } \{000,...,111\}\text{ in binary notation)}
