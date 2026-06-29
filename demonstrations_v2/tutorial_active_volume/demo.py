@@ -13,7 +13,7 @@ take a complementary perspective, and walk slowly through a specific compilation
 
 For readers unfamiliar with ZX-diagrams, it will be useful (but not necessary) to take a look at
 our :doc:`introduction to ZX-calculus <demos/tutorial_zx_calculus>` first.
-Further, it can be instructive to get a primer on :doc:`the sruface code <demos/tutorial_surface_code>`, :doc:`lattice surgery <demos/tutorial_lattice_surgery>`
+Further, it can be instructive to get a primer on :doc:`the surface code <demos/surface-code>`, :doc:`lattice surgery <demos/tutorial_lattice_surgery>`
 and dive into the :doc:`Game of Surface Codes <demos/tutorial_game_of_surface_codes>`, but this
 is not a requirement either.
 
