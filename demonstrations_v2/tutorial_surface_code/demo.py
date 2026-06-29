@@ -25,7 +25,7 @@ that generalize it.
 
 The rotated surface code consists of alternating X (blue) and Z (orange) squares that make up a lattice.
 The so-called data qubits sit on the vertices (highlighted in pink). These will be the qubits that encode 
-the quantum information of a :math:`d \times d` surface code patch, that is making up a single qubit: (we will use :math:`d=5` throughout for simplicity)
+the quantum information of a :math:`d \times d` surface code patch, that is making up a single logical qubit: (we will use :math:`d=5` throughout for simplicity)
 
 .. figure:: ../_static/demonstration_assets/surface_code/surface_code_syndrome.png
     :align: center
