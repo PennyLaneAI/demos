@@ -174,8 +174,8 @@ def  circuit():
 #    included because it depends on the execution of CNOT(0,4).
 # 
 # 3. **Check gate executability**: For each gate in the front layer, the algorithm checks whether the
-#    mapped physical qubits are connected in the hardware graph: If they are adjacent, the gate �is
-#    executed� and is withdrawn from the front layer. If not, SWAP gate is required and step 4 is
+#    mapped physical qubits are connected in the hardware graph: If they are adjacent, the gate "is
+#    executed" and is withdrawn from the front layer. If not, SWAP gate is required and step 4 is
 #    applied. In our case, the CNOT(0,4) and CNOT(1,3) cannot be executed.
 # 
 # 4. **Compute routing cost**: The algorithm calculates the sum of the distance of the operations in
@@ -289,7 +289,7 @@ import pennylane as qp
 
 ######################################################################
 # For the Heron 1 and Heron 2 architectures, you only need to replace the name argument with
-# �qubit-mapping-heron1� or �qubit-mapping-heron2�, respectively.
+# "qubit-mapping-heron1" or "qubit-mapping-heron2", respectively.
 # 
 # Each dataset is divided into three attributes: circuits, hardware, and mappings, following the
 # structure discussed earlier. For example, to access the first sample:
