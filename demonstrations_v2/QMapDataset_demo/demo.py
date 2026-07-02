@@ -453,7 +453,10 @@ plt.show()
 ######################################################################
 # We obtain the following graph: |My graph|
 # 
-# .. |My graph| image:: graph_circuit.png
+# .. figure:: ../_static/demonstration_assets/qubit-mapping/graph_circuit.png
+#   :alt: My graph
+#   :width: 95%
+#   :align: center
 # 
 # For the **hardware**, the nodes represent the physical qubits, and edges connect pairs of physical
 # qubits that are directly connected in the device architecture. The features of each node are the
@@ -513,8 +516,11 @@ plt.savefig("graph_hardware.png", dpi=300, bbox_inches="tight")
 plt.show()
 
 ######################################################################
-# .. figure:: graph_hardware.png
-#    :alt: My graph
+# 
+# .. figure:: ../_static/demonstration_assets/qubit-mapping/graph_hardware.png
+#   :alt: My graph
+#   :width: 95%
+#   :align: center
 # 
 #    My graph
 # 
