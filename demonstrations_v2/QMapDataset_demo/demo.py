@@ -429,7 +429,7 @@ import networkx as nx
 from torch_geometric.utils import to_networkx
 # Convert PyG Data object to NetworkX graph
 G = to_networkx(
-    test,
+    Graph_circuit,
     edge_attrs=["edge_attr"],  # keep CX counts
     node_attrs=["x"],          # keep node features
     to_undirected=False
@@ -440,13 +440,13 @@ edge_labels = {
 }
 nx.draw(
     G,
-    pos,
+    nx.spring_layout(G, seed=42),
     with_labels=True,
     node_size=800,
 )
 nx.draw_networkx_edge_labels(
     G,
-    pos,
+    nx.spring_layout(G, seed=42),
     edge_labels=edge_labels
 )
 plt.show()
