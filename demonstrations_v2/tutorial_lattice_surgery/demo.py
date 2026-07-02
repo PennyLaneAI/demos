@@ -245,7 +245,7 @@ As we can see, the bulk of the qubit is untouched and all that is changed is the
     :target: javascript:void(0)
   
 Here we show an extended single-qubit patch and three example re-orientations of the type of edges.
-The smaller images are guides to the eye to indicate the settings, with X edges as solid lines and Z edges as dashed lines (i.e. the same as the logical measurements moved to the edges).
+The smaller images are guides to the eye to indicate the settings, with Z edges as solid lines and X edges as dashed lines (i.e. the same as the logical measurements moved to the edges).
 Note that the important property is for neighboring X and Z edges to overlap on two data qubits for the corresponding stabilizers to commute. 
 This is why the right patches introduce the triangle-shaped stabilizers of three :math:`Z` operators.
 
