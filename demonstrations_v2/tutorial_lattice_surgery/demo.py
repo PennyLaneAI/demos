@@ -143,7 +143,7 @@ The commutation can be seen from the fact
 that the logical operator only ever overlaps with an even multiple of X or Z operators, and thus commutes with any other stabilizer.
 
 We have defined the logical operators :math:`Z_L` and :math:`X_L` as strings of their respective physical counterparts.
-We can perform their terminal (destructive) measurements by simply measuring all qubits in a common basis. 
+We can perform their terminal (destructive) measurements by simply measuring all qubits in a single-qubit basis. 
 For :math:`Z_L` that corresponds to measuring all data qubits in the :math:`Z` basis.
 In this procedure, we lose the information about the :math:`X` stabilizers but still preserve the information about the :math:`Z` stabilizers, 
 which suffices to perform the measurement fault-tolerantly.
