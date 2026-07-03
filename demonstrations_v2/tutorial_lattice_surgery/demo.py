@@ -148,7 +148,7 @@ For :math:`Z_L` that corresponds to measuring all data qubits in the :math:`Z` b
 In this procedure, we lose the information about the :math:`X` stabilizers but still preserve the information about the :math:`Z` stabilizers, 
 which suffices to perform the measurement fault-tolerantly.
 
-In principle, :math:`Y_L = i X_L Z_L` is a valid logical operator, i.e. the crossing of a logical :math:`X_L` and :math:`Z_L` string. 
+In principle, :math:`Y_L = i X_L Z_L` is a valid logical operator, i.e., the crossing of a logical :math:`X_L` and :math:`Z_L` string. 
 However, we cannot read it out with a simple transversal measurement the way we did for :math:`X_L` and :math:`Z_L`.
 Instead, we use the non-perturbative homological procedure below to construct a 
 fault-tolerant :math:`Y_L` measurement by introducing a twist defect with an auxiliary qubit patch. Logical :math:`Y_L` measurements 
