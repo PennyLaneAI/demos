@@ -16,7 +16,7 @@ Why don't we add this to our quantum toolkits!
 
 The General Vibronics Algorithm
 ===============================
-To carry out a simulation on a specific vibronic Hamiltonian, we need to take the particularities of that system into consideration. Before considering where each Hamiltonian differs, though, we can explore what needs they share. To carry out time-evolution for a vibronic system, the following steps must be fulfilled.
+To simulate the time evolution of a specific vibronic Hamiltonian, we need to take the particularities of that system into consideration. Before considering where each Hamiltonian differs, though, we can explore what needs they share. To carry out time-evolution for a vibronic system, the following steps must be fulfilled.
 
 1. Load the initial state of the system into the simulation,
 2. Partition the terms of the Hamiltonian into mutually non-commuting fragments for Trotterization,
@@ -294,7 +294,7 @@ def PotentialStepQuadratic(fragment, load_coeffs, mode1, mode2, time_coeffs, sta
 # .. math::
 #    e^{-iHt} = (e^{-iH_1 \Delta t/2r}e^{-iH_2 \Delta t/r}e^{-iH_1 \Delta t/2r})^r
 #
-# where :math:`H_1` and :math:`H_2` are non-commuting Hamiltonian fragments, :math:`\Delta t` is a time step, and :math:`r` is the total number of Trotter steps taken. In our case, this implies taking half a time step in kinetic energy, a full time step in potential energy, and another half step forward in energy. 
+# where :math:`H_1` and :math:`H_2` are non-commuting Hamiltonian fragments, :math:`\Delta t` is a time step, and :math:`r` is the total number of Trotter steps taken. In our case, this implies taking half a time step in kinetic energy, a full time step in potential energy, and another half step forward in kinetic energy. 
 #
 # Before we can assemble our Trotter step, though, we are missing a crucial piece. In order to Trotterize a fragmented Hamiltonian, each fragment must be exponentiated. To do this efficiently and to maintain compatibility with architecture, each fragment must be *diagonal*. In a vibronic system, we are heavily concerned with coupling between atoms and, therefore, must consider off-diagonal terms to fully capture our system. Protocol must be put in place to *diagonalize* off-diagonal fragments. This can be done using cheap `Clifford gates <https://pennylane.ai/demos/tutorial_clifford_circuit_simulations>`_, but the exact method required to diagonalize a given Hamiltonian varies. Thus, the full Trotter step function should
 #
