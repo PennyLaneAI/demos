@@ -1,0 +1,26 @@
+{
+  "title": "Simulating Singlet Fission Dynamics with Tensor Networks",
+  "authors": [
+    {
+      "username": "stephendiadamo"
+    }
+  ],
+  "executable_stable": true,
+  "executable_latest": true,
+  "dateOfPublication": "2026-07-05T00:00:00+00:00",
+  "dateOfLastModification": "2026-07-05T00:00:00+00:00",
+  "categories": [],
+  "tags": [],
+  "previewImages": [
+    {
+      "type": "thumbnail",
+      "uri": "/_static/demo_thumbnails/regular_demo_thumbnails/thumbnail_placeholder.png"
+    }
+  ],
+  "seoDescription": "Simulate vibronic dynamics of singlet fission using GPU-accelerated MPS tensor networks via PennyLane and Maestro.",
+  "doi": "",
+  "references": [],
+  "basedOnPapers": [],
+  "referencedByPapers": [],
+  "relatedContent": []
+}
