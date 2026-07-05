@@ -9,8 +9,17 @@
   "executable_latest": true,
   "dateOfPublication": "2026-07-05T00:00:00+00:00",
   "dateOfLastModification": "2026-07-05T00:00:00+00:00",
-  "categories": [],
-  "tags": [],
+  "categories": [
+    "Quantum Chemistry",
+    "Devices and Performance"
+  ],
+  "tags": [
+    "tensor networks",
+    "MPS",
+    "GPU",
+    "vibronic dynamics",
+    "singlet fission"
+  ],
   "previewImages": [
     {
       "type": "thumbnail",
