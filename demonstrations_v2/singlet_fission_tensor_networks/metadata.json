@@ -28,8 +28,48 @@
   ],
   "seoDescription": "Simulate vibronic dynamics of singlet fission using GPU-accelerated MPS tensor networks via PennyLane and Maestro.",
   "doi": "",
-  "references": [],
-  "basedOnPapers": [],
+  "references": [
+    {
+      "id": "SmithMichl2010",
+      "type": "article",
+      "title": "Singlet Fission.",
+      "authors": "Smith, Millicent B. and Michl, Josef",
+      "year": "2010",
+      "journal": "Chemical Reviews",
+      "doi": "10.1021/cr1002613",
+      "url": "https://doi.org/10.1021/cr1002613"
+    },
+    {
+      "id": "Motlagh2024",
+      "type": "article",
+      "title": "Quantum Algorithm for Vibronic Dynamics: Case Study on Singlet Fission Solar Cell Design.",
+      "authors": "Motlagh, Danial et al.",
+      "year": "2024",
+      "journal": "",
+      "url": "https://arxiv.org/abs/2411.13669"
+    },
+    {
+      "id": "Maestro",
+      "type": "software",
+      "title": "Maestro Quantum Simulator.",
+      "authors": "Qoro Quantum",
+      "year": "2025",
+      "journal": "",
+      "url": "https://github.com/qoroquantum/maestro"
+    },
+    {
+      "id": "Bergholm2018",
+      "type": "article",
+      "title": "PennyLane: Automatic differentiation of hybrid quantum-classical computations.",
+      "authors": "Bergholm, Ville et al.",
+      "year": "2018",
+      "journal": "",
+      "url": "https://arxiv.org/abs/1811.04968"
+    }
+  ],
+  "basedOnPapers": [
+    "10.48550/arXiv.2411.13669"
+  ],
   "referencedByPapers": [],
   "relatedContent": []
 }
