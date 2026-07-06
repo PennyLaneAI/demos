@@ -4,19 +4,19 @@ Trotterization
 
 Whether we like it or not, time is always moving forward. 
 
-Even more frustrating, things tend to change with time, meaning we cannot neglect time evolution as we set out to model realistic systems, which tends to be costly. Take, for example, a system of :math:`n` particles, in which there are :math:`2^n` possible configurations. In this case, the Hamiltonian energy matrix of the system used in the time evolution operator :math:`U(t)=e^{-iHt}` would be :math:`2^n \times 2^n`. That's a lot to deal with!
+Even more frustrating, things tend to change with time, which we cannot neglect as we set out to model realistic systems. Take, for example, a system of :math:`n` particles, in which there are :math:`2^n` possible configurations. In this case, the Hamiltonian energy matrix of the system used in the time evolution operator :math:`U(t)=e^{-iHt}` would be :math:`2^n \times 2^n`. Things get unaffordable very quickly!
 
 Luckily, quantum computers have shown promise in addressing this issue. Instead of having to represent each possible state contained in the problem's Hilbert space, qubits can themselves act as analogues for the particles that make up the system. This has the potential to enable polynomial scaling with particle count rather than exponential scaling. `Maybe Feynman was onto something <https://s2.smu.edu/~mitch/class/5395/papers/feynman-quantum-1981.pdf>`_! 
 
-To make this feasible, tools have been put forward to aid in the task of `Hamiltonian simulation <https://pennylane.ai/topics/hamiltonian-simulation>`_. This demo will focus on **Trotterization**, a simulation methods that implements time evolution by segmenting and iteratively walking a Hamiltonian forward in time. Together, we will explore why Trotterization is an essential tool in quantum algorithms, work through a simple implementation to various orders, and determine what trade-offs may be necessary in the fault tolerant picture. 
+To make this feasible, tools have been put forward to aid in the task of `Hamiltonian simulation <https://pennylane.ai/topics/hamiltonian-simulation>`_. This demo will focus on **Trotterization**, a simulation methods that implements time evolution by segmenting and iteratively walking a Hamiltonian forward in time. Together, we will explore why Trotterization is an essential tool for quantum algorithms, work through a simple implementation to various orders, and determine what trade-offs may be necessary in the fault tolerant picture. 
 
-Time is of the essence!
+Let's get started, time is of the essence!
 
 The Commutation Problem
 -----------------------
-For a completely isolated free particle experiencing no external potential, the system's Hamiltonian can be simply defined in terms of kinetic energy and applied to the system via a unitary gate representing the time evolution operator :math:`U_{free}(t)=e^{-iHt}=e^{-iTt}`, where :math:`T` is the kinetic energy term. If this is the only scenario we can deal with, however, our capabilities would be incredibly limited. 
+For a completely isolated free particle experiencing no external potential, the system's Hamiltonian can be simply defined in terms of kinetic energy and applied via a unitary gate representing the time evolution operator :math:`U_{free}(t)=e^{-iHt}=e^{-iTt}`, where :math:`T` is the kinetic energy term. If this is the only scenario we can deal with, however, our capabilities would be incredibly limited. As a Hamiltonian becomes more complex (e.g., additional terms are added), the feasibility of the time evolution operator :math:`e^{-iHt}` being executable within reasonable computational resource bounds diminishes. 
 
-As a Hamiltonian becomes more complex (e.g., additional terms are added), the feasibility of the time evolution operator :math:`e^{-iHt}` being executable within reasonable computational resource bounds diminishes. If complexity is the issue, why not just split the Hamiltonian into smaller pieces that *are* computationally executable? If we take the representation :math:`H=H_1+H_2+...+H_n`, we could naïvely say that our time evolution operator becomes :math:`e^{-i(H_1+H_2+...+H_n)t}=e^{-iH_1t}e^{-iH_2t}...e^{-iH_nt}`. In our naïveté, however, we would neglect to consider the commutation relations of the split Hamiltonian components. If certain fragments of the Hamiltonian do not commute (:math:`[H_i,H_j] \neq 0`), we cannot exponentiate it in its entirety without deviating from our expected outcome.
+If complexity is the issue, why not just split the Hamiltonian into smaller pieces that *are* computationally executable? If we take the representation :math:`H=H_1+H_2+...+H_n`, we could naïvely say that our time evolution operator becomes :math:`e^{-i(H_1+H_2+...+H_n)t}=e^{-iH_1t}e^{-iH_2t}...e^{-iH_nt}`. In our naïveté, however, we would neglect to consider the commutation relations of the split Hamiltonian components. If certain fragments of the Hamiltonian do not commute (:math:`[H_i,H_j] \neq 0`), we cannot exponentiate it in its entirety without deviating from our expected outcome.
 
 .. admonition:: Recall
    :class: note
@@ -51,7 +51,7 @@ Turning back to the Hamiltonian picture, if we take a large, finite :math:`r`, l
 .. math::
    e^{-iHt}=\left(\prod_j e^{-iH_j t/r}\right)^r.
 
-So, by slicing the total time the simulation is trying to emulate, the dependency shared by non-commuting properties can be integrated via alternating applications of each operator within each time step. So, instead of taking one complete :math:`A` step and one complete :math:`B` step, we are now alternating small, partial steps in :math:`A` and :math:`B`, approximating simultaneity to the best of our ability. 
+So, by slicing the total time the simulation is trying to emulate, the dependency shared by non-commuting properties can be integrated via alternating applications of each operator within each time step. Instead of taking one complete :math:`A` step and one complete :math:`B` step, we are now alternating small, partial steps in :math:`A` and :math:`B`, approximating simultaneity to the best of our ability. 
 
 .. figure:: ../demonstrations_v2/exploring_trotterization/IterativeFitIllustration.png
    :align: center
@@ -59,13 +59,11 @@ So, by slicing the total time the simulation is trying to emulate, the dependenc
 
 By splitting the Hamiltonian into fragments :math:`H_j`, we are generating a new *effective* Hamiltonian that becomes an approximation of the initial Hamiltonian (a true perspective is that :math:`e^{-i(A_B)t}\approx e^{-iAt}e^{-iBt}`). Carrying out the above Trotterization allows us to carry out an *exact* simulation of an *approximate* representation!
 
-Returning to the example of position and momentum also raises the question of dealing with operators that exist in different bases. Indeed, if the non-commuting operators do not exist in the same basis, a basis change step (such as a `quantum Fourier transform (QFT) <https://pennylane.ai/demos/tutorial_qft>`_) will need to be added between each operator application. This increases the resources required to carry out a step, but further opens the door to simulating realistic systems.
-
 Implementing the Trotter Method
 -------------------------------
 The form of the Lie-Trotter approximation implies a clear order of operations that must be executed to simulate the time evolution of a non-commuting system. 
 
-The first step of carrying out Hamiltonian simulation using Trotterization is splitting the Hamiltonian. As a rule of thumb, feasible algorithms should strive for a minimal gate count and minimized opportunity for error, meaning we should try to minimize the number of operators used. To achieve this, the Hamiltonian should be split only where mathematically necessary, meaning commuting terms should always be grouped together to the greatest extent possible. 
+The first step of carrying out Hamiltonian simulation using Trotterization is splitting the Hamiltonian. As a rule of thumb, feasible algorithms should strive for a minimal gate count and reduced opportunity for error, meaning we should try to minimize the number of operators required. To achieve this, the Hamiltonian should be split only where mathematically necessary, meaning commuting terms should always be grouped together to the greatest extent possible. 
 
 Once the Hamiltonian is appropriately split, we need to ensure that the fragments we are working with can actually be implemented using realistic quantum devices. This tends to require some kind of :doc:`transformation <demos/tutorial_mapping>` between the native representation of the system and a computationally compatible representation. Recalling the relevance of this method in simulating particle systems, one relevant example is the mapping of Fermionic states to qubit states via the :func:`~qp.jordan_wigner` transformation. For the purposes of the following simple demonstration, we will assume our Hamiltonian was originally defined in the Pauli basis and forgo the transformation step. 
 
@@ -76,7 +74,7 @@ Let our Hamiltonian be given by
    
 where :math:`\alpha` and :math:`\beta` are arbitrary coefficients. 
 
-Finally, the number of time steps :math:`r` must be defined with the goal of achieving a high level of accuracy while remaining within reasonable computational resource bounds. From there, the circuit should simply alternate between the time evolution operator unitary gates for the desired number of steps. Since our Hamiltonian is completely in the Pauli basis, we will not need to perform a basis change step in our Trotter circuit. Recall that exponentiated Pauli operators are represented by rotation gates, where, letting :math:`\sigma_i` be a Pauli operator,
+Recall that exponentiated Pauli operators are represented by rotation gates, where, letting :math:`\sigma_i` be a Pauli operator,
 
 .. math::
    R_{\sigma_i}(\theta)=e^{-i\frac{\theta}{2}\sigma_i}.
@@ -86,7 +84,9 @@ So, taking :math:`H_1=\alpha X` and :math:`H_2=\beta Z`
 .. math::
    U(t)=e^{-i \beta Z t}e^{-i \alpha X t}=R_Z(2\beta t)R_X(2 \alpha t).
 
-This is easily translatable to code.
+Finally, the number of time steps :math:`r` must be defined with the goal of achieving a high level of accuracy while remaining within reasonable computational resource bounds. From there, the circuit should simply alternate between the time evolution operator unitary gates for the desired number of steps.
+
+This is easily translated to code.
 """
 
 import pennylane as qp
@@ -146,7 +146,7 @@ print(BuiltInTrotter(t, coeffs[0], coeffs[1], R[4]))
 # .. math::
 #     e^{-iBt}e^{-iAt}=e^{-it(A+B)-\frac{t^2}{2}[B,A]+i\frac{t^3}{12}[B,[B,A]]-...}.
 #
-# As is familiar when handling series expansions, the degree to which the BCH formula is truncated in the system representation dictates the amount of error to expect in the Hamiltonian. Comparing the previous definition of the approximated Trotter formula to this expansion expression, we can see that we are only concerned with the first term and, therefore, our error is dominated by the second-order term :math:`-\frac{t^2}{2}[B,A]`. Taking :math:`t=\Delta t=\frac{t}{r}` for each time step, we can reason that, in this case, the error is proportional to :math:`\frac{t^2}{r}` after the operator is applied :math:`r` times. This result aligns with our intuition, implying that error will increase with length of time and decrease with number of steps. This, of course, neglects to consider the upper bound on the number of time steps that can be handled computationally, which will be examined briefly later.
+# As is familiar when handling series expansions, the degree to which the BCH formula is truncated in the system representation dictates the amount of error to expect in the Hamiltonian. Comparing the previous definition of the approximated Trotter formula to this expansion expression, we can see that we are only concerned with the first term and, therefore, our error is dominated by the second-order term :math:`-\frac{t^2}{2}[B,A]`. Taking :math:`t=\Delta t=\frac{t}{r}` for each time step, we can reason that, in this case, the error is proportional to :math:`\frac{t^2}{r}` after the operator is applied :math:`r` times.
 #
 # In the simple example implemented in this demo, an observed Trotter error can be achieved by calculating time evolution of the system analytically and carrying out a comparison. This would, of course, be unfeasible for large, complicated (in other words, useful) models or long time scales, but it is sufficient for this example. `Methods for investigating Trotter error in non-analytical cases <https://simons.berkeley.edu/sites/default/files/docs/15639/trottererrortheorysimons.pdf>`_ are a continually developing field of study.
 #
@@ -185,9 +185,9 @@ for r in R:
 # 
 # Higher-Order Trotterizations
 # ----------------------------
-# To this point we have taken the first-order Trotterization approach, in which the root equation is truncated to the first order term. While this approach is sufficient for simple, short time scale problems (e.g., systems with weak interaction), ignoring higher order terms and, therefore, reducing precision can result in ignorance of important system characteristics and unnecessarily high error that requires increased resources to account for [#Childs2021]_. Thus, the use of higher-order Trotterizations is often necessary to achieve realistic simulation.
+# Not too long ago we mentioned that we were working with the BCH formula truncated to the first order term. In other words, we have been taking a first-order Trotterization approach. While this is sufficient for simple, short time scale problems (e.g., systems with weak interaction), ignoring higher order terms and, therefore, reducing precision can result in ignorance of important system characteristics and unnecessarily high error that requires increased resources to account for [#Childs2021]_. Thus, the use of higher-order Trotterizations is often necessary to achieve realistic simulation.
 #
-# Higher-order Trotter products and the associated Trotter error is a complex and developing field of study. A simple, baseline approach to achieving high-order Trotterizations is introducing symmetries into the system that move the simulation closer to reality. Revisiting the analogy used above, the first-order Trotterization alternates between two non-commuting operators and incrementally steps each term in alternating time slices, resulting in an approximate interaction. In a second-order approach, one of the operator terms would be further divided into two half-steps to be applied before and after the other operator. In the case of our Hamiltonian, the second-order Trotter product, discovered simultaneously by Strang [#Strang1968]_ and Verlet [#Verlet1967]_, would be
+# A simple, baseline approach to achieving high-order Trotterizations is introducing symmetries into the system that move the simulation closer to reality. Revisiting the analogy used above, the first-order Trotterization alternates between two non-commuting operators and incrementally steps each term in alternating time slices. In a second-order approach, one of the operator terms would be further divided into two half-steps to be applied before and after the other operator. In the case of our Hamiltonian, the second-order Trotter product, discovered simultaneously by Strang [#Strang1968]_ and Verlet [#Verlet1967]_ in the 1960s, would be
 # 
 # .. math::
 #    e^{-i\alpha Xt}e^{-i\beta Zt}=(e^{-i\alpha Xt/2r}e^{-i\beta Zt/r}e^{-i\alpha Xt/2r})
@@ -197,7 +197,7 @@ for r in R:
 # .. math::
 #    S_2(t)=R_X(\alpha t)R_Z(2\beta t)R_X(\alpha t).
 #
-# A benefit of imposing a symmetric formula such as this is that it cancels out dominant error term discussed previously. The symmetry, essentially, does not allow for even powers to survive the operator application process, eliminating the dominant :math:`t^2` term discussed previously.
+# A benefit of imposing a symmetric formula such as this is that it cancels out the dominant error term discussed previously. The symmetry, essentially, does not allow for even powers to survive the operator application process, eliminating the dominant :math:`t^2` term discussed previously.
 #
 # Altering the TrotterStepper() function to a second-order Trotterization shows the impact this symmetry has on the Trotter error.
 
@@ -224,7 +224,7 @@ for r in R:
     total_errorSO = np.sqrt(X_errorSO**2+Y_errorSO**2+Z_errorSO**2)
     print(f"{r:>5} | {X_errorSO:>8.5f} | {Y_errorSO:>8.5f} | {Z_errorSO:>8.5f} | {total_errorSO:>11.5f}")
 #############################################################################################################
-# Comparing to the first-order results where, for example, the error when :math:`r=10` is approximately 20%, updating to the second-order Trotterization reduces this error to approximately 12%. Not too shabby! The following plot demonstrates the improved performance of the second-order Trotterization, in which low error rates are achieved for much fewer time steps. Thus, even though additional resources are required to implement the additional unitary, the reduction in required steps also implies improved cost.
+# Comparing to the first-order results where, for example, the error when :math:`r=10` is approximately 20%, updating to the second-order Trotterization reduces this error to approximately 12%. Not too shabby! 
 #
 # .. figure:: ../demonstrations_v2/exploring_trotterization/HigherOrderComp.png
 #   :align: center
@@ -239,9 +239,9 @@ for r in R:
 #
 # Gate Synthesis Considerations
 # -----------------------------
-# Before we can officially add Trotterization to our list of capabilities, we must consider how our simulations will interface with eventual fault tolerant quantum hardware. Whether we like it or not, the resources provided by quantum hardware will be, in some way, limited. With this in mind, it is important that the resource requirements of the systems we work with are quantified and evaluated. One metric of interest is the number of `T-gates <https://pennylane.ai/blog/2025/01/optimizing-with-op-t-mize-dataset>`_.
+# Before we can officially add Trotterization to our list of capabilities, we must consider how our simulations will interface with eventual fault tolerant quantum hardware. Whether we like it or not, the resources provided by quantum hardware will be, in some way, limited. With this in mind, it is important that the resource requirements of the systems we work with are quantified and evaluated. One metric of interest is the number of `T-gates <https://pennylane.ai/blog/2025/01/optimizing-with-op-t-mize-dataset>`_ required to synthesize our operations.
 #
-# The PennyLane :func:`~qp.estimate` tool can be implemented to approximate the number of gates used to carry out a given process taking a naïve approach. There are ample optimized methods that can be used to reduce resource requirements. Alternatively, the :doc:`multiplexed phase gradient method <demos/efficient_rotations_with_phase_gradient_states`, which takes advantage of a static register that holds spatially dependent phase values which can be *added* to a target state as needed, can be used for synthesis.
+# The PennyLane :func:`~qp.estimate` tool can be implemented to approximate the number of gates used to carry out a given process, taking a naïve approach. There are ample optimized methods that can be used to reduce resource requirements. Alternatively, the :doc:`multiplexed phase gradient method <demos/efficient_rotations_with_phase_gradient_states`, which takes advantage of a static register that holds spatially dependent phase values which can be *added* to a target state as needed, can be used for synthesis.
 #
 # When we select a gate synthesis method, our initial instinct might be to minimize the T count in favour of implementability and efficiency above all. From this perspective, it seems obvious to always select a low-cost method, such as the aforementioned phase gradient approach. Using PennyLane's :func:`~qp.rz_phase_gradient` transformation, the expensive :math:`R_z(\phi)` rotations implemented in the above Trotterization can be translated into phase gradient additions and compared to the naïve approach. Since this method only transforms :math:`R_z` operations, we can perform our desired :math:`R_x` rotations using an :math:`R_z` rotation sandwiched between two Hadamard gates. For this example, a step count of :math:`r=200` will be taken in the resource estimation step.
 
@@ -310,10 +310,9 @@ for r in R:
     total_error_PG = np.sqrt(X_error_PG**2+Y_error_PG**2+Z_error_PG**2)
     print(f"{r:>5} | {X_error_PG:>8.5f} | {Y_error_PG:>8.5f} | {Z_error_PG:>8.5f} | {total_error_PG:>11.5f}")
 #############################################################################################################
-# Ah ha! A tradeoff has made itself clear! In the phase gradient implementation, the Trotter error is universally higher.  What is also (maybe even more) interesting is that, after a certain :math:`r` threshold is reached, the phase gradient system no longer evolves. This is an example of `underflow <https://en.wikipedia.org/wiki/Arithmetic_underflow>`_ in `quantum arithmetic <https://pennylane.ai/demos/tutorial_how_to_use_quantum_arithmetic_operators>`_, where, put very simply, the simulation has reached a computational limit and is stuck rounding to the same value each pass. Since the phase gradient method relies on quantum addition, it may not be the right tool here if our main goal is to reduce error. So, when we choose which techniques to use for gate synthesis, we must consider the needs of our system in tandem with the cost of our system. Sometimes an investment is necessary!
+# Ah ha! A tradeoff has made itself clear! In the phase gradient implementation, the Trotter error is universally higher. What is also (maybe even more) interesting is that, after a certain :math:`r` threshold is reached, the phase gradient system no longer evolves. This is an example of `underflow <https://en.wikipedia.org/wiki/Arithmetic_underflow>`_ in `quantum arithmetic <https://pennylane.ai/demos/tutorial_how_to_use_quantum_arithmetic_operators>`_, where, put very simply, the simulation has  reached a computational limit and is stuck rounding to the same value each pass. Since the phase gradient method relies on quantum addition, it may not be the right tool here if our main goal is to reduce error. So, when we choose which techniques to use for gate synthesis, we must consider the needs of our system in tandem with the cost of our system. Sometimes an investment is necessary!
 #
 # Another thing to consider is the potential **fast-forwardability** of the system. As shown, carrying out quantum simulation on hardware requires a series of gates to be implemented for each time step, meaning the depth of the circuit grows notably with increasing time. If the depth of a simulation circuit maintains proportionality to the length of the time interval being simulated, for example, it runs the (very real) risk of exceeding the `coherence time <https://en.wikipedia.org/wiki/Quantum_decoherence>`_ of the system. Ideally, running a simulation for time :math:`t` would require a complexity less than :math:`\mathcal{O}(t)` or, in other words, a complexity that is sublinear in :math:`t`. This, in theory, can be achieved by employing a fast-forwarding technique, in which the phase angles used in the time evolution operator can be strategically altered to, put simply, cover more time in a simple step to achieve sub-linear complexity. This technique requires the Hamiltonian have a known analytical solution (or, in other words, that it is "exactly integrable"), which is often not the case.
-
 #
 # Conclusion
 # ----------
