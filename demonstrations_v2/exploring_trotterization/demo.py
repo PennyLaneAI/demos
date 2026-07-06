@@ -148,7 +148,7 @@ print(BuiltInTrotter(t, coeffs[0], coeffs[1], R[4]))
 #
 # As is familiar when handling series expansions, the degree to which the BCH formula is truncated in the system representation dictates the amount of error to expect in the Hamiltonian. Comparing the previous definition of the approximated Trotter formula to this expansion expression, we can see that we are only concerned with the first term and, therefore, our error is dominated by the second-order term :math:`-\frac{t^2}{2}[B,A]`. Taking :math:`t=\Delta t=\frac{t}{r}` for each time step, we can reason that, in this case, the error is proportional to :math:`\frac{t^2}{r}` after the operator is applied :math:`r` times.
 #
-# In the simple example implemented in this demo, an observed Trotter error can be achieved by calculating time evolution of the system analytically and carrying out a comparison. This would, of course, be unfeasible for large, complicated (in other words, useful) models or long time scales, but it is sufficient for this example. `Methods for investigating Trotter error in non-analytical cases <https://simons.berkeley.edu/sites/default/files/docs/15639/trottererrortheorysimons.pdf>`_ are a continually developing field of study.
+# In the simple example implemented in this demo, an observed Trotter error can be achieved by calculating time evolution of the system analytically and carrying out a comparison. This would, of course, be unfeasible for large, complicated (in other words, useful) models or long time scales, but it is sufficient for this example. `Methods for investigating Trotter error <https://arxiv.org/pdf/2606.30738>`_ are a continually developing field of study.
 #
 
 #Approximate evolution for Trotter error calculation
