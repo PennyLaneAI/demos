@@ -4,17 +4,19 @@ Trotterization
 
 Whether we like it or not, time is always moving forward. 
 
-Even more frustrating, things tend to change with time, meaning we cannot neglect time evolution as we set out to model realistic systems. To execute this successfully, though, tends to be incredibly computationally intense. In the case of particle systems, which constitute a lot of interesting, cutting-edge simulation work, the exponential nature of the system's scaling  very quickly renders classical, sequential simulation impossible, even for short time scales. Take, for example, a system of :math:`n` particles, in which there are :math:`2^n` possible configurations, meaning the Hamiltonian energy matrix of the system used in the time evolution operator :math:`U(t)=e^{-iHt}` would be :math:`2^n \times 2^n`. That's a lot to deal with!
+Even more frustrating, things tend to change with time, meaning we cannot neglect time evolution as we set out to model realistic systems, which tends to be costly. Take, for example, a system of :math:`n` particles, in which there are :math:`2^n` possible configurations. In this case, the Hamiltonian energy matrix of the system used in the time evolution operator :math:`U(t)=e^{-iHt}` would be :math:`2^n \times 2^n`. That's a lot to deal with!
 
-Luckily, quantum computers have shown promise in addressing this issue since, instead of having to represent each possible state contained in the problem's Hilbert space, qubits can themselves act as analogues for the particles that make up the system, enabling polynomial scaling with particle count rather than exponential scaling. `Maybe Feynman was onto something <https://s2.smu.edu/~mitch/class/5395/papers/feynman-quantum-1981.pdf>`_! 
+Luckily, quantum computers have shown promise in addressing this issue. Instead of having to represent each possible state contained in the problem's Hilbert space, qubits can themselves act as analogues for the particles that make up the system. This has the potential to enable polynomial scaling with particle count rather than exponential scaling. `Maybe Feynman was onto something <https://s2.smu.edu/~mitch/class/5395/papers/feynman-quantum-1981.pdf>`_! 
 
-To make this feasible, though, we need to be strategic with how we simulate time evolution for our systems. **Trotterization** is a method used in Hamiltonian simulation that enables step-by-step time evolution of systems composed of non-commuting components. This demo will demonstrate that the strategic use of mathematical tricks that allow these complicated Hamiltonians to be exponentated opens the door to achieving realistic, accurate time evolution simulations.
+To make this feasible, tools have been put forward to aid in the task of `Hamiltonian simulation <https://pennylane.ai/topics/hamiltonian-simulation>`_. This demo will focus on **Trotterization**, a simulation methods that implements time evolution by segmenting and iteratively walking a Hamiltonian forward in time. Together, we will learn why Trotterization is seen as an essential tool in quantum computing by exploring its ability to handle complex, non-commuting Hamiltonian terms and implementing a simple Trotterization on a Pauli Hamiltonian. 
+
+Time is of the essence!
 
 The Commutation Problem
 -----------------------
-For a completely isolated free particle experiencing no external potential, the system's Hamiltonian can be simply defined in terms of kinetic energy and applied to the system via a unitary gate representing the time evolution operator :math:`U_{free}(t)=e^{-iHt}=e^{-iTt}`, where :math:`T` is the kinetic energy term. Sticking to this idealized case would, of course, be useless. 
+For a completely isolated free particle experiencing no external potential, the system's Hamiltonian can be simply defined in terms of kinetic energy and applied to the system via a unitary gate representing the time evolution operator :math:`U_{free}(t)=e^{-iHt}=e^{-iTt}`, where :math:`T` is the kinetic energy term. If this is the only scenario we can deal with, however, our capabilities would be incredibly limited. 
 
-With each term added to a Hamiltonian, the feasibility of the time evolution operator :math:`e^{-iHt}` being executable within reasonable computational resource bounds diminishes. This brings to mind a supposedly simple solution, why not just split the Hamiltonian into smaller pieces that are computationally executable? If we take the representation :math:`H=H_1+H_2+...+H_n`, we could naïvely say that our time evolution operator becomes :math:`e^{-i(H_1+H_2+...+H_n)t}=e^{-iH_1t}e^{-iH_2t}...e^{-iH_nt}`. In our naïveté, however, we would neglect to consider the commutation relations of the split Hamiltonian components. If certain fragments of the Hamiltonian do not commute (:math:`[H_i,H_j] \neq 0`), we cannot exponentiate it in its entirety without deviating from our expected outcome.
+As a Hamiltonian becomes more complex (e.g., additional terms are added), the feasibility of the time evolution operator :math:`e^{-iHt}` being executable within reasonable computational resource bounds diminishes. If complexity is the issue, why not just split the Hamiltonian into smaller pieces that *are* computationally executable? If we take the representation :math:`H=H_1+H_2+...+H_n`, we could naïvely say that our time evolution operator becomes :math:`e^{-i(H_1+H_2+...+H_n)t}=e^{-iH_1t}e^{-iH_2t}...e^{-iH_nt}`. In our naïveté, however, we would neglect to consider the commutation relations of the split Hamiltonian components. If certain fragments of the Hamiltonian do not commute (:math:`[H_i,H_j] \neq 0`), we cannot exponentiate it in its entirety without deviating from our expected outcome.
 
 .. admonition:: Recall
    :class: note
@@ -37,7 +39,7 @@ With each term added to a Hamiltonian, the feasibility of the time evolution ope
 
    So, the Taylor expansion :math:`e^{A+B}=I+(A+B)+\frac{1}{2}(A+B)^2+...` differs in the two cases!
 
-As we know, most physical systems require a combination of non-commuting operators to be fully described, but splitting the Hamiltonian this way in a non-commuting scenario would be inaccurate. To imagine this more physically, consider what it would mean to exponentiate two dependent properties in this way. If we took :math:`A` and :math:`B` to be our non-commuting operators, our naïve approach would lead us to blindly exponentiate as :math:`e^{-iHt}=e^{-iAt}e^{-iBt}`. However, applying these operators sequentially assumes that the system is accurately described by iterating the position *then* iterating the momentum, one after the other. This completely ignores how they influence each other, thus rendering the simulation inaccurate. Rats!
+As we know, most physical systems require a combination of non-commuting operators to be fully described. If we took :math:`A` and :math:`B` to be our non-commuting operators, our naïve approach would lead us to blindly exponentiate as :math:`e^{-iHt}=e^{-iAt}e^{-iBt}`. Applying these operators sequentially assumes that the system is accurately described by iterating the position *then* iterating the momentum, one after the other. This completely ignores how they influence each other, thus rendering the simulation inaccurate. Rats!
 
 Luckily for us, the problem of exponentiating non-commuting equations is not new. The `Lie-Trotter product formula <https://en.wikipedia.org/wiki/Lie_product_formula>`_ is a main result of this effort. The theorem states that for arbitrary :math:`m \times m` matrices :math:`A` and :math:`B`
 
@@ -47,7 +49,7 @@ Luckily for us, the problem of exponentiating non-commuting equations is not new
 Turning back to the Hamiltonian picture, if we take a large, finite :math:`r`, letting :math:`r` represent the number of time steps taken in the desired time evolution, we can approximate the Lie-Trotter formula to the first order Trotterization expression
 
 .. math::
-   e^{-iHt}=(\prod_j e^{-iH_j t/r})^r.
+   e^{-iHt}=\left(\prod_j e^{-iH_j t/r}\right)^r.
 
 So, by slicing the total time the simulation is trying to emulate, the dependency shared by non-commuting properties can be integrated via alternating applications of each operator within each time step. So, instead of taking one complete :math:`A` step and one complete :math:`B` step, we are now alternating small, partial steps in :math:`A` and :math:`B`, approximating simultaneity to the best of our ability. 
 
@@ -63,9 +65,13 @@ Implementing the Trotter Method
 -------------------------------
 The form of the Lie-Trotter approximation implies a clear order of operations that must be executed to simulate the time evolution of a non-commuting system. 
 
-The first step of carrying out Hamiltonian simulation using Trotterization is splitting the Hamiltonian. As a rule of thumb, feasible algorithms should strive for a minimal gate count and minimized opportunity for error, meaning we should try to minimize the number of operators used. To achieve this, the Hamiltonian should be split only where mathematically necessary, meaning commuting terms should always be grouped together to the greatest extent possible. Take, for example, a Hamiltonian containing the terms :math:`Z_1Z_3`, :math:`Z_2Z_4`, and :math:`X_1X_2`, where :math:`Z_i` and :math:`X_j` are Pauli operators. The first and second terms will always commute since they consist completely of Z operators, but neither of the first two operators commute with the third operator. Therefore, the most optimal splitting would yield :math:`H_1=Z_1Z_3+Z_2Z_4` and :math:`H_2=X_1X_2`. This is not always so obvious in complex physical systems, so thorough analysis should be carried out to ensure optimal operator pairing. 
+The first step of carrying out Hamiltonian simulation using Trotterization is splitting the Hamiltonian. As a rule of thumb, feasible algorithms should strive for a minimal gate count and minimized opportunity for error, meaning we should try to minimize the number of operators used. To achieve this, the Hamiltonian should be split only where mathematically necessary, meaning commuting terms should always be grouped together to the greatest extent possible. 
 
-Once the Hamiltonian is appropriately split, we need to ensure that the fragments we are working with can actually be implemented using realistic quantum devices. This tends to require some kind of `transformation <https://pennylane.ai/demos/tutorial_mapping>`_ between the native representation of the system and a computationally compatible representation. Recalling the relevance of this method in simulating particle systems, one relevant example is the mapping of Fermionic states to qubit states via the `Jordan-Wigner transformation <https://docs.pennylane.ai/en/stable/code/api/pennylane.jordan_wigner.html>`_. For the purposes of the following simple demonstration, we will assume our Hamiltonian was originally defined in the Pauli basis and forgo the transformation step. Let our Hamiltonian be given by
+Take, for example, a Hamiltonian containing the terms :math:`Z_1Z_3`, :math:`Z_2Z_4`, and :math:`X_1X_2`, where :math:`Z_i` and :math:`X_j` are Pauli operators. The first and second terms will always commute since they consist completely of Z operators, but neither of the first two operators commute with the third operator. Therefore, the most optimal splitting would yield :math:`H_1=Z_1Z_3+Z_2Z_4` and :math:`H_2=X_1X_2`. This is not always so obvious in complex physical systems, so thorough analysis should be carried out to ensure optimal operator pairing. Tools such as :func:`~qp.pauli.group_observables` are very helpful in this case!
+
+Once the Hamiltonian is appropriately split, we need to ensure that the fragments we are working with can actually be implemented using realistic quantum devices. This tends to require some kind of :doc:`transformation <demos/tutorial_mapping>` between the native representation of the system and a computationally compatible representation. Recalling the relevance of this method in simulating particle systems, one relevant example is the mapping of Fermionic states to qubit states via the :func:`~qp.jordan_wigner` transformation. For the purposes of the following simple demonstration, we will assume our Hamiltonian was originally defined in the Pauli basis and forgo the transformation step. 
+
+For this demo, let our Hamiltonian be given by
 
 .. math::
    H=\alpha X + \beta Z, 
@@ -80,7 +86,7 @@ Finally, the number of time steps :math:`r` must be defined with the goal of ach
 So, taking :math:`H_1=\alpha X` and :math:`H_2=\beta Z`
 
 .. math::
-   U(t)=e^{-i \alpha Z t}e^{-i \beta X t}=R_Z(2\beta t)R_X(2 \alpha t).
+   U(t)=e^{-i \beta Z t}e^{-i \alpha X t}=R_Z(2\beta t)R_X(2 \alpha t).
 
 This is easily translatable to code.
 """
@@ -92,7 +98,7 @@ import pennylane.estimator as qre
 from pennylane.transforms.rz_phase_gradient import rz_phase_gradient
 
 #Define System Parameters
-coeffs = [0.2, 1.3] #Define Hamiltonian coefficients
+coeffs = [0.2, 1.3] #Define Hamiltonian coefficients [alpha, beta]
 observables = [qp.PauliX(0), qp.PauliZ(0)] #Define observables
 t = 10
 R = [10, 20, 30, 40, 50, 100, 200, 400] #Trotter steps
@@ -111,6 +117,28 @@ def TrotterStepper(t,r,coeffs):
 
     return [qp.expval(qp.PauliX(0)), qp.expval(qp.PauliY(0)), qp.expval(qp.PauliZ(0))]
 ###############################################################################
+# Luckily for us, PennyLane has the tools to make this much simpler. Using :func:`~qp.Trotterize`, the exact same procedure can be carried out on the target Hamiltonian.
+#
+def first_order_expansion(time, theta, phi, wires):
+    qp.RX(2*time*theta, wires = 0)
+    qp.RZ(2*time*phi, wires = 0)
+
+@qp.qnode(dev)
+def BuiltInTrotter(time, theta, phi, num_trotter_steps):
+    qp.trotterize(
+        first_order_expansion, 
+        n = num_trotter_steps,
+        order = 1
+    )(time, theta, phi, wires=['a','b'])
+    return [qp.expval(qp.PauliX(0)), qp.expval(qp.PauliY(0)), qp.expval(qp.PauliZ(0))]
+
+#Compare results for 50 Trotter steps
+print(TrotterStepper(t, R[4], coeffs))
+print(BuiltInTrotter(t, coeffs[0], coeffs[1], R[4]))
+
+###############################################################################
+# That's a good match! This procedure is advantageous for dealing with larger Hamiltonians or working Trotterization into a larger PennyLane workflow. For the purposes of this demonstration, we will continue using our DIY solution, but the choice is yours!
+#
 # Trotter Error
 # -------------
 # Understanding how Hamiltonian simulations deviate from theoretically expected system behaviour is a field of study in itself. Intuitively, we expect the size of the time step to be a major contributor to the error, since time steps that are too large tend to obscure system behaviour. A nuanced exploration of exact Trotter error typically begins with consideration of the `Baker-Campbell-Hausdorff formula <https://en.wikipedia.org/wiki/Baker%E2%80%93Campbell%E2%80%93Hausdorff_formula>`_ [#Su2020]_, which describes the true expansion of an exponentiated non-commuting operator pair as
