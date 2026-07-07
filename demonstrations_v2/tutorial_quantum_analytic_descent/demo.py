@@ -19,7 +19,7 @@ Quantum analytic descent
 
 One of the main problems of many-body physics is that of finding the ground
 state and ground state energy of a given Hamiltonian.
-`The Variational Quantum Eigensolver (VQE) <https://pennylane.ai/qml/demos/tutorial_vqe>`_ combines smart circuit
+:doc:`The Variational Quantum Eigensolver (VQE) <demos/tutorial_vqe>` combines smart circuit
 design with gradient-based optimization to solve this task.
 Several practical demonstrations have shown how near-term quantum
 devices may be suitable for VQE and other variational quantum algorithms.
@@ -83,7 +83,7 @@ That is, for each parameter :math:`\theta_i` there exist :math:`a_i`, :math:`b_i
 
 All parameters but :math:`\theta_i` are absorbed in the coefficients :math:`a_i,` :math:`b_i` and :math:`c_i.`
 Another technique using this structure of :math:`E(\boldsymbol{\theta})` are the
-Rotosolve/Rotoselect algorithms [#Rotosolve]_ for which there also is `a PennyLane demo <https://pennylane.ai/qml/demos/tutorial_rotoselect>`__.
+Rotosolve/Rotoselect algorithms [#Rotosolve]_ for which there also is :doc:`a PennyLane demo <demos/tutorial_rotoselect>`.
 
 Let's look at a toy example to illustrate this structure of the cost function.
 """
@@ -295,7 +295,7 @@ line2 = ax.plot(
 #   E^{(D)}_{kl} &= \frac{\partial^2 E(\boldsymbol{\theta})}{\partial\theta_k\partial\theta_l}\Bigg|_{\boldsymbol{\theta}=0}
 #
 # In PennyLane, computing the gradient of a cost function with respect to an array of parameters can be easily done
-# with the `parameter-shift rule <https://pennylane.ai/qml/glossary/parameter_shift>`_.
+# with the `parameter-shift rule <https://pennylane.ai/glossary/parameter_shift>`_.
 # By iterating the rule, we can obtain the second derivatives – the Hessian (see for example [#higher_order_diff]_).
 # Let us implement a function that does just that and prepares the coefficients :math:`E^{(A/B/C/D)}:`
 

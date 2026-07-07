@@ -7,13 +7,12 @@ measure of complexity. For example, using the resource of *entanglement*, we can
 resources are: *Clifford stabilizerness*, which measures how close a state is from being preparable by a
 classically simulatable *Clifford circuit*, and *Gaussianity*, which quantifies the distance of a state from simple *Gaussian states*.
 As the name "resourceful" suggests,
-these measures of complexity often relate to the "effort" or cost associated with states, wether that be the complexity of classical simulation or the difficulty of preparation in the lab.
+these measures of complexity often relate to the "effort" or cost associated with states, whether that be the complexity of classical simulation or the difficulty of preparation in the lab.
 
 It turns out that the resourcefulness of quantum states can be investigated with tools from *generalised Fourier analysis*.
 *Fourier analysis* here refers to the well-known technique of computing Fourier coefficients of a function, or in our case,
 the amplitudes of a quantum state. *Generalised* indicates that we don't use the
-standard Fourier transform, but a generalisation of its group-theoretic definition (more about this in our demo on `quantum Fourier transforms
-and groups <https://pennylane.ai/qml/demos/tutorial_qft_and_groups>`__).
+standard Fourier transform, but a generalisation of its group-theoretic definition (more about this in our demo on :doc:`quantum Fourier transforms and groups <demos/tutorial_qft_and_groups>`).
 `Bermejo, Braccia et al. (2025) <https://arxiv.org/abs/2506.19696>`__ [#Bermejo_Braccia]_ suggest using generalised Fourier analysis to
 compute a quantity that they call the **Generalised Fourier Decomposition (GFD) Purity**,
 and use it as a "fingerprint" of a state's resource profile.

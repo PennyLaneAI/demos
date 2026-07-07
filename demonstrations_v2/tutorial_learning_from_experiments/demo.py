@@ -170,7 +170,7 @@ layers, gates = 10, 10  # the number of layers and gates used in RandomLayers
 
 def generate_circuit(shots):
     """
-    generate a random circuit that returns a number of measuement samples
+    generate a random circuit that returns a number of measurement samples
     given by shots
     """
     dev = qp.device("lightning.qubit", wires=qubits)
@@ -430,7 +430,7 @@ plt.show()
 #
 # A well known fact about the maximally entanged state is that
 # :math:`U\otimes \mathbb{I}\vert\Phi^+\rangle= \mathbb{I}\otimes U^T\vert\Phi^+\rangle.`
-# The probabilty is therefore
+# The probability is therefore
 #
 # .. math:: p(11\cdots 1) = \langle \Phi^+ \vert U_i^T U_i \otimes \mathbb{I} \vert\Phi^+ \rangle.
 #

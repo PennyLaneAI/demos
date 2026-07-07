@@ -8,6 +8,7 @@ This document provides comprehensive guidelines for contributing to the PennyLan
   - [Table of Contents](#table-of-contents)
   - [Getting Started](#getting-started)
     - [Cloning or Forking the Repository](#cloning-or-forking-the-repository)
+    - [Installing the CLI Tool](#installing-the-cli-tool)
     - [Creating a New Demo](#creating-a-new-demo)
       - [Using the CLI Tool](#using-the-cli-tool)
       - [Manually Creating a Demo](#manually-creating-a-demo)
@@ -31,6 +32,24 @@ This document provides comprehensive guidelines for contributing to the PennyLan
 ### Cloning or Forking the Repository
 
 To contribute to PennyLane demonstrations, begin by forking and cloning this repository. All contributions should be made by opening a pull request against the `master` branch (for stable versions) or the `dev` branch (for the latest features from PennyLane, Catalyst, and other plugins).
+
+### Installing the CLI Tool
+
+The `demo` CLI is a Python package in this repository.
+Install it in editable mode so the `demo` command is available on your PATH:
+
+```bash
+# uv
+uv pip install -e .
+
+# Poetry
+poetry install
+
+# pip
+pip install -e .
+```
+
+After installing, run `demo --help` (`uv run demo --help` if using `uv`) to verify the setup.
 
 ### Creating a New Demo
 
@@ -217,6 +236,8 @@ To build your demo in HTML format, navigate to the root directory of the reposit
 ```bash
 demo build --format html <name_of_your_demo>
 ```
+
+> **Tip:** Pass only the demo directory name (e.g. `tutorial_trapped_ions`), not the full path to `demo.py`.
 
 The generated HTML file will be located at:
 

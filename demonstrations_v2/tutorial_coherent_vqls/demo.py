@@ -88,7 +88,7 @@ The approach used in Ref. [1] is to decompose the cost function in terms of many
 individual components :math:`A_l` of the problem matrix :math:`A.` For this reason, in the VQLS of Ref. [1],
 the state vector proportional to :math:`A |x\rangle` is not physically prepared.
 On the contrary, the idea presented in this tutorial is to physically implement the linear map :math:`A` as
-a coherent probabilistic operation. This approach allows to prepare the state
+a coherent probabilistic operation. This approach allows for the preparation of the state
 :math:`|\Psi\rangle :=  A |x\rangle/\sqrt{\langle x |A^\dagger A |x\rangle}` which can be used to estimate the
 cost function of the problem in a more direct way.
 

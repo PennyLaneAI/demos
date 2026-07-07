@@ -4,7 +4,7 @@ from pennylane import numpy as np
 """ Based on the SimplifiedTwoDesign template from pennylane
 https://docs.pennylane.ai/en/latest/code/api/pennylane.SimplifiedTwoDesign.html
 as proposed in `Cerezo et al. (2021) <https://doi.org/10.1038/s41467-021-21728-w>`_.
-but changin the Y-rotations for a random choice of {X, Y, Z}-rotations.
+but changing the Y-rotations for a random choice of {X, Y, Z}-rotations.
 """
 
 def build_ansatz(initial_layer_weights, weights, wires, gate_sequence=None):

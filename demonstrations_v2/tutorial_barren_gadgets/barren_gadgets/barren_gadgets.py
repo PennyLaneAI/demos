@@ -18,7 +18,7 @@ class PerturbativeGadgets:
     
     def gadgetize(self, Hamiltonian, target_locality=3):
         """Generation of the perturbative gadget equivalent of the given 
-        Hamiltonian according to the proceedure in Cichy, Fährmann et al.
+        Hamiltonian according to the procedure in Cichy, Fährmann et al.
         Args:
             Hamiltonian (qml.Hamiltonian)   : target Hamiltonian to decompose
                                               into more local terms
