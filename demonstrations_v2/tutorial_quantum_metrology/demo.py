@@ -200,7 +200,7 @@ print(
 #
 # Now, let's turn to the cost function itself. The most important ingredient
 # is the Classical Fisher Information Matrix, which we compute using a separate
-# function that uses the explicit `parameter-shift rule <https://pennylane.ai/qml/glossary/parameter_shift.html>`_
+# function that uses the explicit `parameter-shift rule <https://pennylane.ai/glossary/parameter_shift>`_
 # to enable differentiation.
 def CFIM(weights, phi, gamma):
     p = experiment(weights, phi, gamma=gamma)
@@ -335,7 +335,7 @@ plt.show()
 # that has a better noise resilience than standard Ramsey spectroscopy!
 #
 # This tutorial shows that variational methods are useful for quantum metrology.
-# The are numerous avenues open for further research: one could study more intricate
+# There are numerous avenues open for further research: one could study more intricate
 # sensing problems, different noise models, and other platforms like optical systems.
 #
 # For more intricate noise models that can't be realized on quantum hardware, Ref. [#meyer2020]_

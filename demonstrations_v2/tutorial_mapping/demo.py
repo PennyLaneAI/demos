@@ -78,7 +78,7 @@ and
 This representation is called the **Jordan-Wigner** mapping. Let's now look at an example
 using PennyLane. We map a simple fermionic operator to a qubit operator
 using the Jordan-Wigner mapping. First, we define our
-`fermionic operator <https://pennylane.ai/qml/demos/tutorial_fermionic_operators>`__,
+:doc:`fermionic operator <demos/tutorial_fermionic_operators>`,
 :math:`a_{5}^{\dagger},` which creates an electron in the fifth orbital. One
 way to do this in PennyLane is to use :func:`~.pennylane.fermi.from_string`. We
 then map the operator using :func:`~.pennylane.fermi.jordan_wigner`.
@@ -152,7 +152,7 @@ pauli_pr
 # strings. However, a very important advantage of using parity mapping is the ability to taper two
 # qubits by leveraging symmetries of molecular Hamiltonians. You can find
 # more information about this in our
-# `qubit tapering <https://pennylane.ai/qml/demos/tutorial_qubit_tapering>`__ demo.
+# :doc:`qubit tapering <demos/tutorial_qubit_tapering>` demo.
 # Let's look at an example.
 
 generators = [qp.prod(*[qp.Z(i) for i in range(qubits-1)]), qp.Z(qubits-1)]
@@ -183,7 +183,7 @@ pauli_bk
 # improve the number of qubits. This advantage becomes even more clear if you
 # work with a larger qubit
 # system. We now use the Bravyi-Kitaev mapping to construct a qubit Hamiltonian and
-# compute its ground state energy with the `VQE <https://pennylane.ai/qml/demos/tutorial_vqe/>`__
+# compute its ground state energy with the :doc:`VQE <demos/tutorial_vqe>`
 # method.
 #
 # Energy Calculation

@@ -55,10 +55,10 @@ extensions = [
 dev = os.getenv("DEV", "False")
 dev = True if dev == "True" else False
 
-html_baseurl = "https://pennylane.ai/qml/"
+html_baseurl = "https://pennylane.ai/"
 demo_staging_dir = os.getenv("DEMO_STAGING_DIR", "demonstrations")
 
-if (output_dir := os.getenv("GALLERY_OUTPUT_DIR")):
+if output_dir := os.getenv("GALLERY_OUTPUT_DIR"):
     gallery_output_dir = output_dir
     include_patterns = ["index.rst", f"{output_dir}/*.rst"]
 else:
@@ -75,25 +75,23 @@ sphinx_gallery_conf = {
     # all example scripts in the 'examples_dirs' folder will be skiped.
     "filename_pattern": r"\.py$",
     "pypandoc": {
-        "filters": [ # These are applied in order
-            "./lib/filter_directives.py", 
+        "filters": [  # These are applied in order
+            "./lib/filter_directives.py",
             "./lib/filter_links.py",
             "./lib/filter_tables.py",
             "./lib/filter_figures.py",
         ]
     },
     # first notebook cell in generated Jupyter notebooks
-    "first_notebook_cell": (
-        "%matplotlib inline"
-    ),
+    "first_notebook_cell": ("%matplotlib inline"),
     # thumbnail size
     "thumbnail_size": (400, 400),
     "reference_url": {
         # The module you locally document uses None
         "pennylane": None,  # "https://docs.pennylane.ai/en/stable",
     },
-    "backreferences_dir"  : "backreferences",
-    "doc_module"          : ("pennylane"),
+    "backreferences_dir": "backreferences",
+    "doc_module": ("pennylane"),
     "junit": "../test-results/sphinx-gallery/junit.xml",
     "reset_modules": ("module_resets.reset_jax", "matplotlib", "seaborn"),
     "show_signature": False,
@@ -112,7 +110,7 @@ warnings.filterwarnings(
 warnings.filterwarnings(
     "ignore",
     category=FutureWarning,
-    message=r"Passing \(type, 1\) or '1type' as a synonym of type is deprecated.+"
+    message=r"Passing \(type, 1\) or '1type' as a synonym of type is deprecated.+",
 )
 
 # Raise PennyLane deprecation warnings as errors
@@ -140,7 +138,14 @@ language = "en"
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
-exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", "*venv", "*venv-build", "sphinxext"]
+exclude_patterns = [
+    "_build",
+    "Thumbs.db",
+    ".DS_Store",
+    "*venv",
+    "*venv-build",
+    "sphinxext",
+]
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = "sphinx"
@@ -173,7 +178,7 @@ html_theme_options = {
     "toc_subset": False,
     "toc_hover": False,
     "relations": False,
-    "github_repo": "PennyLaneAI/demos"
+    "github_repo": "PennyLaneAI/demos",
 }
 
 # Add any paths that contain custom static files (such as style sheets) here,
@@ -201,16 +206,23 @@ html_css_files = ["css/light-slider.css", "css/hubs.css"]
 # -- Options for HTMLHelp output ---------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = "QMLdoc"
+htmlhelp_basename = "QPdoc"
 
 
 # -- Options for intersphinx extension ---------------------------------------
 
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {
-    "pennylane": ("https://docs.pennylane.ai/en/" + ("latest/" if dev else "stable/"), None),
-    "catalyst": ("https://docs.pennylane.ai/projects/catalyst/en/" + ("latest/" if dev else "stable/"), None),
-    "demo": ("https://pennylane.ai/qml", None),
+    "pennylane": (
+        "https://docs.pennylane.ai/en/" + ("latest/" if dev else "stable/"),
+        None,
+    ),
+    "catalyst": (
+        "https://docs.pennylane.ai/projects/catalyst/en/"
+        + ("latest/" if dev else "stable/"),
+        None,
+    ),
+    "demo": ("https://pennylane.ai", "https://pennylane.ai/qml/objects.inv"),
 }
 
 # Enable :doc: references for intersphinx (disabled by default in Sphinx 5.0+)

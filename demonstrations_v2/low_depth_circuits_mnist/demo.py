@@ -238,7 +238,7 @@ fidelities_01 = np.asarray(dataset_params.fidelities_d4)[selection]
 
 import matplotlib.pyplot as plt
 
-# Select images with highest fidelity
+# Select images with the highest fidelity
 idx_0 = np.argmax(fidelities_01[labels_01 == 0])
 idx_1 = np.argmax(fidelities_01[labels_01 == 1])
 

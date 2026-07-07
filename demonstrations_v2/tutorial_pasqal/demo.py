@@ -173,7 +173,7 @@ dev = qp.device("cirq.pasqal", control_radius=control_radius,
 #    (lowest) vertical level of qubits. In this example, our classical data
 #    will be simple bit strings, which we can embed by using single-qubit
 #    bit flips (a simple
-#    `data-embedding <https://pennylane.ai/qml/glossary/quantum_embedding.html>`_
+#    `data-embedding <https://pennylane.ai/glossary/quantum_embedding>`_
 #    strategy).
 #
 # ii. For each corner of the tower, CNOTs are enacted between the first-

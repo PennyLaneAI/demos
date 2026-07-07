@@ -302,7 +302,7 @@ h_0_m = Kc_m.conj().T @ H_m @ Kc_m
 basis = [qp.matrix(op, wire_order=range(n_wires)) for op in h]
 coeffs = qp.pauli.trace_inner_product(h_0_m, basis)
 
-# ensure that decomposition is correct, i.e. h_0_m is truely an element of just h
+# ensure that decomposition is correct, i.e. h_0_m is truly an element of just h
 h_0_m_recomposed = np.sum([c * op for c, op in zip(coeffs, basis)], axis=0)
 print("Decomposition of h_0 is faithful: ", np.allclose(h_0_m_recomposed, h_0_m, atol=1e-10))
 

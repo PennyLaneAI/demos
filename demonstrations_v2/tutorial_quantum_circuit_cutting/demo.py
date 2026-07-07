@@ -281,7 +281,7 @@ circuit(x)  # Executing the quantum circuit
 # of simulation efficiency, so choosing the optimal cut reduces post-processing
 # overhead and improves simulation efficiency.
 #
-# Automatic cut placment is a PennyLane functionality that aids us in
+# Automatic cut placement is a PennyLane functionality that aids us in
 # finding the optimal cut that fragments a circuit such that
 # the classical post-processing overhead is minimized. The main algorithm
 # behind automatic cut placement is `graph partitioning <https://kahypar.org/>`__
@@ -405,7 +405,7 @@ circuit(x)
 # 2-designs can be a source of considerable speedups. A good test case
 # where one may care about accurately estimating an observable is the
 # :doc:`Quantum Approximate Optimization Algorithm <demos/tutorial_qaoa_intro>`
-# (QAOA). In its simplest form, QAOA concerns itself with finding a
+# (QAOA). In its simplest form, QAOA concerns itself with finding the
 # lowest energy state of a *cost Hamiltonian* :math:`H_{\mathcal{C}}:`
 #
 # .. math::   H_\mathcal{C} = \frac{1}{|E|} \sum _{(i, j) \in E} Z_i Z_j

@@ -608,7 +608,7 @@ plot_optimal_pulses(hist, S_k, ops_param, T, target_name)
 # It could be optimized further, for example by running the optimization for more
 # training iterations, by tuning the optimizer further to avoid oscillations,
 # or by increasing the precision with which we run the ODE solver.
-# This likely would also allow to reduce the total duration of the pulse.
+# This likely would also allow for the reduction of the total duration of the pulse.
 #
 # Pulse sequence for Toffoli
 # --------------------------

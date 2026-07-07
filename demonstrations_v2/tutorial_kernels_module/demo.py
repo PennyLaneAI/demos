@@ -17,7 +17,7 @@ Here we are concerned with kernels that can be evaluated on quantum computers,
 In this tutorial you will learn how to evaluate kernels, use them for classification
 and train them with gradient-based optimization, and all that using the
 functionality of PennyLane's
-`kernels module <https://pennylane.readthedocs.io/en/latest/code/qml_kernels.html>`__.
+:doc:`kernels module <pennylane:code/qp_kernels>`.
 The demo is based on Ref. [#Training_QEKs]_, a project from Xanadu's own
 `QHack <https://qhack.ai/>`__ hackathon.
 
@@ -230,7 +230,7 @@ ax = plot_double_cake_data(X, Y, plt.gca(), num_sectors=num_sectors)
 ##############################################################################
 # Defining a Quantum Embedding Kernel
 # -----------------------------------
-# PennyLane's `kernels module <https://pennylane.readthedocs.io/en/latest/code/qml_kernels.html>`__
+# PennyLane's :doc:`kernels module <pennylane:code/qp_kernels>`
 # allows for a particularly simple
 # implementation of Quantum Embedding Kernels. The first ingredient we
 # need for this is an *ansatz*, which we will construct by repeating a
@@ -354,7 +354,7 @@ with np.printoptions(precision=3, suppress=True):
 # Using the Quantum Embedding Kernel for predictions
 # --------------------------------------------------
 # The quantum kernel alone can not be used to make predictions on a
-# dataset, becaues it is essentially just a tool to measure the similarity
+# dataset, because it is essentially just a tool to measure the similarity
 # between two datapoints. To perform an actual prediction we will make use
 # of scikit-learn's Support Vector Classifier (SVC).
 
@@ -391,7 +391,7 @@ print(f"The accuracy of the kernel with random parameters is {accuracy_init:.3f}
 
 ##############################################################################
 # We are also interested in seeing what the decision boundaries in this
-# classification look like. This could help us spotting overfitting issues
+# classification look like. This could help us spot overfitting issues
 # visually in more complex data sets. To this end we will introduce a
 # second helper method.
 
@@ -442,7 +442,7 @@ init_plot_data = plot_decision_boundaries(svm, plt.gca())
 # We can, however, resort to a more specialized measure, the
 # *kernel-target alignment* [#Alignment]_. The kernel-target alignment compares the
 # similarity predicted by the quantum kernel to the actual labels of the
-# training data. It is based on *kernel alignment*, a similiarity measure
+# training data. It is based on *kernel alignment*, a similarity measure
 # between two kernels with given kernel matrices :math:`K_1` and
 # :math:`K_2:`
 #

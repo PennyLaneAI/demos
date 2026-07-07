@@ -20,7 +20,7 @@ particle physics we often define a thing simply by the symmetries it
 adheres to. What does symmetry mean for those in machine learning? In
 this context the ambition is straightforward — it is a means to
 reduce the parameter space and improve the trained model's ability to
-sucessfully label unseen data, i.e., its ability to generalise.
+successfully label unseen data, i.e., its ability to generalise.
 
 
 Suppose we have a learning task and the data we are learning from has an
@@ -96,7 +96,7 @@ is both a group, and by virtue of being a collection of invertible matrices, als
 Fundamentally, representation theory is based on the prosaic observation that linear algebra is easy and group theory is abstract. So what if we can
 study groups via linear maps?
 
-Now due to the importance of unitarity in quantum mechnics, we are
+Now due to the importance of unitarity in quantum mechanics, we are
 particularly interested in the unitary representations: representations
 where the linear maps are unitary matrices. If we can
 identify these then we will have a way to naturally encode groups in 
@@ -360,7 +360,7 @@ unitary representations (and so quantum circuits) we are looking to extend this 
 import torch
 import random
 
-# Fix seeds for reproducability
+# Fix seeds for reproducibility
 torch.backends.cudnn.deterministic = True
 torch.manual_seed(16)
 random.seed(16)

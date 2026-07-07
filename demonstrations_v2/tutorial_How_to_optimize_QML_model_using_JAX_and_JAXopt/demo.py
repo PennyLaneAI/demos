@@ -36,6 +36,7 @@ from jax import numpy as jnp
 import jaxopt
 
 jax.config.update("jax_platform_name", "cpu")
+jax.config.update("jax_enable_x64", True)
 
 n_wires = 5
 data = jnp.sin(jnp.mgrid[-2:2:0.2].reshape(n_wires, -1)) ** 3
@@ -82,7 +83,7 @@ def loss_fn(params, data, targets):
 # Note that the model above is just an example for demonstration – there are important considerations
 # that must be taken into account when performing QML research, including methods for data embedding,
 # circuit architecture, and cost function, in order to build models that may have use. This is still
-# an active area of research; see our `demonstrations <https://pennylane.ai/qml/demonstrations>`__ for
+# an active area of research; see our `demonstrations <https://pennylane.ai/demonstrations>`__ for
 # details.
 #
 

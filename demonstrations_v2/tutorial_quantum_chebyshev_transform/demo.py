@@ -1,7 +1,7 @@
 r"""Quantum Chebyshev Transform
 =============================================================
 
-Looking for ways to leverage the speed of the `quantum Fourier transform <https://pennylane.ai/qml/demos/tutorial_qft/>`__ is a common way to design quantum algorithms with exponential speed ups over classical algorithms. 
+Looking for ways to leverage the speed of the :doc:`quantum Fourier transform <demos/tutorial_qft>` is a common way to design quantum algorithms with exponential speed-ups over classical algorithms. 
 Working in the Fourier basis can be a more natural choice than the standard basis for some computations. 
 Swapping bases is feasible due to the efficiency of the quantum Fourier transform.
 In the paper `"Quantum Chebyshev transform: mapping, embedding, learning and sampling distributions" <https://arxiv.org/abs/2306.17026>`__ [#williams2023]_, the authors describe a different basis, the *Chebyshev basis*, and its associated transformation, the *quantum Chebyshev transform*. 
@@ -112,7 +112,7 @@ Finally, we can use the cyclical property of cosine to convert a :math:`j \pi` t
 
 which looks just like a discrete cosine transform.
 
-The quantum analogue of the discrete Chebyshev transform, the quantum Chebyshev transform, inherits the relation to the Fourier transform, allowing the transform to be designed efficiently by utilizing the `quantum Fourier transform <https://pennylane.ai/qml/demos/tutorial_qft/>`__. Next we will discuss the quantum Chebyshev basis, where the Chebyshev polynomials appear in the state amplitudes.
+The quantum analogue of the discrete Chebyshev transform, the quantum Chebyshev transform, inherits the relation to the Fourier transform, allowing the transform to be designed efficiently by utilizing the :doc:`quantum Fourier transform <demos/tutorial_qft>`. Next we will discuss the quantum Chebyshev basis, where the Chebyshev polynomials appear in the state amplitudes.
 
 
 Quantum Chebyshev basis
@@ -150,7 +150,7 @@ An auxiliary qubit is required, which will be the :math:`0` indexed qubit, and t
     Figure 3. Quantum Chebyshev transform circuit. 
 
 The intuition for the structure of the above circuit comes from the link between the discrete Chebyshev transform and the discrete cosine transform. 
-Notice the use of the `quantum Fourier transform (QFT) <https://pennylane.ai/qml/demos/tutorial_qft/>`__ applied on all qubits. 
+Notice the use of the :doc:`quantum Fourier transform (QFT) <demos/tutorial_qft>` applied on all qubits. 
 The quantum Chebyshev transform is an extended QFT circuit with some added interference and mixing of the elements. 
 Note the auxiliary qubit starts and ends in the state :math:`|0\rangle`, and the amplitudes of the transformed state are all real valued.
 Let's break down the circuit above into pieces that we will use inside our circuit function. 

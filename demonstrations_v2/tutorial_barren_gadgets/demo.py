@@ -25,7 +25,7 @@ Some context
 
 Barren plateaus refer to the phenomenon where the gradients of the cost function
 decay exponentially with the size of the problem. Essentially, the cost 
-landscape becomes flat, with exception of some small regions, e.g., around
+landscape becomes flat, with the exception of some small regions, e.g., around
 the minimum. 
 That is a problem because increasing the precision of the cost 
 function requires more measurements from the quantum device due to shot noise, 

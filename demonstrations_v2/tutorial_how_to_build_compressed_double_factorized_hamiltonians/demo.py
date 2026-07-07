@@ -31,6 +31,10 @@ and :math:`p, q, r, s` are the orbital indices. In PennyLane, we can obtain :mat
 """
 
 import pennylane as qp
+import numpy as np
+
+import warnings
+warnings.filterwarnings(action="ignore", category=np.exceptions.ComplexWarning)
 
 symbols = ["H", "H", "H", "H"]
 geometry = qp.math.array([[0., 0., -0.2], [0., 0., -0.1], [0., 0., 0.1], [0., 0., 0.2]])
@@ -173,8 +177,7 @@ assert qp.math.allclose(approx_two_shift, two_shift, atol=1e-2)
 #
 # .. math:: H_{\text{CDF}} = \mu + \sum_{\sigma \in {\uparrow, \downarrow}} U^{(0)}_{\sigma} \left( \sum_{p} Z^{(0)}_{p} a^\dagger_{\sigma, p} a_{\sigma, p} \right) U_{\sigma}^{(0)\ \dagger} + \sum_t^T \sum_{\sigma, \tau \in {\uparrow, \downarrow}} U_{\sigma, \tau}^{(t)} \left( \sum_{pq} Z_{pq}^{(t)} a^\dagger_{\sigma, p} a_{\sigma, p} a^\dagger_{\tau, q} a_{\tau, q} \right) U_{\sigma, \tau}^{(t)\ \dagger}.
 #
-# This Hamiltonian can be easily mapped to the qubit basis via `Jordan-Wigner
-# transformation <https://pennylane.ai/qml/demos/tutorial_mapping>`_ (JWT) using
+# This Hamiltonian can be easily mapped to the qubit basis via :doc:`Jordan-Wigner transformation <demos/tutorial_mapping>` (JWT) using
 # :math:`a_p^\dagger a_p = n_p \mapsto 0.5 * (1 - z_p)`, where :math:`n_p` is the number
 # operator and :math:`z_p` is the Pauli-Z operation acting on the qubit corresponding to
 # orbital :math:`p`. The mapped form naturally gives rise to a measurement grouping, where
@@ -234,7 +237,8 @@ cdf_hamiltonian = {
 def leaf_unitary_rotation(leaf, wires):
     """Applies the basis rotation transformation corresponding to the leaf tensor."""
     basis_mat = qp.math.kron(leaf, qp.math.eye(2)) # account for spin
-    return qp.BasisRotation(unitary_matrix=basis_mat, wires=wires)
+    qp.BasisRotation(unitary_matrix=basis_mat, wires=wires)
+
 
 ######################################################################
 # Similarly, the unitary transformation for the core tensors can be applied efficiently
@@ -248,22 +252,20 @@ import itertools as it
 
 def core_unitary_rotation(core, body_type, wires):
     """Applies the unitary transformation corresponding to the core tensor."""
-    ops = []
     if body_type == "one_body":  # implements one-body term
         for wire, cval in enumerate(qp.math.diag(core)):
             for sigma in [0, 1]:
-                ops.append(qp.RZ(-cval, wires=2 * wire + sigma))
-        ops.append(qp.GlobalPhase(qp.math.sum(core), wires=wires))
+                qp.RZ(-cval, wires=2 * wire + sigma)
+        qp.GlobalPhase(qp.math.sum(core), wires=wires)
 
     if body_type == "two_body":  # implements two-body term
         for odx1, odx2 in it.product(range(len(wires) // 2), repeat=2):
             cval = core[odx1, odx2] / 4.0
             for sigma, tau in it.product(range(2), repeat=2):
                 if odx1 != odx2 or sigma != tau:
-                    ops.append(qp.IsingZZ(cval, wires=[2*odx1+sigma, 2*odx2+tau]))
+                    qp.IsingZZ(cval, wires=[2*odx1+sigma, 2*odx2+tau])
         gphase = 0.5 * qp.math.sum(core) - 0.25 * qp.math.trace(core)
-        ops.append(qp.GlobalPhase(-gphase, wires=wires))
-    return ops
+        qp.GlobalPhase(-gphase, wires=wires)
 
 ######################################################################
 # We can now use these functions to approximate the evolution operator :math:`e^{-iHt}` for
@@ -281,8 +283,19 @@ def core_unitary_rotation(core, body_type, wires):
 # step using the following :func:`CDFTrotterStep` function that uses the CDF Hamiltonian
 # with the ``leaf_unitary_rotation`` and ``core_unitary_rotation`` functions defined earlier.
 # We can then use the :func:`~.pennylane.trotterize` function to implement any higher-order
-# Suzuki-Trotter products.
+# Suzuki-Trotter products. It is crucial to wrap these steps in :func:`~.pennylane.prod`; this ensures
+# the sequence of operators are preserved as a single block which prevents
+# :func:`~.pennylane.trotterize` from re-ordering or reversing the internal terms.
 #
+
+@qp.prod
+def block(time, leaf, core, body_type, wires):
+    # apply the basis rotation for leaf tensor
+    leaf_unitary_rotation(leaf, wires)
+    # apply the rotation for core tensor scaled by the time-step
+    core_unitary_rotation(time * core, body_type, wires)
+    # revert the change-of-basis for leaf tensor
+    leaf_unitary_rotation(leaf.conjugate().T, wires)
 
 def CDFTrotterStep(time, cdf_ham, wires):
     """Implements a first-order Trotter step for a CDF Hamiltonian.
@@ -296,14 +309,7 @@ def CDFTrotterStep(time, cdf_ham, wires):
     for bidx, (core, leaf) in enumerate(zip(cores, leaves)):
         # Note: only the first term is one-body, others are two-body
         body_type = "two_body" if bidx else "one_body"
-        qp.prod(
-            # revert the change-of-basis for leaf tensor
-            leaf_unitary_rotation(leaf.conjugate().T, wires),
-            # apply the rotation for core tensor scaled by the time-step
-            *core_unitary_rotation(time * core, body_type, wires),
-            # apply the basis rotation for leaf tensor
-            leaf_unitary_rotation(leaf, wires),
-        ) # Note: prod applies operations in the reverse order (right-to-left).
+        block(time, leaf, core, body_type, wires)
 
 ######################################################################
 # We now use this function to simulate the evolution of the :math:`H_4` Hamiltonian

@@ -107,7 +107,7 @@ print(resources_exec)
 # However, :mod:`estimator <pennylane.estimator>`
 # doesn't require detailed descriptions of Hamiltonians
 # for estimation; instead, we can define 
-# `resource Hamiltonians <https://docs.pennylane.ai/en/stable/code/qml_estimator.html#resource-hamiltonians>`__
+# :mod:`resource Hamiltonians <pennylane.estimator>`
 # which capture the resources required for Hamiltonian simulation
 # without the need to compute costly Hamiltonians.
 #
@@ -149,8 +149,8 @@ kitaev_H = qre.PauliHamiltonian(
 
 ######################################################################
 # Similarly, we can then use existing resource
-# `operators <https://docs.pennylane.ai/en/stable/code/qml_estimator.html#id1>`__ and
-# `templates <https://docs.pennylane.ai/en/stable/code/qml_estimator.html#resource-templates>`__
+# `operators <https://docs.pennylane.ai/en/stable/code/qp_estimator.html#id1>`__ and
+# `templates <https://docs.pennylane.ai/en/stable/code/qp_estimator.html#resource-templates>`__
 # from the :mod:`estimator <pennylane.estimator>` module to express our circuit.
 # These
 # :class:`ResourceOperator <pennylane.estimator.resource_operator.ResourceOperator>`
@@ -414,9 +414,9 @@ print(resources_est)
 # quantum resource :mod:`estimator <pennylane.estimator>` is,
 # go try it out yourself!
 # See how convenient it is to estimate the resources of powerful algorithms like
-# `DQI <https://pennylane.ai/qml/demos/tutorial_dqi>`__,
-# `XAS <https://pennylane.ai/qml/demos/tutorial_xas>`__,
-# or `Shor's algorithm <https://pennylane.ai/qml/demos/tutorial_shors_algorithm_catalyst>`__.
+# :doc:`DQI <demos/tutorial_dqi>`,
+# :doc:`XAS <demos/tutorial_xas>`,
+# or :doc:`Shor's algorithm <demos/tutorial_shors_algorithm_catalyst>`.
 # :mod:`estimator <pennylane.estimator>` includes a host of resource operators, templates, and Hamiltonians
 # which serve to make resource estimation a breeze for a wide variety of algorithms.
 # If you're also interested in exact resource tracking of programs compiled for *execution*,

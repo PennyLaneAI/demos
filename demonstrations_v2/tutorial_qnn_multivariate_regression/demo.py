@@ -73,6 +73,8 @@ import jax
 from jax import numpy as jnp
 import optax
 
+jax.config.update("jax_enable_x64", True)
+
 pnp.random.seed(42)
 
 dev = qp.device('default.qubit', wires=2)
@@ -128,7 +130,7 @@ num_samples=30
 ######################################################################
 # Now we build the training data with the exact target function :math:`f(x_1, x_2)`. To do so, it is convenient to  
 # create a two-dimensional grid to make sure that, for each value of
-# :math:`x_1,` we perform a sweep over all the values of :math:`x_2` and viceversa.
+# :math:`x_1,` we perform a sweep over all the values of :math:`x_2` and vice-versa.
 
 x1_train=pnp.linspace(x1_min,x1_max, num_samples)
 x2_train=pnp.linspace(x2_min,x2_max, num_samples)
@@ -274,7 +276,7 @@ plt.tight_layout(pad=3.7)
 #
 #    Johannes Jakob Meyer, Maria Schuld
 #    “Tutorial: Quantum models as Fourier series”,
-#    `Pennylane: Quantum models as Fourier series <https://pennylane.ai/qml/demos/tutorial_expressivity_fourier_series/>`__, 2021.
+#    :doc:`Pennylane: Quantum models as Fourier series <demos/tutorial_expressivity_fourier_series>`, 2021.
 #
 # .. [#demoqibo]
 #
@@ -285,5 +287,5 @@ plt.tight_layout(pad=3.7)
 #
 #    Josh Izaac, Maria Schuld
 #    "How to optimize a QML model using JAX and Optax",
-#    `Pennylane: How to optimize a QML model using JAX and Optax  <https://pennylane.ai/qml/demos/tutorial_How_to_optimize_QML_model_using_JAX_and_Optax/>`__, 2024
+#    :doc:`Pennylane: How to optimize a QML model using JAX and Optax <demos/tutorial_How_to_optimize_QML_model_using_JAX_and_Optax>`, 2024
 #

@@ -177,6 +177,7 @@ import jax.numpy as jnp
 import pennylane as qp
 import numpy as np
 jax.config.update("jax_platform_name", "cpu")
+jax.config.update("jax_enable_x64", True)
 np.random.seed(666) # seed used for random functions
 
 A01 = np.array([[1, -1, 1], [1, -1, -1], [-1, 1, 0]])  # rules for player 0 vs player 1
@@ -591,7 +592,7 @@ def likelihood(weights, X, Y, model):
     The cost function. Returns the negative log likelihood
     """
     expvals = jnp.array(model(weights, X)).T
-    probs = (1 + Y * expvals) / 2  # get the relevant probabilites
+    probs = (1 + Y * expvals) / 2  # get the relevant probabilities
     probs = jnp.log(probs)
     llh = jnp.sum(probs) / len(X) / 3
     return -llh
@@ -619,7 +620,7 @@ probs_test = jnp.array(probs_test)
 
 def kl_div(p, q):
     """
-    Get the KL divergence between two probability distribtuions
+    Get the KL divergence between two probability distributions
     """
     p = jnp.vstack([p, jnp.ones(len(p)) * 10 ** (-8)])  # lower cutoff of prob values of 10e-8
     p = jnp.max(p, axis=0)
