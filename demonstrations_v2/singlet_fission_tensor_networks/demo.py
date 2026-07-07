@@ -100,7 +100,479 @@ r"""Simulating Singlet Fission Dynamics with Tensor Networks: From Quantum Algor
 # 3. A **backward half-step** of potential + coupling (reversed)
 # 
 
-from vibronic_utils import load_hamiltonian, build_pauli_hamiltonian, DATA_FILE
+import pickle
+from pathlib import Path
+
+import numpy as np
+import pennylane as qml
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+
+# =====================================================================
+# Constants
+# =====================================================================
+
+STATE_LABELS = ["S₀", "S₁", "¹TT", "T₁T₁", "CS"]
+STATE_COLORS = ["#2d3436", "#e74c3c", "#3498db", "#2ecc71", "#f39c12"]
+N_STATES = 5
+N_EL = 3  # ceil(log2(5)) = 3 qubits for electronic register
+DATA_FILE = Path(__file__).parent / "vibronic_data" / "n4o4a_sf.pkl"
+
+
+# =====================================================================
+# Hamiltonian loading & Pauli decomposition
+# =====================================================================
+
+def load_hamiltonian(path, n_modes_max=None):
+    """Load vibronic Hamiltonian from pickle file.
+
+    Returns
+    -------
+    freqs : (n_modes,) array — harmonic frequencies (a.u.)
+    H_el  : (5, 5) array    — electronic Hamiltonian
+    kappa : (5, 5, n_modes)  — vibronic coupling tensors
+    """
+    with open(path, "rb") as f:
+        data = pickle.load(f)
+
+    freqs = np.array(data[0])
+    H_el = data[1][0]
+    kappa = data[1][1]
+    n_modes_total = len(freqs)
+
+    if n_modes_max is not None and n_modes_max < n_modes_total:
+        # Select modes with strongest vibronic coupling
+        strength = np.sum(np.abs(kappa), axis=(0, 1))
+        strongest = np.sort(np.argsort(strength)[-n_modes_max:])
+        return freqs[strongest], H_el, kappa[:, :, strongest]
+
+    return freqs, H_el, kappa
+
+
+def _op_to_pauliword(op):
+    """Convert a PennyLane Pauli operator to (word, wires) tuple."""
+    if isinstance(op, qml.Identity):
+        return None, None
+    if isinstance(op, (qml.PauliX, qml.PauliY, qml.PauliZ)):
+        return op.name[-1], list(op.wires)
+    if hasattr(op, "operands"):
+        word, wires = "", []
+        for o in op.operands:
+            if isinstance(o, qml.Identity):
+                continue
+            w, ws = _op_to_pauliword(o)
+            if w is not None:
+                word += w
+                wires.extend(ws)
+        return (word, wires) if word else (None, None)
+    return None, None
+
+
+def _decompose_matrix(mat, wire_order):
+    """Decompose Hermitian matrix into (coeff, pauli_word, wires) tuples."""
+    decomp = qml.pauli_decompose(mat, wire_order=wire_order)
+    terms = []
+    for c, op in zip(decomp.coeffs, decomp.ops):
+        if abs(c) < 1e-12:
+            continue
+        pw, ws = _op_to_pauliword(op)
+        if pw is None:
+            continue
+        terms.append((float(c.real), pw, ws))
+    return terms
+
+
+def _coalesce_terms(terms):
+    """Merge Pauli terms with identical (pauli_word, wires) by summing coeffs.
+
+    Reduces gate count by ~17% for the singlet fission Hamiltonian.
+    """
+    merged = {}
+    for label, coeff, pw, ws in terms:
+        key = (pw, tuple(ws))
+        if key in merged:
+            merged[key] = (merged[key][0], merged[key][1] + coeff, pw, ws)
+        else:
+            merged[key] = (label, coeff, pw, ws)
+    return [v for v in merged.values() if abs(v[1]) > 1e-12]
+
+
+def build_pauli_hamiltonian(freqs, H_el, kappa, n_q):
+    """Decompose the full vibronic Hamiltonian into Pauli rotation terms.
+
+    The vibronic Hamiltonian (arXiv:2411.13669) is:
+        H = H_el ⊗ I + Σ_m (ω_m/2)(p_m² + q_m²) + Σ_m κ_m ⊗ q_m
+
+    This is split into potential+coupling fragments (position-basis diagonal
+    or Pauli-decomposable) and a kinetic fragment (diagonal in momentum
+    basis, accessed via QFT).
+
+    Parameters
+    ----------
+    freqs : (n_modes,) — harmonic frequencies (a.u.)
+    H_el  : (5, 5)    — electronic Hamiltonian
+    kappa : (5, 5, n_modes) — vibronic coupling tensors
+    n_q   : int        — qubits per vibrational mode
+
+    Returns
+    -------
+    pot_coup_terms : list of (label, coeff, pauli_word, wires)
+        Electronic + potential + coupling Pauli terms.
+    kinetic_modes  : list of (mode_wires, ke_pauli_terms)
+        Per-mode kinetic energy Pauli terms (applied in Fourier basis).
+    """
+    n_modes = len(freqs)
+    grid = 2**n_q
+    x_mat = np.diag([float(k - grid // 2) for k in range(grid)])
+    x2_mat = x_mat @ x_mat
+
+    pot_coup_terms = []
+
+    # 1) Electronic Hamiltonian on qubits [0, 1, 2]
+    H_el_full = np.zeros((2**N_EL, 2**N_EL), dtype=complex)
+    H_el_full[:N_STATES, :N_STATES] = H_el
+    for c, pw, ws in _decompose_matrix(H_el_full, list(range(N_EL))):
+        pot_coup_terms.append(("el", c, pw, ws))
+
+    # 2) Per-mode: harmonic potential + vibronic coupling
+    kinetic_modes = []
+    for m in range(n_modes):
+        mode_wires = list(range(N_EL + m * n_q, N_EL + (m + 1) * n_q))
+        el_wires = list(range(N_EL))
+
+        # Harmonic potential: ω q²/2  (position-basis diagonal)
+        pot_mat = freqs[m] * x2_mat / 2.0
+        for c, pw, ws in _decompose_matrix(pot_mat.astype(complex), mode_wires):
+            pot_coup_terms.append(("pot", c, pw, ws))
+
+        # Vibronic coupling: κ ⊗ q
+        K = np.zeros((2**N_EL, 2**N_EL), dtype=complex)
+        K[:N_STATES, :N_STATES] = kappa[:, :, m]
+        coup_mat = np.kron(K, x_mat)
+        for c, pw, ws in _decompose_matrix(
+            coup_mat.astype(complex), el_wires + mode_wires
+        ):
+            pot_coup_terms.append(("coup", c, pw, ws))
+
+        # Kinetic energy: ω p²/2  (same x² form, but applied in momentum basis)
+        ke_mat = freqs[m] * x2_mat / 2.0
+        ke_terms = _decompose_matrix(ke_mat.astype(complex), mode_wires)
+        kinetic_modes.append((mode_wires, ke_terms))
+
+    # Coalesce terms with same (pauli_word, wires) to reduce gate count
+    pot_coup_terms = _coalesce_terms(pot_coup_terms)
+
+    return pot_coup_terms, kinetic_modes
+
+
+# =====================================================================
+# Circuit building blocks
+# =====================================================================
+
+def apply_qft(wires):
+    """QFT using only native gates (no Adjoint wrappers)."""
+    n = len(wires)
+    for j in range(n):
+        qml.Hadamard(wires=wires[j])
+        for k in range(j + 1, n):
+            qml.ControlledPhaseShift(
+                np.pi / 2 ** (k - j), wires=[wires[k], wires[j]]
+            )
+    for i in range(n // 2):
+        qml.SWAP(wires=[wires[i], wires[n - 1 - i]])
+
+
+def apply_iqft(wires):
+    """Inverse QFT using only native gates (no Adjoint wrappers).
+
+    QFT = S · U  =>  QFT† = U† · S  (since S† = S for SWAPs).
+    U† reverses the gate order and negates ControlledPhaseShift angles.
+    """
+    n = len(wires)
+    # SWAP layer first (same as forward)
+    for i in range(n // 2):
+        qml.SWAP(wires=[wires[i], wires[n - 1 - i]])
+    # Reversed H + CPhase with negated angles
+    for j in range(n - 1, -1, -1):
+        for k in range(n - 1, j, -1):
+            qml.ControlledPhaseShift(
+                -np.pi / 2 ** (k - j), wires=[wires[k], wires[j]]
+            )
+        qml.Hadamard(wires=wires[j])
+
+
+def apply_trotter_step(pot_coup_terms, kinetic_modes, dt):
+    """One second-order Trotter step (Eq. 5 of arXiv:2411.13669).
+
+    Implements:
+        U₂(dt) = [∏_m exp(-i H_m dt/2)] · exp(-i H_T dt) · [∏_m exp(-i H_m dt/2)]†
+
+    where H_m are potential+coupling fragments and H_T is kinetic energy.
+    The kinetic energy is applied in momentum space via QFT.
+    """
+    # ── Forward half-step: potential + coupling ──
+    for _, coeff, pw, ws in pot_coup_terms:
+        theta = coeff * dt
+        if abs(theta) > 1e-8:
+            qml.PauliRot(theta, pw, wires=ws)
+
+    # ── Full kinetic energy step (momentum basis via QFT) ──
+    for mode_wires, ke_terms in kinetic_modes:
+        # Transform to momentum basis
+        apply_qft(mode_wires)
+        # X on MSB to center the momentum grid around zero
+        qml.PauliX(wires=mode_wires[0])
+        # Apply kinetic diagonal: ω/2 · p² (full step, factor of 2 in theta)
+        for coeff, pw, ws in ke_terms:
+            theta = 2.0 * coeff * dt
+            if abs(theta) > 1e-8:
+                qml.PauliRot(theta, pw, wires=ws)
+        # Undo X on MSB
+        qml.PauliX(wires=mode_wires[0])
+        # Transform back to position basis
+        apply_iqft(mode_wires)
+
+    # ── Backward half-step: potential + coupling (reversed) ──
+    for _, coeff, pw, ws in reversed(pot_coup_terms):
+        theta = coeff * dt
+        if abs(theta) > 1e-8:
+            qml.PauliRot(theta, pw, wires=ws)
+
+
+def electronic_pop_observable(state_idx):
+    """Build projector |state⟩⟨state| as a Pauli Hamiltonian on el wires."""
+    el_wires = list(range(N_EL))
+    coeffs, ops = [], []
+    for mask in range(2**N_EL):
+        c = 1.0 / (2**N_EL)
+        paulis = []
+        for w in range(N_EL):
+            if (mask >> w) & 1:
+                bit_pos = N_EL - 1 - w
+                sign = -1 if ((state_idx >> bit_pos) & 1) else 1
+                c *= sign
+                paulis.append(qml.PauliZ(el_wires[w]))
+        if not paulis:
+            ops.append(qml.Identity(el_wires[0]))
+        elif len(paulis) == 1:
+            ops.append(paulis[0])
+        else:
+            ops.append(qml.prod(*paulis))
+        coeffs.append(c)
+    return qml.Hamiltonian(coeffs, ops)
+
+
+# =====================================================================
+# Plotting utilities
+# =====================================================================
+
+BG_COLOR = "#0d1117"
+LEGEND_KWARGS = dict(
+    fontsize=11, framealpha=0.3, facecolor="#1a1a2e",
+    edgecolor="#444", labelcolor="white",
+)
+
+
+def _style_ax(ax):
+    """Apply dark-theme styling to an axis."""
+    ax.set_facecolor(BG_COLOR)
+    ax.tick_params(colors="white", labelsize=10)
+    for spine in ax.spines.values():
+        spine.set_color("#444")
+    ax.grid(True, alpha=0.15, color="white")
+
+
+def _dark_fig(*args, **kwargs):
+    """Create a figure with dark background."""
+    fig, axes = plt.subplots(*args, **kwargs)
+    fig.patch.set_facecolor(BG_COLOR)
+    return fig, axes
+
+
+def plot_populations(times, populations, title, filename, meta=""):
+    """Publication-quality electronic state population dynamics plot.
+
+    Parameters
+    ----------
+    times : (n_steps+1,) array
+    populations : (n_steps+1, N_STATES) array
+    title : str — plot title
+    filename : str or Path — output file
+    meta : str — annotation text (bottom-left corner)
+    """
+    fig, ax = _dark_fig(figsize=(12, 6))
+    _style_ax(ax)
+
+    for s in range(N_STATES):
+        ax.plot(times, populations[:, s], color=STATE_COLORS[s],
+                linewidth=2.5, label=STATE_LABELS[s],
+                marker="o", markersize=4, alpha=0.9)
+
+    # Sum conservation band
+    total = populations.sum(axis=1)
+    ax.fill_between(times, total - 0.001, total + 0.001,
+                    alpha=0.1, color="white",
+                    label=f"Σ = {total[-1]:.4f}")
+
+    ax.set_xlabel("Time (a.u.)", fontsize=14, color="white")
+    ax.set_ylabel("Electronic State Population", fontsize=14, color="white")
+    ax.set_title(title, fontsize=16, color="white", fontweight="bold")
+    ax.set_ylim(-0.05, 1.05)
+    ax.set_xlim(times[0], times[-1])
+    ax.legend(fontsize=12, loc="upper right", **{
+        k: v for k, v in LEGEND_KWARGS.items() if k != "fontsize"
+    })
+
+    if meta:
+        ax.text(0.02, 0.02, meta, transform=ax.transAxes,
+                fontsize=10, color="#888", va="bottom")
+
+    plt.tight_layout()
+    plt.savefig(filename, dpi=150, facecolor=fig.get_facecolor())
+    plt.close()
+    print(f"  Plot saved: {filename}")
+
+
+def plot_convergence(times, results_by_chi, suptitle, filename):
+    """Two-panel convergence plot: S₁ decay and ¹TT growth vs χ.
+
+    Parameters
+    ----------
+    times : (n_steps+1,) array
+    results_by_chi : dict of {chi_or_"exact": (n_steps+1, N_STATES) array}
+    suptitle : str — figure super-title
+    filename : str or Path — output file
+    """
+    fig, axes = _dark_fig(1, 2, figsize=(16, 6))
+    cmap = plt.cm.viridis
+
+    chi_values = sorted(
+        (k for k in results_by_chi if k != "exact"),
+    ) + (["exact"] if "exact" in results_by_chi else [])
+
+    panels = [
+        (axes[0], 1, "S₁ Decay — Bond Dimension Convergence"),
+        (axes[1], 2, "¹TT Growth — Singlet Fission Signature"),
+    ]
+    for ax, state_idx, panel_title in panels:
+        _style_ax(ax)
+        for i, chi in enumerate(chi_values):
+            color = cmap(i / max(len(chi_values) - 1, 1))
+            label = f"χ = {chi}" if chi != "exact" else "Exact (SV)"
+            ls = "-" if chi != "exact" else "--"
+            lw = 2.0 if chi != "exact" else 2.5
+            ax.plot(times, results_by_chi[chi][:, state_idx],
+                    color=color, linewidth=lw, linestyle=ls,
+                    label=label, alpha=0.9)
+        ax.set_xlabel("Time (a.u.)", fontsize=13, color="white")
+        ax.set_ylabel(f"{STATE_LABELS[state_idx]} Population",
+                       fontsize=13, color="white")
+        ax.set_title(panel_title, fontsize=14, color="white")
+        ax.legend(**LEGEND_KWARGS)
+
+    fig.suptitle(suptitle, fontsize=16, color="white",
+                 fontweight="bold", y=1.02)
+    plt.tight_layout()
+    plt.savefig(filename, dpi=150, facecolor=fig.get_facecolor(),
+                bbox_inches="tight")
+    plt.close()
+    print(f"  Plot saved: {filename}")
+
+
+def plot_validation(times, pops_mps, pops_sv, chi, filename):
+    """Overlay MPS (solid) vs Statevector (dashed) with error annotation.
+
+    Parameters
+    ----------
+    times : (n_steps+1,) array
+    pops_mps : (n_steps+1, N_STATES) — MPS populations
+    pops_sv  : (n_steps+1, N_STATES) — statevector populations
+    chi : int — bond dimension used for MPS
+    filename : str or Path — output file
+    """
+    max_err = np.max(np.abs(pops_mps - pops_sv))
+
+    fig, ax = _dark_fig(figsize=(12, 6))
+    _style_ax(ax)
+
+    for s in range(N_STATES):
+        ax.plot(times, pops_sv[:, s], "--", color=STATE_COLORS[s],
+                linewidth=1.5, alpha=0.6)
+        ax.plot(times, pops_mps[:, s], "-", color=STATE_COLORS[s],
+                linewidth=2.5, label=STATE_LABELS[s],
+                marker="o", markersize=3)
+
+    ax.set_xlabel("Time (a.u.)", fontsize=14, color="white")
+    ax.set_ylabel("Population", fontsize=14, color="white")
+    ax.set_title(
+        f"MPS (χ={chi}, solid) vs Statevector (dashed) — "
+        f"max error = {max_err:.2e}",
+        fontsize=14, color="white",
+    )
+    ax.legend(fontsize=12, **{
+        k: v for k, v in LEGEND_KWARGS.items() if k != "fontsize"
+    })
+
+    plt.tight_layout()
+    plt.savefig(filename, dpi=150, facecolor=fig.get_facecolor())
+    plt.close()
+    print(f"    Plot saved: {filename}")
+    return max_err
+
+
+def plot_scaling(scaling_data, filename, title=None):
+    """Bar chart: CPU vs GPU timing at different χ values.
+
+    Parameters
+    ----------
+    scaling_data : list of dicts with keys "chi", "gpu_time", optional "cpu_time"
+    filename : str or Path — output file
+    """
+    fig, ax = _dark_fig(figsize=(12, 7))
+    _style_ax(ax)
+
+    chi_vals = [d["chi"] for d in scaling_data]
+    cpu_times = [d.get("cpu_time", 0) for d in scaling_data]
+    gpu_times = [d["gpu_time"] for d in scaling_data]
+
+    x = np.arange(len(chi_vals))
+    width = 0.35
+
+    if any(t > 0 for t in cpu_times):
+        ax.bar(x - width / 2, cpu_times, width, label="CPU",
+               color="#e74c3c", alpha=0.85, edgecolor="white", linewidth=0.5)
+    ax.bar(x + width / 2, gpu_times, width, label="GPU (CUDA)",
+           color="#2ecc71", alpha=0.85, edgecolor="white", linewidth=0.5)
+
+    # Speedup annotations
+    for i, d in enumerate(scaling_data):
+        if d.get("cpu_time", 0) > 0:
+            speedup = d["cpu_time"] / d["gpu_time"]
+            ax.text(x[i], max(d["cpu_time"], d["gpu_time"]) * 1.05,
+                    f"{speedup:.0f}×", ha="center", fontsize=13,
+                    color="#f39c12", fontweight="bold")
+
+    ax.set_xlabel("Bond Dimension (χ)", fontsize=14, color="white")
+    ax.set_ylabel("Wall-clock Time (seconds)", fontsize=14, color="white")
+    ax.set_title(title or "CPU vs GPU MPS Performance", fontsize=16,
+                  color="white", fontweight="bold")
+    ax.set_xticks(x)
+    ax.set_xticklabels([str(c) for c in chi_vals])
+    ax.legend(fontsize=13, **{
+        k: v for k, v in LEGEND_KWARGS.items() if k != "fontsize"
+    })
+    ax.set_yscale("log")
+
+    plt.tight_layout()
+    plt.savefig(filename, dpi=150, facecolor=fig.get_facecolor())
+    plt.close()
+    print(f"  Plot saved: {filename}")
+
+
+# =====================================================================
+# Load Hamiltonian and build Pauli decomposition
+# =====================================================================
 
 freqs, H_el, kappa = load_hamiltonian(DATA_FILE, n_modes_max=19)
 pot_coup_terms, kinetic_modes = build_pauli_hamiltonian(freqs, H_el, kappa, n_q=3)
