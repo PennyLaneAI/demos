@@ -164,7 +164,7 @@ def pl_func():
 #
 # If we actually want to execute the circuit and see the result of our measurement, we need to define
 # what the circuit runs on, just like how we defined a ``StatevectorSampler`` instance in Qiskit
-# (a new `V2 primitive <https://pennylane.ai/qml/glossary/what-are-qiskit-primitives/>`__). PennyLane’s
+# (a new `V2 primitive <https://pennylane.ai/glossary/what-are-qiskit-primitives/>`__). PennyLane’s
 # way of doing this is simple: (1) define a device with :func:`qp.device <pennylane.device>` and (2) pair 
 # the device with the quantum function with :class:`~pennylane.QNode`.
 #

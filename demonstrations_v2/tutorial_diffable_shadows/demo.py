@@ -482,8 +482,8 @@ plt.show()
 # We have been using a relatively simple approach to qwc grouping, as :func:`~pennylane.pauli.group_observables`
 # is based on the largest first (LF) heuristic (see :func:`~pennylane.pauli.graph_colouring.largest_first`).
 # There has been intensive research in recent years on optimizing qwc measurement schemes.
-# Similarily, it has been realized by the original authors that the randomized shadow protocol can be improved by what they call derandomization [#Huang2021]_.
-# Currently, it seems advanced grouping algorithms are still the preferred choice, as is illustrated and discused in [#Yen]_.
+# Similarly, it has been realized by the original authors that the randomized shadow protocol can be improved by what they call derandomization [#Huang2021]_.
+# Currently, it seems advanced grouping algorithms are still the preferred choice, as is illustrated and discussed in [#Yen]_.
 # 
 #
 #

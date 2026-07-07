@@ -352,7 +352,7 @@ efficient level of theory.
 # Now, we have defined all the ingredients of DMET. We can set up the self-consistency loop to get
 # the final results.
 #
-# We set up the loop by defining the maximum number of iterations and a convergence criteria. We use
+# We set up the loop by defining the maximum number of iterations and a convergence criterion. We use
 # both energy and correlation potential as our convergence parameters, so we define the initial
 # values and convergence tolerance for both. Also, since dividing the system into multiple impurities
 # might lead to the wrong number of electrons, we define and check the chemical potential :math:`\mu`
@@ -411,8 +411,7 @@ efficient level of theory.
 # Our implementation of DMET used full configuration interaction (FCI) to accurately treat the
 # impurity subsystem. The cost of using a high-level solver such as FCI increases exponentially with
 # the system size which limits the number of orbitals we can have in the impurity. One way to solve
-# this problem is to use a quantum algorithm as our accurate solver. We now `map our impurity
-# Hamiltonian to a qubit Hamiltonian <https://pennylane.ai/qml/demos/tutorial_mapping/>`__
+# this problem is to use a quantum algorithm as our accurate solver. We now :doc:`map our impurity Hamiltonian to a qubit Hamiltonian <demos/tutorial_mapping>`
 # that can be used in a quantum algorithm using PennyLane.
 #
 # The Hamiltonian object we generated above contains one-body and two-body integrals along with the
@@ -444,7 +443,7 @@ efficient level of theory.
 #
 #    Qubit Hamiltonian:  0.6230307293797223 * I(0) + -0.4700529413255728 * Z(0) + -0.4700529413255728 * Z(1) + -0.21375048863111926 * (Y(0) @ Z(1) @ Y(2)) + ...
 #
-# This Hamiltonian can be used in a quantum algorithm such as `quantum phase estimation <https://pennylane.ai/qml/demos/tutorial_qpe/>`__.
+# This Hamiltonian can be used in a quantum algorithm such as :doc:`quantum phase estimation <demos/tutorial_qpe>`.
 # We can get the ground state energy for the system by solving for the full system as done above in the
 # self-consistency loop using the ``solve_full_system`` function. The qubit Hamiltonian is
 # particularly relevant for a hybrid version of DMET, where classical mean field calculations are
@@ -467,8 +466,7 @@ efficient level of theory.
 # power and versatility in electronic structure theory, paving the way for hybrid quantum-classical
 # simulations of challenging materials [#DMETQC]_. Potential future extensions could involve applying
 # these techniques to the wider field of spectroscopy, which probes the excited-state response of materials.
-# A relevant example is the investigation of core-level excited states in `X-ray Absorption Spectroscopy (XAS)
-# <https://pennylane.ai/qml/demos/tutorial_xas/>`__,
+# A relevant example is the investigation of core-level excited states in :doc:`X-ray Absorption Spectroscopy (XAS)  <demos/tutorial_xas>`,
 # a domain which can be explored using quantum algorithms.
 #
 #

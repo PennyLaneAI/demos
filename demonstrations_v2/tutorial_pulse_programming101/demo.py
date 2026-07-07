@@ -343,7 +343,7 @@ value_and_grad = jax.jit(jax.value_and_grad(qnode))
 # a package for optimizations in ``jax``.
 #
 # It has been shown that the loss landscapes of pulse programs are trap-free for a variety of conditions and loss functions, including ours [#Russell2016]_.
-# In practice however, we see that the optimization is senstive to the initial values of the parameters and the optimization strategy.
+# In practice however, we see that the optimization is sensitive to the initial values of the parameters and the optimization strategy.
 # In particular, we often find ourselves with very slow progress during optimization, indicating wide flat regions in the loss landscape.
 # This can be salvaged by increasing the learning rate. Sometimes, it proved advantageous to increase the learning rate after an
 # initial finer search for a better starting point. Further, we note that with the increase in the number of parameters due to the continuous evolution,

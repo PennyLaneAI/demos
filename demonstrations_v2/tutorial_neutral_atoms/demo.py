@@ -622,7 +622,7 @@ def pi_pulse(distance, coupling, wires=[0]):
 ##############################################################################
 #
 # When acting on individual atoms, these pulses have the net effect of adding a phase of :math:`-1` to the state. But the presence
-# of the Rydberg blocakde changes this outcome.
+# of the Rydberg blockade changes this outcome.
 # Then, let's see the effect the sequence of pulses has on the :math:`\vert 00 \rangle` state when the atoms are close enough.
 #
 
@@ -744,7 +744,7 @@ print(
 #
 # Neutral-atom quantum hardware is a promising and quickly developing technology which we should keep an eye on. The ability to
 # easily create custom qubit topologies and the coherence time of the atoms are its main strong points, and its weaknesses are
-# actually no too different from other qubit-based architectures. We can easily program neutral-atom devices using pulses,
+# actually not too different from other qubit-based architectures. We can easily program neutral-atom devices using pulses,
 # for which PennyLane is of great help. If you want to
 # learn more, check out our tutorials on the :doc:`Aquila device, <demos/ahs_aquila>` :doc:`neutral atom configurations, <demos/tutorial_pasqal>` and
 # :doc:`pulse programming <demos/tutorial_pulse_programming101>`. And do take a look

@@ -362,7 +362,7 @@ reconstructions_equ = list(map(full_reconstruction_equ, cost_functions, Ns))
 # its deviation from :math:`E(x)` (lower plots).
 # For this, a function for the whole procedure of comparing the functions comes in handy, and
 # we will reuse it further below. For convenience, showing the deviation will be an optional
-# feature controled by the ``show_diff`` keyword argument.
+# feature controlled by the ``show_diff`` keyword argument.
 
 
 def compare_functions(originals, reconstructions, Ns, shifts, show_diff=True):
@@ -789,7 +789,7 @@ def parameter_shift_second(fun, R):
     _coeffs = [(-1) ** mu / (2 * np.sin(shift) ** 2) for mu, shift in enumerate(shifts)]
     # Include the coefficients for the "special" term E(0).
     coeffs = np.array([-(2 * R ** 2 + 1) / 6] + _coeffs)
-    # Evaluate at the regularily shifted positions
+    # Evaluate at the regularly shifted positions
     _evaluations = list(map(fun, 2 * shifts))
     # Include the "special" term E(0).
     evaluations = np.array([fun(0.0)] + _evaluations)

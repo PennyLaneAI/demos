@@ -750,11 +750,13 @@ print(f"Under theta_Y, the operators\n{su2}\nhave the eigenvalues\n{eigvals}")
 #
 # If :math:`x` happens to be from the horizontal subspace :math:`\mathfrak{p},` so that
 # :math:`G\in \mathcal{P}\subset\mathcal{G},` we know that the two subgroup elements :math:`K_1`
-# and :math:`K_2` will in fact be related, namely
+# and :math:`K_2` will in fact be related. In particular, :math:`K_2` will be the inverse of
+# :math:`K_1`, yielding
 #
 # .. math::
 #
-#     G\in\mathcal{P} \quad\Rightarrow\quad G=K\exp(a)K^\dagger.
+#     G\in\mathcal{P} \quad\Rightarrow\quad G=K\exp(a)K^\dagger
+#     \qquad\textbf{(Horizontal KAK Decomposition).}
 #
 # **Example**
 #
@@ -890,7 +892,7 @@ fig, ax = qp.draw_mpl(su4_gate, wire_order=[0, 1])(params)
 # You may have noticed that this mathematical result only states the existence of a
 # decomposition, but does not provide a constructive way of finding
 # :math:`y_{1,2}` and :math:`a` for a given gate :math:`U.` For this,
-# some additional work is required, as explained in [#kokcu_fdhs]_, for example.
+# some additional work is required, as explained in [#kokcu_fdhs]_ or [#wierichs]_, for example.
 #
 # Conclusion
 # ----------
@@ -985,4 +987,10 @@ fig, ax = qp.draw_mpl(su4_gate, wire_order=[0, 1])(params)
 #     Michael Ragone, Bojko N. Bakalov, Frédéric Sauvage, Alexander F. Kemper, Carlos Ortiz Marrero, Martin Larocca, M. Cerezo
 #     "A Unified Theory of Barren Plateaus for Deep Parametrized Quantum Circuits"
 #     `Nat. Commun. 15 <https://www.nature.com/articles/s41467-024-49909-3>`__, 2024.
+#
+# .. [#wierichs]
+#
+#     David Wierichs, Maxwell West, Roy T. Forestano, M. Cerezo, Nathan Killoran.
+#     "Recursive Cartan decompositions for unitary synthesis"
+#     `arXiv:2503.19014 <https://arxiv.org/abs/2503.19014>`__, 2025.
 #

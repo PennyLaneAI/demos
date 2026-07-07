@@ -1,7 +1,7 @@
 r"""Intro to the Quantum Fourier Transform
 =============================================================
 
-The quantum Fourier transform (QFT) is one of the most important building blocks in quantum algorithms, famously used in `quantum phase estimation <https://pennylane.ai/qml/demos/tutorial_qpe/>`__ and `Shor's factoring algorithm <https://en.wikipedia.org/wiki/Shor%27s_algorithm>`__.
+The quantum Fourier transform (QFT) is one of the most important building blocks in quantum algorithms, famously used in :doc:`quantum phase estimation <demos/tutorial_qpe>` and `Shor's factoring algorithm <https://en.wikipedia.org/wiki/Shor%27s_algorithm>`__.
 
 The QFT is a quantum analog of the discrete Fourier transform --- the main tool of digital signal processing --- which is used to analyze periodic functions by mapping between time and frequency representations.
 
@@ -27,7 +27,7 @@ In this case, the output is another quantum state :math:`|y\rangle = \sum_{i = 0
 .. math::
     y_k = \frac{1}{\sqrt{N}} \sum_{j = 0}^{N-1} x_j \exp \left(\frac{2\pi i kj}{N} \right).
 
-For historical reasons, the sign of the exponent is positive in the defintion of the QFT, as opposed to a negative exponent in the DFT. Therefore the DFT technically coincides with the inverse operation :math:`\text{QFT}^{\dagger}` . Also, in the QFT we include normalization factor :math:`\frac{1}{\sqrt{N}}.`
+For historical reasons, the sign of the exponent is positive in the definition of the QFT, as opposed to a negative exponent in the DFT. Therefore the DFT technically coincides with the inverse operation :math:`\text{QFT}^{\dagger}` . Also, in the QFT we include normalization factor :math:`\frac{1}{\sqrt{N}}.`
 
 These transformations are linear and can be represented by a matrix. Let's verify that they actually match using scipy's implementation of the DFT and PennyLane's implementation of the QFT:
 """

@@ -32,7 +32,7 @@ Build your PennyLane circuit
 ----------------------------
 
 Here we will build a simple :doc:`Bell pair </glossary/what-are-bell-states>` and simulate it on the BlueQubit backend.
-Later in this tutorial we will show a larger example — a 26-qubit circuit that demonstrates the central limit theorem using a `Draper QFT adder <https://pennylane.ai/qml/demos/tutorial_qft_arithmetics>`__.
+Later in this tutorial we will show a larger example — a 26-qubit circuit that demonstrates the central limit theorem using a :doc:`Draper QFT adder <demos/tutorial_qft_arithmetics>`.
 
 Here is the example circuit we will be simulating:
 """
@@ -81,7 +81,7 @@ print(result)
 # Larger workloads: 26 qubits
 # ---------------------------
 # Here we will see a much larger example — a 26-qubit circuit.
-# Inspired by `Guillermo Allonso's <https://www.pennylane.ai/profile/ketpuntog>`__ PennyLane Demo `Basic arithmetic with the quantum Fourier transform (QFT) <https://pennylane.ai/qml/demos/tutorial_qft_arithmetics>`__,
+# Inspired by `Guillermo Allonso's <https://www.pennylane.ai/profile/ketpuntog>`__ PennyLane Demo :doc:`Basic arithmetic with the quantum Fourier transform (QFT) <demos/tutorial_qft_arithmetics>`,
 # which implements a quantum adder in PennyLane, we build our own adder and use it to add together quantum registers.
 # 
 # In the quantum world we can use the idea of superposition to add multiple numbers at the same time.
@@ -139,7 +139,7 @@ def add_4_6qubit_uniforms():
     for reg in regs:
         for j in range(6):
             qp.Hadamard(reg[-j-1])
-    # calcualte sum
+    # calculate sum
     draper_adder(regs[0], regs[3][-6:], kind="half")
     draper_adder(regs[1], regs[3][-7:], kind="half", include_iqft=False)
     draper_adder(regs[2], regs[3], include_qft=False) # skip I=QFT+iQFT, a small optimization
