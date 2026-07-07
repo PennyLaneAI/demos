@@ -1,0 +1,103 @@
+{
+    "title": "Certified GKP-qLDPC error correction: logical qubits as theorems, not floats",
+    "authors": [
+        {
+            "username": "IAOM"
+        }
+    ],
+    "executable_stable": true,
+    "executable_latest": true,
+    "dateOfPublication": "2026-07-06T00:00:00+00:00",
+    "dateOfLastModification": "2026-07-06T00:00:00+00:00",
+    "categories": [
+        "Quantum Computing",
+        "Algorithms"
+    ],
+    "tags": [
+        "quantum error correction",
+        "GKP",
+        "qLDPC",
+        "bosonic codes",
+        "formal verification",
+        "certified computation",
+        "Smith normal form",
+        "decoding"
+    ],
+    "previewImages": [
+        {
+            "type": "thumbnail",
+            "uri": "/_static/demo_thumbnails/regular_demo_thumbnails/thumbnail_certified_gkp_qldpc.png"
+        },
+        {
+            "type": "large_thumbnail",
+            "uri": "/_static/demo_thumbnails/large_demo_thumbnails/thumbnail_large_certified_gkp_qldpc.png"
+        }
+    ],
+    "seoDescription": "Certify the logical group of concatenated GKP-qLDPC codes by verifying Smith-normal-form witnesses in exact integer arithmetic, reject fraudulent certificates, and use GKP analog soft information to decode errors that fool hard-decision decoders.",
+    "doi": "",
+    "references": [
+        {
+            "id": "gottesman2001",
+            "type": "article",
+            "title": "Encoding a qubit in an oscillator",
+            "authors": "Daniel Gottesman, Alexei Kitaev, John Preskill",
+            "year": "2001",
+            "journal": "Physical Review A",
+            "doi": "10.1103/PhysRevA.64.012310",
+            "url": "https://journals.aps.org/pra/abstract/10.1103/PhysRevA.64.012310"
+        },
+        {
+            "id": "conrad2022",
+            "type": "article",
+            "title": "Gottesman-Kitaev-Preskill codes: A lattice perspective",
+            "authors": "Jonathan Conrad, Jens Eisert, Francesco Arzani",
+            "year": "2022",
+            "journal": "Quantum",
+            "doi": "10.22331/q-2022-02-10-648",
+            "url": "https://quantum-journal.org/papers/q-2022-02-10-648/"
+        },
+        {
+            "id": "raveendran2022",
+            "type": "article",
+            "title": "Finite Rate QLDPC-GKP Coding Scheme that Surpasses the CSS Hamming Bound",
+            "authors": "Nithin Raveendran, Narayanan Rengaswamy, Filip Rozpedek, Ankur Raina, Liang Jiang, Bane Vasic",
+            "year": "2022",
+            "journal": "Quantum",
+            "doi": "10.22331/q-2022-07-20-767",
+            "url": "https://quantum-journal.org/papers/q-2022-07-20-767/"
+        },
+        {
+            "id": "borah2025",
+            "type": "preprint",
+            "title": "Fault Tolerant Decoding of QLDPC-GKP Codes with Circuit Level Soft Information",
+            "authors": "Shantom K. Borah, Asit K. Pradhan, Nithin Raveendran, Michele Pacenti, Bane Vasic",
+            "year": "2025",
+            "doi": "10.48550/arXiv.2505.06385",
+            "url": "https://arxiv.org/abs/2505.06385"
+        },
+        {
+            "id": "aghaeerad2025",
+            "type": "article",
+            "title": "Scaling and networking a modular photonic quantum computer",
+            "authors": "H. Aghaee Rad et al.",
+            "year": "2025",
+            "journal": "Nature",
+            "doi": "10.1038/s41586-024-08406-9",
+            "url": "https://www.nature.com/articles/s41586-024-08406-9"
+        }
+    ],
+    "basedOnPapers": [],
+    "referencedByPapers": [],
+    "relatedContent": [
+        {
+            "type": "demonstration",
+            "id": "tutorial_gkp_codes",
+            "weight": 1.0
+        },
+        {
+            "type": "demonstration",
+            "id": "tutorial_toric_code",
+            "weight": 0.8
+        }
+    ]
+}
