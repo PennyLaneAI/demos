@@ -28,9 +28,9 @@ variant of the `Kitaev surface code <https://errorcorrectionzoo.org/c/surface>`_
 with the :doc:`toric code <demos/tutorial_toric_code>` or one of the `many other variants <https://errorcorrectionzoo.org/list/quantum_surface>`__
 that generalize it.
 
-The rotated surface code consists of alternating X (blue) and Z (orange) squares that make up a lattice.
+The rotated surface code consists of alternating X (blue) and Z (yellow) squares that make up a lattice.
 The so-called data qubits sit on the vertices (highlighted in pink). These will be the qubits that encode 
-the quantum information of a :math:`d \times d` surface code patch, that is making up a single logical qubit: (we will use :math:`d=5` throughout for simplicity)
+the quantum information of a :math:`d \times d` surface code patch that makes up a single logical qubit (we will use :math:`d=5` throughout for simplicity):
 
 .. figure:: ../_static/demonstration_assets/surface_code/surface_code_syndrome.png
     :align: center
@@ -83,7 +83,7 @@ Error detection via stabilizers
 
 The surface code is a stabilizer code, which means that quantum information is encoded in the joint :math:`+1` eigenspace
 of a set of commuting observables :math:`\mathcal{S}` called *stabilizers*. These stabilizers :math:`S_i \in \mathcal{S}` 
-are faces of four or two :math:`Z` or :math:`X` observables, arranged in a checkerboard formation: (the stabilizer operators are their product)
+are products of four (or two) :math:`Z` or :math:`X` operators arranged in a checkerboard.
 
 .. figure:: ../_static/demonstration_assets/surface_code/surface_code_with_stabilizers.png
     :align: center
@@ -141,7 +141,7 @@ We can continue to deform the string to arrive at a logical :math:`Z_L` operator
     :width: 50%
     :target: javascript:void(0)
 
-This is why the left and right edge are called :math:`Z` edges, which may be confusing because they contain :math:`X` arches.
+This is why the left and right edges are called :math:`Z` edges, which may be confusing because they contain :math:`X` arches.
 The opposite is true for the top and bottom :math:`X` edges with :math:`Z` arches.
 
 These arches define the logical operators, but they are also crucial from a mathematical point of view and restrict our
@@ -267,7 +267,7 @@ This reduces the runtime of the quantum computation as it avoids additional phys
 # Conclusion
 # ----------
 #
-# In this demo, we have learned about the basics of modern rotated surface codes from qubit definition, stabilizers, logical operators, computation to error decoding.
+# In this demo, we have learned about the basics of modern rotated surface codes from qubit definitions and stabilizers to logical operators, computation, and error decoding.
 # Most modern quantum error correction codes such as :doc:`qLDPC codes <demos/tutorial_qldpc_codes>` work under the same principles, so you should be well-prepared
 # for continuing your QEC journey down this path.
 # 
