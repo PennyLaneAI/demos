@@ -47,7 +47,7 @@ Additionally, there are weight-2 :math:`X` and :math:`Z` arches on the edges (mo
 
 These stabilizers on the data qubits are measured indirectly via the syndrome qubits. 
 This is done by entangling the data qubits with the corresponding syndrome qubit and then
-measuring that (see `Fig. 1 <https://arxiv.org/abs/1208.0928>`__ in [#surfacecode]_ for the detailed circuits). 
+measuring that (see also `Fig. 1 <https://arxiv.org/abs/1208.0928>`__ in [#surfacecode]_). 
 
 .. figure:: ../_static/demonstration_assets/surface_code/syndrome_measurements.png
     :align: center
@@ -73,8 +73,8 @@ They are very similar, but the rotated surface code effectively halves the requi
 
 For the purpose of this demo, we shall refer to it just as *the* surface code.
 
-Stabilizers
------------
+Error detection via stabilizers
+-------------------------------
 
 The surface code is a stabilizer code, which means that quantum information is encoded in the joint :math:`+1` eigenspace
 of a set of commuting observables :math:`\mathcal{S}` called *stabilizers*. These stabilizers :math:`S_i \in \mathcal{S}` 
@@ -99,6 +99,9 @@ is equal to the identity, :math:`S_i |\psi\rangle = + 1 |\psi\rangle`.
 By continuously measuring all stabilizers we can ensure that the state is not leaving the code space. 
 If, however, we do measure :math:`-1` somewhere, we know that an error has occurred. In that case, we need to perform
 error correction, which we are discussing later.
+
+These stabilizers allow us to deterministically detect up to :math:`d-1` single-qubit :math:`X`, :math:`Y`, or :math:`Z` errors.
+Larger error strings are equivalent to logical operators and cannot be detected, as we will see next.
 
 Logical operators: Z and X edges
 --------------------------------
