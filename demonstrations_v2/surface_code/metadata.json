@@ -101,6 +101,16 @@
         },
         {
             "type": "demonstration",
+            "id": "tutorial_lattice_surgery",
+            "weight": 1.0
+        },
+        {
+            "type": "demonstration",
+            "id": "tutorial_qldpc_codes",
+            "weight": 1.0
+        },
+        {
+            "type": "demonstration",
             "id": "tutorial_toric_code",
             "weight": 1.0
         },
