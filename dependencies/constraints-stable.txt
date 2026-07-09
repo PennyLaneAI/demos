@@ -1,5 +1,4 @@
 # Specifies global constraints for the stable build
---extra-index-url https://download.pytorch.org/whl/cpu
 pennylane==0.45.*
 pennylane-cirq==0.44.*
 pennylane-qiskit==0.45.*
@@ -19,9 +18,7 @@ jax==0.7.1
 jaxlib==0.7.1
 jaxopt==0.8.5
 
-torch==2.9.0+cpu ; sys_platform != 'darwin'
-torch==2.9.0 ; sys_platform == 'darwin'
-torchvision==0.24.0+cpu ; sys_platform != 'darwin'
-torchvision==0.24.0 ; sys_platform == 'darwin'
+torch==2.9.0
+torchvision==0.24.0
 
 optax==0.2.4
