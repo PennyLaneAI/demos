@@ -6,11 +6,11 @@ Introducing the Surface Code
 The surface code is the gold standard when it comes to quantum error correction (QEC).
 Its popularity stems from the fact that it provides a high error threshold (around 1%) and requires only local connectivity, 
 making it ameanable to most hardware platforms.
-Beyond that, it serves as a great intro into the world of fault-tolerant quantum computing (FTQC),
-because its working principles are ubiquitous in modern QEC codes.
+Beyond it being a fully-functioning QEC code, it serves as a great intro into the world of fault-tolerant quantum computing (FTQC),
+because its working principles are ubiquitous in most modern QEC codes.
 A lot has happened since its early inception in the 90s, so we are going to give a modern 2026 overview of its components in this demo.
-In particular, we are going to learn about stabilizers, logical operators, Pauli based computation via lattice surgery,
-error detection and correction, all of which is also relevant in more general :doc:`qLDPC codes <demos/tutorial_qldpc_codes>`.
+In particular, we are going to learn about error detection via stabilizers, logical operators, Pauli based computation via lattice surgery,
+and error correction --- all of which are also relevant in more general :doc:`qLDPC codes <demos/tutorial_qldpc_codes>`.
 
 .. figure:: _static/demo_thumbnails/large_demo_thumbnails/pennylane-demo-surface-code-large-thumbnail.png
     :align: center
