@@ -9,8 +9,8 @@ making it amenable to hardware with 2D nearest-neighbor connectivity, such as su
 Beyond it being a fully-functioning QEC code, it serves as a great introduction to the world of fault-tolerant quantum computing (FTQC),
 because its working principles are ubiquitous in most modern QEC codes such as :doc:`qLDPC codes <demos/tutorial_qldpc_codes>` that break the locality requirement.
 A lot has happened since its early inception in the 90s, so we are going to give a modern 2026 overview of its components in this demo.
-In particular, we are going to learn about error detection via stabilizers, logical operators, Pauli based computation via lattice surgery,
-and error correction --- all of which are also relevant in more general :doc:`qLDPC codes <demos/tutorial_qldpc_codes>`.
+In particular, we are going to learn about stabilizers, logical operators, Pauli based computation via lattice surgery,
+and error detection & correction --- all of which are also relevant in more general :doc:`qLDPC codes <demos/tutorial_qldpc_codes>`.
 
 .. figure:: _static/demo_thumbnails/large_demo_thumbnails/pennylane-demo-surface-code-large-thumbnail.png
     :align: center
@@ -189,8 +189,8 @@ along their :math:`Z` edges via an intermediate auxiliary qubit region, indicate
 So overall, this is just the joint measurement of :math:`Z_{q_1} \otimes Z_{q_2}` via their :math:`Z` edges.
 
 
-Error correction
-----------------
+Error detection and correction
+------------------------------
 
 Let us first consider what actually happens if a single :math:`Z` error occurs on one of the data qubits.
 The story works equivalently for :math:`X` and :math:`Y` errors.
