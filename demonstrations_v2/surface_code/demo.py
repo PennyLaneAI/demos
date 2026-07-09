@@ -39,6 +39,7 @@ These syndrome qubits are used to continuously perform measurements on the surro
 These measurements are called stabilizers and make up the backbone of almost all modern QEC codes.
 In the rotated surface code, they are alternating squares with a product of four :math:`X` or :math:`Z` operators.
 Additionally, there are weight-2 :math:`X` and :math:`Z` arches on the edges (more on that later).
+These suffice to detect a string of :math:`d-1` :math:`X`, :math:`Y`, or :math:`Z` errors.
 
 .. figure:: ../_static/demonstration_assets/surface_code/surface_code_with_stabilizers.png
     :align: center
