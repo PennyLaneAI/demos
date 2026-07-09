@@ -15,6 +15,8 @@ These principles are ubiquitous in modern QEC codes, so this demo should serve a
     :target: javascript:void(0)
     
 
+In this demo, we are going to learn about stabilizers, logical operators, error detection and correction.
+
 Introduction
 ------------
 
@@ -46,12 +48,18 @@ Additionally, there are weight-2 :math:`X` and :math:`Z` arches on the edges (mo
 These stabilizers on the data qubits are measured indirectly via the syndrome qubits. 
 This is done by entangling the data qubits with the corresponding syndrome qubit and then
 measuring that (see `Fig. 1 <https://arxiv.org/abs/1208.0928>`__ in [#surfacecode]_ for the detailed circuits). 
+
+.. figure:: ../_static/demonstration_assets/surface_code/syndrome_measurements.png
+    :align: center
+    :width: 80%
+    :target: javascript:void(0)
+
 The measurement result (:math:`\pm 1`) of a stabilizer measurement indicates whether or not an error has occurred.
 A :math:`d \times d` surface code qubit can detect up to :math:`d-1` errors, and correct up to :math:`\left\lfloor \tfrac{d-1}{2} \right\rfloor`.
 When more errors occur, they may go unnoticed or get corrected in the wrong way, as we will see later.
 
-In this demo, we are going to go into more detail and expand on each of these components. 
-Before that, we want to stress the difference between the *rotated* surface code (left) to the original planar surface code (right):
+Before we get into more detail and expand on each of these components,
+we want to stress the difference between the *rotated* surface code (left) to the original planar surface code (right):
 
 .. figure:: ../_static/demonstration_assets/surface_code/rotated.png
     :align: center
