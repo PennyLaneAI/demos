@@ -34,7 +34,7 @@ the quantum information of a :math:`d \times d` surface code patch, that is maki
     :width: 50%
     :target: javascript:void(0)
     
-We additionally have so-called syndrome qubits (in light gray) that sit in the middle of the squares. 
+We additionally have so-called syndrome qubits (in light gray) that sit in the middle of the squares or keystones of the arches. 
 These syndrome qubits are used to continuously perform measurements on the surrounding data qubits in a non-destructive way.
 These measurements are called stabilizers and make up the backbone of almost all modern QEC codes.
 In the rotated surface code, they are alternating squares with a product of four :math:`X` or :math:`Z` operators.
@@ -98,12 +98,16 @@ The measurement outcome of such a stabilizer is binary :math:`\pm 1` and we assu
 That means that the action of any stabilizer :math:`S_i \in \mathcal{S}` on a state :math:`|\psi\rangle` in the code space 
 is equal to the identity, :math:`S_i |\psi\rangle = + 1 |\psi\rangle`.
 
-By continuously measuring all stabilizers we can ensure that the state is not leaving the code space. 
-If, however, we do measure :math:`-1` somewhere, we know that an error has occurred. In that case, we need to perform
-error correction, which we are discussing later.
+By continuously measuring all stabilizers we can ensure that the state is not leaving the code space.
+Because the stabilizer measurement itself is prone to error (the CNOT and Hadamard gates in the syndrome extraction circuit above are noisy),
+we typically repeat it :math:`d` times. This allows us to differentiate a true data qubit error, 
+leading to repeated error syndromes in time, and measurement errors, that manifest as singular events in the history of syndrome measurements.
+We call this one *round* of syndrome extraction. If we detect a true data qubit error during the round,
+we in principle need to perform error correction. As we are going to see later, this is done in software, such that no physical error 
+*correction* operations need to be applied.
 
-These stabilizers allow us to deterministically detect up to :math:`d-1` single-qubit :math:`X`, :math:`Y`, or :math:`Z` errors.
-Larger error strings are equivalent to logical operators and cannot be detected, as we will see next.
+Overall, these stabilizer measurements allow us to deterministically detect up to :math:`d-1` single-qubit :math:`X`, :math:`Y`, or :math:`Z` errors.
+Larger error strings are equivalent to logical operators and cannot be detected, as we will see next section.
 
 Logical operators: Z and X edges
 --------------------------------
