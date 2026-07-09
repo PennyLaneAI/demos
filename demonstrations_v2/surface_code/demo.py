@@ -244,10 +244,15 @@ errors up to :math:`d-1`.
 And we can only deterministically correct errors up to half the distance, 
 because a wrong correction will make the total operation (error + correction) a logical operator that goes unnoticed.
 
-Error correction is continuously performed during computation with one clock cycle corresponding to measuring all :math:`\mathcal{O}(d^2)` stabilizers once.
-It is worth noting that the actual error *correction* typically happens in software, and no correction terms are actively applied.
-Instead, one typically tracks all detected errors based on their syndromes and then multiplies 
+Error correction is continuously performed during computation. 
+Measuring all :math:`\mathcal{O}(d^2)` stabilizers once (and typically in parallel) is called a QEC clock cycle.
+A *logical* clock cycle corresponds to repeating these stabilizer measurements :math:`d` times.
+We typically measure the runtime of a computation in logical clock cycles. Most notably, a Pauli product measurement can be performed in one logical clock cycle.
+
+Finally, the actual error *correction* typically happens in software, and no physical correction terms are actively applied.
+Instead, one can track all detected errors based on their syndromes and then multiply 
 them retrospectively with the final measurement results at the end of the computation.
+This reduces the runtime of the quantum computation as it avoids additional physical computations.
 
 
 """
