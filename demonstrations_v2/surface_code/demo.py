@@ -56,7 +56,8 @@ measuring that (see also `Fig. 1 <https://arxiv.org/abs/1208.0928>`__ in [#surfa
     :target: javascript:void(0)
 
 The measurement result (:math:`\pm 1`) of a stabilizer measurement indicates whether or not an error has occurred.
-A :math:`d \times d` surface code qubit can detect up to :math:`d-1` errors, and correct up to :math:`\left\lfloor \tfrac{d-1}{2} \right\rfloor`.
+A :math:`d \times d` surface code qubit is said to have code-distance :math:`d` and can detect up to :math:`d-1` errors,
+and correct up to :math:`\left\lfloor \tfrac{d-1}{2} \right\rfloor`.
 When more errors occur, they may go unnoticed or get corrected in the wrong way, as we will see later.
 
 Before we get into more detail and expand on each of these components,
