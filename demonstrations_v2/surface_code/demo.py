@@ -90,7 +90,7 @@ are faces of four or two :math:`Z` or :math:`X` observables, arranged in a check
 All these stabilizers commute with each other - that is one of their defining properties. 
 That all stabilizers in the surface code depicted here commute can be seen from the fact that generally two 
 Pauli words commute iff they anticommute on an even number of sites.
-Take for example the most simple case, two sites ``[0, 1]``, such that we have :math:`[X_0 X_1, Z_0 Z_1] = 0`.
+Take for example the simplest case, two sites ``[0, 1]``, such that we have :math:`[X_0 X_1, Z_0 Z_1] = 0`.
 
 The measurement outcome of such a stabilizer is binary :math:`\pm 1` and we assume that the underlying quantum state
 :math:`|\psi\rangle` that is encoded by the qubit of the surface code is in the so-called code (sub)space - the joint 
