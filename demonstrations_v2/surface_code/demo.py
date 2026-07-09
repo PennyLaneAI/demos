@@ -4,10 +4,10 @@ Introducing the Surface Code
 ============================
 
 The surface code is the gold standard when it comes to quantum error correction (QEC).
-Its popularity stems from the fact that it provides a high error threshold (around 1%) and requires only local connectivity, 
-making it ameanable to most hardware platforms.
+Its popularity stems from the fact that it provides a high circuit-level error threshold (around 1%) and requires only local connectivity, 
+making it amenable to hardware with 2D nearest-neighbor connectivity, such as superconducting qubits.
 Beyond it being a fully-functioning QEC code, it serves as a great intro into the world of fault-tolerant quantum computing (FTQC),
-because its working principles are ubiquitous in most modern QEC codes.
+because its working principles are ubiquitous in more modern QEC codes such as :doc:`qLDPC codes <demos/tutorial_qldpc_codes>` that break the locality requirement.
 A lot has happened since its early inception in the 90s, so we are going to give a modern 2026 overview of its components in this demo.
 In particular, we are going to learn about error detection via stabilizers, logical operators, Pauli based computation via lattice surgery,
 and error correction --- all of which are also relevant in more general :doc:`qLDPC codes <demos/tutorial_qldpc_codes>`.
@@ -39,7 +39,7 @@ the quantum information of a :math:`d \times d` surface code patch, that is maki
     
 We additionally have so-called syndrome qubits (in light gray) that sit in the middle of the squares or keystones of the arches. 
 These syndrome qubits are used to continuously perform measurements on the surrounding data qubits in a non-destructive way.
-These measurements are called stabilizers and make up the backbone of almost all modern QEC codes.
+These operators being measured are called stabilizers and make up the backbone of almost all modern QEC codes.
 In the rotated surface code, they are alternating squares with a product of four :math:`X` or :math:`Z` operators.
 Additionally, there are weight-2 :math:`X` and :math:`Z` arches on the edges (more on that later).
 These suffice to detect a string of :math:`d-1` :math:`X`, :math:`Y`, or :math:`Z` errors.
@@ -110,7 +110,7 @@ we in principle need to perform error correction. As we are going to see later, 
 *correction* operations need to be applied.
 
 Overall, these stabilizer measurements allow us to deterministically detect up to :math:`d-1` single-qubit :math:`X`, :math:`Y`, or :math:`Z` errors.
-Larger error strings are equivalent to logical operators and cannot be detected, as we will see next section.
+Larger error strings that are equivalent to logical operators cannot be detected, as we will see next section.
 
 Logical operators: Z and X edges
 --------------------------------
@@ -122,7 +122,7 @@ Logical operators :math:`Z_L` or :math:`X_L` need to commute with all stabilizer
 At the same time, they must not be stabilizers (or products thereof) themselves. 
 On top of that, they of course need to satisfy the fundamental anti-commutation relation :math:`X_L Z_L = -Z_L X_L`.
 
-On the rotated surface code, a logical :math:`X_L` operator is a string of measurements of data qubits that connects the two
+On the rotated surface code, a logical :math:`X_L` operator is a string of Pauli :math:`X` operators on data qubits that connects the two
 edges with :math:`X` arches (left and right here). And vice versa for a logical :math:`Z_L` operator, as indicated below.
 
 Multiplying a logical operator by a stabilizer does not change the logical state, 
