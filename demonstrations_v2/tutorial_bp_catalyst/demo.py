@@ -267,7 +267,7 @@ print(tabulate(table_data, headers=["Syndrome", "LUT Error"]))
 
 ######################################################################
 # While this approach is optimal for small codes, it rapidly becomes infeasible for larger examples.
-# For instance, the distance-:math:`30` :doc:`rotated surface code <demos/surface-code>`, which encodes only :math:`1` logical qubits, has :math:`450`
+# For instance, the distance-:math:`30` :doc:`rotated surface code <demos/surface_code>`, which encodes only :math:`1` logical qubits, has :math:`450`
 # stabilizers for both :math:`X` and :math:`Z`. A full lookup table decoder for just one check type
 # would require approximately :math:`2.9\times 10^{35}` entries.
 #
