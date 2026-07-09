@@ -185,7 +185,7 @@ Error correction
 ----------------
 
 Let us first consider what actually happens if a single :math:`Z` error occurs on one of the data qubits.
-The story works equivalently for :math:`X` errors.
+The story works equivalently for :math:`X` and :math:`Y` errors.
 Before the :math:`Z` error, each stabilizer measurement returns :math:`+1`, confirming the underlying state is in the correct code space.
 Now let us assume the central data qubit experiences a :math:`Z` error. The surrounding :math:`Z` stabilizers are unaffected by it, but
 the two :math:`X` stabilizers yield a :math:`-1` measurement - a *defect*, indicated by :math:`-1` on the stabilizer square.
