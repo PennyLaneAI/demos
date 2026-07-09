@@ -78,8 +78,8 @@ They are very similar, but the rotated surface code effectively halves the requi
 
 For the purpose of this demo, we shall refer to it just as *the* surface code.
 
-Error detection via stabilizers
--------------------------------
+Stabilizers
+-----------
 
 The surface code is a stabilizer code, which means that quantum information is encoded in the joint :math:`+1` eigenspace
 of a set of commuting observables :math:`\mathcal{S}` called *stabilizers*. These stabilizers :math:`S_i \in \mathcal{S}` 
