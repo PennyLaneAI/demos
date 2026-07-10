@@ -2,6 +2,10 @@ r"""
 How to track algorithmic error using PennyLane
 ==============================================
 
+.. warning::
+    
+    This demo is only compatible with PennyLane v0.45 or below.
+
 In order to accurately determine the resources required to run a given quantum workflow, one must carefully track 
 and propagate the sources of error within the many algorithms that make up the workflow. Furthermore, there are 
 a variety of different errors to keep track of:

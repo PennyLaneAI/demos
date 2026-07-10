@@ -6,9 +6,10 @@
         }
     ],
     "executable_stable": true,
-    "executable_latest": true,
+    "_comment": "Only compatible with PennyLane <v0.46.",
+    "executable_latest": false,
     "dateOfPublication": "2024-05-03T00:00:00+00:00",
-    "dateOfLastModification": "2026-04-17T15:48:14+00:00",
+    "dateOfLastModification": "2026-07-10T15:48:14+00:00",
     "categories": [
         "Algorithms",
         "Quantum Computing",
