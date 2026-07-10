@@ -59,8 +59,6 @@ for approx_op, theta in zip(ops, thetas):
 #      Spectral Norm error (theta = 1.23): 0.00200
 #      Spectral Norm error (theta = 1.20): 0.01700
 #      Spectral Norm error (theta = 1.00): 0.11693
-#
-#
 
 
 ###############################################################################
@@ -98,7 +96,6 @@ print(f"Error from Suzuki-Trotter algorithm: {error:.5f}")
 #  .. code-block:: none
 #
 #      Error from Suzuki-Trotter algorithm: 0.00037
-# 
 
 ###############################################################################
 # In general, exactly computing the spectral norm is computationally expensive for larger systems as it requires
@@ -268,6 +265,20 @@ errors_dict = qp.resource.algo_error(circ)(Hamiltonian, time, phi1, phi2)
 error = errors_dict["SpectralNormError"]
 print("Error:")
 print(error)
+
+##############################################################################
+# .. rst-class:: sphx-glr-script-out
+#
+#
+#  .. code-block:: none
+#
+#      State:
+#      [0.04966733-0.54493335j 0.04966733-0.54493335j 0.04966733-0.44509994j
+#       0.04966733-0.44509994j]
+#      
+#      Error:
+#      SpectralNormError(0.22470860342773674)
+
 
 
 ###############################################################################
