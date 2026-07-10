@@ -24,15 +24,6 @@
   "seoDescription": "Hamiltonian simulation is a leading application of quantum computers, and the tools used to carry it out make the difference between success and failure. Trotterization is a key addition to the quantum simulation toolkit.",
   "references": [
     {
-      "id": "Su2020",
-      "type": "other",
-      "title": "A Theory of Trotter Error",
-      "authors": "Su",
-      "year": "2020",
-      "howpublished": "Lecture slides",
-      "url": "https://simons.berkeley.edu/sites/default/files/docs/15639/trottererrortheorysimons.pdf"
-    },
-    {
       "id": "Paetznick2014",
       "type": "article",
       "title": "Repeat-Until-Success: Non-deterministic decomposition of single-qubit unitaries",
