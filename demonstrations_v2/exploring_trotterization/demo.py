@@ -260,7 +260,7 @@ dev2 = qp.device("lightning.qubit", wires=(1+3*b))
 
 @qp.qnode(dev2)
 @rz_phase_gradient(angle_wires,gradient_wires,work_wires)
-def TrotterStepperPG(t,r,coeffs):
+def TrotterStepperPG(t,coeffs,r):
     del_t = t/r
 
     #Apply the rotation r times
