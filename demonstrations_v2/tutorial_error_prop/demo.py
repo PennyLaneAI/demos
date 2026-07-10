@@ -116,6 +116,14 @@ commutator_error_bound = op.error(method="commutator-bound")
 print("one-norm bound:   ", one_norm_error_bound)
 print("commutator bound: ", commutator_error_bound)
 
+##############################################################################
+# .. rst-class:: sphx-glr-script-out
+#
+#
+#  .. code-block:: none
+#
+#      one-norm bound:    SpectralNormError(0.012000000000000004)
+#      commutator bound:  SpectralNormError(0.01066666666666667)
 
 ###############################################################################
 # Custom Error Operations
