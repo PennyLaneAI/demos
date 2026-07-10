@@ -14,26 +14,28 @@ Let's get started, time is of the essence!
 
 The Commutation Problem
 -----------------------
-For a completely isolated free particle experiencing no external potential, the system's Hamiltonian can be simply defined in terms of kinetic energy and applied via a unitary gate representing the time evolution operator :math:`U_{free}(t)=e^{-iHt}=e^{-iTt}`, where :math:`T` is the kinetic energy term. If this is the only scenario we can deal with, however, our capabilities would be incredibly limited. As a Hamiltonian becomes more complex (e.g., additional terms are added), the feasibility of the time evolution operator :math:`e^{-iHt}` being executable within reasonable computational resource bounds diminishes. 
+For a completely isolated free particle experiencing no external potential, the system's Hamiltonian can be simply defined in terms of kinetic energy and applied via a unitary gate representing the time evolution operator :math:`U_{free}(t)=e^{-iHt}=e^{-iTt}`, where :math:`T` is the kinetic energy term. If this is the only scenario we can deal with, however, our capabilities would be incredibly limited. As a Hamiltonian becomes more complex (e.g., additional terms are added), the chance that the time evolution operator :math:`e^{-iHt}` can be implemented with available gates (determined by a process of calculation and decomposiiton into a relevant gate set) and computational resources diminishes. 
 
-If complexity is the issue, why not just split the Hamiltonian into smaller pieces that *are* computationally executable? If we take the representation :math:`H=H_1+H_2+...+H_n`, we could naïvely say that our time evolution operator becomes :math:`e^{-i(H_1+H_2+...+H_n)t}=e^{-iH_1t}e^{-iH_2t}...e^{-iH_nt}`. In our naïveté, however, we would neglect to consider the commutation relations of the split Hamiltonian components. If certain fragments of the Hamiltonian do not commute (:math:`[H_i,H_j] \neq 0`), we cannot exponentiate it in its entirety without deviating from our expected outcome.
+If runnability is the issue, why not just split the Hamiltonian into smaller pieces that *are* executable and hardware compatible? If we take the representation :math:`H=H_1+H_2+...+H_n`, where :math:`H_n` is an implementable Hamiltonian fragment, we could naïvely say that our time evolution operator becomes :math:`e^{-i(H_1+H_2+...+H_n)t}=e^{-iH_1t}e^{-iH_2t}...e^{-iH_nt}`. In our naïveté, however, we would neglect to consider the commutation relations of the split Hamiltonian components. If certain fragments of the Hamiltonian do not commute (:math:`[H_i,H_j] \neq 0`), then this product would merely be an approximation, resulting in systemic error and inaccurate outputs. 
 
 .. admonition:: Recall
    :class: note
 
-   For commuting matrices, where :math:`AB=BA` and it is implied that A and B are completely independent,
+   For commuting matrices, where :math:`AB=BA` and it is implied that :math:`A` and :math:`B` are completely independent,
 
    |
 
-   :math:`(A+B)^2 = A^2+2AB+B^2`.
+   .. math::
+      (A+B)^2 = A^2+2AB+B^2.
 
    |
 
-   For non-commuting matrices, where :math:`AB \neq BA` and it is implied that A and B have some level of dependency,
+   For non-commuting matrices, where :math:`AB \neq BA` and it is implied that :math:`A` and :math:`B` have some level of dependency,
 
    |
 
-   :math:`(A+B)^2 = A^2+AB+BA+B^2`
+   .. math::
+      (A+B)^2 = A^2+AB+BA+B^2.
 
    |
 
@@ -105,7 +107,7 @@ dev = qp.device("lightning.qubit", wires=1)
 
 #Define Trotterization Function
 @qp.qnode(dev)
-def TrotterStepper(t,r,coeffs):
+def TrotterStepper(t, coeffs, r):
     del_t = t/r
 
     #Apply the rotation r times
@@ -114,8 +116,10 @@ def TrotterStepper(t,r,coeffs):
         qp.RZ(2*coeffs[1]*del_t, wires=0)
 
     return [qp.expval(qp.PauliX(0)), qp.expval(qp.PauliY(0)), qp.expval(qp.PauliZ(0))]
+
+print(TrotterStepper(t, coeffs, R[4]))
 ###############################################################################
-# Luckily for us, PennyLane has the tools to make this much simpler. Using :func:`~qp.Trotterize`, the exact same procedure can be carried out on the target Hamiltonian.
+# Luckily for us, PennyLane has the tools to make this much simpler. Using :func:`~pennylane.Trotterize`, the exact same procedure can be carried out on the target Hamiltonian.
 #
 def first_order_expansion(time, theta, phi, wires):
     qp.RX(2*time*theta, wires = 0)
@@ -131,13 +135,12 @@ def BuiltInTrotter(time, theta, phi, num_trotter_steps):
     return [qp.expval(qp.PauliX(0)), qp.expval(qp.PauliY(0)), qp.expval(qp.PauliZ(0))]
 
 #Compare results for 50 Trotter steps
-print(TrotterStepper(t, R[4], coeffs))
 print(BuiltInTrotter(t, coeffs[0], coeffs[1], R[4]))
 
 ###############################################################################
 # That's a good match! This procedure is advantageous for dealing with larger Hamiltonians or working Trotterization into a larger PennyLane workflow. For the purposes of this demonstration, we will continue using our DIY solution, but the choice is yours!
 #
-# For this simple Hamiltonian, fragmentation was handled by definition. In more complex scenarios, fragmentation must be carried out in its own step. Take, for example, a Hamiltonian containing the terms :math:`Z_1Z_3`, :math:`Z_2Z_4`, and :math:`X_1X_2`, where :math:`Z_i` and :math:`X_j` are Pauli operators. The first and second terms will always commute since they consist completely of Z operators, but neither of the first two operators commute with the third operator. Therefore, the most optimal splitting would yield :math:`H_1=Z_1Z_3+Z_2Z_4` and :math:`H_2=X_1X_2`. This is often not obvious in complex physical systems, so thorough analysis should be carried out to ensure optimal operator pairing. Tools such as :func:`~qp.pauli.group_observables` are very helpful in this case!
+# For this simple Hamiltonian, fragmentation was handled by definition. In more complex scenarios, fragmentation must be carried out in its own step. Take, for example, a Hamiltonian containing the terms :math:`Z_1Z_3`, :math:`Z_2Z_4`, and :math:`X_1X_2`, where :math:`Z_i` and :math:`X_j` are Pauli operators. The first and second terms will always commute since they consist completely of Z operators, but neither of the first two operators commute with the third operator. Therefore, the most optimal splitting would yield :math:`H_1=Z_1Z_3+Z_2Z_4` and :math:`H_2=X_1X_2`. This is often not obvious in complex physical systems, so thorough analysis should be carried out to ensure optimal operator pairing. Tools such as :func:`~pennylane.pauli.group_observables` are very helpful in this case!
 #
 # Trotter Error
 # -------------
@@ -199,7 +202,7 @@ for r in R:
 #
 # A benefit of imposing a symmetric formula such as this is that it cancels out the dominant error term discussed previously. The symmetry, essentially, does not allow for even powers to survive the operator application process, eliminating the dominant :math:`t^2` term discussed previously.
 #
-# Altering the TrotterStepper() function to a second-order Trotterization shows the impact this symmetry has on the Trotter error.
+# Altering the ``TrotterStepper()`` function to a second-order Trotterization shows the impact this symmetry has on the Trotter error.
 
 @qp.qnode(dev)
 def TrotterStepperSO(t,r,coeffs):
@@ -241,7 +244,7 @@ for r in R:
 # -----------------------------
 # Before we can officially add Trotterization to our list of capabilities, we must consider how our simulations will interface with eventual fault tolerant quantum hardware. Whether we like it or not, the resources provided by quantum hardware will be, in some way, limited. With this in mind, it is important that the resource requirements of the systems we work with are quantified and evaluated. One metric of interest is the number of `T-gates <https://pennylane.ai/blog/2025/01/optimizing-with-op-t-mize-dataset>`_ required to synthesize our operations.
 #
-# The PennyLane :func:`~qp.estimate` tool can be implemented to approximate the number of gates used to carry out a given process, taking a naïve approach. There are ample optimized methods that can be used to reduce resource requirements. Alternatively, the :doc:`multiplexed phase gradient method <demos/efficient_rotations_with_phase_gradient_states`, which takes advantage of a static register that holds spatially dependent phase values which can be *added* to a target state as needed, can be used for synthesis.
+# The PennyLane :func:`~pennylane.estimate` tool can be implemented to approximate the number of gates used to carry out a given process, taking a naïve approach. There are ample optimized methods that can be used to reduce resource requirements. Alternatively, the :doc:`multiplexed phase gradient method <demos/efficient_rotations_with_phase_gradient_states`, which takes advantage of a static register that holds spatially dependent phase values which can be *added* to a target state as needed, can be used for synthesis.
 #
 # When we select a gate synthesis method, our initial instinct might be to minimize the T count in favour of implementability and efficiency above all. From this perspective, it seems obvious to always select a low-cost method, such as the aforementioned phase gradient approach. Using PennyLane's :func:`~qp.rz_phase_gradient` transformation, the expensive :math:`R_z(\phi)` rotations implemented in the above Trotterization can be translated into phase gradient additions and compared to the naïve approach. Since this method only transforms :math:`R_z` operations, we can perform our desired :math:`R_x` rotations using an :math:`R_z` rotation sandwiched between two Hadamard gates. For this example, a step count of :math:`r=200` will be taken in the resource estimation step.
 
@@ -316,21 +319,21 @@ for r in R:
 #
 # Conclusion
 # ----------
-# There is a phenomenon that is renewed over and over again in which the field of mathematics is continually years ahead of physics (especially applied physics). The use of product formulas as tools for time evolution in Hamiltonian simulation is a beautiful example of this, in which a purely mathematical description of how to exponentiate non-commuting operators has become a defining method for time-evolution simulation in today's quantum pursuits. Understanding the basics of how Trotter products can be used and optimized for various applications of quantum simulation opens the door to not only increased utility but a heightened awareness of how the input of many fields is required to achieve viable outcomes. Keep calm and Trotter on!
+# There is a phenomenon that is renewed over and over again in which the field of mathematics is continually years ahead of physics (especially applied physics). The use of product formulas as tools for time evolution in Hamiltonian simulation is a beautiful example of this, in which a purely mathematical description of how to exponentiate non-commuting operators has become a defining method for time-evolution simulation in today's quantum pursuits. Understanding the basics of how Trotter products can be used and optimized for various applications of quantum simulation opens the door to not only increased utility but a heightened awareness of how the input of many fields is required to achieve viable outcomes. If you are, wisely, looking to add Trotterization to your quantum skill set, check out our `Codebook chapter on product formulas <https://pennylane.ai/codebook/hamiltonian-simulation/trotterization>`_. Keep calm and Trotter on!
 #
 # .. _references:
 #
 # References
 # ----------
-# .. [#Su2020] Y.\ Su, "A Theory of Trotter Error," presented at the Simons Institute for the Theory of Computing, UC Berkeley, Berkeley, CA, USA, Apr. 2020. [Online]. Available: https://simons.berkeley.edu/sites/default/files/docs/15639/trottererrortheorysimons.pdf
+# .. [#Su2020] Y.\ Su, "A Theory of Trotter Error," presented at the Simons Institute for the Theory of Computing, UC Berkeley, Berkeley, CA, USA, Apr. 2020. [Online]. Available: https://simons.berkeley.edu/sites/default/files/docs/15639/trottererrortheorysimons.pdf.
 #
-# .. [#Paetznick2014] A.\ Paetznick and K. M. Svore, "Repeat-Until-Success: Non-deterministic decomposition of single-qubit unitaries," *Quantum Inf. Comput.*, vol. 14, no. 15-16, pp. 1277–1301, Nov. 2014, arXiv: 1311.1074 [quant-ph].
+# .. [#Paetznick2014] A.\ Paetznick and K. M. Svore, "Repeat-Until-Success: Non-deterministic decomposition of single-qubit unitaries," *Quantum Inf. Comput.*, vol. 14, no. 15-16, pp. 1277–1301, Nov. 2014, doi: `10.48550/arXiv.1311.1074 <https://doi.org/10.48550/arXiv.1311.1074>`_.
 #
-# .. [#Childs2010] A.\ M. Childs and R. Kothari, "Limitations on the simulation of non-sparse Hamiltonians," *Quantum Inf. Comput.*, vol. 10, no. 7, pp. 669–684, Jul. 2010, arXiv: `0908.4398 <https://arxiv.org/abs/0908.4398>`_ [quant-ph].
+# .. [#Childs2010] A.\ M. Childs and R. Kothari, "Limitations on the simulation of non-sparse Hamiltonians," *Quantum Inf. Comput.*, vol. 10, no. 7, pp. 669–684, Jul. 2010, arXiv: `10.48550/arXiv.0908.4398 <https://doi.org/10.48550/arXiv.0908.4398>`_.
 #
-# .. [#Cirstoiu2020] C.\ Cîrstoiu, Z. Holmes, J. Iosue, L. Cincio, P. J. Coles, and A. Sornborger, "Variational fast forwarding for quantum simulation beyond the coherence time," *npj Quantum Inf.*, vol. 6, no. 1, p. 82, Sep. 2020, arXiv: `1910.04292 <https://arxiv.org/abs/1910.04292>`_ [quant-ph].
+# .. [#Cirstoiu2020] C.\ Cîrstoiu, Z. Holmes, J. Iosue, L. Cincio, P. J. Coles, and A. Sornborger, "Variational fast forwarding for quantum simulation beyond the coherence time," *npj Quantum Inf.*, vol. 6, no. 1, p. 82, Sep. 2020, arXiv: `10.48550/arXiv.1910.04292 <https://doi.org/10.48550/arXiv.1910.04292>`_ [quant-ph].
 #
-# .. [#Gidney2018] C.\ Gidney, "Halving the cost of quantum addition," *Quantum*, vol. 2, p. 74, Jun. 2018. `doi: 10.22331/q-2018-06-18-74 <https://quantum-journal.org/papers/q-2018-06-18-74/>`_.
+# .. [#Gidney2018] C.\ Gidney, "Halving the cost of quantum addition," *Quantum*, vol. 2, p. 74, Jun. 2018. `doi: 10.22331/q-2018-06-18-74 <https://doi.org/10.22331/q-2018-06-18-74>`_.
 #
 # .. [#Childs2021] A.\ M. Childs, Y. Su, M. C. Tran, N. Wiebe, and S. Zhu, "Theory of Trotter Error with Commutator Scaling," *Phys. Rev. X*, vol. 11, no. 1, Feb. 2021, doi: `10.1103/PhysRevX.11.011020 <https://doi.org/10.1103/PhysRevX.11.011020>`_.
 #
