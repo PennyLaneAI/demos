@@ -50,6 +50,18 @@ for approx_op, theta in zip(ops, thetas):
     error = SpectralNormError.get_error(exact_op, approx_op)
     print(f"Spectral Norm error (theta = {theta:.2f}): {error:.5f}")
 
+##############################################################################
+# .. rst-class:: sphx-glr-script-out
+#
+#
+#  .. code-block:: none
+#
+# Spectral Norm error (theta = 1.23): 0.00200
+# Spectral Norm error (theta = 1.20): 0.01700
+# Spectral Norm error (theta = 1.00): 0.11693
+#
+#
+
 
 ###############################################################################
 # The error in the operator increases as we round the rotation angle to fewer decimal places as expected.
