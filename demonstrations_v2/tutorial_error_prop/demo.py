@@ -218,6 +218,17 @@ explicit_comp = SpectralNormError.get_error(true_op, approx_op)
 print("Explicit computation: ", explicit_comp)
 print("Error from function:  ", error_from_theory.error)
 
+##############################################################################
+# .. rst-class:: sphx-glr-script-out
+#
+#
+#  .. code-block:: none
+#
+#      Explicit computation:  0.22184346764856389
+#      Error from function:   0.22184346764856405
+
+
+
 ###############################################################################
 # Bringing it All Together
 # ------------------------
