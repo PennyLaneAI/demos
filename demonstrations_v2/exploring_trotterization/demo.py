@@ -177,7 +177,7 @@ print(f"{'r':>5} | {'X error':>8} | {'Y error':>8} | {'Z error':>8} | {'Total er
 print("-" * 51)
 
 for r in R:
-    result = TrotterStepper(t,r,coeffs)
+    result = TrotterStepper(t,coeffs,r)
     X_error = abs(result[0]-exact_exp_X)
     Y_error = abs(result[1]-exact_exp_Y)
     Z_error = abs(result[2]-exact_exp_Z)
@@ -205,7 +205,7 @@ for r in R:
 # Altering the ``TrotterStepper()`` function to a second-order Trotterization shows the impact this symmetry has on the Trotter error.
 
 @qp.qnode(dev)
-def TrotterStepperSO(t,r,coeffs):
+def TrotterStepperSO(t,coeffs,r):
     del_t = t/r
 
     #Apply the rotation r times
@@ -220,7 +220,7 @@ print(f"{'r':>5} | {'X error':>8} | {'Y error':>8} | {'Z error':>8} | {'Total er
 print("-" * 51)
 
 for r in R:
-    resultSO = TrotterStepperSO(t,r,coeffs)
+    resultSO = TrotterStepperSO(t,coeffs,r)
     X_errorSO = abs(resultSO[0]-exact_exp_X)
     Y_errorSO = abs(resultSO[1]-exact_exp_Y)
     Z_errorSO = abs(resultSO[2]-exact_exp_Z)
@@ -277,8 +277,8 @@ def TrotterStepperPG(t,r,coeffs):
 
 #Resource estimation
 test_r = 200
-Trotter_resources = qre.estimate(TrotterStepper)(t,test_r,coeffs) #Naïve approach
-Trotter_resources_PG = qre.estimate(TrotterStepperPG)(t,test_r,coeffs) #Phase gradient approach
+Trotter_resources = qre.estimate(TrotterStepper)(t,coeffs,test_r) #Naïve approach
+Trotter_resources_PG = qre.estimate(TrotterStepperPG)(t,coeffs,test_r) #Phase gradient approach
 ###############################################################################
 # So, in the case of the naïve approach, the estimated requirements are:
 print(Trotter_resources)
@@ -293,7 +293,7 @@ print(f"{'r':>5} | {'X error':>8} | {'Y error':>8} | {'Z error':>8} | {'Total er
 print("-" * 51)
 
 for r in R:
-    result = TrotterStepper(t,r,coeffs)
+    result = TrotterStepper(t,coeffs,r)
     X_error = abs(result[0]-exact_exp_X)
     Y_error = abs(result[1]-exact_exp_Y)
     Z_error = abs(result[2]-exact_exp_Z)
@@ -306,7 +306,7 @@ print(f"{'r':>5} | {'X error':>8} | {'Y error':>8} | {'Z error':>8} | {'Total er
 print("-" * 51)
 
 for r in R:
-    resultPG = TrotterStepperPG(t,r,coeffs)
+    resultPG = TrotterStepperPG(t,coeffs,r)
     X_error_PG = abs(resultPG[0]-exact_exp_X)
     Y_error_PG = abs(resultPG[1]-exact_exp_Y)
     Z_error_PG = abs(resultPG[2]-exact_exp_Z)
