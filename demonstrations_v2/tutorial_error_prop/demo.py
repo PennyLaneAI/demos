@@ -56,9 +56,9 @@ for approx_op, theta in zip(ops, thetas):
 #
 #  .. code-block:: none
 #
-# Spectral Norm error (theta = 1.23): 0.00200
-# Spectral Norm error (theta = 1.20): 0.01700
-# Spectral Norm error (theta = 1.00): 0.11693
+#      Spectral Norm error (theta = 1.23): 0.00200
+#      Spectral Norm error (theta = 1.20): 0.01700
+#      Spectral Norm error (theta = 1.00): 0.11693
 #
 #
 
