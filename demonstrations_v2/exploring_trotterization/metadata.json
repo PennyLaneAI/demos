@@ -14,7 +14,11 @@
   "previewImages": [
     {
       "type": "thumbnail",
-      "uri": "/_static/demo_thumbnails/regular_demo_thumbnails/thumbnail_placeholder.png"
+      "uri": "/_static/demo_thumbnails/regular_demo_thumbnails/pennylane-demo-trotterization-thumbnail.png"
+    },
+    {
+      "type": "large_thumbnail",
+      "uri": "/_static/demo_thumbnails/large_demo_thumbnails/pennylane-demo-trotterization-large-thumbnail.png"
     }
   ],
   "seoDescription": "Trotterization is a key tool for Hamiltonian simulation. It is a well established tool for accurate time evolution of a complex system, but the resources required for implementation on quantum hardware can quickly become astronomical as system size, time scale, and dynamics specifications grow. This demo will explore how phase gradient states can be used to optimize the T-count of the Trotter method.",
