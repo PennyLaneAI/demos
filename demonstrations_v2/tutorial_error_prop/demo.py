@@ -149,6 +149,13 @@ op2 = qp.GlobalPhase(np.pi / 8) @ qp.Hadamard(0) @ qp.T(0) @ qp.Hadamard(0)
 
 np.allclose(qp.matrix(op1), qp.matrix(op2))
 
+##############################################################################
+# .. rst-class:: sphx-glr-script-out
+#
+#
+#  .. code-block:: none
+#
+#      True
 
 ###############################################################################
 # We can approximate the :class:`~.pennylane.RX` gate by *rounding* the rotation angle to the lowest multiple
