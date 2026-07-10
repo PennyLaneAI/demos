@@ -91,6 +91,14 @@ approx_op = qp.TrotterProduct(  #  eg: e^iHt ~ e^iXt/2 * e^iYt * e^iXt/2
 error = SpectralNormError.get_error(exact_op, approx_op)  # Expensive to compute
 print(f"Error from Suzuki-Trotter algorithm: {error:.5f}")
 
+##############################################################################
+# .. rst-class:: sphx-glr-script-out
+#
+#
+#  .. code-block:: none
+#
+#      Error from Suzuki-Trotter algorithm: 0.00037
+# 
 
 ###############################################################################
 # In general, exactly computing the spectral norm is computationally expensive for larger systems as it requires
