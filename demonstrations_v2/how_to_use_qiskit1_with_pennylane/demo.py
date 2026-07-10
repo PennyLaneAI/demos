@@ -417,15 +417,15 @@ print(f"Optimized cost function value: {new_loss}")
 # -----------------
 #
 # There’s so much more to learn about what’s possible in PennyLane, and if you’re coming from Qiskit
-# you’re in good hands! The `PennyLany-Qiskit plugin <https://docs.pennylane.ai/projects/qiskit/en/stable/>`__ is your personal chaperone to the PennyLane
+# you’re in good hands! The `PennyLane-Qiskit plugin <https://docs.pennylane.ai/projects/qiskit/en/stable/>`__ is your personal chaperone to the PennyLane
 # ecosystem. You can dive deeper into what’s possible with the PennyLane-Qiskit plugin by visiting the
 # plugin homepage and, in the
-# mean time, if you have any questions about the plugin, PennyLane, or even Qiskit, drop a question on
+# meantime, if you have any questions about the plugin, PennyLane, or even Qiskit, drop a question on
 # our `Discussion Forum <https://discuss.pennylane.ai>`__ and we’ll promptly respond.
 #
 # Now that you’ve used PennyLane, every road in the wonderful world of quantum programming SDKs is
 # open with no set speed limits 🏎️. Explore our website to see
-# the latest and greatest `PennyLane features </features/>`__, `Demos </qml/demonstrations/>`__ and our `blog posts </blog/>`__, and follow us on
+# the latest and greatest `PennyLane features </features/>`__, `Demos </demonstrations/>`__ and our `blog posts </blog/>`__, and follow us on
 # `LinkedIn <https://www.linkedin.com/company/pennylaneai/>`__ or `X (formerly
 # Twitter) <https://twitter.com/PennyLaneAI>`__ to stay updated!
 #

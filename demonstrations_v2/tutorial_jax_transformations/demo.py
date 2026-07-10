@@ -82,7 +82,7 @@ print("\nGradient Descent")
 print("---------------")
 
 # We use jax.grad here to transform our circuit method into one
-# that calcuates the gradient of the output relative to the input.
+# that calculates the gradient of the output relative to the input.
 
 grad_circuit = jax.grad(circuit)
 print(f"grad_circuit(jnp.pi / 2): {grad_circuit(jnp.pi / 2):0.3f}")
@@ -136,7 +136,7 @@ vcircuit = jax.vmap(circuit)
 
 # Now, we call the ``vcircuit`` with multiple parameters at once and get back a
 # batch of expectations.
-# This examples runs 3 quantum circuits in parallel.
+# This example runs 3 quantum circuits in parallel.
 batch_params = jnp.array([1.02, 0.123, -0.571])
 
 batched_results = vcircuit(batch_params)

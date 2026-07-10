@@ -104,7 +104,7 @@ The cost function and "nonlinear collapse"
 So far, we have only performed linear operations (matrix
 multiplications) and we know that we need to have some nonlinear
 squashing similar to activation functions in neural networks to really
-make a universal classifier (Cybenko 1989). Here is where things gets a
+make a universal classifier (Cybenko 1989). Here is where things get a
 bit quantum. After the application of the layers, we will end up at some
 point on the Bloch sphere due to the sequence of unitaries implementing
 rotations of the input. These are still just linear transformations of

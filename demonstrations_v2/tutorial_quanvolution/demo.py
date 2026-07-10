@@ -107,7 +107,7 @@ tf.random.set_seed(0)       # Seed for TensorFlow random number generator
 ##############################################################################
 # Loading of the MNIST dataset
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-# We import the MNIST dataset from *Keras*. To speedup the evaluation of this demo
+# We import the MNIST dataset from *Keras*. To speed up the evaluation of this demo
 # we use only a small number of training and test images. Obviously, better
 # results are achievable when using the full dataset.
 

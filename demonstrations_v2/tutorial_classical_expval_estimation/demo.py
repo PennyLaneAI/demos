@@ -2,7 +2,7 @@ r"""
 Pauli Propagation: Classically estimating expectation values from parametrized quantum circuits
 ===============================================================================================
 
-In the race between classical and `quantum computing <https://pennylane.ai/qml/quantum-computing/>`__, an important question
+In the race between classical and `quantum computing <https://pennylane.ai/quantum-computing/>`__, an important question
 is whether there exist efficient classical algorithms to simulate quantum
 circuits.
 Probably the most widely-known result of this type is the Gottesman–Knill
@@ -48,7 +48,7 @@ Being able to estimate such an expectation value efficiently is required
 to train the parametrized quantum circuit in applications such as
 :doc:`QAOA <demos/tutorial_qaoa_intro>`,
 the :doc:`variational quantum eigensolver <demos/tutorial_vqe>` and a wide
-range of `quantum machine learning <https://pennylane.ai/qml/whatisqml/>`__ tasks.
+range of `quantum machine learning <https://pennylane.ai/whatisqml/>`__ tasks.
 
 For simplicity, we will assume the initial state to be
 :math:`|\psi_0\rangle=|0\rangle` throughout.

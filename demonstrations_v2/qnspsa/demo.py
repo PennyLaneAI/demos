@@ -622,7 +622,7 @@ if loss_curr + tol < loss_next:
 # call one ``qp.execute()`` on all the tapes. This practice utilizes the
 # batch execution feature from PennyLane, and has a few potential
 # advantages. Some simulators provide parallelization support, so that the
-# grouped tapes can be executed simutaneously. As an example, utilizing
+# grouped tapes can be executed simultaneously. As an example, utilizing
 # the `task
 # batching <https://docs.aws.amazon.com/braket/latest/developerguide/braket-batching-tasks.html?tag=local002>`__
 # feature from the Braket SV1 simulator, we are able to reduce the

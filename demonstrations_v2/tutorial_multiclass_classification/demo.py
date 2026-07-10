@@ -157,7 +157,7 @@ def multiclass_svm_loss(q_circuits, all_params, feature_vecs, true_labels):
     num_samples = len(true_labels)
     for i, feature_vec in enumerate(feature_vecs):
         # Compute the score given to this sample by the classifier corresponding to the
-        # true label. So for a true label of 1, get the score computed by classifer 1,
+        # true label. So for a true label of 1, get the score computed by classifier 1,
         # which distinguishes between "class 1" or "not class 1".
         s_true = variational_classifier(
             q_circuits[int(true_labels[i])],

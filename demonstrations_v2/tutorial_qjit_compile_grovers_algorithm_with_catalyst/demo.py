@@ -8,7 +8,7 @@ How to quantum just-in-time (QJIT) compile Grover's algorithm with Catalyst
 # `Grover's algorithm </codebook/#05-grovers-algorithm>`__ is an `oracle
 # </codebook/04-basic-quantum-algorithms/02-the-magic-8-ball/>`__-based quantum algorithm, first
 # proposed by Lov Grover in 1996 [#Grover1996]_, to solve unstructured search problems using a
-# `quantum computer <https://pennylane.ai/qml/quantum-computing/>`__. For example, we could use
+# `quantum computer <https://pennylane.ai/quantum-computing/>`__. For example, we could use
 # Grover's algorithm to search for a phone number in a randomly ordered database containing
 # :math:`N` entries and say (with high probability) that the database contains that number by
 # performing :math:`O(\sqrt{N})` queries on the database, whereas a classical search algorithm would
