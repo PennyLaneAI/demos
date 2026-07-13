@@ -3,14 +3,16 @@ r"""
 Introducing the Surface Code
 ============================
 
-The surface code is the gold standard when it comes to `quantum error correction (QEC) <https://pennylane.ai/codebook/quantum-error-correction>`__.
-Its popularity stems from the fact that it provides a high circuit-level error threshold (around 1%) and requires only local connectivity, 
-making it amenable to hardware with 2D nearest-neighbor connectivity, such as :doc:`superconducting qubits <demos/tutorial_sc_qubits>`.
+The surface code is the gold standard for deploying `quantum error correction (QEC) <https://pennylane.ai/codebook/quantum-error-correction>`__ on hardware today. 
+Not only does it provide a high circuit-level error threshold (around 1%), but it only requires local connectivity, making it amenable to hardware with 2D nearest-neighbor connectivity, such as :doc:`superconducting qubits <demos/tutorial_sc_qubits>`.
+
 Beyond it being a fully-functioning QEC code, it serves as a great introduction to the world of `fault-tolerant quantum computing (FTQC) <https://pennylane.ai/topics/fault-tolerant-quantum-computing>`__,
-because its working principles are ubiquitous in most modern QEC codes such as :doc:`qLDPC codes <demos/tutorial_qldpc_codes>` that break the locality requirement.
+because its working principles are ubiquitous in most modern QEC codes such as :doc:`qLDPC codes <demos/tutorial_qldpc_codes>` that break the locality requirement and are more qubit efficient. 
+
 A lot has happened since its early inception in the 90s, so we are going to give a modern 2026 overview of its components in this demo.
 In particular, we are going to learn about :doc:`stabilizers <demos/tutorial_stabilizer_codes>`, logical operators, `Pauli based computation <https://pennylane.ai/compilation/pauli-based-computation>`__ via :doc:`lattice surgery <demos/tutorial_lattice_surgery>`,
 and error detection & correction --- all of which are also relevant in more general :doc:`qLDPC codes <demos/tutorial_qldpc_codes>`.
+
 
 .. figure:: _static/demo_thumbnails/large_demo_thumbnails/pennylane-demo-surface-code-large-thumbnail.png
     :align: center
@@ -110,7 +112,7 @@ we in principle need to perform error correction. As we are going to see later, 
 *correction* operations need to be applied.
 
 Overall, these stabilizer measurements allow us to deterministically detect up to :math:`d-1` single-qubit :math:`X`, :math:`Y`, or :math:`Z` errors.
-Larger error strings that are equivalent to logical operators cannot be detected, as we will see next section.
+Larger error strings that are equivalent to logical operators cannot be detected, as we will see in the next section.
 
 Logical operators: Z and X edges
 --------------------------------
