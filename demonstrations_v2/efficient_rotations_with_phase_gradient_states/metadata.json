@@ -7,8 +7,8 @@
   ],
   "executable_stable": true,
   "executable_latest": true,
-  "dateOfPublication": "2026-05-21T00:00:00+00:00",
-  "dateOfLastModification": "2026-05-21T00:00:00+00:00",
+  "dateOfPublication": "2026-07-13T00:00:00+00:00",
+  "dateOfLastModification": "2026-07-13T00:00:00+00:00",
   "categories": ["Algorithms", "Quantum Computing"],
   "tags": ["Algorithms", "Rotations", "Gate Decomposition", "Fault Tolerance", "Resource Estimation"],
   "previewImages": [
