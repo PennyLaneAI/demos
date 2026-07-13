@@ -102,7 +102,7 @@ That means that the action of any stabilizer :math:`S_i \in \mathcal{S}` on a st
 is equal to the identity, :math:`S_i |\psi\rangle = + 1 |\psi\rangle`.
 
 By continuously measuring all stabilizers we can ensure that the state is not leaving the code space.
-Because the stabilizer measurement itself is prone to error (the :class:`~.pennylane.CNOT` and :class:`~.pennylane.H` gates in the syndrome extraction circuit above are noisy),
+Because the stabilizer measurement itself is prone to error (the :class:`~.pennylane.CNOT` and :class:`~.pennylane.Hadamard` gates in the syndrome extraction circuit above are noisy),
 we typically repeat it :math:`d` times. This allows us to differentiate a true data qubit error, 
 leading to repeated error syndromes in time, and measurement errors, that manifest as singular events in the history of syndrome measurements.
 We call this one *round* of syndrome extraction. If we detect a true data qubit error during the round,
