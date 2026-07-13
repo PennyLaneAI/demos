@@ -233,6 +233,7 @@ simply connect them via their :math:`Z` edge (lattice merging),
 perform :math:`d` rounds of measuring all stabilizers, including the intermediary ones, and finally destructively measure in between the two patches to split them again (lattice splitting).
 The logical :math:`Z_L \otimes Z_L` measurement is indirectly determined via the product of the stabilizers that have been measured during the 
 intermediate rounds of error correction. Note that this is different from terminal measurements where data qubits are measured directly.
+A :math:`X_L \otimes X_L` measurement work analogously, but we stitch the two surface code patches along their :math:`X` edges (see our :doc:`lattice surgery demo <demos/tutorial_lattice_surgery>` for more details).
 
 .. figure:: ../_static/demonstration_assets/surface_code/lattice_surgery.png
     :align: center
