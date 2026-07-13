@@ -384,7 +384,7 @@ import pennylane as qp
 dev = qp.device("default.tensor", method="tn", contraction_optimizer="auto-hq")
 
 ##############################################################################
-# The different types of values accepted for ``contraction_optimizer`` are determined by the ``optimize`` parameter in ``Quimb`` (see `docs <https://quimb.readthedocs.io/en/latest/tensor-circuit.html#finding-a-contraction-path-the-optimize-kwarg>`_) as this is the backend behind the :class:`~pennylane.devices.default_tensor.DefaultTensor` device. See our `simulate quantum circuits with tensor networks demo <https://pennylane.ai/qml/demos/tutorial_How_to_simulate_quantum_circuits_with_tensor_networks/>`_ to learn more about the use of this device in ``Pennylane``.
+# The different types of values accepted for ``contraction_optimizer`` are determined by the ``optimize`` parameter in ``Quimb`` (see `docs <https://quimb.readthedocs.io/en/latest/tensor-circuit.html#finding-a-contraction-path-the-optimize-kwarg>`_) as this is the backend behind the :class:`~pennylane.devices.default_tensor.DefaultTensor` device. See our :doc:`simulate quantum circuits with tensor networks demo <demos/tutorial_How_to_simulate_quantum_circuits_with_tensor_networks>` to learn more about the use of this device in ``Pennylane``.
 # 
 # Slicing
 # ^^^^^^^

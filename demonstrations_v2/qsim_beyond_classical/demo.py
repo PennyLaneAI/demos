@@ -51,7 +51,7 @@ simulations.
 
 .. note::
 
-    We will be using PennyLane along with the aformentioned
+    We will be using PennyLane along with the aforementioned
     ``qsim`` simulator running via our `PennyLane-Cirq plugin
     <https://pennylane-cirq.readthedocs.io/en/latest/>`__. To use the ``qsim``
     device you also need to install ``qsimcirq``, which is the Python module
@@ -82,7 +82,7 @@ import numpy as np
 # this demo without having access to a supercomputer!
 #
 # We define the 12 qubits in a rectangular grid, setting the coordinates for
-# each qubit following the paper's suplementary dataset [#Martinis2020]_. We also create
+# each qubit following the paper's supplementary dataset [#Martinis2020]_. We also create
 # a mapping between the wire number and the Cirq qubit to more easily reference
 # specific qubits later. Feel free to play around with different grids and
 # number of qubits. Just keep in mind that the grid needs to stay
@@ -389,7 +389,7 @@ def fidelity_xeb(samples, probs):
 # possible bitstrings. It is then possible to sample from exactly the same
 # circuit by using the same seed. Before calculating the cross-entropy
 # benchmarking fidelity, the Pauli-Z samples need to be converted into
-# their correponding bitstrings, since we need the samples to be in the
+# their corresponding bitstrings, since we need the samples to be in the
 # computational basis.
 #
 # .. note::
@@ -541,7 +541,7 @@ print("\rObserved:", f"{np.mean(f_circuit):.7f}".rjust(27))
 # .. note::
 #
 #     For more reading on this, the original paper [#Arute2019]_ is highly
-#     recommended (along with the suplementary information [#Arute2019sup]_ if you want
+#     recommended (along with the supplementary information [#Arute2019sup]_ if you want
 #     to dive deeper into the math and physics of the experiment). The blog
 #     post in [#Sohaib2019]_, along with the accompanying GitHub repo, also provides
 #     a nice introduction to the cross-entropy benchmarking fidelity, and

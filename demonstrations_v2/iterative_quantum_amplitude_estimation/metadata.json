@@ -1,0 +1,79 @@
+{
+  "title": "Iterative Quantum Amplitude Estimation",
+  "authors": [
+    {
+      "username": "emgem"
+    }
+  ],
+  "executable_stable": true,
+  "executable_latest": true,
+  "dateOfPublication": "2026-07-07T00:00:00+00:00",
+  "dateOfLastModification": "2026-07-07T00:00:00+00:00",
+  "categories": ["Algorithms", "Quantum Computing"],
+  "tags": [],
+   "previewImages": [
+    {
+      "type": "thumbnail",
+      "uri": "/_static/demo_thumbnails/regular_demo_thumbnails/pennylane-demo-iterative-quantum-amplitude-estimation-thumbnail.png"
+    },
+    {
+      "type": "large_thumbnail",
+      "uri": "/_static/demo_thumbnails/large_demo_thumbnails/pennylane-demo-iterative-quantum-amplitude-estimation-large-thumbnail.png"
+    }
+  ],
+  "seoDescription": "Quantum computers are uniquely poised to carry out highly efficient search and estimation algorithms. Iterative quantum amplitude estimation is one such example, in which quantum-classical hybrid methods are used to estimate the probability of a certain state being measured in a data set. This demo explores the methodology and implementation of this method in PennyLane",
+  "doi": "",
+  "references": [
+     {
+            "id": "Grinko2021",
+            "type": "article",
+            "title": "Iterative Quantum Amplitude Estimation",
+            "authors": "Grinko, Gacon, Zoufal, and Woerner",
+            "year": "2021",
+            "journal": "npj Quantum Information",
+            "doi": "10.1038/s41534-021-00379-1",
+            "url": "https://doi.org/10.1038/s41534-021-00379-1"
+        },
+     {
+            "id": "Brassard2000",
+            "type": "article",
+            "title": "Quantum Amplitude Amplification and Estimation",
+            "authors": "Brassard, Høyer, Mosca, and Tapp",
+            "year": "2002",
+            "journal": "Contemporary Mathematics",
+            "doi": "10.1090/conm/305/05215",
+            "url": "https://doi.org/10.1090/conm/305/05215"
+        },
+    {
+            "id": "Fukuzawa2023",
+            "type": "article",
+            "title": "Modified Iterative Quantum Amplitude Estimation is Asymptotically Optimal",
+            "authors": "Fukuzawa, Ho, Irani, and Zion",
+            "year": "2023",
+            "journal": "Symposium on Algorithm Engineering and Experiments",
+            "doi": "10.1137/1.9781611977561.ch12",
+            "url": "https://doi.org/10.1137/1.9781611977561.ch12"
+        }
+  ],
+  "basedOnPapers": [
+    "1912.05559"
+  ],
+  "referencedByPapers": [],
+  "relatedContent": [
+    {
+      "type":"demonstration",
+      "id": "tutorial_qpe",
+      "weight": 1.0
+    },
+    {
+      "type": "demonstration",
+      "id": "tutorial_grovers_algorithm",
+      "weight": 1.0
+    },
+    {
+      "type": "demonstration",
+      "id": "tutorial_intro_amplitude_amplification",
+      "weight": 1.0
+    }
+  ]
+}

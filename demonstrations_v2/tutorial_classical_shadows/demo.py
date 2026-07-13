@@ -85,7 +85,7 @@ observables.
 #      ,\ldots, \hat{\rho}_N= \mathcal{M}^{-1}\left(U_N^\dagger |b_N\rangle\langle b_N| U_N \right)
 #      \right\}.
 #
-# The inverted channel is not physical, i.e., it is not completely postive and trace preserving (CPTP).
+# The inverted channel is not physical, i.e., it is not completely positive and trace preserving (CPTP).
 # However, this is of no concern to us, since all we care about is efficiently applying this inverse channel to the
 # observed snapshots as a post-processing step.
 #
@@ -98,7 +98,7 @@ observables.
 # Note that the classical shadow is independent of the observables we want to estimate, as :math:`S(\rho,N)` contains
 # only information about the state!
 #
-# Furthermore, the authors of [#Huang2020]_ prove that with a shadow of size :math:`N,` we can predict :math:`M` arbitary linear functions
+# Furthermore, the authors of [#Huang2020]_ prove that with a shadow of size :math:`N,` we can predict :math:`M` arbitrary linear functions
 # :math:`\text{Tr}{O_1\rho},\ldots,\text{Tr}{O_M \rho}` up to an additive error :math:`\epsilon` if :math:`N\geq \mathcal{O}\left(\log{M} \max_i ||O_i||^2_{\text{shadow}}/\epsilon^2\right).`
 # The shadow norm :math:`||O_i||^2_{\text{shadow}}` depends on the unitary ensemble that is chosen.
 #

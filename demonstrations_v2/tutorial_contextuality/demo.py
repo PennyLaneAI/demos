@@ -592,7 +592,7 @@ def likelihood(weights, X, Y, model):
     The cost function. Returns the negative log likelihood
     """
     expvals = jnp.array(model(weights, X)).T
-    probs = (1 + Y * expvals) / 2  # get the relevant probabilites
+    probs = (1 + Y * expvals) / 2  # get the relevant probabilities
     probs = jnp.log(probs)
     llh = jnp.sum(probs) / len(X) / 3
     return -llh
@@ -620,7 +620,7 @@ probs_test = jnp.array(probs_test)
 
 def kl_div(p, q):
     """
-    Get the KL divergence between two probability distribtuions
+    Get the KL divergence between two probability distributions
     """
     p = jnp.vstack([p, jnp.ones(len(p)) * 10 ** (-8)])  # lower cutoff of prob values of 10e-8
     p = jnp.max(p, axis=0)

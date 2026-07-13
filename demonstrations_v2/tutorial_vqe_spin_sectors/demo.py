@@ -349,7 +349,7 @@ print("\n" f"Final value of the energy = {energy:.8f} Ha")
 print("\n" f"Optimal value of the circuit parameters = {params}")
 
 ##############################################################################
-# As expected, the VQE algorithms has found the lowest-energy state with total spin
+# As expected, the VQE algorithm has found the lowest-energy state with total spin
 # :math:`S=1` which is an excited state of the hydrogen molecule.
 #
 # Conclusion
