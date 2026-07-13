@@ -12,7 +12,7 @@ As it stands, quantum algorithmic efficiency tends to be quantified by the numbe
 
 To emphasize the benefit of T gate optimization, let us take the example of time evolution simulation on a computational grid. Here, a wavefunction discretized to :math:`N=2^n` grid points, where :math:`n` is the number of qubits required to represent the dimensions of the grid, can be effectively evolved in time via the application of a `multiplexed rotation <https://docs.pennylane.ai/en/stable/code/api/pennylane.SelectPauliRot.html>`_, which can be interpreted as a mesh of controlled rotations that apply position-dependent phases to all members of a given state. In the naïve approach, where each point on the grid is treated independently and receives an isolated, individual rotation, the system's gate count will scale as :math:`\mathcal{O}(2^n\log_2(1/\epsilon))`, where :math:`\epsilon` is the desired precision. Yikes.
 
-A quick resource estimation for a single pass of this procedure can be carried out using PennyLane and the `estimator tool <https://docs.pennylane.ai/en/stable/code/api/pennylane.estimator.estimate.estimate.html>`_. Note that, for an :math:`n`-qubit system, :func:`~qp.SelectPauliRot` (a PennyLane operator that represents the aforementioned multiplexed operation) will apply a total of :math:`R=2^n` rotations to address each possible state. Thus, for a 3-qubit system, 8 rotations will be applied in a single pass. The T count estimate here is made using the method outlined in [#Mottonen2005]_ for gate synthesis, which is the default approach taken by PennyLane's estimation function.
+A quick resource estimation for a single pass of this procedure can be carried out using PennyLane and the `estimator tool <https://docs.pennylane.ai/en/stable/code/api/pennylane.estimator.estimate.estimate.html>`_. Note that, for an :math:`n`-qubit system, :func:`~pennylane.SelectPauliRot` (a PennyLane operator that represents the aforementioned multiplexed operation) will apply a total of :math:`R=2^n` rotations to address each possible state. Thus, for a 3-qubit system, 8 rotations will be applied in a single pass. The T count estimate here is made using the method outlined in [#Mottonen2005]_ for gate synthesis, which is the default approach taken by PennyLane's estimation function.
 
 """
 import pennylane as qp
@@ -56,9 +56,10 @@ print(qre.estimate(circuit_baseline)())
 #
 # Here, :math:`b=\log_2(1/\epsilon)` is the total number of qubits stored in the phase gradient register, :math:`B=2^b` is the total number of possible states in the superposition between all qubits in the gradient register, and :math:`j` is the index of a specific qubit within the register.
 #
-# .. figure:: ../demonstrations_v2/efficient_rotations_with_phase_gradient_states/PhaseShiftCircuitDiagram.png
+# .. figure:: ../demonstrations_v2/efficient_rotations_with_phase_gradient_states/pennylane-demo-efficient-rotations-with-phase-gradient-states-PhaseShiftCircuitDiagram.png
 #    :align: center
 #    :width: 900px
+#    :alt: Circuit diagram depicting the gate representation of an arbitrary phase shift gate.
 #
 #    *Equivalent circuits for executing a phase shift, in which the phase shift operator can be replaced with an addition step between a state and the phase gradient register*
 #
@@ -72,9 +73,10 @@ print(qre.estimate(circuit_baseline)())
 #
 # The controlled addition step can basically be interpreted as a "push" invoked by the added state on the phase gradient register. Via quantum addition, the gradient register is shifted by an amount equivalent to the binary weight of each data qubit that is added to it. Since the data state remains "stationary", the two states will be *out of phase* by an amount equivalent to the shift experienced by the register following the addition operation.
 #
-# .. figure:: ../demonstrations_v2/efficient_rotations_with_phase_gradient_states/PhaseKickback.gif
+# .. figure:: ../demonstrations_v2/efficient_rotations_with_phase_gradient_states/pennylane-demo-efficient-rotations-with-phase-gradient-states-PhaseKickback.gif
 #      :align: center
 #      :width: 700px
+#      :alt: An animation depicting phase kickback as a relative phase accumulation between a data register and a phase gradient register.
 #
 #      *The phase gradient register addition process can be imagined as a change in the relative phase between the data register and the phase gradient register. As depicted, a controlled addition between the two registers will result in the positional displacement of the phase gradient state which, in turn, causes the phase difference that can be associated with either state. Even though the gradient register shifts, the states in the data register can "pick up" the relative phase difference*.
 #
@@ -97,11 +99,12 @@ print(qre.estimate(circuit_baseline)())
 #    4. The shift in the gradient register causes the target qubit to accumulate a relative phase via phase kickback.
 #    5. Since position shifts are relative and do not alter structure, the catalytic phase gradient state remains unchanged and can be reused as desired.
 #
-# This structure can be easily extended to the more commonly used multiplexed case that we discussed at the beginning of this demonstration. In this case, we can use a `quantum read only memory (QROM) <https://pennylane.ai/demos/tutorial_intro_qrom>`_ to store each :math:`k` value in parallel in a data register. To carry out the rotation, it is best practice to carry out a semi-out-of-place addition using a :func:`~qp.SemiAdder` to add this data register to the phase gradient register. This reduces the complexity bound to :math:`\mathcal{O}(2^n+\log_2(1/\epsilon))`. This reduction in complexity combined with the catalytic nature of the phase gradient state makes this approach to gate synthesis highly resource efficient.
+# This structure can be easily extended to the more commonly used multiplexed case that we discussed at the beginning of this demonstration. In this case, we can use a `quantum read only memory (QROM) <https://pennylane.ai/demos/tutorial_intro_qrom>`_ to store each :math:`k` value in parallel in a data register. To carry out the rotation, it is best practice to carry out a semi-out-of-place addition using a :func:`~pennylane.SemiAdder` to add this data register to the phase gradient register. This reduces the complexity bound to :math:`\mathcal{O}(2^n+\log_2(1/\epsilon))`. This reduction in complexity combined with the catalytic nature of the phase gradient state makes this approach to gate synthesis highly resource efficient.
 #
-# .. figure:: ../demonstrations_v2/efficient_rotations_with_phase_gradient_states/Multiplexer.png
+# .. figure:: ../demonstrations_v2/efficient_rotations_with_phase_gradient_states/pennylane-demo-efficient-rotations-with-phase-gradient-states-Multiplexer.png
 #    :align: center
 #    :width: 700px
+#    :alt: A circuit diagram depicting multiplexed phase gradient systems.
 #    
 #    *Simple multiplexed phase gradient addition* [#OBrien2025]_.
 #
@@ -137,9 +140,10 @@ print(qre.estimate(circuit_phase_grad)())
 #
 # The scale of these savings becomes increasingly clear as the size of the data register that stores the input state (and, therefore, the size of the system as a whole) increases. The plot below shows how drastically the resource requirements scale in the first case with even a small increase in system size.
 #
-# .. figure:: ../demonstrations_v2/efficient_rotations_with_phase_gradient_states/t_gate_comparison.png
+# .. figure:: ../demonstrations_v2/efficient_rotations_with_phase_gradient_states/pennylane-demo-efficient-rotations-with-phase-gradient-states-t_gate_comparison.png
 #    :align: center
 #    :width: 80%
+#    :alt: A plot of T gate usage in the naive approach versus the phase gradient approach.
 # 
 # Though the phase gradient approach requires an investment of resources to prepare the gradient register, the additive, multiplexed nature of the rotation procedure results in a very slow accumulation of resources, as elaborated below. It is, of course, important to acknowledge that the implementation of the phase gradient state requires additional qubits to be added to the system. Though this contributes to resource cost, the comparative cost of generating a usable T gate still outweighs this investment in the long run. Thus, even though this approach requires an upfront investment of resources, it pays off in the long-run as additional per-rotation costs accumulate much more slowly than in alternative methods.
 #
