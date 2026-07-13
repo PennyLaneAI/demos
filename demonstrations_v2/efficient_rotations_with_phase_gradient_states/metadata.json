@@ -10,7 +10,7 @@
   "dateOfPublication": "2026-05-21T00:00:00+00:00",
   "dateOfLastModification": "2026-05-21T00:00:00+00:00",
   "categories": ["Algorithms", "Quantum Computing"],
-  "tags": [],
+  "tags": ["Algorithms", "Rotations", "Gate Decomposition", "Fault Tolerance", "Resource Estimation"],
   "previewImages": [
     {
       "type": "thumbnail",
