@@ -153,41 +153,6 @@ Together with the :math:`8` arches we get :math:`k = 25 - 16 - 8 = 1`.
 The arches are also important for coverage of all possible errors. 
 E.g., if a :math:`X` error occurred on the top left data qubit, only the top left :math:`Z` arch would catch it.
 
-Quantum computation via lattice surgery
----------------------------------------
-
-There are different variants of how to perform quantum computation with the surface code.
-Braiding is an older approach [#braiding]_, but most modern approaches use
-:doc:`lattice surgery <demos/tutorial_lattice_surgery>` [#Fowler]_ [#latticesurgery]_.
-The concept is relatively simple: To measure :math:`Z_L \otimes Z_L` between two surface code qubits, 
-simply connect them via their :math:`Z` edge (lattice merging), 
-perform :math:`d` rounds of measuring all stabilizers, including the intermediary ones, and finally destructively measure in between the two patches to split them again (lattice splitting).
-The logical :math:`Z_L \otimes Z_L` measurement is indirectly determined via the product of the stabilizers that have been measured during the 
-intermediate rounds of error correction. Note that this is different from terminal measurements where data qubits are measured directly.
-
-.. figure:: ../_static/demonstration_assets/surface_code/lattice_surgery.png
-    :align: center
-    :width: 50%
-    :target: javascript:void(0)
-
-This is important because most modern surface code constructions are targeting 
-`Pauli based computation <https://pennylane.ai/compilation/pauli-based-computation>`__, where all
-logical operations can be reduced to such Pauli product measurements.
-
-In fact, in :doc:`the Game of Surface Codes <demos/tutorial_game_of_surface_codes>` [#Litinski]_, a popular framework for thinking about
-fault tolerant quantum computers, we forget about everything but the :math:`X` and :math:`Z` edges of our qubit patches.
-This results in rectangular boxes with solid (:math:`Z`) and dotted (:math:`X`) edges. 
-The same :math:`Z_L \otimes Z_L` measurement from above can be portrayed as
-
-.. figure:: ../_static/demonstration_assets/surface_code/gosc.png
-    :align: center
-    :width: 50%
-    :target: javascript:void(0)
-
-This diagram simply says, we measure qubits :math:`|q_1\rangle` and :math:`|q_2\rangle` 
-along their :math:`Z` edges via an intermediate auxiliary qubit region, indicated by the blue connection.
-So overall, this is just the joint measurement of :math:`Z_{q_1} \otimes Z_{q_2}` via their :math:`Z` edges.
-
 
 Error detection and correction
 ------------------------------
@@ -257,6 +222,40 @@ Instead, one can track all detected errors based on their syndromes and then mul
 them retrospectively with the final measurement results at the end of the computation.
 This reduces the runtime of the quantum computation as it avoids additional physical computations.
 
+Quantum computation via lattice surgery
+---------------------------------------
+
+There are different variants of how to perform quantum computation with the surface code.
+Braiding is an older approach [#braiding]_, but most modern approaches use
+:doc:`lattice surgery <demos/tutorial_lattice_surgery>` [#Fowler]_ [#latticesurgery]_.
+The concept is relatively simple: To measure :math:`Z_L \otimes Z_L` between two surface code qubits, 
+simply connect them via their :math:`Z` edge (lattice merging), 
+perform :math:`d` rounds of measuring all stabilizers, including the intermediary ones, and finally destructively measure in between the two patches to split them again (lattice splitting).
+The logical :math:`Z_L \otimes Z_L` measurement is indirectly determined via the product of the stabilizers that have been measured during the 
+intermediate rounds of error correction. Note that this is different from terminal measurements where data qubits are measured directly.
+
+.. figure:: ../_static/demonstration_assets/surface_code/lattice_surgery.png
+    :align: center
+    :width: 50%
+    :target: javascript:void(0)
+
+This is important because most modern surface code constructions are targeting 
+`Pauli based computation <https://pennylane.ai/compilation/pauli-based-computation>`__, where all
+logical operations can be reduced to such Pauli product measurements.
+
+In fact, in :doc:`the Game of Surface Codes <demos/tutorial_game_of_surface_codes>` [#Litinski]_, a popular framework for thinking about
+fault tolerant quantum computers, we forget about everything but the :math:`X` and :math:`Z` edges of our qubit patches.
+This results in rectangular boxes with solid (:math:`Z`) and dotted (:math:`X`) edges. 
+The same :math:`Z_L \otimes Z_L` measurement from above can be portrayed as
+
+.. figure:: ../_static/demonstration_assets/surface_code/gosc.png
+    :align: center
+    :width: 50%
+    :target: javascript:void(0)
+
+This diagram simply says, we measure qubits :math:`|q_1\rangle` and :math:`|q_2\rangle` 
+along their :math:`Z` edges via an intermediate auxiliary qubit region, indicated by the blue connection.
+So overall, this is just the joint measurement of :math:`Z_{q_1} \otimes Z_{q_2}` via their :math:`Z` edges.
 
 """
 
@@ -267,7 +266,7 @@ This reduces the runtime of the quantum computation as it avoids additional phys
 # Conclusion
 # ----------
 #
-# In this demo, we have learned about the basics of modern rotated surface codes from qubit definitions and stabilizers to logical operators, computation, and error decoding.
+# In this demo, we have learned about the basics of modern rotated surface codes from qubit definitions and stabilizers to logical operators, error decoding, and computation.
 # Most modern quantum error correction codes such as :doc:`qLDPC codes <demos/tutorial_qldpc_codes>` work under the same principles, so you should be well-prepared
 # for continuing your QEC journey down this path.
 # 
