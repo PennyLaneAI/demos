@@ -3,13 +3,13 @@ r"""
 Introducing the Surface Code
 ============================
 
-The surface code is the gold standard when it comes to quantum error correction (QEC).
+The surface code is the gold standard when it comes to `quantum error correction (QEC) <https://pennylane.ai/codebook/quantum-error-correction>`__.
 Its popularity stems from the fact that it provides a high circuit-level error threshold (around 1%) and requires only local connectivity, 
-making it amenable to hardware with 2D nearest-neighbor connectivity, such as superconducting qubits.
-Beyond it being a fully-functioning QEC code, it serves as a great introduction to the world of fault-tolerant quantum computing (FTQC),
+making it amenable to hardware with 2D nearest-neighbor connectivity, such as :doc:`superconducting qubits <demos/tutorial_sc_qubits>`.
+Beyond it being a fully-functioning QEC code, it serves as a great introduction to the world of `fault-tolerant quantum computing (FTQC) <https://pennylane.ai/topics/fault-tolerant-quantum-computing>`__,
 because its working principles are ubiquitous in most modern QEC codes such as :doc:`qLDPC codes <demos/tutorial_qldpc_codes>` that break the locality requirement.
 A lot has happened since its early inception in the 90s, so we are going to give a modern 2026 overview of its components in this demo.
-In particular, we are going to learn about stabilizers, logical operators, Pauli based computation via lattice surgery,
+In particular, we are going to learn about :doc:`stabilizers <demos/tutorial_stabilizer_codes>`, logical operators, `Pauli based computation <https://pennylane.ai/compilation/pauli-based-computation>`__ via :doc:`lattice surgery <demos/tutorial_lattice_surgery>`,
 and error detection & correction --- all of which are also relevant in more general :doc:`qLDPC codes <demos/tutorial_qldpc_codes>`.
 
 .. figure:: _static/demo_thumbnails/large_demo_thumbnails/pennylane-demo-surface-code-large-thumbnail.png
@@ -39,7 +39,7 @@ the quantum information of a :math:`d \times d` surface code patch that makes up
     
 We additionally have so-called syndrome qubits (in light gray) that sit in the middle of the squares or keystones of the arches. 
 These syndrome qubits are used to continuously perform measurements on the surrounding data qubits in a non-destructive way.
-These operators being measured are called stabilizers and make up the backbone of almost all modern QEC codes.
+These operators being measured are called :doc:`stabilizers <demos/tutorial_stabilizer_codes>` and make up the backbone of almost all modern QEC codes.
 In the rotated surface code, they are alternating squares with a product of four :math:`X` or :math:`Z` operators.
 Additionally, there are weight-2 :math:`X` and :math:`Z` arches on the edges (more on that later).
 These suffice to detect a string of :math:`d-1` :math:`X`, :math:`Y`, or :math:`Z` errors.
@@ -58,7 +58,7 @@ measuring that (see also `Fig. 1 <https://arxiv.org/abs/1208.0928>`__ in [#surfa
     :width: 80%
     :target: javascript:void(0)
 
-The measurement result (:math:`\pm 1`) of a stabilizer measurement indicates whether or not an error has occurred.
+The measurement result or $-1$ or $+1$ of a stabilizer measurement indicates whether or not an error has occurred, respectively.
 A :math:`d \times d` surface code qubit is said to have code-distance :math:`d` and can detect up to :math:`d-1` errors,
 and correct up to :math:`\left\lfloor \tfrac{d-1}{2} \right\rfloor`.
 When more errors occur, they may go unnoticed or get corrected in the wrong way, as we will see later.
@@ -102,7 +102,7 @@ That means that the action of any stabilizer :math:`S_i \in \mathcal{S}` on a st
 is equal to the identity, :math:`S_i |\psi\rangle = + 1 |\psi\rangle`.
 
 By continuously measuring all stabilizers we can ensure that the state is not leaving the code space.
-Because the stabilizer measurement itself is prone to error (the CNOT and Hadamard gates in the syndrome extraction circuit above are noisy),
+Because the stabilizer measurement itself is prone to error (the :class:`~.pennylane.CNOT` and :class:`~.pennylane.H` gates in the syndrome extraction circuit above are noisy),
 we typically repeat it :math:`d` times. This allows us to differentiate a true data qubit error, 
 leading to repeated error syndromes in time, and measurement errors, that manifest as singular events in the history of syndrome measurements.
 We call this one *round* of syndrome extraction. If we detect a true data qubit error during the round,
@@ -158,7 +158,7 @@ Quantum computation via lattice surgery
 
 There are different variants of how to perform quantum computation with the surface code.
 Braiding is an older approach [#braiding]_, but most modern approaches use
-:doc:`lattice surgery <demos/tutorial_lattice_surgery>` [#Fowler]_ [#latticesurgery]_.
+:doc:`lattice surgery <demos/tutorial_lattice_surgery>` [#latticesurgery]_ [#Fowler]_ .
 The concept is relatively simple: To measure :math:`Z_L \otimes Z_L` between two surface code qubits, 
 simply connect them via their :math:`Z` edge (lattice merging), 
 perform :math:`d` rounds of measuring all stabilizers, including the intermediary ones, and finally destructively measure in between the two patches to split them again (lattice splitting).
@@ -250,7 +250,7 @@ because a wrong correction will make the total operation (error + correction) a 
 Error correction is continuously performed during computation. 
 Measuring all :math:`\mathcal{O}(d^2)` stabilizers once (and typically in parallel) is called a QEC clock cycle.
 A *logical* clock cycle corresponds to repeating these stabilizer measurements :math:`d` times.
-We typically measure the runtime of a computation in logical clock cycles. Most notably, a Pauli product measurement can be performed in one logical clock cycle.
+We typically measure the runtime of a computation in logical clock cycles. Most notably, a `Pauli product measurement <https://pennylane.ai/compilation/pauli-based-computation>`__ can be performed in one logical clock cycle.
 
 Finally, the actual error *correction* typically happens in software, and no physical correction terms are actively applied.
 Instead, one can track all detected errors based on their syndromes and then multiply 
