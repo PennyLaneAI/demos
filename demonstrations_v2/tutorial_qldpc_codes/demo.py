@@ -20,7 +20,7 @@ the following four properties:
 4. Linear time classical decoding and corresponding error correction.
 
 Unfortunately, these requirements are not all mutually compatible. For example, widely used
-topological codes, such as :doc:`surface codes <demos/surface_code>`, use local, nearest-neighbour connections, but usually
+topological codes, such as :doc:`surface codes <demos/intro_to_surface_code>`, use local, nearest-neighbour connections, but usually
 have poor encoding rates. It remains unclear which combination of these trade-offs will offer
 the best long-term solution. However, because solving real-world problems requires scaling up to
 thousands of logical qubits, moving beyond strict nearest-neighbour constraints has become crucial.
