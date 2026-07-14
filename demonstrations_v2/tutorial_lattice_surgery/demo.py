@@ -15,7 +15,7 @@ enable parity measurements of arbitrary Pauli operators, which unlock universal 
     :width: 50%
     :target: javascript:void(0)
 
-For self-consistency, we are going to briefly recap the basic concepts of the :doc:`rotated surface code <demos/surface_code>` and explain why `Pauli product measurements <https://pennylane.ai/compilation/pauli-based-computation>`__ are sufficient 
+For self-consistency, we are going to briefly recap the basic concepts of the :doc:`rotated surface code <demos/intro_to_surface_code>` and explain why `Pauli product measurements <https://pennylane.ai/compilation/pauli-based-computation>`__ are sufficient 
 for universal computing. We are then going to explain how to perform such 
 `homological measurements <https://arxiv.org/abs/2410.02753>`__ using lattice splitting and merging.
 
