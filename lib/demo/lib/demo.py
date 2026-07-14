@@ -301,8 +301,23 @@ def _build_demo(
             with open(ctx.plc_dev_constraints_file) as f:
                 constraints = json.load(f)
             for package in constraints:
+                if source := package.get("source"):
+                    logger.info("Installing %s from %s", package["name"], source)
+                    install_args = [
+                        *base_install_args,
+                        "--force-reinstall",
+                        "--no-deps",
+                        source,
+                    ]
+                    cmds.pip_install(*install_args, quiet=quiet)
+                    continue
+
                 logger.info("Getting versions for %s", package["name"])
-                package_versions = cmds.pip_get_versions(build_venv.python, package["name"], index_url="https://test.pypi.org/simple/")
+                package_versions = cmds.pip_get_versions(
+                    build_venv.python,
+                    package["name"],
+                    index_url="https://test.pypi.org/simple/",
+                )
                 # These are returned newest to oldest, so we can break when we find the first match
                 for version in package_versions:
                     if Version(version).release == Version(package["version"]).release:
@@ -325,11 +340,16 @@ def _build_demo(
                 )
 
     elif dev:
-        # Need latest version of PennyLane to build, whether or not we're executing
+        # Install the configured PennyLane development source for build-only demos.
+        with open(ctx.plc_dev_constraints_file) as f:
+            constraints = json.load(f)
+        pennylane = next(package for package in constraints if package["name"] == "pennylane")
         cmds.pip_install(
             build_venv.python,
             "--upgrade",
-            "git+https://github.com/PennyLaneAI/pennylane.git#egg=pennylane",
+            pennylane.get(
+                "source", "git+https://github.com/PennyLaneAI/pennylane.git#egg=pennylane"
+            ),
             quiet=quiet,
         )
 

@@ -1,5 +1,9 @@
 [
   {"name": "pennylane-catalyst", "version": "0.16.0"},
   {"name": "pennylane-lightning", "version": "0.46.0"},
-  {"name": "pennylane", "version": "0.46.0"}
+  {
+    "name": "pennylane",
+    "version": "0.46.0",
+    "source": "git+https://github.com/PennyLaneAI/pennylane.git@data-setters-main#egg=pennylane"
+  }
 ]
