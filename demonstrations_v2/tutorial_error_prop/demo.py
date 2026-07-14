@@ -2,6 +2,10 @@ r"""
 How to track algorithmic error using PennyLane
 ==============================================
 
+.. warning::
+    
+    This demo is only compatible with PennyLane v0.45 or below.
+
 In order to accurately determine the resources required to run a given quantum workflow, one must carefully track 
 and propagate the sources of error within the many algorithms that make up the workflow. Furthermore, there are 
 a variety of different errors to keep track of:
@@ -46,6 +50,16 @@ for approx_op, theta in zip(ops, thetas):
     error = SpectralNormError.get_error(exact_op, approx_op)
     print(f"Spectral Norm error (theta = {theta:.2f}): {error:.5f}")
 
+##############################################################################
+# .. rst-class:: sphx-glr-script-out
+#
+#
+#  .. code-block:: none
+#
+#      Spectral Norm error (theta = 1.23): 0.00200
+#      Spectral Norm error (theta = 1.20): 0.01700
+#      Spectral Norm error (theta = 1.00): 0.11693
+
 
 ###############################################################################
 # The error in the operator increases as we round the rotation angle to fewer decimal places as expected.
@@ -75,6 +89,13 @@ approx_op = qp.TrotterProduct(  #  eg: e^iHt ~ e^iXt/2 * e^iYt * e^iXt/2
 error = SpectralNormError.get_error(exact_op, approx_op)  # Expensive to compute
 print(f"Error from Suzuki-Trotter algorithm: {error:.5f}")
 
+##############################################################################
+# .. rst-class:: sphx-glr-script-out
+#
+#
+#  .. code-block:: none
+#
+#      Error from Suzuki-Trotter algorithm: 0.00037
 
 ###############################################################################
 # In general, exactly computing the spectral norm is computationally expensive for larger systems as it requires
@@ -92,6 +113,14 @@ commutator_error_bound = op.error(method="commutator-bound")
 print("one-norm bound:   ", one_norm_error_bound)
 print("commutator bound: ", commutator_error_bound)
 
+##############################################################################
+# .. rst-class:: sphx-glr-script-out
+#
+#
+#  .. code-block:: none
+#
+#      one-norm bound:    SpectralNormError(0.012000000000000004)
+#      commutator bound:  SpectralNormError(0.01066666666666667)
 
 ###############################################################################
 # Custom Error Operations
@@ -117,6 +146,13 @@ op2 = qp.GlobalPhase(np.pi / 8) @ qp.Hadamard(0) @ qp.T(0) @ qp.Hadamard(0)
 
 np.allclose(qp.matrix(op1), qp.matrix(op2))
 
+##############################################################################
+# .. rst-class:: sphx-glr-script-out
+#
+#
+#  .. code-block:: none
+#
+#      True
 
 ###############################################################################
 # We can approximate the :class:`~.pennylane.RX` gate by *rounding* the rotation angle to the lowest multiple
@@ -179,6 +215,17 @@ explicit_comp = SpectralNormError.get_error(true_op, approx_op)
 print("Explicit computation: ", explicit_comp)
 print("Error from function:  ", error_from_theory.error)
 
+##############################################################################
+# .. rst-class:: sphx-glr-script-out
+#
+#
+#  .. code-block:: none
+#
+#      Explicit computation:  0.22184346764856389
+#      Error from function:   0.22184346764856405
+
+
+
 ###############################################################################
 # Bringing it All Together
 # ------------------------
@@ -218,6 +265,20 @@ errors_dict = qp.resource.algo_error(circ)(Hamiltonian, time, phi1, phi2)
 error = errors_dict["SpectralNormError"]
 print("Error:")
 print(error)
+
+##############################################################################
+# .. rst-class:: sphx-glr-script-out
+#
+#
+#  .. code-block:: none
+#
+#      State:
+#      [0.04966733-0.54493335j 0.04966733-0.54493335j 0.04966733-0.44509994j
+#       0.04966733-0.44509994j]
+#      
+#      Error:
+#      SpectralNormError(0.22470860342773674)
+
 
 
 ###############################################################################
