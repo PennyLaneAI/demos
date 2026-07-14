@@ -1,0 +1,39 @@
+{
+    "title": "Molecular Hamiltonian Representations",
+    "authors": [
+        {
+            "username": "soran"
+        }
+    ],
+    "executable_stable": true,
+    "executable_latest": true,
+    "dateOfPublication": "2025-11-05T00:00:00+00:00",
+    "dateOfLastModification": "2025-11-05T15:48:14+00:00",
+    "categories": [
+        "Quantum Chemistry",
+        "Devices and Performance"
+    ],
+    "tags": [],
+    "previewImages": [
+        {
+            "type": "thumbnail",
+            "uri": "/_static/demonstration_assets/external_libs/thumbnail_tutorial_external_libs.png"
+        },
+        {
+            "type": "large_thumbnail",
+            "uri": "/_static/demo_thumbnails/large_demo_thumbnails/thumbnail_large_external_libs.png"
+        }
+    ],
+    "seoDescription": "Learn how to integrate external quantum chemistry libraries with PennyLane.",
+    "doi": "",
+    "references": [],
+    "basedOnPapers": [],
+    "referencedByPapers": [],
+    "relatedContent": [
+        {
+            "type": "demonstration",
+            "id": "tutorial_quantum_chemistry",
+            "weight": 1.0
+        }
+    ]
+}
