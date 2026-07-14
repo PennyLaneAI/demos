@@ -3,7 +3,8 @@ r"""
 Introducing the Surface Code
 ============================
 
-The surface code is the gold standard for deploying `quantum error correction (QEC) <https://pennylane.ai/codebook/quantum-error-correction>`__ on hardwareNot only does it provide a high circuit-level :doc:`error threshold <demos/tutorial_fault_tolerant_threshold>` (around 1%), but it only requires local connectivity, making it amenable to hardware with 2D nearest-neighbor connectivity, such as :doc:`superconducting qubits <demos/tutorial_sc_qubits>`.
+The surface code is the gold standard for deploying `quantum error correction (QEC) <https://pennylane.ai/codebook/quantum-error-correction>`__ on hardware today. 
+Not only does it provide a high circuit-level :doc:`error threshold <demos/tutorial_fault_tolerant_threshold>` (around 1%), but it only requires local connectivity, making it amenable to hardware with 2D nearest-neighbor connectivity, such as :doc:`superconducting qubits <demos/tutorial_sc_qubits>`.
 
 Beyond it being a fully-functioning QEC code, it serves as a great introduction to the world of `fault-tolerant quantum computing (FTQC) <https://pennylane.ai/topics/fault-tolerant-quantum-computing>`__,
 because its working principles are ubiquitous in most modern QEC codes such as :doc:`qLDPC codes <demos/tutorial_qldpc_codes>` that break the locality requirement and are more qubit efficient. 
