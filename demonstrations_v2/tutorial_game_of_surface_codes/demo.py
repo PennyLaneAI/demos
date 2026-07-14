@@ -16,7 +16,7 @@ the nitty-gritty details of surface code physics. In this demo, we will see how 
 Introduction
 ------------
 
-The game of surface codes is a high-level framework for designing surface code quantum computing architectures.
+The game of surface codes is a high-level framework for designing :doc:` surface code <demos/surface_code>` quantum computing architectures.
 The game helps us understand space-time trade-offs, where designs with a higher qubit overhead allow for faster computations and vice versa.
 For example, a space-efficient design might allow a computation with :math:`10^8` T gates to run in :math:`4` hours using :math:`55k` physical qubits, 
 whereas an intermediate design may run the same computation in :math:`22` minutes using :math:`120k` physical qubits, 
