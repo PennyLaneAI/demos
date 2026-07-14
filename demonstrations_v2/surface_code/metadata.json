@@ -55,6 +55,15 @@
             "url": "https://arxiv.org/abs/1208.0928"
         },
         {
+            "id": "tomita",
+            "type": "article",
+            "title": "Low-distance Surface Codes under Realistic Quantum Noise",
+            "authors": "Yu Tomita, Krysta M. Svore",
+            "year": "2014",
+            "journal": "Preprint",
+            "url": "https://arxiv.org/abs/1404.3747"
+        },
+        {
             "id": "braiding",
             "type": "article",
             "title": "Topological fault-tolerance in cluster state quantum computation",
