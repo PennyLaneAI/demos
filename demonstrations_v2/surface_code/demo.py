@@ -53,7 +53,7 @@ These suffice to detect any arbitrary :math:`X`, :math:`Y`, or :math:`Z` error o
 
 These stabilizers on the data qubits are measured indirectly via the syndrome qubits. 
 This is done by entangling the data qubits with the corresponding syndrome qubit and then
-measuring that (see also `Fig. 1 <https://arxiv.org/abs/1208.0928>`__ in [#surfacecode]_). 
+measuring that (see also `Fig. 2 <https://arxiv.org/abs/1404.3747>`__ in [#tomita]_). 
 
 .. figure:: ../_static/demonstration_assets/surface_code/syndrome_measurements.png
     :align: center
@@ -300,6 +300,12 @@ So overall, this is just the joint measurement of :math:`Z_{q_1} \otimes Z_{q_2}
 #     Austin G. Fowler, Matteo Mariantoni, John M. Martinis, Andrew N. Cleland,
 #     "Surface codes: Towards practical large-scale quantum computation",
 #     `arXiv:1208.0928 <https://arxiv.org/abs/1208.0928>`__, 2012
+#
+# .. [#tomita]
+#
+#     Yu Tomita, Krysta M. Svore
+#     "Low-distance Surface Codes under Realistic Quantum Noise",
+#     `arXiv:1404.3747 <https://arxiv.org/abs/1404.3747>`__, 2014
 #
 # .. [#braiding]
 #
