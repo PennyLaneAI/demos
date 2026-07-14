@@ -4,7 +4,7 @@ Introducing the Surface Code
 ============================
 
 The surface code is the gold standard for deploying `quantum error correction (QEC) <https://pennylane.ai/codebook/quantum-error-correction>`__ on hardware today. 
-Not only does it provide a high circuit-level error threshold (around 1%), but it only requires local connectivity, making it amenable to hardware with 2D nearest-neighbor connectivity, such as :doc:`superconducting qubits <demos/tutorial_sc_qubits>`.
+Not only does it provide a high circuit-level :doc:`error threshold <demos/tutorial_ft_threshold>` (around 1%), but it only requires local connectivity, making it amenable to hardware with 2D nearest-neighbor connectivity, such as :doc:`superconducting qubits <demos/tutorial_sc_qubits>`.
 
 Beyond it being a fully-functioning QEC code, it serves as a great introduction to the world of `fault-tolerant quantum computing (FTQC) <https://pennylane.ai/topics/fault-tolerant-quantum-computing>`__,
 because its working principles are ubiquitous in most modern QEC codes such as :doc:`qLDPC codes <demos/tutorial_qldpc_codes>` that break the locality requirement and are more qubit efficient. 
@@ -44,7 +44,7 @@ These syndrome qubits are used to continuously perform measurements on the surro
 These operators being measured are called :doc:`stabilizers <demos/tutorial_stabilizer_codes>` and make up the backbone of almost all modern QEC codes.
 In the rotated surface code, they are alternating squares with a product of four :math:`X` or :math:`Z` operators.
 Additionally, there are weight-2 :math:`X` and :math:`Z` arches on the edges (more on that later).
-These suffice to detect a string of :math:`d-1` :math:`X`, :math:`Y`, or :math:`Z` errors.
+These suffice to detect any arbitrary :math:`X`, :math:`Y`, or :math:`Z` error of weight up to :math:`d-1`.
 
 .. figure:: ../_static/demonstration_assets/surface_code/surface_code_with_stabilizers.png
     :align: center
@@ -70,7 +70,7 @@ we want to stress the difference between the *rotated* surface code (left) to th
 
 .. figure:: ../_static/demonstration_assets/surface_code/rotated.png
     :align: center
-    :width: 80%
+    :width: 95%
     :target: javascript:void(0)
     
 In the central image we see their correspondences. Note that the solid pink lines are merely a guide to the eye and do not represent physical connectivity. 
@@ -93,8 +93,8 @@ are products of four (or two) :math:`Z` or :math:`X` operators arranged in a che
     :target: javascript:void(0)
     
 All these stabilizers commute with each other - that is one of their defining properties. 
-That all stabilizers in the surface code depicted here commute can be seen from the fact that generally two 
-Pauli words commute iff they anticommute on an even number of sites.
+For the surface code layout shown here, you can easily verify this using the rule that two 
+Pauli words commute if and only if they anticommute on an even number of sites.
 Take for example the simplest case, two sites ``[0, 1]``, such that we have :math:`[X_0 X_1, Z_0 Z_1] = 0`.
 
 The measurement outcome of such a stabilizer is binary :math:`\pm 1` and we assume that the underlying quantum state
@@ -105,11 +105,15 @@ is equal to the identity, :math:`S_i |\psi\rangle = + 1 |\psi\rangle`.
 
 By continuously measuring all stabilizers we can ensure that the state is not leaving the code space.
 Because the stabilizer measurement itself is prone to error (the :class:`~.pennylane.CNOT` and :class:`~.pennylane.Hadamard` gates in the syndrome extraction circuit above are noisy),
-we typically repeat it :math:`d` times. This allows us to differentiate a true data qubit error, 
-leading to repeated error syndromes in time, and measurement errors, that manifest as singular events in the history of syndrome measurements.
-We call this one *round* of syndrome extraction. If we detect a true data qubit error during the round,
-we in principle need to perform error correction. As we are going to see later, this is done in software, such that no physical error 
-*correction* operations need to be applied.
+we typically repeat this process, performing :math:`d` rounds of syndrome extraction. 
+A single parallel measurement of all stabilizers is called a *round*. Repeating this 
+measurement :math:`d` times builds a historical timeline that helps us isolate the root cause
+of an error.  A true data qubit error alters the system permanently, leading to a persistent,
+repeated change in the error syndrome over time. In contrast, a measurement error behaves
+like a temporary glitch, manifesting as an isolated, singular event in the syndrome history.
+Once the former is identified across these :math:`d` rounds, the system must account for it
+and correct it. As we will see later, this correction is handled entirely in software,
+bypassing the need to apply error *correction* operations physically.
 
 Overall, these stabilizer measurements allow us to deterministically detect up to :math:`d-1` single-qubit :math:`X`, :math:`Y`, or :math:`Z` errors.
 Larger error strings that are equivalent to logical operators cannot be detected, as we will see in the next section.
@@ -124,10 +128,10 @@ Logical operators :math:`Z_L` or :math:`X_L` need to commute with all stabilizer
 At the same time, they must not be stabilizers (or products thereof) themselves. 
 On top of that, they of course need to satisfy the fundamental anti-commutation relation :math:`X_L Z_L = -Z_L X_L`.
 
-On the rotated surface code, a logical :math:`X_L` operator is a string of Pauli :math:`X` operators on data qubits that connects the two
+On a rotated surface code, these operators form physical chains across the lattice. A logical :math:`X_L` operator is a string of Pauli :math:`X` operators on data qubits that connects the two
 edges with :math:`X` arches (left and right here). And vice versa for a logical :math:`Z_L` operator, as indicated below.
 
-Multiplying a logical operator by a stabilizer does not change the logical state, 
+Multiplying a logical operator by a stabilizer does not change the underlying logical state, 
 so the string on the right hand side is an equivalent logical operator (recall that :math:`Z^2=\mathbb{1}`).
 
 .. figure:: ../_static/demonstration_assets/surface_code/Z_string.png
@@ -189,7 +193,7 @@ Consider the following situation, where two different weight-2 error strings lea
     :width: 80%
     :target: javascript:void(0)
 
-Here, both errors have the same minimum distance, so the choice for an MWPM decoder is ambiguous. Luckily, it does not matter
+Here, both errors have the same weight, so the choice for an MWPM decoder is ambiguous. Luckily, it does not matter
 which error we correct, as they are logically equivalent: they are the same error up to a :math:`Z` stabilizer, in particular the one on the surface between the two defects.
 
 In the following scenario, however, we will run into a real problem.
@@ -215,8 +219,9 @@ And we can only deterministically correct errors up to half the distance,
 because a wrong correction will make the total operation (error + correction) a logical operator that goes unnoticed.
 
 Error correction is continuously performed during computation. 
-Measuring all :math:`\mathcal{O}(d^2)` stabilizers once (and typically in parallel) is called a QEC clock cycle.
-A *logical* clock cycle corresponds to repeating these stabilizer measurements :math:`d` times.
+Measuring all :math:`\mathcal{O}(d^2)` stabilizers once (and typically in parallel) constitutes one round,
+which is often called a QEC clock cycle in hardware.
+A *logical* clock cycle corresponds to repeating these stabilizer measurements :math:`d` times to ensure fault tolerance.
 We typically measure the runtime of a computation in logical clock cycles. Most notably, a `Pauli product measurement <https://pennylane.ai/compilation/pauli-based-computation>`__ can be performed in one logical clock cycle.
 
 Finally, the actual error *correction* typically happens in software, and no physical correction terms are actively applied.
@@ -233,9 +238,9 @@ Braiding is an older approach [#braiding]_, but most modern approaches use
 The concept is relatively simple: To measure :math:`Z_L \otimes Z_L` between two surface code qubits, 
 simply connect them via their :math:`Z` edge (lattice merging), 
 perform :math:`d` rounds of measuring all stabilizers, including the intermediary ones, and finally destructively measure in between the two patches to split them again (lattice splitting).
-The logical :math:`Z_L \otimes Z_L` measurement is indirectly determined via the product of the stabilizers that have been measured during the 
-intermediate rounds of error correction. Note that this is different from terminal measurements where data qubits are measured directly.
-A :math:`X_L \otimes X_L` measurement work analogously, but we stitch the two surface code patches along their :math:`X` edges (see our :doc:`lattice surgery demo <demos/tutorial_lattice_surgery>` for more details).
+The logical :math:`Z_L \otimes Z_L` measurement is indirectly determined via the product of the intermediate boundary stabilizers measured
+during those rounds of error correction. Note that this is different from terminal measurements where data qubits are measured directly.
+A :math:`X_L \otimes X_L` measurement works analogously, but we stitch the two surface code patches along their :math:`X` edges (see our :doc:`lattice surgery demo <demos/tutorial_lattice_surgery>` for more details).
 
 .. figure:: ../_static/demonstration_assets/surface_code/lattice_surgery.png
     :align: center
