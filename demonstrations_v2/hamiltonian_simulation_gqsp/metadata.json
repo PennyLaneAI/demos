@@ -1,5 +1,5 @@
 {
-  "title": "How to do Hamiltonian Simulation with Generalized Quantum Signal Processing",
+  "title": "How to do Hamiltonian Simulation with GQSP in PennyLane",
   "authors": [
     {
       "username": "IpsiXboiI"
@@ -11,6 +11,7 @@
   "dateOfLastModification": "2026-06-17T00:00:00+00:00",
   "categories": [
     "Algorithms",
+    "How-to",
     "Quantum Computing"
   ],
   "tags": [
@@ -25,7 +26,7 @@
       "uri": "/_static/demo_thumbnails/regular_demo_thumbnails/thumbnail_placeholder.png"
     }
   ],
-  "seoDescription": "Simulate exp(-iHt) by block-encoding H as a qubitization walk and applying a single Jacobi-Anger polynomial of that walk with qml.GQSP, then verify against scipy.linalg.expm.",
+  "seoDescription": "Learn how to simulate exp(-iHt) by block-encoding H as a qubitization walk and applying a single Jacobi-Anger polynomial of that walk with qp.GQSP, then verify against scipy.linalg.expm.",
   "doi": "",
   "references": [
     {

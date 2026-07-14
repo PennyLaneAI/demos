@@ -1,11 +1,16 @@
 r"""
-How to do Hamiltonian Simulation with Generalized Quantum Signal Processing
-===========================================================================
+How to do Hamiltonian Simulation with GQSP in PennyLane
+=======================================================
 
 Generalized Quantum Signal Processing (GQSP), introduced by Motlagh and Wiebe [#motlagh]_,
 applies an arbitrary complex polynomial :math:`P` of a unitary :math:`U` using a single extra
 control qubit. Its flagship application is **Hamiltonian simulation**, which is mainly concerned
 with implementing the time-evolution operator :math:`e^{-iHt}`.
+
+This demo assumes familiarity with block encoding, qubitization, and quantum signal processing
+(QSP). If any of these are new, the :doc:`introduction to qubitization <demos/tutorial_qubitization>`
+[#qubitization]_ and :doc:`QSVT in practice <demos/tutorial_apply_qsvt>` [#qsvt]_ demos are good
+starting points.
 
 Hamiltonian simulation is the original motivation for quantum signal processing, and GQSP is a
 modern variant of it. For GQSP, a single ancilla qubit and one complex polynomial of the
@@ -25,7 +30,7 @@ By the end of this demo, you will be able to carry out a
 :doc:`qubitization <demos/tutorial_qubitization>` [#qubitization]_ walk for a Pauli Hamiltonian,
 derive the GQSP polynomial for :math:`e^{-iHt}` from the Jacobi-Anger expansion, run
 :func:`~qp.GQSP` and recover the evolution, and confirm that the error converges with the
-polynomial degree. The three pieces are:
+truncation order. The three pieces are:
 
 1. **Block-encode** :math:`H` as a qubitization walk operator :math:`W` whose eigenvalues are
 
@@ -275,24 +280,25 @@ plt.show()
 # -------------------------
 #
 # Running :func:`~qp.GQSP` on the qubitization walk reproduced :math:`e^{-iHt}` to within
-# :math:`\sim 10^{-8}` at polynomial degree :math:`K=8`, matching ``scipy.linalg.expm`` to
-# machine precision. Because of the fast Bessel decay seen in the convergence plot, useful
-# accuracy needs only :math:`K = \mathcal{O}(\lambda t + \log(1/\varepsilon))` queries of the
-# walk.
+# :math:`\sim 10^{-8}` at truncation order :math:`K=8` (a polynomial of degree :math:`2K=16`),
+# matching ``scipy.linalg.expm`` to machine precision. Because of the fast Bessel decay seen in the
+# convergence plot, useful accuracy needs only :math:`K = \mathcal{O}(\lambda t + \log(1/\varepsilon))`,
+# i.e. :math:`\mathcal{O}(\lambda t + \log(1/\varepsilon))` applications of the walk.
 #
 # There are two practical things to keep in mind:
 #
 # - **One control qubit, one polynomial.** GQSP needs a single ancilla and a single complex
 #   polynomial, applied directly rather than as separate real and imaginary parts, which is what
 #   makes its angle synthesis simpler and more stable than ordinary QSP for this task.
-# - **Where the cost lives.** The accuracy knob is the degree :math:`K`, and we can interpret each
-#   degree as one application of the walk :math:`W`. This correlation causes the circuit depth to
-#   increase quickly with increasing degree. The
+# - **Where the cost lives.** The accuracy knob is the truncation order :math:`K`; the polynomial
+#   GQSP applies has degree :math:`2K`, so the circuit uses :math:`2K` applications of the walk
+#   :math:`W` (plus :math:`K` adjoint-walk applications to undo the :math:`z^{K}` shift). The depth
+#   therefore grows quickly with :math:`K`. The
 #   :doc:`resource-estimation demo <demos/tutorial_estimator_hamiltonian_simulation_gqsp>`
 #   [#estimator]_ is a good reference to explore this cost.
 #
 # In practice, this makes GQSP a natural choice when you need an accurate :math:`e^{-iHt}` over a
-# longer evolution time :math:`t`. The super-exponential convergence means the degree :math:`K`
+# longer evolution time :math:`t`. The super-exponential convergence means the order :math:`K`
 # (and hence the number of walk applications) grows only mildly as you tighten the error, so the
 # cost stays close to the :math:`\lambda t` set by the evolution itself. This points to an
 # accuracy-versus-resource trade-off rather than one method dominating: GQSP (and block-encoding
@@ -324,3 +330,8 @@ plt.show()
 # .. [#qubitization] PennyLane demo,
 #     "Introduction to qubitization",
 #     `pennylane.ai <https://pennylane.ai/demos/tutorial_qubitization>`__.
+#
+#
+# .. [#qsvt] PennyLane demo,
+#     "QSVT in practice",
+#     `pennylane.ai <https://pennylane.ai/demos/tutorial_apply_qsvt>`__.
