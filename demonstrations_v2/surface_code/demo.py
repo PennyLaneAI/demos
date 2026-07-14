@@ -182,8 +182,8 @@ know what *actually* has physically happened. The same error syndromes could hav
     :width: 50%
     :target: javascript:void(0)
 
-This scenario is, however, exponentially more unlikely. A common decoding algorithm is minimum-weight perfect matching (MWPM),
-that looks for the shortest (and thus most likely) error string and corrects that. In this scenario, the (by far) most likely
+This scenario is, however, exponentially more unlikely.
+A common decoding algorithm is Minimum-Weight Perfect Matching (MWPM). It pairs up the observed flipped stabilizers by finding the shortest, and therefore most likely, chain of physical errors that could have caused them. In the scenario in the image above, the (by far) most likely
 error string is simply the central :math:`Z` error.
 
 Consider the following situation, where two different weight-2 error strings lead to the same error syndrome.
