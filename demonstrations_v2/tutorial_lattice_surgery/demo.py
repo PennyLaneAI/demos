@@ -142,10 +142,17 @@ state out of the code space (:math:`O_L S |\psi\rangle_L = S O_L |\psi\rangle_L`
 The commutation can be seen from the fact
 that the logical operator only ever overlaps with an even multiple of X or Z operators, and thus commutes with any other stabilizer.
 
-We also note that the logical :math:`Y_L` measurement is a topic on its own. In principle, one could measure :math:`Y_L` by simultaneously measuring the logical
-:math:`X_L` and :math:`Z_L` with a physical :math:`Y` measurement on the intersecting data qubit.
-However, this is not a properly defined logical operator anymore as it does not commute with the stabilizers, and thus moves the qubit out of the code space.
-Measuring (and applying, it's the same really) logical :math:`Y_L` operators is still possible, just a little more complicated as we will show further below.
+We have defined the logical operators :math:`Z_L` and :math:`X_L` as strings of their respective physical counterparts.
+We can perform their terminal (destructive) measurements by simply measuring all qubits in a single-qubit basis. 
+For :math:`Z_L` that corresponds to measuring all data qubits in the :math:`Z` basis.
+In this procedure, we lose the information about the :math:`X` stabilizers but still preserve the information about the :math:`Z` stabilizers, 
+which suffices to perform the measurement fault-tolerantly.
+
+In principle, :math:`Y_L = i X_L Z_L` is a valid logical operator, i.e., the crossing of a logical :math:`X_L` and :math:`Z_L` string. 
+However, we cannot read it out with a simple transversal measurement the way we did for :math:`X_L` and :math:`Z_L`.
+Instead, we use the non-perturbative homological procedure below to construct a 
+fault-tolerant :math:`Y_L` measurement by introducing a twist defect with an auxiliary qubit patch. Logical :math:`Y_L` measurements 
+in the rotated surface code are a topic on their own and we dedicate a special section to it at the end of this demo.
 
 Arbitrary Pauli product measurements via lattice merging and splitting
 ----------------------------------------------------------------------
