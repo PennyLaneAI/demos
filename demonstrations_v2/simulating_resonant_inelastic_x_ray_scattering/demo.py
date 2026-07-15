@@ -456,9 +456,9 @@ def AngleFinder(Gamma, lamb, E_0, omega_I):
 # 4. Carry out a controlled X operation that will flag if the block encoding is
 #    successful.
 #
-# .. figure::
-#    ../demonstrations_v2/pennylane-demo-simulating-resonant-inelastic-xray-scattering-BlockEncodingCircuit
-#    :align: center :width: 700px :alt: An circuit diagram illustration
+# .. figure:: ../demonstrations_v2/pennylane-demo-simulating-resonant-inelastic-xray-scattering-BlockEncodingCircuit
+#    :align: center :width: 700px 
+#    :alt: An circuit diagram illustration
 #    depicting the block encoding operator for the RIXS state.
 # 
 # While the source paper suggest the use of a :doc:`quantum read only memory
