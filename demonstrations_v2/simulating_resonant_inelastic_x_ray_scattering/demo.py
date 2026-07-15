@@ -662,14 +662,9 @@ def HighProbRIXSState(probs):
 # forgo them in favour of resource and runtime minimization.
 # 
 
-HighProbBool = FALSE
-
 @qp.qnode(dev)
 def QPEReadout(probs, HighProbBool):
-    if HighProbBool: #GET RID OF IF TK
-        HighProbRIXSState(probs)
-    else:
-        RIXSStateEncodingUnitary(angles)
+    RIXSStateEncodingUnitary(angles)
     
     KaiserWindow = np.kaiser(2**n_omega+1, 2.0)[:-1] #0 corresponds to a rectangular window shape
     KaiserWindowShifted = np.fft.ifftshift(KaiserWindow)
