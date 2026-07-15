@@ -14,7 +14,7 @@
   "previewImages": [
     {
       "type": "thumbnail",
-      "uri": "/_static\\demo_thumbnails\\regular_demo_thumbnails\\thumbnail_placeholder.png"
+      "uri": "/_static/demo_thumbnails/regular_demo_thumbnails/thumbnail_placeholder.png"
     }
   ],
   "seoDescription": "Advanced material discovery and quantum simulation often relies on a strong understanding of molecular structure. Could quantum algorithms be the key to achieving this?",
