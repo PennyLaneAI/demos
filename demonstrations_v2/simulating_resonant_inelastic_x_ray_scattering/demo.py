@@ -226,9 +226,16 @@ Hhybrid_up = h*((create(2)*annihilate(4))+(create(4)*annihilate(2)))
 Hhybrid_down = h*((create(3)*annihilate(5))+(create(5)*annihilate(3)))
 
 #Spin term
-Hspin = v*(num_op_v2_up*num_op_v2_down)
+Hspin = V*(num_op_v2_up*num_op_v2_down)
 
 H_raw = qp.jordan_wigner((Hdiag_up+Hdiag_down)+(Hhybrid_up+Hhybrid_down)+Hspin).simplify()
+
+#TK TEMPORARY LOCATION - NEEDS DESCRIPTION
+coeffs, ops = H_raw.terms()
+id_c = sum(c for c, o in zip(coeffs, ops) if len(o.wires) == 0)  
+H_traceless = H_raw - id_c * qp.Identity(0)
+H_sparse = H_traceless.sparse_matrix(wire_order=range(8)).toarray()
+H_evals, H_evecs = np.linalg.eigh(H_sparse)
 ###############################################################################
 # Alright, now we have a goal (simulate a RIXS spectrum), a platform (a quantum
 # computer or, here, PennyLane), and a system. Now we just need our strategy!
@@ -355,6 +362,15 @@ H_raw = qp.jordan_wigner((Hdiag_up+Hdiag_down)+(Hhybrid_up+Hhybrid_down)+Hspin).
 # independent. Thus, we can define the base of our dipole operator as only the
 # excitation terms (i.e., ignoring the conjugate terms).
 #
+
+#TK TEMPORARY LOCATION 
+Gamma = 0.99*s
+lamb = float(np.sum(np.abs(H_traceless.terms()[0])))
+E_0 = H_evals[0]
+omega_I = 6.10*s
+z = np.linspace(-1, 1, 1000)
+K_G = 100
+
 #Define dipole matrix elements
 d_c1 = 1
 d_c2 = 1
@@ -678,6 +694,16 @@ def QPEReadout(probs, HighProbBool):
 # desired precision. The system register should be twice the size of the
 # molecular system, which, in this case, is 4 (two core orbitals plus two
 # valence orbitals).
+
+eps_omega = 1
+eps_QAE = 0.3
+
+N_eps_omega = np.ceil((np.pi*lamb)/(np.sqrt(2)*eps_omega))
+n_omega = 7
+
+Na = 4 #core plus two valence
+Ne = 6
+nQAE = np.ceil(np.log2(1/eps_QAE))
 
 registers = {
     "GQSP": 1,
