@@ -7,6 +7,7 @@ Modeling the toric code on a quantum computer
     :property="og:description": Investigation of the toric code degenerate ground state and anyon excitations
     :property="og:image": https://pennylane.ai/qml/_static/demonstration_assets/types_of_loops.png
 
+.. note:: If you are looking for a demo on the :doc:`rotated surface code <demos/intro_to_surface_code>`, please follow the link.
 
 Introduction
 ------------
