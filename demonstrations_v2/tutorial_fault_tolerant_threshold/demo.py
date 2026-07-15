@@ -23,7 +23,7 @@ logical error rate.
 
 In this demo, we will learn the theoretical framework of the fault-tolerant threshold
 theorem and observe this phenomenon in action. We will construct a QEC scheme called the
-:doc:`rotated surface code <demos/surface_code>`, and subject it to simulated quantum noise across a range of physical
+:doc:`rotated surface code <demos/intro_to_surface_code>`, and subject it to simulated quantum noise across a range of physical
 error rates, computing two key metrics: (i) the pseudo-threshold (:math:`p_{pseudo}`), which
 is the break-even point where a specific error-correcting code becomes better than doing
 nothing at all, and (ii) the fault-tolerant threshold (:math:`p_{th}`), the fundamental
