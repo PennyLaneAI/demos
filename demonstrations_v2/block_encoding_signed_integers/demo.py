@@ -20,7 +20,7 @@ If we apply $U_p Z_\Pi U_p Z_\Pi$, then we have encoded the second-order Chebysh
 Since the identity commutes with the Hamiltonian, it does not influence the dynamics, and given the leading factor of $2$, we can block encode the mass coefficients with a factor of ½ in our prep circuit, thus reducing the overall 1-norm by half. 
 Given the 1-norm is usually very large (a bottle neck for :doc:`qubitization <demos/tutorial_qubitization` simulation), this block encoding method trick is a significant improvement with almost negligible additional circuit depth. 
 
-This demo will show how to block encode a register of signed integers by the technique elucidated by Pocrnic et al. [pocrnic]_. 
+This demo will show how to block encode a register of signed integers by the technique elucidated by Pocrnic et al. [#pocrnic]_. 
 While the proof may be found in the `paper <https://arxiv.org/abs/2602.11272>`__, this demo details the action of each part of 
 the PREP and SEL operators, provides a working circuit, and details how :doc:`PennyLane can estimate the resources <demos/re_how_to_use_pennylane_for_resource_estimation>` of this block encoding. 
 
