@@ -29,11 +29,11 @@ that can help in the validation and interpretation of experimental results. This
 is precisely the case made by Laoiza et al. in "Quantum algorithm for simulating
 resonant inelastic X-ray scattering of battery materials". Here, the team puts
 forward a quantum algorithm designed to tackle the problem of RIXS simulation
-using a novel combination of :docs:`generalized quantum signal processing (GQSP)
-<demos/tutorial_estimator_hamiltonian_simulation>`, :docs:`amplitude
-amplification <demos/tutorial_intro_amplitude_amplification>`, :docs:`quantum
+using a novel combination of :doc:`generalized quantum signal processing (GQSP)
+<demos/tutorial_estimator_hamiltonian_simulation>`, :doc:`amplitude
+amplification <demos/tutorial_intro_amplitude_amplification>`, :doc:`quantum
 amplitude estimation (QAE) <demos/iterative_quantum_amplitude_estimation>`, and
-:docs:`quantum phase estimation (QPE) <demos/tutorial_qpe>`. 
+:doc:`quantum phase estimation (QPE) <demos/tutorial_qpe>`. 
 
 Today, our goal will be to understand how these quantum building blocks work
 together to make way for reliable RIXS simulation and begin to open the door for
@@ -119,7 +119,7 @@ The Hamiltonian
 .. admonition:: A note on Fermionic operators
    :class: note
 
-   When describing molecular systems it is, conventional to use :docs:`Fermionic
+   When describing molecular systems it is, conventional to use :doc:`Fermionic
    operators <demos/tutorial_fermionic_operators>` to describe the behaviour of
    the identical particles that make up the system. In general, the operators of
    concern are:
@@ -273,10 +273,10 @@ H_evals, H_evecs = np.linalg.eigh(H_sparse)
 #    as a result of the incident photon excitation, d. Prepare a block encoding
 #    :math:`\hat{\mathcal{U}}` of the operator proportional to
 #    :math:`\hat{D}_{\epsilon_S}^\dagger \hat{G}(\omega_I, \Gamma)
-#    \hat{D}_{\epsilon_I}`, e. Construct a :docs:`Grover operator
+#    \hat{D}_{\epsilon_I}`, e. Construct a :doc:`Grover operator
 #    <demos/tutorial_grovers_algorithm>` using :math:`\hat{\mathcal{U}}` and
 #    carry out amplitude estimation to determine the success probability of the
-#    block encoding step, f. Carry out :docs:`amplitude amplification
+#    block encoding step, f. Carry out :doc:`amplitude amplification
 #    <demos/tutorial_intro_amplitude_amplification` on the successful block
 #    encoded state to boost the success probability,
 # 
@@ -290,7 +290,7 @@ H_evals, H_evecs = np.linalg.eigh(H_sparse)
 # BLISS-THC Decomposition TK DOUBLE COMPRESSED, THC HAMILTONIAN RESOURCE OBJECTS
 # -----------------------
 # In order to carry out subsequent block encoding and minimize resource costs, a
-# system's Hamiltonian may need to be decomposed into a :docs:`linear
+# system's Hamiltonian may need to be decomposed into a :doc:`linear
 # combination of unitaries (LCU) <demos/tutorial_lcu_blockencoding>`. Achieving
 # this LCU allows for the exploitation of symmetries (in other words, the
 # commutation relationships) that exist within the original Hamiltonian for
@@ -347,7 +347,9 @@ H_evals, H_evecs = np.linalg.eigh(H_sparse)
 #
 # We're almost done with the bulk of the definitions, I promise!
 #
-# The Dipole Operator ................... Laoiza et al. define the dipole
+# The Dipole Operator 
+# ...................
+# Laoiza et al. define the dipole
 # operator as:
 # 
 # .. math::
@@ -459,7 +461,7 @@ def AngleFinder(Gamma, lamb, E_0, omega_I):
 #    :align: center :width: 700px :alt: An circuit diagram illustration
 #    depicting the block encoding operator for the RIXS state.
 # 
-# While the source paper suggest the use of a :docs:`quantum read only memory
+# While the source paper suggest the use of a :doc:`quantum read only memory
 # (QROM) <demos/tutorial_intro_qrom>` to carry out dipole operator loading, we
 # will simplify this for our toy model by using :class:`~pennylane.BlockEncode`.
 
@@ -622,7 +624,7 @@ def HighProbRIXSState(probs):
 # measurement and readout. The second step of the algorithm we laid out
 # previously is the application of walk-based QPE. To briefly review, this is a
 # strategy in which time evolution is carried out by a "walk operator"
-# constructed from a :docs:`qubitized <demos/tutorial_qubitization>`
+# constructed from a :doc:`qubitized <demos/tutorial_qubitization>`
 # representation of the system's Hamiltonian. This walk operator is composed of
 # two oracle states, the PREPARE oracle (which loads the Hamiltonian
 # coefficients) and the SELECT oracle (which applies non-coefficient, physical
