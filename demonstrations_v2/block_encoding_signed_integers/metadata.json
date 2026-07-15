@@ -154,12 +154,12 @@
     "relatedContent": [
         {
             "type": "demonstration",
-            "id": "tutorial_teleportation",
+            "id": "tutorial_resource_estimation",
             "weight": 1.0
         },
         {
             "type": "demonstration",
-            "id": "tutorial_magic_states",
+            "id": "tutorial_lcu_blockencoding",
             "weight": 1.0
         },
         {

@@ -1,5 +1,5 @@
 r"""Block encoding signed integers
-==========================
+=========================================
 
 Quantum algorithms based on :doc:`block encodings <demos/tutorial_lcu_blockencoding>` serve as a powerhouse for `fault-tolerant quantum computation <https://pennylane.ai/topics/fault-tolerant-quantum-computing>`__. 
 Unified under the framework of the :doc:`QSVT <demos/tutorial_intro_qsvt>`, block encodings enable efficient polynomial transformations of matrices, 
@@ -13,37 +13,37 @@ These functions can be first loaded with QROM, or computed using :doc:`arithmeti
 This is especially useful for :doc:`chemistry simulations in first quantization <demos/tutorial_resource_estimation>`, where our system qubits encode a discrete grid, and store the positions or momenta of the nuclei and electrons. 
 
 In said simulations, one needs an efficient implementation of the kinetic energy operator. 
-Once we have a block encoding of the operation $\ket p \to p \ket p$, we can simply square these block encodings by applying them sequentially to get a block encoding of $p^2$. 
+Once we have a block encoding of the operation :math:`\ket p \to p \ket p`, we can simply square these block encodings by applying them sequentially to get a block encoding of :math:`p^2`. 
 
-However, we can do something more clever by building a walk operator $U_p Z_\Pi$, where $Z_\Pi$ is a reflection about the block encoding subspace (see Ch. 7.1 of `Lin Lin's lecture notes <https://arxiv.org/abs/2201.08309>`__ for more details). 
-If we apply $U_p Z_\Pi U_p Z_\Pi$, then we have encoded the second-order Chebyshev polynomial $T(p) = 2p^2 -\mathbb I$. 
-Since the identity commutes with the Hamiltonian, it does not influence the dynamics, and given the leading factor of $2$, we can block encode the mass coefficients with a factor of ½ in our prep circuit, thus reducing the overall 1-norm by half. 
+However, we can do something more clever by building a walk operator :math:`U_p Z_\Pi`, where :math:`Z_\Pi` is a reflection about the block encoding subspace (see Ch. 7.1 of `Lin Lin's lecture notes <https://arxiv.org/abs/2201.08309>`__ for more details). 
+If we apply :math:`U_p Z_\Pi U_p Z_\Pi`, then we have encoded the second-order Chebyshev polynomial :math:`T(p) = 2p^2 -\mathbb I`. 
+Since the identity commutes with the Hamiltonian, it does not influence the dynamics, and given the leading factor of 2, we can block encode the mass coefficients with a factor of 1/2 in our prep circuit, thus reducing the overall 1-norm by half. 
 Given the 1-norm is usually very large (a bottle neck for :doc:`qubitization <demos/tutorial_qubitization` simulation), this block encoding method trick is a significant improvement with almost negligible additional circuit depth. 
 
 This demo will show how to block encode a register of signed integers by the technique elucidated by Pocrnic et al. [#pocrnic]_. 
 While the proof may be found in the `paper <https://arxiv.org/abs/2602.11272>`__, this demo details the action of each part of 
 the PREP and SEL operators, provides a working circuit, and details how :doc:`PennyLane can estimate the resources <demos/re_how_to_use_pennylane_for_resource_estimation>` of this block encoding. 
 
-Specifically, we shall show how to go from a superposition of integers $a$ in [two’s complement](https://en.wikipedia.org/wiki/Two%27s_complement) form 
-e.g., $\sum_a c_a |a\rangle$, where $c_a$ is a normalisation coefficient, to a block encoding of $a$ such that $\sum_a c_a |a\rangle \rightarrow \frac{1}{2^{n-1}} \sum_a c_a a |a\rangle$, where $n$ is the number of qubits. 
+Specifically, we shall show how to go from a superposition of integers :math:`a` in `two’s complement <https://en.wikipedia.org/wiki/Two%27s_complement>`__ form 
+e.g., :math:`\sum_a c_a |a\rangle`, where :math:`c_a` is a normalisation coefficient, to a block encoding of :math:`a` such that :math:`\sum_a c_a |a\rangle \rightarrow \frac{1}{2^{n-1}} \sum_a c_a a |a\rangle`, where :math:`n` is the number of qubits. 
 
 Signed integers
 ---------------------------------
 
-[Two’s complement](https://en.wikipedia.org/wiki/Two%27s_complement) is the most popular method for encoding signed integers on modern computers, 
-with $n$ bits encoding a signed integer $a \in \{-2^{n-1}, \dots, +2^{n-1}-1 \}.$ The bitstring representation 
-is $a = \bar{a}_{n-1} \dots \bar{a}_0$ where $\bar{a}_j \in \{ 0,1\}.$ Either the leading or the trailing bit 
+`Two's complement <https://en.wikipedia.org/wiki/Two%27s_complement>`__ is the most popular method for encoding signed integers on modern computers, 
+with :math:`n` bits encoding a signed integer :math:`a \in \{-2^{n-1}, \dots, +2^{n-1}-1 \}.` The bitstring representation 
+is :math:`a = \bar{a}_{n-1} \dots \bar{a}_0` where :math:`\bar{a}_j \in \{ 0,1\}.` Either the leading or the trailing bit 
 encodes the sign (depending on the endianness): 0 means a positive number while 1 means a negative number. 
-For example, $a = -3 = 101$ for $n=3$. Quantum binary encoding of $a$, then, is as simple as applying the Pauli $X$ gate 
-on the appropriate qubit iff $\bar{a}_j=1$. However, our goal here is to construct a block encoding of 
-the operation $|a\rangle \rightarrow a | a \rangle$ where $a$ is said integer. Note that, in practice, encoding a set of signed integers is ordinarily the goal, not just a single integer. 
+For example, :math:`a = -3 = 101` for :math:`n=3`. Quantum binary encoding of :math:`a`, then, is as simple as applying the Pauli X gate 
+on the appropriate qubit iff :math:`\bar{a}_j=1`. However, our goal here is to construct a block encoding of 
+the operation :math:`|a\rangle \rightarrow a | a \rangle` where :math:`a` is said integer. Note that, in practice, encoding a set of signed integers is ordinarily the goal, not just a single integer. 
 
 
 Circuit structure
 ---------------------------------
 
 This block encoding circuit consists of two main components: PREP and SEL. 
-In turn, PREP consists of $\mathtt{amp}_n$ to prepare a resource state $|\sqrt{\mathtt{amp}_n}\rangle. 
+In turn, PREP consists of :math:`\mathtt{amp}_n` to prepare a resource state :math:`|\sqrt{\mathtt{amp}_n}\rangle`. 
 This PREP technique had been previously described in a `paper by Su et al. <https://arxiv.org/abs/2105.12767>`__ [#Su]_, 
 but there was no circuit provided for PREP to the best of our knowledge. 
 
@@ -52,11 +52,11 @@ PREP
 
 For this implementation, the following resource state is important for PREP. 
 
-$|\sqrt{\mathtt{amp}_n}\rangle = \frac{1}{2^{(n-1)/2}} \Big[|0\rangle^{n-1}|1\rangle_s + \sum_{b=0}^{n-2} 2^{b/2} |b\rangle |0\rangle_s \Big]$
+:math:`|\sqrt{\mathtt{amp}_n}\rangle = \frac{1}{2^{(n-1)/2}} \Big[|0\rangle^{n-1}|1\rangle_s + \sum_{b=0}^{n-2} 2^{b/2} |b\rangle |0\rangle_s \Big]`
 
-where $b$ denotes a one-hot encoding of integers. That is, $|0\rangle = |0\dots 1\rangle$, $|1\rangle = |0\dots 10\rangle$, and $|n-2\rangle = |10\dots 0\rangle$. The all-zero state is the only state marked by $|1\rangle_s$ which serves as a flag qubit to help us encode the negative sign later. 
+where :math:`b` denotes a one-hot encoding of integers. That is, :math:`|0\rangle = |0\dots 1\rangle:math:`, :math:`|1\rangle = |0\dots 10\rangle`, and :math:`|n-2\rangle = |10\dots 0\rangle`. The all-zero state is the only state marked by :math:`|1\rangle_s` which serves as a flag qubit to help us encode the negative sign later. 
 
-The PREP operator prepares this $|\sqrt{\mathtt{amp}_n}\rangle$ state along with a non-entangled $|h\rangle = |+\rangle$ state to enable destructive interference for amplitudes equalling zero later. 
+The PREP operator prepares this :math:`|\sqrt{\mathtt{amp}_n}\rangle` state along with a non-entangled :math:`|h\rangle = |+\rangle` state to enable destructive interference for amplitudes equalling zero later. 
 
 
 .. _fig-1-PREP-oracle:
@@ -66,10 +66,10 @@ The PREP operator prepares this $|\sqrt{\mathtt{amp}_n}\rangle$ state along with
   :width: 95%
   :align: center
 
-  Figure 1: *PREP oracle is composed of $|\sqrt{\mathtt{amp}_n}\rangle$ above in the above circuit. “$\mathtt{HAD}$” refers to the Hadamard gate.*
+  Figure 1: *PREP oracle is composed of :math:`|\sqrt{\mathtt{amp}_n}\rangle` above in the above circuit. “:math:`\mathtt{HAD}`” refers to the Hadamard gate.*
   
 
-For example, for $n = 3$, $|\sqrt{\mathtt{amp}_n}\rangle = \frac{1}{2}|00\rangle|1\rangle_s + \frac{1}{2} |01\rangle|0\rangle_s + \frac{1}{\sqrt{2}} |10\rangle |0\rangle_s$.
+For example, for :math:`n = 3`, :math:`|\sqrt{\mathtt{amp}_n}\rangle = \frac{1}{2}|00\rangle|1\rangle_s + \frac{1}{2} |01\rangle|0\rangle_s + \frac{1}{\sqrt{2}} |10\rangle |0\rangle_s`.
 
 
 Such a resource state can be prepared by the circuit below: 
@@ -81,28 +81,28 @@ Such a resource state can be prepared by the circuit below:
   :width: 95%
   :align: center
 
-  Figure 2: *Circuit to prepare |$\sqrt{\mathtt{amp}_n}\rangle$*
+  Figure 2: *Circuit to prepare :math:`|\sqrt{\mathtt{amp}_n}\rangle`*
   
 The initial :class:`.~pennylane.Hadamard` gate and subsequent cascade of controlled-Hadamard gates creates a superposition of some computational basis states 
-$|0\dots 0\rangle, |10\dots0\rangle, |110\dots 0\rangle, \dots, |1\dots 1\rangle,$ where the $k^\text{th}$ state has $1/\sqrt{2}$ the amplitude of 
-the $k-1^{\text{th}}$ state for $0\leq k \leq n-2.$
+:math:`|0\dots 0\rangle, |10\dots0\rangle, |110\dots 0\rangle, \dots, |1\dots 1\rangle,` where the :math:`k^\text{th}` state has :math:`1/\sqrt{2}` the amplitude of 
+the :math:`k-1^{\text{th}}` state for :math:`0\leq k \leq n-2.`
 
-For $n=3$, this performs $|000\rangle\rightarrow \Big(\frac{1}{\sqrt{2}}|00\rangle + \frac{1}{2}(|10\rangle + |11\rangle)\Big)|0\rangle.$
+For :math:`n=3`, this performs :math:`|000\rangle\rightarrow \Big(\frac{1}{\sqrt{2}}|00\rangle + \frac{1}{2}(|10\rangle + |11\rangle)\Big)|0\rangle.`
 
-This effectively represents a unary encoding. To obtain the complementary encoding, we must flip the bits with $X$ gates, as seen in :ref:`Figure 2 <fig-2-amp>`. 
-For our example, we have $\Big(\frac{1}{\sqrt{2}}|11\rangle + \frac{1}{2}(|01\rangle + |00\rangle)\Big)|0\rangle.$
+This effectively represents a unary encoding. To obtain the complementary encoding, we must flip the bits with X gates, as seen in :ref:`Figure 2 <fig-2-amp>`. 
+For our example, we have :math:`\Big(\frac{1}{\sqrt{2}}|11\rangle + \frac{1}{2}(|01\rangle + |00\rangle)\Big)|0\rangle.`
 
-The $n^{\text{th}}$ qubit is used to encode the sign. To do so, we entangle the $n-1$ qubit all-zero state with the $n^{\text{th}}$ qubit 
-via an open-controlled CNOT gate. For our $n=3$ example, that is $\frac{1}{\sqrt{2}}|11\rangle|0\rangle_s + \frac{1}{2}|01\rangle|0\rangle_s + \frac{1}{2}|00\rangle|1\rangle_s.$
+The :math:`n^{\text{th}}` qubit is used to encode the sign. To do so, we entangle the :math:`n-1` qubit all-zero state with the :math:`n^{\text{th}}` qubit 
+via an open-controlled CNOT gate. For our :math:`n=3` example, that is :math:`\frac{1}{\sqrt{2}}|11\rangle|0\rangle_s + \frac{1}{2}|01\rangle|0\rangle_s + \frac{1}{2}|00\rangle|1\rangle_s.`
 
 Finally, we want to convert this unary encoding to a one-hot encoding with a rising cascade of CNOTs. 
-This yields the desired state $|\sqrt{\mathtt{amp}_n}\rangle$. For $n=3$, $\frac{1}{\sqrt{2}}|10\rangle|0\rangle_s + \frac{1}{2}|01\rangle|0\rangle_s + \frac{1}{2}|00\rangle|1\rangle_s.$ 
+This yields the desired state :math:`|\sqrt{\mathtt{amp}_n}\rangle`. For :math:`n=3`, :math:`\frac{1}{\sqrt{2}}|10\rangle|0\rangle_s + \frac{1}{2}|01\rangle|0\rangle_s + \frac{1}{2}|00\rangle|1\rangle_s.`
 
-Note that the endianness of this register has now been flipped, ie. $|001\rangle = |0\rangle$, $|1\rangle = |010\rangle$, $|2\rangle = |100\rangle$, etc. 
+Note that the endianness of this register has now been flipped, ie. :math:`|001\rangle = |0\rangle`, :math:`|1\rangle = |010\rangle`, :math:`|2\rangle = |100\rangle`, etc. 
 The all-zero state does not have a meaning in this one-hot encoding. Rather than applying swaps to restore the ordering, 
-it is more gate efficient to just reinterpret the endianness in the SEL circuit, inverting the ordering of operations on $|b\rangle$. 
+it is more gate efficient to just reinterpret the endianness in the SEL circuit, inverting the ordering of operations on :math:`|b\rangle`. 
 
-The code snippet below creates the $|\sqrt{\mathtt{amp}_n}\rangle$ state given $n$ qubits, the $b$ register, and the $s$ qubit. 
+The code snippet below creates the :math:`|\sqrt{\mathtt{amp}_n}\rangle` state given :math:`n` qubits, the :math:`b` register, and the :math:`s` qubit. 
 
 """ 
 import pennylane as qp
@@ -126,7 +126,7 @@ def ampn(n, b, s):
         qp.CNOT([b[wire], b[wire+1]])
 
 ##########################################
-# The following creates the PREP operator from ```ampn```. 
+# The following creates the PREP operator from ``ampn``. 
 # 
 def prepn():
     ampn(n,b,s)
@@ -135,10 +135,10 @@ def prepn():
 ##########################################
 # For `fault-tolerant quantum computing <https://pennylane.ai/topics/fault-tolerant-quantum-computing>`__, the non-Clifford gate cost 
 # is typically the most burdensome. The sole non-Clifford gates are the controlled-Hadamard gates, which may be constructed by 
-# one :class:`.~pennylane.Toffoli` gate each [#pocrnic]_. Therefore, a $n$-qubit PREP circuit uses $n-2$ controlled-Hadamard gates, 
-# and thus costs $n-2$ Toffolis. 
+# one :class:`.~pennylane.Toffoli` gate each [#pocrnic]_. Therefore, a :math:`n`-qubit PREP circuit uses :math:`n-2` controlled-Hadamard gates, 
+# and thus costs :math:`n-2` Toffolis. 
 # 
-# The overall block encoding circuit calls PREP and the adjoint of PREP, so $2n-4$ Toffolis are needed as a result.
+# The overall block encoding circuit calls PREP and the adjoint of PREP, so :math:`2n-4` Toffolis are needed as a result.
 # 
 # The detailed proof of this operator is listed in the paper by Pocrnic et al. [#pocrnic]_.  
 # 
@@ -153,67 +153,67 @@ def prepn():
 #   :width: 95%
 #   :align: center
 # 
-#   Figure 2: *SEL sets up the relevant interference to encode the signed integers. The Toffoli gates are applied transversally over the $n-1$ qubits in the $a$ and $b$ registers, but act on the same flag qubit (see Figure 12 in [#pocrnic]_ for an example.)*
+#   Figure 3: *SEL sets up the relevant interference to encode the signed integers. The Toffoli gates are applied transversally over the :math:`n-1` qubits in the :math:`a` and :math:`b` registers, but act on the same flag qubit (see Figure 12 in [#pocrnic]_ for an example.)*
 # 
-# With all bitwise amplitudes loaded in the $b$ register, SEL must allow a branch to survive if $\bar{a}_j = \bar{b}_{n-2-j} = 1$, 
+# With all bitwise amplitudes loaded in the :math:`b` register, SEL must allow a branch to survive if :math:`\bar{a}_j = \bar{b}_{n-2-j} = 1`, 
 # and set up destructive interference otherwise. The adjoint of PREP will square the surviving amplitudes, the sum of which block 
-# encodes $a/2^{n-1}$ up to the sign kicked back by CZ.
+# encodes :math:`a/2^{n-1}` up to the sign kicked back by CZ.
 # 
 # Unsigned case 
-# =====================
+# ~~~~~~~~~~~~~~~~~~~~~~~~
 # 
-# For ease of explanation, let's first consider the unsigned case when a is non-negative. The sign bit $\bar a_{n-1}=0$, so the initial CZ and 
-# CNOTs do nothing. SEL must allow a branch to survive if $\bar{a}_j = \bar{b}_{n-2-j} = 1$, and set up destructive interference otherwise. 
+# For ease of explanation, let's first consider the unsigned case when a is non-negative. The sign bit :math:`\bar a_{n-1}=0`, so the initial CZ and 
+# CNOTs do nothing. SEL must allow a branch to survive if :math:`\bar{a}_j = \bar{b}_{n-2-j} = 1`, and set up destructive interference otherwise. 
 # The action of SEL is as follows: 
 # 
-# - A Toffoli checks if $\bar{a}_j = \bar{b}_{n-2-j} = 1$, and sets the flag qubit to be $1$ if so. (See the Note below) 
-# - A CCZ gate targeting the $|h\rangle=|+\rangle$ qubit is controlled on the $ctl$ qubit and open-controlled on this flag qubit. Only a branch that sets the flag qubit to be $0$ leads to the CCZ gate firing. 
+# - A Toffoli checks if :math:`\bar{a}_j = \bar{b}_{n-2-j} = 1`, and sets the flag qubit to be :math:`1` if so. (See the Note below) 
+# - A CCZ gate targeting the :math:`|h\rangle=|+\rangle` qubit is controlled on the :math:`\mathttt{ctl}` qubit and open-controlled on this flag qubit. Only a branch that sets the flag qubit to be :math:`0` leads to the CCZ gate firing. 
 # - The flag is uncomputed by another Toffoli
 # 
-# Note: While it may seem like we would want to control on $\bar{a}_j$ and $\bar{b}_j$, observe that the nature of PREP encodes $|b\rangle$ with the 
+# Note: While it may seem like we would want to control on :math:`\bar{a}_j` and :math:`\bar{b}_j`, observe that the nature of PREP encodes :math:`|b\rangle` with the 
 # opposite endianness. Rather than applying SWAP gates to correct this, it is more resource efficient to just reinterpret the endianness of 
-# $|b\rangle$ such that we invert the order of the Toffoli gates on that register as written above. 
+# :math:`|b\rangle` such that we invert the order of the Toffoli gates on that register as written above. 
 # 
-# Let us consider the scenario when $\bar{a}_j = \bar{b}_{n-2-j} = 1$. We’d like to add its weight $2^j$ to the block encoding. 
-# The CCZ gate does not fire, leaving $|h\rangle=|+\rangle$ untouched. When this encounters the outgoing $\langle+|$ from the 
-# adjoint of PREP later on, the result is $\langle +|+ \rangle= 1$: the branch survives, contributing its weight to be added up with 
-# the other surviving branches’ weights. 
+# Let us consider the scenario when :math:`\bar{a}_j = \bar{b}_{n-2-j} = 1`. We’d like to add its weight :math:`2^j` to the block encoding. 
+# The CCZ gate does not fire, leaving :math:`|h\rangle=|+\rangle` untouched. When this encounters the outgoing :math:`\langle+|` from the 
+# adjoint of PREP later on, the result is :math:`\langle +|+ \rangle= 1`: the branch survives, contributing its weight to be added up with 
+# the other surviving branches' weights. 
 # 
-# The other scenario is when $\bar{a}_j = 0$. This means that the Toffoli does not fire, allowing the CCZ to convert $|h\rangle=|+\rangle$ into 
-# $|-\rangle$. When this encounters the outgoing $\langle+|$ from the adjoint of PREP later on, the result is $\langle+|-\rangle = 0$: 
+# The other scenario is when :math:`\bar{a}_j = 0`. This means that the Toffoli does not fire, allowing the CCZ to convert :math:`|h\rangle=|+\rangle` into 
+# :math:`|-\rangle`. When this encounters the outgoing :math:`\langle+|` from the adjoint of PREP later on, the result is :math:`\langle+|-\rangle = 0`: 
 # the amplitude is destroyed, so correctly contributes nothing to the final amplitude. In this way, SEL may be thought of as a filter 
 # that removes undesirable amplitudes instead of a selector that applies desirable amplitudes. 
 # 
-# Summing the surviving weights gives $\sum_j \bar a_j\, 2^j = a$, and dividing by
-# the $2^{n-1}$ subnormalization yields the block element $a / 2^{n-1}$.
+# Summing the surviving weights gives :math:`\sum_j \bar a_j\, 2^j = a`, and dividing by
+# the :math:`2^{n-1}` subnormalization yields the block element :math:`a / 2^{n-1}`.
 # 
 # Signed case
-# =====================
+# ~~~~~~~~~~~~~~~~~~~~~~~~
 # 
-# Next, consider the signed case. When the input is negative, the sign bit $\bar{a}_{n-1} = 1$, which triggers two effects. 
+# Next, consider the signed case. When the input is negative, the sign bit :math:`\bar{a}_{n-1} = 1`, which triggers two effects. 
 # 
-# Firstly, the CZ between $|ctl\rangle$ and the sign qubit kicks back a $-1$, giving the block-encoded amplitude the negative sign. 
+# Firstly, the CZ between :math:`|\mathttt{ctl}\rangle` and the sign qubit kicks back a :math:`-1`, giving the block-encoded amplitude the negative sign. 
 # 
-# Secondly, the CNOTs controlled on the sign bit flip the lower $n-1$ qubits in $|a\rangle$. Now, $\bar{a}_j$ in this section denotes 
-# the bit-flipped values. This is the first step of negation in two’s complement: performing the additive inverse. The more familiar 
-# reader may notice this is equivalent to taking the one’s complement. 
+# Secondly, the CNOTs controlled on the sign bit flip the lower :math:`n-1` qubits in :math:`|a\rangle`. Now, :math:`\bar{a}_j` in this section denotes 
+# the bit-flipped values. This is the first step of negation in two's complement: performing the additive inverse. The more familiar 
+# reader may notice this is equivalent to taking the one's complement. 
 # 
 # Just as in the unsigned case, the action of the following Toffolis and the CCZ gate is to retain the amplitude of the branch 
-# if $\bar{a}_j = \bar{b}_{n-2-j} = 1$ and delete the amplitude otherwise (see above). 
+# if :math:`\bar{a}_j = \bar{b}_{n-2-j} = 1` and delete the amplitude otherwise (see above). 
 # 
-# Contrary to the unsigned case, now, we must add $+1$ to complete negation in two's complement. That $+1$ comes from the all-zeros 
-# branch $|0\dots0\rangle|1\rangle_s$. Ordinarily, some extra arithmetic must be done, but a clever way comes from the realisation 
-# that the amplitude of the all-zeros branch is $2^0 = +1$. No Toffolis fire for this branch, irrespective of $a$, meaning that the 
-# flag qubit is $|0\rangle$. That allows CCZ to apply a Z gate. We established above that this Z gate can lead to the elimination of 
-# this branch’s amplitude. However, the CCCZ gate controlled on $|ctl\rangle$, $|s\rangle$ (the marker qubit in $\mathtt{amp_n}$), and 
-# the sign qubit finally fires when $a$ is negative to apply another Z gate, cancelling the first Z gate from CCZ. Therefore, the 
-# amplitude is correctly retained, adding $+1$ during the adjoint of PREP. 
+# Contrary to the unsigned case, now, we must add :math:`+1` to complete negation in two's complement. That :math:`+1` comes from the all-zeros 
+# branch :math:`|0\dots0\rangle|1\rangle_s`. Ordinarily, some extra arithmetic must be done, but a clever way comes from the realisation 
+# that the amplitude of the all-zeros branch is :math:`2^0 = +1`. No Toffolis fire for this branch, irrespective of :math:`a`, meaning that the 
+# flag qubit is :math:`|0\rangle`. That allows CCZ to apply a Z gate. We established above that this Z gate can lead to the elimination of 
+# this branch’s amplitude. However, the CCCZ gate controlled on :math:`|ctl\rangle`, :math:`|s\rangle` (the marker qubit in :math:`\mathtt{amp_n}`), and 
+# the sign qubit finally fires when :math:`a` is negative to apply another Z gate, cancelling the first Z gate from CCZ. Therefore, the 
+# amplitude is correctly retained, adding :math:`+1` during the adjoint of PREP. 
 # 
-# For example, if $a=-6$, the two's complement binary encoding is $|a\rangle = |1010\rangle$. Flipping all but the sign bit gives 
-# $|1101\rangle$. Ignoring the sign qubit, the state is |$101\rangle = |5\rangle$ (note that $5$ is the one’s complement). 
-# The all-zeros branch adds $+1$ ($5+1=6=|-6|$) while the CZ provides the minus sign. Thus, $|a=-6\rangle = -6 |-6\rangle$, up to normalisation. 
+# For example, if :math:`a=-6`, the two's complement binary encoding is :math:`|a\rangle = |1010\rangle`. Flipping all but the sign bit gives 
+# :math:`|1101\rangle`. Ignoring the sign qubit, the state is :math:`|101\rangle = |5\rangle` (note that :math:`5` is the one’s complement). 
+# The all-zeros branch adds :math:`+1` (:math:`5+1=6=|-6|`) while the CZ provides the minus sign. Thus, :math:`|a=-6\rangle = -6 |-6\rangle`, up to normalisation. 
 # 
-# In total, the SEL operator requires $2n+1$ Toffoli gates [#pocrnic]_
+# In total, the SEL operator requires :math:`2n+1` Toffoli gates [#pocrnic]_
 # 
 # The following constructs the SEL operator as well as performs state preparation of the list of integers to be encoded: 
 
@@ -252,7 +252,7 @@ def prep_amp(a_num):
     qp.StatePrep(a_num, wires=[wire for sublist in [a, [anm1]] for wire in sublist], normalize=True)
 
 ##########################################
-# With the code to create PREP and SEL, we consider an implementation with $n=3$ qubits. 
+# With the code to create PREP and SEL, we consider an implementation with :math:`n=3` qubits. 
 # 
 
 n = 3
@@ -287,7 +287,7 @@ qp.draw_mpl(block_encoding)(a_value)
 ##########################################
 # To confirm the circuit works as expected, we calculate the correct amplitudes. We also  identify the relevant amplitude in the statevector, 
 # assuming the particular wire ordering shown in the above figure and that the 
-# auxiliary qubits must end as $|0\rangle$. 
+# auxiliary qubits must end as :math:`|0\rangle`. 
 
 correct_amplitude_101 = (1/(2**(n-1)))*(1/np.sqrt(2))*-3 
 correct_amplitude_010 = (1/(2**(n-1)))*(1/np.sqrt(2))*+2 
@@ -309,13 +309,13 @@ print("Is the +2 amplitude correct? ", np.allclose(output[index_010], correct_am
 # Resource estimation
 # ---------------------------------
 # 
-# Below we build the resource operator for ```prep_amp(n)```.
+# Below we build the resource operator for ``prep_amp(n)``.
 
 import pennylane.estimator as qre
 
 class PrepAmp(qre.ResourceOperator):
     """
-    For a given number of qubits $n$, calculates the resources required to prepare an |amp> state.
+    For a given number of qubits n, calculates the resources required to prepare an |amp> state.
     """
 
     resource_keys = {"n"}  # the parameters that determine the resources of this operator
@@ -366,7 +366,7 @@ class PrepAmp(qre.ResourceOperator):
 
 class SelAmp(qre.ResourceOperator):
     """
-    Given an amp state and an input state of size $n$, calculates the resources required to apply the select operator that
+    Given an amp state and an input state of size :math:`n`, calculates the resources required to apply the select operator that
     block encodes a signed integer.
     """
 
@@ -430,7 +430,7 @@ class SelAmp(qre.ResourceOperator):
         return gate_cost
 
 ##########################################
-# With these resource estimation operators, we can estimate the resource cost of PREP-SEL-PREP for $n=10$ to be: 
+# With these resource estimation operators, we can estimate the resource cost of PREP-SEL-PREP for :math:`n=10` to be: 
 
 PREP_estimate = PrepAmp(10)
 print(PREP_estimate.resource_decomp(10))
@@ -442,9 +442,9 @@ SEL_estimate = SelAmp(10)
 print(SEL_estimate.resource_decomp(10))
 
 ##########################################
-# Therefore, the total cost of PREP-SEL-PREP is $2\times$ PREP cost + SEL cost from above. 
+# Therefore, the total cost of PREP-SEL-PREP is :math:`2\times` PREP cost + SEL cost from above. 
 # 
-# In general, the total cost of this block encoding is $4n-3$ Toffoli gates. 
+# In general, the total cost of this block encoding is :math:`4n-3` Toffoli gates. 
 # 
 # Using this method allows block encoding of kinetic energy operators via a walk operator with a shifted spectrum, 
 # reducing the 1-norm by a factor of 2. See the paper by Pocrnic et al. [#pocrnic]_ for more details. 
@@ -453,13 +453,7 @@ print(SEL_estimate.resource_decomp(10))
 # Conclusion
 # ---------------------------------
 # 
-# We have seen how the Clifford hierarchy enables universal and fault-tolerant quantum computing by mapping higher level gates down to lower level gates. The same hierarchy also ranks gates by the number of resources needed to implement them fault-tolerantly, thus how 'quantum' they are and how gates can be considered as magic fuel for fault-tolerance. 
-# 
-# Although the Clifford hierarchy was first proposed in the context of universality [#gottesmanchuang]_, its ideas lurk underneath other topics. For example, `Pauli frame tracking <https://pennylane.ai/compilation/pauli-frame-tracking>`__ conjugates Clifford gates to avoid having to physically execute correction Pauli gates [#pauliframetracking]_. 
-# 
-# Not only $T$ gates can be implemented fault-tolerantly; the Clifford hierarchy shows how an enormous class of gates can be implemented fault-tolerantly. For example, the diagonal $C-U$ gates that perform period finding for `Shor’s algorithm <https://pennylane.ai/codebook/shors-algorithm>`__ , the :doc:`quantum Fourier transform <demos/tutorial_qft>`, and in :doc:`quantum phase estimation (QPE) <demos/tutorial_qpe>` can be implemented fault-tolerantly using the teleportation circuits shown in the above sections. 
-# 
-# 
+# Wabc
 # 
 # References
 # ---------------------------------
