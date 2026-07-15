@@ -448,8 +448,7 @@ print(SEL_estimate.resource_decomp(10))
 # 
 # Using this method allows block encoding of kinetic energy operators via a walk operator with a shifted spectrum, 
 # reducing the 1-norm by a factor of 2. See the paper by Pocrnic et al. [#pocrnic]_ for more details. 
-
-
+#
 # 
 # Conclusion
 # ---------------------------------
