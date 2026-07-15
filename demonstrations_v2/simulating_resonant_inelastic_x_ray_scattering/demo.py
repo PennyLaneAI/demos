@@ -370,6 +370,7 @@ E_0 = H_evals[0]
 omega_I = 6.10*s
 z = np.linspace(-1, 1, 1000)
 K_G = 100
+scale = 0.7
 
 #Define dipole matrix elements
 d_c1 = 1
