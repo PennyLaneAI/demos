@@ -572,6 +572,7 @@ def GroverIterate():
     RIXSStateEncodingUnitary(angles)
 ###############################################################################
 # Using this, a typical amplitude estimation procedure can be invoked.
+dev = qp.device("lightning.qubit")
 
 @qp.qnode(dev)
 #Implement QAE
