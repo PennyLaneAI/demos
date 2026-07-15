@@ -54,7 +54,8 @@ For this implementation, the following resource state is important for PREP.
 
 :math:`|\sqrt{\mathtt{amp}_n}\rangle = \frac{1}{2^{(n-1)/2}} \Big[|0\rangle^{n-1}|1\rangle_s + \sum_{b=0}^{n-2} 2^{b/2} |b\rangle |0\rangle_s \Big]`
 
-where :math:`b` denotes a one-hot encoding of integers. That is, :math:`|0\rangle = |0\dots 1\rangle:math:`, :math:`|1\rangle = |0\dots 10\rangle`, and :math:`|n-2\rangle = |10\dots 0\rangle`. The all-zero state is the only state marked by :math:`|1\rangle_s` which serves as a flag qubit to help us encode the negative sign later. 
+where :math:`b` denotes a one-hot encoding of integers. That is, :math:`|0\rangle = |0\dots 1\rangle`, :math:`|1\rangle = |0\dots 10\rangle`, and :math:`|n-2\rangle = |10\dots 0\rangle`. 
+The all-zero state is the only state marked by :math:`|1\rangle_s` which serves as a flag qubit to help us encode the negative sign later. 
 
 The PREP operator prepares this :math:`|\sqrt{\mathtt{amp}_n}\rangle` state along with a non-entangled :math:`|h\rangle = |+\rangle` state to enable destructive interference for amplitudes equalling zero later. 
 
@@ -167,7 +168,7 @@ def prepn():
 # The action of SEL is as follows: 
 # 
 # - A Toffoli checks if :math:`\bar{a}_j = \bar{b}_{n-2-j} = 1`, and sets the flag qubit to be :math:`1` if so. (See the Note below) 
-# - A CCZ gate targeting the :math:`|h\rangle=|+\rangle` qubit is controlled on the :math:`\mathttt{ctl}` qubit and open-controlled on this flag qubit. Only a branch that sets the flag qubit to be :math:`0` leads to the CCZ gate firing. 
+# - A CCZ gate targeting the :math:`|h\rangle=|+\rangle` qubit is controlled on the :math:`\mathtt{ctl}` qubit and open-controlled on this flag qubit. Only a branch that sets the flag qubit to be :math:`0` leads to the CCZ gate firing. 
 # - The flag is uncomputed by another Toffoli
 # 
 # Note: While it may seem like we would want to control on :math:`\bar{a}_j` and :math:`\bar{b}_j`, observe that the nature of PREP encodes :math:`|b\rangle` with the 
@@ -192,7 +193,7 @@ def prepn():
 # 
 # Next, consider the signed case. When the input is negative, the sign bit :math:`\bar{a}_{n-1} = 1`, which triggers two effects. 
 # 
-# Firstly, the CZ between :math:`|\mathttt{ctl}\rangle` and the sign qubit kicks back a :math:`-1`, giving the block-encoded amplitude the negative sign. 
+# Firstly, the CZ between :math:`|\mathtt{ctl}\rangle` and the sign qubit kicks back a :math:`-1`, giving the block-encoded amplitude the negative sign. 
 # 
 # Secondly, the CNOTs controlled on the sign bit flip the lower :math:`n-1` qubits in :math:`|a\rangle`. Now, :math:`\bar{a}_j` in this section denotes 
 # the bit-flipped values. This is the first step of negation in two's complement: performing the additive inverse. The more familiar 
@@ -205,7 +206,7 @@ def prepn():
 # branch :math:`|0\dots0\rangle|1\rangle_s`. Ordinarily, some extra arithmetic must be done, but a clever way comes from the realisation 
 # that the amplitude of the all-zeros branch is :math:`2^0 = +1`. No Toffolis fire for this branch, irrespective of :math:`a`, meaning that the 
 # flag qubit is :math:`|0\rangle`. That allows CCZ to apply a Z gate. We established above that this Z gate can lead to the elimination of 
-# this branch’s amplitude. However, the CCCZ gate controlled on :math:`|ctl\rangle`, :math:`|s\rangle` (the marker qubit in :math:`\mathtt{amp_n}`), and 
+# this branch’s amplitude. However, the CCCZ gate controlled on :math:`|\mathtt{ctl}\rangle`, :math:`|s\rangle` (the marker qubit in :math:`\mathtt{amp_n}`), and 
 # the sign qubit finally fires when :math:`a` is negative to apply another Z gate, cancelling the first Z gate from CCZ. Therefore, the 
 # amplitude is correctly retained, adding :math:`+1` during the adjoint of PREP. 
 # 
