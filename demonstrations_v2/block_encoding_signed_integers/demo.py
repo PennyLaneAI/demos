@@ -15,10 +15,10 @@ This is especially useful for :doc:`chemistry simulations in first quantization 
 In said simulations, one needs an efficient implementation of the kinetic energy operator. 
 Once we have a block encoding of the operation :math:`\ket p \to p \ket p`, we can simply square these block encodings by applying them sequentially to get a block encoding of :math:`p^2`. 
 
-However, we can do something more clever by building a walk operator :math:`U_p Z_\Pi`, where :math:`Z_\Pi` is a reflection about the block encoding subspace (see Ch. 7.1 of `Lin Lin's lecture notes <https://arxiv.org/abs/2201.08309>`__ for more details). 
+However, we can do something more clever by building a walk operator :math:`U_p Z_\Pi`, where :math:`Z_\Pi` is a reflection about the block encoding subspace (see Ch. 7.1 of `Lin Lin's lecture notes <https://arxiv.org/abs/2201.08309>`__ [#linlin]_ for more details). 
 If we apply :math:`U_p Z_\Pi U_p Z_\Pi`, then we have encoded the second-order Chebyshev polynomial :math:`T(p) = 2p^2 -\mathbb I`. 
 Since the identity commutes with the Hamiltonian, it does not influence the dynamics, and given the leading factor of 2, we can block encode the mass coefficients with a factor of 1/2 in our prep circuit, thus reducing the overall 1-norm by half. 
-Given the 1-norm is usually very large (a bottle neck for :doc:`qubitization <demos/tutorial_qubitization` simulation), this block encoding method trick is a significant improvement with almost negligible additional circuit depth. 
+Given the 1-norm is usually very large (a bottle neck for :doc:`qubitization <demos/tutorial_qubitization>` simulation), this block encoding method trick is a significant improvement with almost negligible additional circuit depth. 
 
 This demo will show how to block encode a register of signed integers by the technique elucidated by Pocrnic et al. [#pocrnic]_. 
 While the proof may be found in the `paper <https://arxiv.org/abs/2602.11272>`__, this demo details the action of each part of 
@@ -83,7 +83,7 @@ Such a resource state can be prepared by the circuit below:
 
   Figure 2: *Circuit to prepare :math:`|\sqrt{\mathtt{amp}_n}\rangle`*
   
-The initial :class:`.~pennylane.Hadamard` gate and subsequent cascade of controlled-Hadamard gates creates a superposition of some computational basis states 
+The initial :class:`~.pennylane.Hadamard` gate and subsequent cascade of controlled-Hadamard gates creates a superposition of some computational basis states 
 :math:`|0\dots 0\rangle, |10\dots0\rangle, |110\dots 0\rangle, \dots, |1\dots 1\rangle,` where the :math:`k^\text{th}` state has :math:`1/\sqrt{2}` the amplitude of 
 the :math:`k-1^{\text{th}}` state for :math:`0\leq k \leq n-2.`
 
@@ -135,7 +135,7 @@ def prepn():
 ##########################################
 # For `fault-tolerant quantum computing <https://pennylane.ai/topics/fault-tolerant-quantum-computing>`__, the non-Clifford gate cost 
 # is typically the most burdensome. The sole non-Clifford gates are the controlled-Hadamard gates, which may be constructed by 
-# one :class:`.~pennylane.Toffoli` gate each [#pocrnic]_. Therefore, a :math:`n`-qubit PREP circuit uses :math:`n-2` controlled-Hadamard gates, 
+# one :class:`~.pennylane.Toffoli` gate each [#pocrnic]_. Therefore, a :math:`n`-qubit PREP circuit uses :math:`n-2` controlled-Hadamard gates, 
 # and thus costs :math:`n-2` Toffolis. 
 # 
 # The overall block encoding circuit calls PREP and the adjoint of PREP, so :math:`2n-4` Toffolis are needed as a result.
