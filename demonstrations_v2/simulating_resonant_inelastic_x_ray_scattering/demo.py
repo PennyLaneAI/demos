@@ -255,8 +255,7 @@ H_evals, H_evecs = np.linalg.eigh(H_sparse)
 # .. figure:: ../demonstrations_v2/simulating_resonant_inelastic_x_ray_scattering/pennylane-demo-simulating-resonant-inelastic-xray-scattering-RIXScircuit.png
 #    :align: center 
 #    :width: 700px 
-#    :alt: An illustrated circuit diagram depicting
-#    the general components of Loaiza et al.'s algorithm.
+#    :alt: An illustrated circuit diagram depicting the general components of Loaiza et al.'s algorithm.
 #
 # Item 1 on this list does a lot of heavy lifting here. In fact, the process of
 # preparing the state *is* the algorithm in many ways. So, we can expand the
@@ -460,8 +459,7 @@ def AngleFinder(Gamma, lamb, E_0, omega_I):
 # .. figure:: ../demonstrations_v2/simulating_resonant_inelastic_x_ray_scattering/pennylane-demo-simulating-resonant-inelastic-xray-scattering-BlockEncodingCircuit.png
 #    :align: center 
 #    :width: 700px 
-#    :alt: An circuit diagram illustration
-#    depicting the block encoding operator for the RIXS state.
+#    :alt: An circuit diagram illustration depicting the block encoding operator for the RIXS state.
 # 
 # While the source paper suggest the use of a :doc:`quantum read only memory
 # (QROM) <demos/tutorial_intro_qrom>` to carry out dipole operator loading, we
@@ -537,8 +535,7 @@ def RIXSStateEncodingUnitary(angles):
 # .. figure:: ../demonstrations_v2/simulating_resonant_inelastic_x_ray_scattering/pennylane-demo-simulating-resonant-inelastic-xray-scattering-GroverIterateCircuit.png
 #    :align: center 
 #    :width: 700px 
-#    :alt: An illustrated circuit diagram for
-#    constructing the Grover iterate.
+#    :alt: An illustrated circuit diagram for constructing the Grover iterate.
 #
 # To implement the Grover iterate in circuit form, the following operations must
 # be executed.
@@ -602,8 +599,7 @@ def QAE():
 # .. figure:: ../demonstrations_v2/simulating_resonant_inelastic_x_ray_scattering/pennylane-demo-simulating-resonant-inelastic-xray-scattering-HighProbState.png
 #    :align: center 
 #    :width: 700px 
-#    :alt: An illustrated circuit diagram of the
-#    amplitude amplification step.
+#    :alt: An illustrated circuit diagram of the amplitude amplification step.
 #
 # 
 def HighProbRIXSState(probs):
@@ -770,8 +766,7 @@ QPE_wires = regs["QPE"]
 # .. figure:: ../demonstrations_v2/simulating_resonant_inelastic_x_ray_scattering/pennylane-demo-simulating-resonant-inelastic-xray-scattering-PreFoldedBins.png
 #    :align: center 
 #    :width: 700px 
-#    :alt: A plot depicting the output of the QPE
-#    run prior to folding.
+#    :alt: A plot depicting the output of the QPE run prior to folding.
 #
 #    *Prior to phase folding, the QPE output shows a mirrored set of phase
 #    values as a result of the mirrored eigenvalues of the qubitized walk
