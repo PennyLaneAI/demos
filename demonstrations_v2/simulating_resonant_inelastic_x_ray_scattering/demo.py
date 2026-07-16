@@ -56,7 +56,7 @@ the relaxation of the second valence electron into the core releases a photon of
 frequency :math:`\omega_S` that is detected and used to compute the difference
 between the input and output photon energies.
 
-.. figure:: ..demonstrations_v2/pennylane-demo-simulating-resonant-inelastic-xray-scattering-EnergyLevelDiagram.png
+.. figure:: ../demonstrations_v2/pennylane-demo-simulating-resonant-inelastic-xray-scattering-EnergyLevelDiagram.png
    :align: center
    :width: 700px
    :alt: An illustration of the three stages of the RIXS process in the form of an energy level diagram.
@@ -252,7 +252,7 @@ H_evals, H_evecs = np.linalg.eigh(H_sparse)
 # 2. Carry out a walk-based `quantum phase estimation <demos/tutorial_qpe>` to
 #    evolve toward the final state.
 #
-# .. figure:: ..demonstrations_v2/pennylane-demo-simulating-resonant-inelastic-xray-scattering-RIXScircuit.png
+# .. figure:: ../demonstrations_v2/pennylane-demo-simulating-resonant-inelastic-xray-scattering-RIXScircuit.png
 #    :align: center 
 #    :width: 700px 
 #    :alt: An illustrated circuit diagram depicting
@@ -534,8 +534,7 @@ def RIXSStateEncodingUnitary(angles):
 # the amplitude amplification repetition parameter, boost our signal, and move
 # forward to our QPE readout with confidence.
 #
-# ..
-#    figure:: ..demonstrations_v2/pennylane-demo-simulating-resonant-inelastic-xray-scattering-GroverIterateCircuit.png
+# .. figure:: ../demonstrations_v2/pennylane-demo-simulating-resonant-inelastic-xray-scattering-GroverIterateCircuit.png
 #    :align: center 
 #    :width: 700px 
 #    :alt: An illustrated circuit diagram for
@@ -600,8 +599,7 @@ def QAE():
 # Using the output of the amplitude estimation step, we can easily construct a
 # high probability RIXS state to guarantee a successful simulation outcome.
 #
-# ..
-#    figure:: ..demonstrations_v2/pennylane-demo-simulating-resonant-inelastic-xray-scattering-HighProbState.png
+# .. figure:: ../demonstrations_v2/pennylane-demo-simulating-resonant-inelastic-xray-scattering-HighProbState.png
 #    :align: center 
 #    :width: 700px 
 #    :alt: An illustrated circuit diagram of the
@@ -769,7 +767,7 @@ QPE_wires = regs["QPE"]
 # state. Essentially, this step folds the final phase output in half, combining
 # symmetrical bins to prevent cancellation. 
 # 
-# .. figure:: ..demonstrations_v2/pennylane-demo-simulating-resonant-inelastic-xray-scattering-PreFoldedBins.png
+# .. figure:: ../demonstrations_v2/pennylane-demo-simulating-resonant-inelastic-xray-scattering-PreFoldedBins.png
 #    :align: center 
 #    :width: 700px 
 #    :alt: A plot depicting the output of the QPE
@@ -821,7 +819,7 @@ def plot_qpe_spectrum_tools(amplitude, H_traceless, n_omega, eta=0.2, xmax=4.0):
 # analytical solution of the RIXS spectrum for comparison. This can be achieved
 # via diagonalization of the Hamiltonian matrix.
 #
-# .. figure:: ..demonstrations_v2/pennylane-demo-simulating-resonant-inelastic-xray-scattering-AnalyticalSolution.png
+# .. figure:: ../demonstrations_v2/pennylane-demo-simulating-resonant-inelastic-xray-scattering-AnalyticalSolution.png
 #    :align: center 
 #    :width: 700px 
 #    :alt: A plot depicting the analytical solution of the target Hamiltonian.
@@ -829,7 +827,7 @@ def plot_qpe_spectrum_tools(amplitude, H_traceless, n_omega, eta=0.2, xmax=4.0):
 # Running the full RIXS simulation with the provided parameters yields the
 # following plot.
 #
-# .. figure:: ..demonstrations_v2/pennylane-demo-simulating-resonant-inelastic-xray-scattering-RIXSspectrum.png
+# .. figure:: ../demonstrations_v2/pennylane-demo-simulating-resonant-inelastic-xray-scattering-RIXSspectrum.png
 #    :align: center 
 #    :width: 700px 
 #    :alt: A plot depicting the simulation output of the target Hamiltonian.
