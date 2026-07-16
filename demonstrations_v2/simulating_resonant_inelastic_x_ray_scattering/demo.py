@@ -129,7 +129,7 @@ The Hamiltonian
    2. :math:`a`, the **annihilation operator**. This is used when a particle is
       "destroyed", such as a photon being absorbed in an excitation process.
 
-   Combining these operators for a single particle yeilds **number operators**,
+   Combining these operators for a single particle yields **number operators**,
    which "count" the number of a certain particle in a system:
 
    :math:`\hat{n}_i=a^\dagger_i a_i`
@@ -252,9 +252,10 @@ H_evals, H_evecs = np.linalg.eigh(H_sparse)
 # 2. Carry out a walk-based `quantum phase estimation <demos/tutorial_qpe>` to
 #    evolve toward the final state.
 #
-# ..
-#    figure::..demonstrations_v2/pennylane-demo-simulating-resonant-inelastic-xray-scattering-RIXScircuit.png
-#    :align: center :width: 700px :alt: An illustrated circuit diagram depicting
+# .. figure::..demonstrations_v2/pennylane-demo-simulating-resonant-inelastic-xray-scattering-RIXScircuit.png
+#    :align: center 
+#    :width: 700px 
+#    :alt: An illustrated circuit diagram depicting
 #    the general components of Loaiza et al.'s algorithm.
 #
 # Item 1 on this list does a lot of heavy lifting here. In fact, the process of
@@ -457,7 +458,8 @@ def AngleFinder(Gamma, lamb, E_0, omega_I):
 #    successful.
 #
 # .. figure:: ../demonstrations_v2/pennylane-demo-simulating-resonant-inelastic-xray-scattering-BlockEncodingCircuit
-#    :align: center :width: 700px 
+#    :align: center 
+#    :width: 700px 
 #    :alt: An circuit diagram illustration
 #    depicting the block encoding operator for the RIXS state.
 # 
@@ -534,7 +536,9 @@ def RIXSStateEncodingUnitary(angles):
 #
 # ..
 #    figure::..demonstrations_v2/pennylane-demo-simulating-resonant-inelastic-xray-scattering-GroverIterateCircuit.png
-#    :align: center :width: 700px :alt: An illustrated circuit diagram for
+#    :align: center 
+#    :width: 700px 
+#    :alt: An illustrated circuit diagram for
 #    constructing the Grover iterate.
 #
 # To implement the Grover iterate in circuit form, the following operations must
@@ -598,7 +602,9 @@ def QAE():
 #
 # ..
 #    figure::..demonstrations_v2/pennylane-demo-simulating-resonant-inelastic-xray-scattering-HighProbState.png
-#    :align: center :width: 700px :alt: An illustrated circuit diagram of the
+#    :align: center 
+#    :width: 700px 
+#    :alt: An illustrated circuit diagram of the
 #    amplitude amplification step.
 #
 # 
@@ -681,9 +687,7 @@ def QPEReadout(probs, HighProbBool):
     return qp.probs(wires = list(success_wire)+list(phase_wires))
 
 ###############################################################################
-# Resource Definition 
-# ................... 
-# Before we can successfully run our
+# Resource Definition ................... Before we can successfully run our
 # RIXS simulation, some bookkeeping is in order. We have built our systems using
 # a total of 9 registers, each of which has a different number of wires. 
 #
@@ -693,15 +697,24 @@ def QPEReadout(probs, HighProbBool):
 # desired precision. The system register should be twice the size of the
 # molecular system, which, in this case, is 4 (two core orbitals plus two
 # valence orbitals).
+#
+# The remaining two registers (the QAE wires and the phase wires) should be
+# computed relative to the desired accuracy and resolution of the spectral
+# output. In general, the number of wires required to achieve accuracy
+# :math:`\epsilon` is given by
+#
+# .. math:: \lceil \log_2(1/\epsilon) \rceil
+#
+# So, we can define our thresholds and compute our register sizes, defining the
+# full set of system registers using :func:`~pennylane.registers`.
 
-eps_omega = 1
+eps_omega = 0.01
 eps_QAE = 0.3
-
-N_eps_omega = np.ceil((np.pi*lamb)/(np.sqrt(2)*eps_omega))
-n_omega = 7
-
 Na = 4 #core plus two valence
 Ne = 6
+
+N_eps_omega = np.ceil((np.pi*lamb)/(np.sqrt(2)*eps_omega))
+n_omega = np.ceil(np.log2(1/eps_omega))
 nQAE = np.ceil(np.log2(1/eps_QAE))
 
 registers = {
@@ -730,18 +743,125 @@ QAE_wires = regs["QAE"]
 phase_wires = regs["phase"]
 QPE_wires = regs["QPE"]
 ###############################################################################
+# With that, we're ready to rock! Or, more accurately, we're ready to walk.
+#
+# Some Notes on Plotting 
+# .................. 
+# When constructing the final RIXS
+# spectrum from the algorithm output, it is noted by Laoiza et al. that a
+# convolution step is taken to smooth the output, which involves a Dirac delta
+# function as a result of the differential representation of the RIXS amplitude,
+# given by
+#
+# .. math:: P_{\epsilon_I, \epsilon_S}(\omega_I,\omega)=\sum_f ||\langle
+# E_f|\hat{R}_{\epsilon_I,
+# \epsilon_S}(\omega_I)|E_0\rangle||^2\delta(\omega-(E_f-E_0)).
+#
+# To achieve this, the autors apply a `Lorentzian
+# <https://en.wikipedia.org/wiki/Lorentzian>`_ with width :math:`\eta=0.2` eV to
+# smooth and account for expected broadening in a realistic system.
+#
+# An additional, relevant trick is the use of **spectral folding**, which
+# accounts for symmetries in the :math:`[0,2\pi]` range that the QPE step works
+# in. More specifically, the step accounts for the fact that the qubitized walk
+# operator have complex eigenvalues on the unit circle, meaning the QPE register
+# will hold both positive and negative angles that correspond to the same energy
+# state. Essentially, this step folds the final phase output in half, combining
+# symmetrical bins to prevent cancellation. 
 # 
+# .. figure::..demonstrations_v2/pennylane-demo-simulating-resonant-inelastic-xray-scattering-PreFoldedBins.png
+#    :align: center 
+#    :width: 700px 
+#    :alt: A plot depicting the output of the QPE
+#    run prior to folding.
 #
-# A note on plotting
-# ..................
+#    *Prior to phase folding, the QPE output shows a mirrored set of phase
+#    values as a result of the mirrored eigenvalues of the qubitized walk
+#    operator*
 #
+# Finally, the spectral output should be plotted in terms of recovered energy (:math:`E_f-E_0`) versus normalized intensity. The recovered energy is given by Laoiza et al. as 
+#
+# .. math::
+#    \lambda\cos(\theta_f)-E_0
+# 
+# The following function should aid in the implementation of these plotting nuances. 
+
+def plot_qpe_spectrum_tools(amplitude, H_traceless, n_omega, eta=0.2, xmax=4.0):
+
+    lamb = float(np.sum(np.abs(H_traceless.terms()[0])))
+    Hm = H_traceless.sparse_matrix(wire_order=range(8)).toarray()
+    E_0 = float(np.linalg.eigvalsh(Hm)[0])
+
+    N = 2**int(n_omega)
+    amp = np.asarray(amplitude).reshape(2, N)
+    block = amp[1] / amp[1].sum() #Select the results associated with the success flag
+
+    # Fold phases
+    folded = np.zeros(N // 2 + 1)
+    folded[0] = block[0]
+    folded[N // 2] = block[N // 2]
+    for k in range(1, N // 2):
+        folded[k] = block[k] + block[N - k]
+
+    fbins = np.arange(N // 2 + 1)
+    ftheta  = 2*np.pi*(fbins / N)
+    fenergy = lamb*np.cos(ftheta)-E_0  
+
+    #Lorentzian fit
+    w = np.linspace(-1.0, xmax, 2000)
+    spec = np.zeros_like(w)
+    for prob, ef in zip(folded, fenergy):
+        spec += prob * (eta/np.pi)/((w-ef)**2 + eta**2)
+    if spec.max() > 0:
+        spec /= np.trapezoid(spec, w)
+###############################################################################
 # Interpreting the Results
 # ========================
+# Since we are dealing with a small toy model, it is easy for us to plot the
+# analytical solution of the RIXS spectrum for comparison. This can be achieved
+# via diagonalization of the Hamiltonian matrix.
 #
+# .. figure::..demonstrations_v2/pennylane-demo-simulating-resonant-inelastic-xray-scattering-AnalyticalSolution.png
+#    :align: center 
+#    :width: 700px 
+#    :alt: A plot depicting the analytical solution
+#    of the target Hamiltonian.
+#
+# Running the full RIXS simulation with the provided parameters yields the
+# following plot.
+#
+# .. figure::..demonstrations_v2/pennylane-demo-simulating-resonant-inelastic-xray-scattering-RIXSspectrum.png
+#    :align: center 
+#    :width: 700px 
+#    :alt: A plot depicting the simulation output
+#    of the target Hamiltonian.
+#
+# As we can see, the two spectral peaks are aligned! We can interpret this
+# spectrum as depicting the elastic peak (which occurs at 0 eV and corresponds
+# to excitations that result in a relaxation of the same electron into the core
+# hole) and the inelastic peak (which occurs at approximately 2.75 eV and
+# corresponds to excitations that leave the molecule in the final, excited state
+# that we are interested in). 
+#
+# Bringing back the idea of RIXS for battery discovery, the inelastic peak is
+# the fingerprint of a specific molecule existing within the system. Researchers
+# can interpret these results to determine what molecules are present during a
+# certain chemical process by correlating the peak values to known excitation
+# energies. Comparing their results to simulation will, therefore, distinguish
+# significant, process inherent molecules from experimental artifacts.
+# 
 # .. _references:
 #
 # References
 # ----------
-# .. [#Gao2025] X.\ Gao, B. Li, K. Kummer, A. Geondzhian, D. Aksyonov, R. Dedryvère, D. Foix, G. Rousse, M. B. Yahia, M. L. Doublet, et al., "Clarifying the origin of molecular O2 in cathode oxides," Nature Materials, vol. 24, p. 743-752, 2026. doi: `10.1038/s41563-025-02144-7 <https://www.nature.com/articles/s41563-025-02144-7>`_.
+# .. [#Gao2025] X.\ Gao, B. Li, K. Kummer, A. Geondzhian, D. Aksyonov, R.
+# Dedryvère, D. Foix, G. Rousse, M. B. Yahia, M. L. Doublet, et al., "Clarifying
+# the origin of molecular O2 in cathode oxides," Nature Materials, vol. 24, p.
+# 743-752, 2026. doi: `10.1038/s41563-025-02144-7
+# <https://www.nature.com/articles/s41563-025-02144-7>`_.
 #
-# .. [#Loaiza2026] I.\ Loaiza, A. Kunitsa, S. Fomichev, D. Motlagh, D. Dhawan, S. Jahangiri, J. H. Fuglsbjerg, A. Izmalov, N. Wiebe, Y. Abu-Lebdeh, J. M. Arrazola, and A. Delgado, "Quantum algorithm for simulating resonant inelastic X-ray scattering of battery materials," 2026. arXiv. doi: `10.48550/arXiv.2602.20270 <https://doi.org/10.48550/arXiv.2602.20270>`_.
+# .. [#Loaiza2026] I.\ Loaiza, A. Kunitsa, S. Fomichev, D. Motlagh, D. Dhawan,
+# S. Jahangiri, J. H. Fuglsbjerg, A. Izmalov, N. Wiebe, Y. Abu-Lebdeh, J. M.
+# Arrazola, and A. Delgado, "Quantum algorithm for simulating resonant inelastic
+# X-ray scattering of battery materials," 2026. arXiv. doi:
+# `10.48550/arXiv.2602.20270 <https://doi.org/10.48550/arXiv.2602.20270>`_.
