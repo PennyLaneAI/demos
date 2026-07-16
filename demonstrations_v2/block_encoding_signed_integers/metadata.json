@@ -22,10 +22,6 @@
         {
             "type": "thumbnail",
             "uri": "/_static/demo_thumbnails/regular_demo_thumbnails/thumbnail_placeholder.png"
-        },
-        {
-            "type": "large_thumbnail",
-            "uri": "/_static/demo_thumbnails/large_demo_thumbnails/pennylane-demo-universality-and-clifford-hierarchy-large-thumbnail.png"
         }
     ],
     "seoDescription": "Learn how to block encode signed integers and its application",
@@ -74,7 +70,7 @@
         },
         {
             "type": "demonstration",
-            "id": "tutorial_magic_state_distillation",
+            "id": "tutorial_xas",
             "weight": 0.5
         }
     ]
