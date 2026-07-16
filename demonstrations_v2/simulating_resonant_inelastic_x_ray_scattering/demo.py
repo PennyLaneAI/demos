@@ -82,7 +82,7 @@ Why Quantum?
 Classical simulation is limited in the amount and type of complexity it can
 handle. Basic comparisons of classical and quantum simulation methods tend to make the
 case that the maximum compatible system size varies greatly between the two, 
-with quantum simulations typically capable to handling many more
+with quantum simulations typically capable of handling many more
 states. While this is generally true, there are additional, potentially more important
 advantages that are not merely reliant on an increase in computational power. In
 the case of Loaiza et al.'s RIXS algorithm, the following two advantages are
@@ -111,7 +111,7 @@ The Hamiltonian
 .. admonition:: A note on operators
    :class: note
 
-   When describing molecular systems it is, conventional to use :doc:`Fermionic
+   When describing molecular systems it is conventional to use :doc:`Fermionic
    operators <demos/tutorial_fermionic_operators>` to describe the behaviour of
    the identical particles that make up the system. In general, the operators of
    concern are:
@@ -147,7 +147,7 @@ where :math:`N_a` is the number of spatial orbitals in the molecule, :math:`p,
 q, r,` and :math:`s` are specific orbital indices, :math:`\sigma` and
 :math:`\sigma^\prime` are spin states, :math:`h_{pq}` are the one-electron
 integrals, :math:`V_{pqrs}` are the two-electron integrals, 
-and :math:`E^0` is the total energy of the inner-shell electrons which are approximated as frozen in the active
+and :math:`E^0` is the total energy of the inner-shell electrons, which are approximated as frozen in the active
 space definition. 
 
 Let's make things a bit simpler. For our toy implementation, we will not apply this complex Hamiltonian structure
@@ -469,7 +469,7 @@ def AngleFinder(Gamma, lamb, E_0, omega_I):
 # .. figure:: ../demonstrations_v2/simulating_resonant_inelastic_x_ray_scattering/pennylane-demo-simulating-resonant-inelastic-xray-scattering-BlockEncodingCircuit.png
 #    :align: center 
 #    :width: 700px 
-#    :alt: An circuit diagram illustration depicting the block encoding operator for the RIXS state.
+#    :alt: A circuit diagram illustration depicting the block encoding operator for the RIXS state.
 #
 #     *The RIXS state generator*
 # 
@@ -522,7 +522,7 @@ def RIXSStateEncodingUnitary(angles):
 # and then use "textbook" amplitude amplification ... which has better
 # prefactors" [#Loaiza2026]_. 
 #
-# To quickly review, amplitude estimation is a process of determining the
+# To quickly review, amplitude estimation is the process of determining the
 # proportion of a specific "good" state in a data set. In this context, the
 # estimation process should give the probability of the block encoding
 # step returning a successful block encoding, as marked by the success
@@ -623,7 +623,7 @@ def QAE():
 def HighProbRIXSState(probs):
     wires = int(nQAE)
 
-    #Extract the highest proabability available and compute P_R
+    #Extract the highest probability available and compute P_R
     PeakProbAngle = (np.argmax(probs)/(2**wires))
     P_R = (np.sin(np.pi*PeakProbAngle))**2
     
@@ -674,7 +674,7 @@ def HighProbRIXSState(probs):
 # the "phase wires" going forward. Prior to the walk operator, an operator
 # :math:`\mathcal{L}_\delta` operates on the register. This operator encodes a
 # `Kaiser lineshape <https://en.wikipedia.org/wiki/Kaiser_window>`_, 
-# replacing the typical Hadamard invoked superposition used to initiate
+# replacing the typical Hadamard invoked superposition used to initialize
 # similar registers. Loaiza et al. state that this is to reduce "errors coming
 # from discretization and finite precision" [#Loaiza2026]_, which arise mainly
 # from the incapability of our system to replicate an infinite Dirac delta
@@ -682,7 +682,7 @@ def HighProbRIXSState(probs):
 # 
 
 @qp.qnode(dev)
-def QPEReadout(probs):
+def QPEReadout():
     RIXSStateEncodingUnitary(angles)
     
     KaiserWindow = np.kaiser(2**n_omega+1, 2.0)[:-1] #0 corresponds to a rectangular window shape
