@@ -1,3 +1,4 @@
+"""Supporting subroutines for the singlet fission tensor-network demo."""
 import numpy as np
 import pennylane as qp
 import matplotlib
