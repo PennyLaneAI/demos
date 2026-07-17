@@ -1,7 +1,8 @@
 r"""Simulating Singlet Fission Dynamics with Tensor Networks: From Quantum Algorithms to GPU-Accelerated Classical Simulation
 =========================================================================================================================
 
-*A joint demo by Qoro Quantum and Xanadu*
+.. tip::
+*This is a joint demo by Qoro Quantum and Xanadu*
 """
 
 ######################################################################
