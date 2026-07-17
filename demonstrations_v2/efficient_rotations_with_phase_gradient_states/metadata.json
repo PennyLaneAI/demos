@@ -1,0 +1,128 @@
+{
+  "title": "Efficient Rotations With Phase Gradient States",
+  "authors": [
+    {
+      "username": "emgem"
+    }
+  ],
+  "executable_stable": true,
+  "executable_latest": true,
+  "dateOfPublication": "2026-07-14T00:00:00+00:00",
+  "dateOfLastModification": "2026-07-14T00:00:00+00:00",
+  "categories": ["Algorithms", "Quantum Computing"],
+  "tags": ["Algorithms", "Rotations", "Gate Decomposition", "Fault Tolerance", "Resource Estimation"],
+  "previewImages": [
+    {
+      "type": "thumbnail",
+      "uri": "/_static/demo_thumbnails/regular_demo_thumbnails/pennylane-demo-phase-gradient-states-thumbnail.png"
+    },
+    {
+      "type": "large_thumbnail",
+      "uri": "/_static/demo_thumbnails/large_demo_thumbnails/pennylane-demo-phase-gradient-states-large-thumbnail.png"
+    }
+  ],
+  "seoDescription": "The ability to perform arbitrary rotations is essential for the realization of usable algorithms on quantum computers. To minimize gate costs, efficient gate synthesis methods should be selected for implementation, such as multiplexed phase gradient states!",
+  "doi": "",
+  "references": [
+      {
+            "id": "Gidney2018",
+            "type": "article",
+            "title": "Halving the cost of quantum addition",
+            "authors": "Gidney",
+            "year": "2018",
+            "journal": "Quantum",
+            "doi": "10.22331/q-2018-06-18-74",
+            "url": "https://doi.org/10.22331/q-2018-06-18-74"
+        },
+      {
+            "id": "Ross2016",
+            "type": "article",
+            "title": "Optimal ancilla-free Clifford+T approximation of z-rotations",
+            "authors": "Ross and Selinger",
+            "year": "2016",
+            "journal": "Quantum Information and Computation",
+            "doi": "10.26421/QIC16.11-12-1",
+            "url": "https://doi.org/10.26421/QIC16.11-12-1"
+        },
+      {
+            "id": "Paetznick2014",
+            "type": "article",
+            "title": "Repeat-Until-Success: Non-deterministic decomposition of single-qubit unitaries",
+            "authors": "Paetznick and Svore",
+            "year": "2014",
+            "journal": "Quantum Information and Computation",
+            "doi": "10.48550/arXiv.1311.1074",
+            "url": "https://doi.org/10.48550/arXiv.1311.1074"
+        },
+       {
+            "id": "Dawson2006",
+            "type": "article",
+            "title": "The Solovay-Kitaev algorithm",
+            "authors": "Dawson and Nielsen",
+            "year": "2006",
+            "journal": "Quantum Information and Computation",
+            "doi": "10.26421/QIC6.1-6",
+            "url": "https://doi.org/10.26421/QIC6.1-6"
+        },
+       {
+            "id": "Kliuchnikov2015",
+            "type": "article",
+            "title": "A Framework for Approximating Qubit Unitaries",
+            "authors": "Kliuchnikov, Bocharov, Roetteler, and Yard",
+            "year": "2015",
+            "journal": "arXiv",
+            "doi": "10.48550/arXiv.1510.03888",
+            "url": "https://arxiv.org/pdf/1510.03888"
+        },
+      {
+            "id": "Kliuchnikov2022",
+            "type": "article",
+            "title": "Shorter quantum circuits via single-qubit gate approximation",
+            "authors": "Kliuchnikov, Lauter, Minko, Paetznick, and Petit",
+            "year": "2022",
+            "journal": "Quantum",
+            "doi": "10.22331/q-2023-12-18-1208",
+            "url": "https://doi.org/10.22331/q-2023-12-18-1208"
+        },
+      {
+            "id": "OBrien2025",
+            "type": "article",
+            "title": "Quantum State Preparation via Piecewise QSVT",
+            "authors": "O'Brien and Sunderhauf",
+            "year": "2025",
+            "journal": "Quantum",
+            "doi": "10.22331/q-2025-07-03-1786",
+            "url": "https://doi.org/10.22331/q-2025-07-03-1786"
+        },
+      {
+            "id": "Mottonen2005",
+            "type": "article",
+            "title": "Decompositons of General Quantum Gates",
+            "authors": "Mottonen and Vartiainen",
+            "year": "2005",
+            "journal": "arXiv",
+            "doi": "10.48550/arXiv.quant-ph/0504100",
+            "url": "https://doi.org/10.48550/arXiv.quant-ph/0504100"
+        }
+        
+  ],
+  "basedOnPapers": [],
+  "referencedByPapers": [],
+  "relatedContent": [
+    {
+      "type":"demonstration",
+      "id": "tutorial_intro_qrom",
+      "weight": 1.0
+    },
+    {
+      "type":"demonstration",
+      "id": "tutorial_clifford_circuit_simulations",
+      "weight": 1.0
+    },
+    {
+      "type":"demonstration",
+      "id": "tutorial_achieving_universality_with_the_clifford_hierarchy",
+      "weight": 1.0
+    }
+  ]
+}
