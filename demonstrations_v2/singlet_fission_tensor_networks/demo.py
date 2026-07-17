@@ -100,6 +100,7 @@ r"""Simulating Singlet Fission Dynamics with Tensor Networks: From Quantum Algor
 # 2. A **full kinetic step** in momentum space (QFT → Pauli rotations → iQFT)
 # 3. A **backward half-step** of potential + coupling (reversed)
 # 
+# We shall do so below with some methods in vibronic_utils.py. 
 
 
 import numpy as np
