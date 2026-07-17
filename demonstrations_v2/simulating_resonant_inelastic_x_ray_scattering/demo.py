@@ -242,6 +242,10 @@ id_c = sum(c for c, o in zip(coeffs, ops) if len(o.wires)==0)
 H_traceless = H_raw-id_c*qp.Identity(0)
 H_sparse = H_traceless.sparse_matrix(wire_order=range(8)).toarray()
 H_evals, H_evecs = np.linalg.eigh(H_sparse)
+
+#Extract the 1-norm and initial energy value from the Hamiltonian
+lamb = float(np.sum(np.abs(H_traceless.terms()[0])))
+E_0 = H_evals[0]
 ###############################################################################
 # Alright, now we have a goal (simulate a RIXS spectrum), a platform (a quantum
 # computer or, here, PennyLane), and a system. Now we just need our strategy!
@@ -486,9 +490,6 @@ D_eps_mat_out_norm = D_eps_out_mat/norm_const_out
 # being used. A higher degree will result in more terms kept in the final expression,
 # yielding higher resolution.
 
-#Extract the 1-norm and initial energy value from the Hamiltonian
-lamb = float(np.sum(np.abs(H_traceless.terms()[0])))
-E_0 = H_evals[0]
 
 #Define the Gamma parameter and initial photon energy
 Gamma = 0.99*s
