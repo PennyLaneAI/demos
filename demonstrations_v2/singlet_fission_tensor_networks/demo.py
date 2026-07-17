@@ -108,9 +108,7 @@ import pennylane as qp
 from vibronic_utils import build_pauli_hamiltonian, _FREQS, _H_EL, _KAPPA
 
 
-# =====================================================================
 # Build Pauli decomposition from embedded Hamiltonian data
-# =====================================================================
 
 pot_coup_terms, kinetic_modes = build_pauli_hamiltonian(_FREQS, _H_EL, _KAPPA, n_q=3)
 
