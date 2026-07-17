@@ -120,15 +120,6 @@ print(f"Kinetic Pauli terms: {n_kinetic}")
 print(f"PauliRots per Trotter step: {2 * n_pot_coup + n_kinetic}")
 
 ######################################################################
-# .. rst-class:: sphx-glr-script-out
-# 
-# .. code-block:: none
-# 
-#    Potential + coupling Pauli terms: 809
-#    Kinetic Pauli terms: 114
-#    PauliRots per Trotter step: 1,732
-
-######################################################################
 # Using :math:`n_q = 3` instead of :math:`n_q = 4` reduces the gate count by **~28%** per step (1,732
 # vs 2,400 PauliRots). Combined with fewer Trotter steps (10 vs 20), the total circuit is **~64%
 # shallower** — a significant reduction that makes the simulation more practical while preserving the
