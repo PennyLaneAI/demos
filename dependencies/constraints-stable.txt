@@ -18,7 +18,7 @@ jax==0.7.1
 jaxlib==0.7.1
 jaxopt==0.8.5
 
-torch==2.9.0
+torch==2.13.0
 torchvision==0.24.0
 
 optax==0.2.4
