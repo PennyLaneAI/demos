@@ -102,7 +102,7 @@ r"""Simulating Singlet Fission Dynamics with Tensor Networks: From Quantum Algor
 
 
 import numpy as np
-import pennylane as qml
+import pennylane as qp
 from vibronic_utils import build_pauli_hamiltonian, _FREQS, _H_EL, _KAPPA
 
 
@@ -181,10 +181,10 @@ print(f"PauliRots per Trotter step: {2 * n_pot_coup + n_kinetic}")
 # Once installed, setting up the Maestro device in PennyLane is straightforward:
 # 
 
-import pennylane as qml
+import pennylane as qp
 
 # CPU MPS backend
-dev = qml.device(
+dev = qp.device(
     "maestro.qubit",
     wires=60,
     simulator_type="QCSim",
@@ -193,7 +193,7 @@ dev = qml.device(
 )
 
 # GPU MPS backend — same interface, just change simulator_type
-dev_gpu = qml.device(
+dev_gpu = qp.device(
     "maestro.qubit",
     wires=60,
     simulator_type="Gpu",
@@ -203,35 +203,35 @@ dev_gpu = qml.device(
 
 ######################################################################
 # The circuit construction uses PennyLane’s standard API. Each Trotter step is built from
-# ``qml.PauliRot`` gates for the Hamiltonian terms and ``qml.QFT`` / ``qml.IQFT`` for the kinetic
+# ``qp.PauliRot`` gates for the Hamiltonian terms and ``qp.QFT`` / ``qp.IQFT`` for the kinetic
 # energy in momentum space:
 # 
 
-@qml.qnode(dev)
+@qp.qnode(dev)
 
 def circuit():
     # Initialize in S₁ (singlet excited state)
-    qml.PauliX(wires=2)
+    qp.PauliX(wires=2)
 
     # Time evolution via second-order Trotter
     for _ in range(n_steps):
         # Forward half-step: potential + coupling
         for coeff, pauli_word, wires in pot_coup_terms:
-            qml.PauliRot(coeff * dt, pauli_word, wires=wires)
+            qp.PauliRot(coeff * dt, pauli_word, wires=wires)
 
         # Full kinetic step in momentum basis
         for mode_wires, ke_terms in kinetic_modes:
-            qml.QFT(wires=mode_wires)
+            qp.QFT(wires=mode_wires)
             for coeff, pauli_word, wires in ke_terms:
-                qml.PauliRot(2 * coeff * dt, pauli_word, wires=wires)
-            qml.adjoint(qml.QFT)(wires=mode_wires)
+                qp.PauliRot(2 * coeff * dt, pauli_word, wires=wires)
+            qp.adjoint(qp.QFT)(wires=mode_wires)
 
         # Backward half-step: potential + coupling (reversed)
         for coeff, pauli_word, wires in reversed(pot_coup_terms):
-            qml.PauliRot(coeff * dt, pauli_word, wires=wires)
+            qp.PauliRot(coeff * dt, pauli_word, wires=wires)
 
     # Measure electronic state populations
-    return [qml.expval(projector) for projector in state_projectors]
+    return [qp.expval(projector) for projector in state_projectors]
 
 ######################################################################
 # Bond Dimension Convergence

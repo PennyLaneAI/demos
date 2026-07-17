@@ -1,5 +1,5 @@
 import numpy as np
-import pennylane as qml
+import pennylane as qp
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
@@ -165,14 +165,14 @@ _KAPPA = np.array([
 
 def _op_to_pauliword(op):
     """Convert a PennyLane Pauli operator to (word, wires) tuple."""
-    if isinstance(op, qml.Identity):
+    if isinstance(op, qp.Identity):
         return None, None
-    if isinstance(op, (qml.PauliX, qml.PauliY, qml.PauliZ)):
+    if isinstance(op, (qp.PauliX, qp.PauliY, qp.PauliZ)):
         return op.name[-1], list(op.wires)
     if hasattr(op, "operands"):
         word, wires = "", []
         for o in op.operands:
-            if isinstance(o, qml.Identity):
+            if isinstance(o, qp.Identity):
                 continue
             w, ws = _op_to_pauliword(o)
             if w is not None:
@@ -184,7 +184,7 @@ def _op_to_pauliword(op):
 
 def _decompose_matrix(mat, wire_order):
     """Decompose Hermitian matrix into (coeff, pauli_word, wires) tuples."""
-    decomp = qml.pauli_decompose(mat, wire_order=wire_order)
+    decomp = qp.pauli_decompose(mat, wire_order=wire_order)
     terms = []
     for c, op in zip(decomp.coeffs, decomp.ops):
         if abs(c) < 1e-12:
@@ -287,13 +287,13 @@ def apply_qft(wires):
     """QFT using only native gates (no Adjoint wrappers)."""
     n = len(wires)
     for j in range(n):
-        qml.Hadamard(wires=wires[j])
+        qp.Hadamard(wires=wires[j])
         for k in range(j + 1, n):
-            qml.ControlledPhaseShift(
+            qp.ControlledPhaseShift(
                 np.pi / 2 ** (k - j), wires=[wires[k], wires[j]]
             )
     for i in range(n // 2):
-        qml.SWAP(wires=[wires[i], wires[n - 1 - i]])
+        qp.SWAP(wires=[wires[i], wires[n - 1 - i]])
 
 
 def apply_iqft(wires):
@@ -305,14 +305,14 @@ def apply_iqft(wires):
     n = len(wires)
     # SWAP layer first (same as forward)
     for i in range(n // 2):
-        qml.SWAP(wires=[wires[i], wires[n - 1 - i]])
+        qp.SWAP(wires=[wires[i], wires[n - 1 - i]])
     # Reversed H + CPhase with negated angles
     for j in range(n - 1, -1, -1):
         for k in range(n - 1, j, -1):
-            qml.ControlledPhaseShift(
+            qp.ControlledPhaseShift(
                 -np.pi / 2 ** (k - j), wires=[wires[k], wires[j]]
             )
-        qml.Hadamard(wires=wires[j])
+        qp.Hadamard(wires=wires[j])
 
 
 def apply_trotter_step(pot_coup_terms, kinetic_modes, dt):
@@ -328,21 +328,21 @@ def apply_trotter_step(pot_coup_terms, kinetic_modes, dt):
     for _, coeff, pw, ws in pot_coup_terms:
         theta = coeff * dt
         if abs(theta) > 1e-8:
-            qml.PauliRot(theta, pw, wires=ws)
+            qp.PauliRot(theta, pw, wires=ws)
 
     # ── Full kinetic energy step (momentum basis via QFT) ──
     for mode_wires, ke_terms in kinetic_modes:
         # Transform to momentum basis
         apply_qft(mode_wires)
         # X on MSB to center the momentum grid around zero
-        qml.PauliX(wires=mode_wires[0])
+        qp.PauliX(wires=mode_wires[0])
         # Apply kinetic diagonal: ω/2 · p² (full step, factor of 2 in theta)
         for coeff, pw, ws in ke_terms:
             theta = 2.0 * coeff * dt
             if abs(theta) > 1e-8:
-                qml.PauliRot(theta, pw, wires=ws)
+                qp.PauliRot(theta, pw, wires=ws)
         # Undo X on MSB
-        qml.PauliX(wires=mode_wires[0])
+        qp.PauliX(wires=mode_wires[0])
         # Transform back to position basis
         apply_iqft(mode_wires)
 
@@ -350,7 +350,7 @@ def apply_trotter_step(pot_coup_terms, kinetic_modes, dt):
     for _, coeff, pw, ws in reversed(pot_coup_terms):
         theta = coeff * dt
         if abs(theta) > 1e-8:
-            qml.PauliRot(theta, pw, wires=ws)
+            qp.PauliRot(theta, pw, wires=ws)
 
 
 def electronic_pop_observable(state_idx):
@@ -365,15 +365,15 @@ def electronic_pop_observable(state_idx):
                 bit_pos = N_EL - 1 - w
                 sign = -1 if ((state_idx >> bit_pos) & 1) else 1
                 c *= sign
-                paulis.append(qml.PauliZ(el_wires[w]))
+                paulis.append(qp.PauliZ(el_wires[w]))
         if not paulis:
-            ops.append(qml.Identity(el_wires[0]))
+            ops.append(qp.Identity(el_wires[0]))
         elif len(paulis) == 1:
             ops.append(paulis[0])
         else:
-            ops.append(qml.prod(*paulis))
+            ops.append(qp.prod(*paulis))
         coeffs.append(c)
-    return qml.Hamiltonian(coeffs, ops)
+    return qp.Hamiltonian(coeffs, ops)
 
 
 # =====================================================================
