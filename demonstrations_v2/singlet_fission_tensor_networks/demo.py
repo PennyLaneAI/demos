@@ -235,7 +235,7 @@ def circuit():
 # We ran the full 60-qubit, 19-mode system at :math:`\chi = 32, 64, 128, 256` and tracked the
 # electronic state populations over 10 a.u. of evolution time:
 # 
-# .. figure:: _static/demonstration_assets/vibronic_gpu_convergence.png
+# .. figure:: ../_static/demonstration_assets/vibronic_gpu_convergence.png
 #    :alt: Bond dimension convergence
 # 
 # *Bond dimension convergence showing S₁ decay and ¹TT growth across χ = 32, 64, 128, 256. The curves
@@ -290,7 +290,7 @@ def circuit():
 # -  CPU: c2-standard-30 (30 vCPUs, 120 GB Memory)
 # -  GPU: a2-highgpu-1g (12 vCPUs, 85 GB Memory, 1 NVIDIA A100 40GB)
 # 
-# .. figure:: _static/demonstration_assets/vibronic_cpu_vs_gpu.png
+# .. figure:: ../_static/demonstration_assets/vibronic_cpu_vs_gpu.png
 #    :alt: CPU vs GPU comparison
 # 
 # *CPU vs GPU wall-clock time comparison across bond dimensions. GPU becomes faster at χ ≥ 128,
@@ -316,7 +316,7 @@ def circuit():
 # Putting it all together, here’s what the converged simulation (:math:`\chi = 256`) tells us about
 # singlet fission in the anthracene dimer:
 # 
-# .. figure:: _static/demonstration_assets/vibronic_gpu_populations.png
+# .. figure:: ../_static/demonstration_assets/vibronic_gpu_populations.png
 #    :alt: Population dynamics
 # 
 # *Population dynamics of the five electronic states over 10 a.u. of evolution, showing S₁ → ¹TT
