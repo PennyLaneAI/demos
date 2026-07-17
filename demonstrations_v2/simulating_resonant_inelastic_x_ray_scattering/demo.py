@@ -2,7 +2,7 @@ r"""
 Simulating Resonant Inelastic X-Ray Scattering
 ##############################################
 
-Our understanding of the world is only as accurate as our models and our models are only as accurate as our ability to interpret their
+Our understanding of reality is only as accurate as our models and our models are only as accurate as our ability to interpret their
 results.
 
 In our battery-dependent world, it is very important that we properly understand
@@ -17,14 +17,15 @@ molecular oxygen that becomes trapped inside the battery, leading to decline.
 
 In 2025, Gao et al. published "Clarifying the origin of molecular O2 in cathode
 oxides", dropping the bombshell that RIXS experiments show the presence of molecular
-oxygen in non-Li-excess batteries as well, meaning it is likely an artifact of
-the methodology rather than a result of the battery process. They additionally
+oxygen in non-Li-excess batteries incapable of producing these molecules as well, 
+meaning it is likely an artifact of the methodology itself. They additionally
 point to this as evidence of a much more complex degradation mechanism involving
 the bonding of oxygen dimers to transition metals in the battery materials.
 
 Though this wasn't necessarily a "back to the drawing board" moment, this shift in
 interpretation and understanding shed light on the need for reliable simulations
-that can help with the validation and interpretation of experimental results. This
+that can help with the validation and interpretation of experimental results. The 
+problem? Classical computers simply cannot handle RIXS simulation. This
 is precisely the case made by Loaiza et al. in "Quantum algorithm for simulating
 resonant inelastic X-ray scattering of battery materials". Here, the team puts
 forward a quantum algorithm designed to tackle the problem of RIXS simulation
@@ -34,7 +35,7 @@ amplification <demos/tutorial_intro_amplitude_amplification>`, :doc:`quantum
 amplitude estimation (QAE) <demos/iterative_quantum_amplitude_estimation>`, and
 :doc:`quantum phase estimation (QPE) <demos/tutorial_qpe>`. This solution not only
 addresses the typical resource limitations of classical computation, but unlocks
-access to the quantum processes that RIXS relies on, which are simply inaccessible 
+access to the quantum processes that RIXS relies on, which are inaccessible 
 to classical systems.
 
 Today, our goal will be to understand how these quantum building blocks work
@@ -70,10 +71,10 @@ So, the three states involved in the RIXS process are:
 2. :math:`|E_n\rangle`: Following the absorption of the incident :math:`\omega_I` photon, a core electron has been excited to a higher-energy valence orbital leaving behind a core hole.
 3. :math:`|E_f\rangle`: To fill the unfavourable core hole, an electron from a lower energy valence orbital has relaxed into the core, leaving behind a valence hole and emitting a :math:`\omega_S` photon [#Loaiza2026]_. The molecule is left in an excited state.
 
-The difference between :math:`E_f` and :math:`E_0` state is known as the **energy
+The difference between :math:`E_f` and :math:`E_0` is known as the **energy
 transfer**. When energy transfer versus intensity is plotted (as is characteristic of a
 RIXS spectrum), the spectral peaks can be interpreted as a specific excitation within the
-target system. The energy values at which these peaks indicate what exactly is present,
+target system. The energy values at which these peaks occur indicate what exactly is present,
 allowing for correlation between observed excitation peaks and known molecular excitation
 energies for identification.
 
@@ -88,7 +89,7 @@ advantages that are not merely reliant on an increase in computational power. In
 the case of Loaiza et al.'s RIXS algorithm, the following two advantages are
 listed for the quantum case:
 
-1. RIXS processes involve several **delocalized processes**, meaning the positions
+1. RIXS spectroscopy involves several **delocalized processes**, meaning the positions
    of the electrons involved are probabilistically spread out across the
    molecule. Capturing this requires a large active space that simply cannot be constructed 
    by classical bits incapable of emulating superposition and entanglement relationships.
@@ -96,14 +97,14 @@ listed for the quantum case:
 2. Strongly correlated systems of interest, such as the transition metal-oxygen
    dimer bonding proposed by Gao et al., experience complex intermediate states
    that dictate the mixing of orbitals in the oxygen-metal bonding process. To
-   model this sufficiently, a computationally simple wavefunction is
+   model this sufficiently, any computationally simple wavefunction is
    insufficient, and a classical computer is once again incapable of carrying
    out the necessary entanglement math [#Loaiza2026]_.
 
 So, even though it *is* a valid argument to say that quantum computers could
 more feasibly handle large molecules if necessary, the stronger arguments in
 this context is that the use of qubits to carry out RIXS simulation makes it
-inherently possible to model the quantum phenomena that it relies on. Good thing
+inherently possible to model the quantum phenomena that the technique relies on. Good thing
 we know our stuff!
 
 The Hamiltonian
@@ -137,11 +138,11 @@ The Hamiltonian
 
 
 In "Quantum algorithm for simulating resonant inelastic X-ray scattering of
-battery materials", Loaiza et al. specify that a second-quantized Hamiltonian of
+battery materials", Loaiza et al. focus on a second-quantized Hamiltonian of
 the form
 
 .. math::
-   \hat{H}=E^{0}+\sum_{p,q=1}^{N_{a}}\sum_{\sigma}h_{pq}\hat{c}_{p\sigma}^{\dagger}\hat{c}_{q\sigma} +\frac{1}{2}\sum_{p,q,r,s=1}^{N_{a}}\sum_{\sigma,\sigma^{\prime}}V_{pqrs}\hat{c}_{p\sigma}^{\dagger}\hat{c}_{q\sigma}\hat{c}_{r\sigma^{\prime}}^{\dagger}\hat{c}_{s\sigma^{\prime}},
+   \hat{H}=E^{0}+\sum_{p,q=1}^{N_{a}}\sum_{\sigma}h_{pq}\hat{c}_{p\sigma}^{\dagger}\hat{c}_{q\sigma}+\frac{1}{2}\sum_{p,q,r,s=1}^{N_{a}}\sum_{\sigma,\sigma^{\prime}}V_{pqrs}\hat{c}_{p\sigma}^{\dagger}\hat{c}_{q\sigma}\hat{c}_{r\sigma^{\prime}}^{\dagger}\hat{c}_{s\sigma^{\prime}},
 
 where :math:`N_a` is the number of spatial orbitals in the molecule, :math:`p,
 q, r,` and :math:`s` are specific orbital indices, :math:`\sigma` and
@@ -160,9 +161,9 @@ orbitals to be our focus. To do this, we will adapt the given Hamiltonian as
 
 where :math:`c_1` and :math:`c_2` are core orbitals, :math:`\nu_1` and
 :math:`\nu_2` are valence orbitals, and :math:`\epsilon_i` are on-site orbital
-energies. Since we are dealing with a very small system, we are not taking the
-same frozen inner-shell assumption as in the source paper, hence the addition of 
-the initial interaction term.
+energies. Note that the :math:`\sum_{p,q=1}^{N_{a}}\sum_{\sigma}h_{pq}\hat{c}_{p\sigma}^{\dagger}\hat{c}_{q\sigma}`
+term has been explicitly broken up into the diagonal (first term) and off-diagonal (second term) components in 
+our Hamiltonian.
 
 To implement this Hamiltonian in PennyLane, we can first call the built in
 Fermionic operators :class:`~pennylane.FermiC` (the creation operator) and
@@ -197,7 +198,7 @@ num_op_v2_down = create(5)*annihilate(5)
 # between our values, so any changes in coefficient value will be done using 
 # a scaling factor :math:`s`. 
 
-s = 0.45 #Optional scaling term for runnability
+s = 0.45 #Optional scaling term
 
 #Orbital energies
 eps_c1 = -1.5*s
@@ -230,8 +231,10 @@ Hspin = V*(num_op_v2_up*num_op_v2_down)
 
 H_raw = qp.jordan_wigner((Hdiag_up+Hdiag_down)+(Hhybrid_up+Hhybrid_down)+Hspin).simplify()
 ###############################################################################
-# To carry out subsequent steps, we need to extract the eigenvaluea and eigenvectors
-# of our Hamiltonian. This can be done by converting ``H_raw`` into a sparse matrix
+# This Hamiltonian will be the core focus of our state definition and eventual
+# time evolution. Eventually, we will map this Hamiltonian onto our registers, but
+# for now we need to extract its eigenvalues and eigenvectors. 
+# This can be done by converting ``H_raw`` into a sparse matrix
 # and finding the values using ``np.linalg.eigh()``.
 
 coeffs, ops = H_raw.terms()
@@ -299,10 +302,74 @@ H_evals, H_evecs = np.linalg.eigh(H_sparse)
 # built for us in PennyLane, so let us work through these steps systematically
 # to reach our goal. 
 #
+# # Resource Definition 
+# ................... 
+# Before we jump in, some bookkeeping is in order. Based on the algorithm
+# outling, we will build our functions using 
+# a total of 9 registers, each of which has a different number of wires. 
+#
+# The GQSP register, success flag register, and two block encoding ancilla
+# registers only require one wire each. The number of wires included in the QPE
+# register and the qubitization control register can vary depending on the
+# desired precision. The system register should be twice the size of the
+# molecular system itself, which, in this case, is 4 (two core orbitals plus two
+# valence orbitals).
+#
+# The remaining two registers (the QAE wires and the phase wires) should be
+# computed relative to the desired accuracy and resolution of the spectral
+# output. In general, the number of wires required to achieve accuracy
+# :math:`\epsilon` is given by
+#
+# .. math:: \lceil \log_2(1/\epsilon) \rceil
+#
+# So, we can define our thresholds and compute our register sizes, initializing the
+# full set of system registers using :func:`~pennylane.registers`.
+
+eps_omega = 0.01
+eps_QAE = 0.3
+Na = 4 #two core plus two valence
+
+N_eps_omega = np.ceil((np.pi*lamb)/(np.sqrt(2)*eps_omega))
+n_omega = np.ceil(np.log2(1/eps_omega))
+nQAE = np.ceil(np.log2(1/eps_QAE))
+
+registers = {
+    "GQSP": 1,
+    "success": 1,
+    "controllers": 4,
+    "block_encilla_1": 1,
+    "block_encilla_2": 1,
+    "system": int(2*Na),
+    "QAE": int(nQAE),
+    "phase": int(n_omega),
+    "QPE": 4
+}
+
+regs = qp.registers(registers)
+###############################################################################
+# Which can be unpacked and labelled as necessary.
+
+GQSP_wire = regs["GQSP"]
+success_wire = regs["success"]
+control_wires = regs["controllers"]
+block_encilla_1 = regs["block_encilla_1"]
+block_encilla_2 = regs["block_encilla_2"]
+system_wires = regs["system"]
+QAE_wires = regs["QAE"]
+phase_wires = regs["phase"]
+QPE_wires = regs["QPE"]
+###############################################################################
+# With these registers defined, we can map our Hamiltonian to the set of wires
+# to ensure nothing gets crossed along the way.
+
+sys_list = list(system_wires)
+wire_map = {i: sys_list[i] for i in range(8)}
+H = H_traceless.map_wires(wire_map)
+###############################################################################
 # BLISS-THC Decomposition 
 # -----------------------
-# In order to carry out subsequent block encoding and minimize resource costs, a
-# system's Hamiltonian may need to be decomposed into a :doc:`linear
+# In order to carry out subsequent block encoding and minimize resource costs,
+# the target Hamiltonian may need to be decomposed into a :doc:`linear
 # combination of unitaries (LCU) <demos/tutorial_lcu_blockencoding>`. The main
 # goal of this process is to *compress* the Hamiltonian, making it easier to
 # implement using gates and more feasible to execute within available
@@ -326,7 +393,7 @@ H_evals, H_evecs = np.linalg.eigh(H_sparse)
 #
 # .. math:: |R_{\epsilon_I,
 #    \epsilon_S}(\omega_I)\rangle\equiv\frac{\hat{R}_{\epsilon_I,
-#    \epsilon_S}(\omega_I)|E_0\rangle}{|R_{\epsilon_I,\epsilon_S}(\omega_I)}|.
+#    \epsilon_S}(\omega_I)|E_0\rangle}{|R_{\epsilon_I,\epsilon_S}(\omega_I)|}.
 #
 # We will take for granted that this state is equivalent to the block encoded
 # operator
@@ -336,12 +403,13 @@ H_evals, H_evecs = np.linalg.eigh(H_sparse)
 #    \hat{G}(\omega_I, \Gamma) \hat{U}_{\epsilon_I} & \cdot \\ \cdot & \cdot
 #    \end{bmatrix}
 #
-# Where :math:`\Gamma` is a scaling factor, :math:`D_{\epsilon_S}^\dagger` is the
+# Where :math:`\Gamma` is the inverse of the intermediate state lifetime in units
+# energy, :math:`D_{\epsilon_S}^\dagger` is the
 # final state dipole operator, :math:`\lambda_D^{(\epsilon_S)}` is the 1-norm of
 # the final state dipole operator, :math:`\hat{G}(\omega_I, \Gamma)` is the
 # Green's function, and :math:`\hat{U}_{\epsilon_I}` an operator that maps the
 # initial dipole perturbed state onto the all-zero state, giving
-# :math:`\hat{U}_{\epsilon_I}|0\rangle=|D_{\epsilon_I}\rangle`. So, our main
+# :math:`\hat{U}_{\epsilon_I}|0\rangle=|D_{\epsilon_I}\rangle` [#Loaiza2026]_. So, our main
 # goal for now is to gather the building blocks of the embedded unitary operator
 # and construct this block encoding representation.
 #
@@ -359,7 +427,7 @@ H_evals, H_evecs = np.linalg.eigh(H_sparse)
 # with the scattering process. 
 #
 # Since we can interpret this operator as the de-excitation process that occurs
-# in the final step, the initial dipole operator can be taken as merely the
+# in the final RIXS step, the initial dipole operator can be taken as merely the
 # inverse excitation operator since these representations are frequency
 # independent. Thus, we can define the base of our dipole operator as only the
 # excitation terms (i.e., ignoring the conjugate terms).
@@ -403,10 +471,7 @@ D_eps_mat_out_norm = D_eps_out_mat/norm_const_out
 # The Green's function is given by,
 # 
 # .. math::
-#    \Gamma\hat{G}(\omega_I,\Gamma)=\frac{\Gamma}{\omega_I-(\hat{H}-E_0)+i\Gamma}
-#
-# where :math:`\Gamma` is the inverse of the intermediate state lifetime in units
-# energy [#Loaiza2026]_.
+#    \Gamma\hat{G}(\omega_I,\Gamma)=\frac{\Gamma}{\omega_I-(\hat{H}-E_0)+i\Gamma}.
 # 
 # To implement this function using GQSP, the phase factor angles must first be
 # determined. This is a completely classical process that involves determining
@@ -417,7 +482,7 @@ D_eps_mat_out_norm = D_eps_out_mat/norm_const_out
 # :func:`~pennylane.poly_to_angles`, which handles the conversion as long as the
 # found polynomial is represented in the Fourier basis) to get the job done. 
 #
-# The polynomial transformation will also determine the degree of the Green's function
+# The polynomial transformation will also implement the degree of the Green's function :math:`K_G`
 # being used. A higher degree will result in more terms kept in the final expression,
 # yielding higher resolution.
 
@@ -431,7 +496,7 @@ omega_I = 6.10*s
 
 #Define the Green's function polynomial degree and scaling factor
 K_G = 100
-scale = 0.7
+scale = 0.7 #Ensure compatibility with poly_to_angle tool
 
 #The Green's function must operate between -1 and 1
 z = np.linspace(-1, 1, 1000)
@@ -461,7 +526,8 @@ def AngleFinder(Gamma, lamb, E_0, omega_I):
 # 1. Encode the initial dipole excited state onto a register representing the
 #    molecular system,
 # 2. Carry out the GQSP process, encoding the Green's function onto the system
-#    register,
+#    register and using a qubitized representation of the system Hamiltonian 
+#    as our walk operator,
 # 3. Load the final dipole operator onto the system register,
 # 4. Carry out a controlled X operation that will flag if the block encoding is
 #    successful.
@@ -544,7 +610,7 @@ def RIXSStateEncodingUnitary(angles):
 #
 # So, if we are able to determine the success probability, we can easily compute
 # the amplitude amplification repetition parameter, boost our signal, and move
-# forward to our QPE readout with confidence.
+# forward to our QPE step with confidence.
 #
 # .. figure:: ../demonstrations_v2/simulating_resonant_inelastic_x_ray_scattering/pennylane-demo-simulating-resonant-inelastic-xray-scattering-GroverIterateCircuit.png
 #    :align: center 
@@ -610,7 +676,7 @@ def QAE():
 
     return qp.probs(wires = QAE_wires)
 ###############################################################################
-# Using the output of the amplitude estimation step, we can simply repeatedly
+# Using the output of the amplitude estimation step, we can repeatedly
 # execute the ``GroverIterate()`` operator :math:`K_A` times to achieve a 
 # high probability RIXS state, ensuring successful QPE.
 #
@@ -642,9 +708,9 @@ def HighProbRIXSState(probs):
 # Quantum Phase Estimation and Readout
 # ------------------------------------
 # Another novelty of the Loaiza et al. RIXS algorithm is their approach to
-# measurement and readout. The second step of the algorithm we laid out
+# time evolution and readout. The second step of the algorithm we laid out
 # previously is the application of walk-based QPE. To briefly review, this is a
-# strategy in which time evolution is carried out by a "walk operator"
+# strategy in which time evolution is carried out by a walk operator
 # constructed from a :doc:`qubitized <demos/tutorial_qubitization>`
 # representation of the system's Hamiltonian. This walk operator is composed of
 # two oracle states, the PREPARE oracle (which loads the Hamiltonian
@@ -679,6 +745,8 @@ def HighProbRIXSState(probs):
 # from discretization and finite precision" [#Loaiza2026]_, which arise mainly
 # from the incapability of our system to replicate an infinite Dirac delta
 # function in the QPE step. 
+#
+# With that, we're ready to rock! Or, more accurately, we're ready to walk.
 # 
 
 @qp.qnode(dev)
@@ -702,72 +770,6 @@ def QPEReadout():
 # for computational simplicity. ``HighProbRIXSState()`` can easily replace 
 # ``RIXSStateEncodingUnitary()`` at the beginning of the function.
 #
-# Resource Definition 
-# ................... 
-# Before we can successfully run our
-# RIXS simulation, some bookkeeping is in order. We have built our functions using
-# a total of 9 registers, each of which has a different number of wires. 
-#
-# The GQSP register, success flag register, and two block encoding ancilla
-# registers only require one wire each. The number of wires included in the QPE
-# register and the qubitization control register can vary depending on the
-# desired precision. The system register should be twice the size of the
-# molecular system itself, which, in this case, is 4 (two core orbitals plus two
-# valence orbitals).
-#
-# The remaining two registers (the QAE wires and the phase wires) should be
-# computed relative to the desired accuracy and resolution of the spectral
-# output. In general, the number of wires required to achieve accuracy
-# :math:`\epsilon` is given by
-#
-# .. math:: \lceil \log_2(1/\epsilon) \rceil
-#
-# So, we can define our thresholds and compute our register sizes, initializing the
-# full set of system registers using :func:`~pennylane.registers`.
-
-eps_omega = 0.01
-eps_QAE = 0.3
-Na = 4 #two core plus two valence
-
-N_eps_omega = np.ceil((np.pi*lamb)/(np.sqrt(2)*eps_omega))
-n_omega = np.ceil(np.log2(1/eps_omega))
-nQAE = np.ceil(np.log2(1/eps_QAE))
-
-registers = {
-    "GQSP": 1,
-    "success": 1,
-    "controllers": 4,
-    "block_encilla_1": 1,
-    "block_encilla_2": 1,
-    "system": int(2*Na),
-    "QAE": int(nQAE),
-    "phase": int(n_omega),
-    "QPE": 4
-}
-
-regs = qp.registers(registers)
-###############################################################################
-# Which can be unpacked and labelled as necessary.
-
-GQSP_wire = regs["GQSP"]
-success_wire = regs["success"]
-control_wires = regs["controllers"]
-block_encilla_1 = regs["block_encilla_1"]
-block_encilla_2 = regs["block_encilla_2"]
-system_wires = regs["system"]
-QAE_wires = regs["QAE"]
-phase_wires = regs["phase"]
-QPE_wires = regs["QPE"]
-###############################################################################
-# With these registers defined, we can map our Hamiltonian to the set of wires
-# to ensure nothing gets crossed along the way.
-
-sys_list = list(system_wires)
-wire_map = {i: sys_list[i] for i in range(8)}
-H = H_traceless.map_wires(wire_map)
-###############################################################################
-# With that, we're ready to rock! Or, more accurately, we're ready to walk.
-#
 # Some Notes on Plotting 
 # ...................... 
 # When constructing the final RIXS
@@ -784,8 +786,8 @@ H = H_traceless.map_wires(wire_map)
 #
 # An additional, relevant trick is the use of **spectral folding**, which
 # accounts for symmetries in the :math:`[0,2\pi]` range that the QPE step works
-# in. More specifically, the step accounts for the fact that the qubitized walk
-# operator have complex eigenvalues on the unit circle, meaning the QPE register
+# in. More specifically, the it compensates for the fact that the qubitized walk
+# operator has complex eigenvalues on the unit circle, meaning the QPE register
 # will hold both positive and negative angles that correspond to the same energy
 # state. Essentially, this step folds the final phase output in half, combining
 # symmetrical bins to prevent cancellation. 
@@ -843,7 +845,7 @@ def plot_qpe_spectrum_tools(amplitude, H_traceless, n_omega, eta=0.2, xmax=4.0):
 #
 # .. figure:: ../demonstrations_v2/simulating_resonant_inelastic_x_ray_scattering/pennylane-demo-simulating-resonant-inelastic-xray-scattering-AnalyticalSolution.png
 #    :align: center 
-#    :width: 700px 
+#    :width: 500px 
 #    :alt: A plot depicting the analytical solution of the target Hamiltonian.
 #
 #    *Analytical spectrum*
@@ -853,7 +855,7 @@ def plot_qpe_spectrum_tools(amplitude, H_traceless, n_omega, eta=0.2, xmax=4.0):
 #
 # .. figure:: ../demonstrations_v2/simulating_resonant_inelastic_x_ray_scattering/pennylane-demo-simulating-resonant-inelastic-xray-scattering-RIXSspectrum.png
 #    :align: center 
-#    :width: 700px 
+#    :width: 500px 
 #    :alt: A plot depicting the simulation output of the target Hamiltonian.
 #
 #    *Simulated spectrum*
@@ -871,11 +873,23 @@ def plot_qpe_spectrum_tools(amplitude, H_traceless, n_omega, eta=0.2, xmax=4.0):
 # certain chemical process by correlating the peak values to known excitation
 # energies. Comparing their results to simulation will, therefore, distinguish
 # significant, process inherent molecules from experimental artifacts.
+#
+# Conclusion
+# ==========
+# Pursuing useful, accessible quantum technologies requires careful consideration
+# of which applications and use cases are most important and well suited. The 
+# problem of RIXS simulation is a clear example of this, in which a gap in 
+# computational capability is causing confusion in cutting-edge research and
+# can be addressed specifically by the capabilities of quantum algorithms. Chasing
+# opportunities such as these are a first step in creating a quantum-ready future.
+# The algorithm implementation here shows a simple example of a powerful algorithm,
+# play around with it as you become better acquainted with the techniques used and 
+# explore larger molecules!
 # 
 # .. _references:
 #
 # References
-# ----------
+# ==========
 # .. [#Gao2025] X.\ Gao, B. Li, K. Kummer, A. Geondzhian, D. Aksyonov, R.
 # Dedryvère, D. Foix, G. Rousse, M. B. Yahia, M. L. Doublet, et al., "Clarifying
 # the origin of molecular O2 in cathode oxides," Nature Materials, vol. 24, p.
