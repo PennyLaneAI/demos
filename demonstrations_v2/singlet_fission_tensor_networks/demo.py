@@ -2,7 +2,7 @@ r"""Simulating Singlet Fission Dynamics with Tensor Networks: From Quantum Algor
 =========================================================================================================================
 
 .. tip::
-*This is a joint demo by Qoro Quantum and Xanadu*
+    *This is a joint demo by Qoro Quantum and Xanadu*
 """
 
 ######################################################################
