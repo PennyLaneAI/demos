@@ -1,0 +1,33 @@
+{
+  "title": "Intro to quantum random access memory (QRAM)",
+  "authors": [
+    {
+      "username": "shifanxu"
+    },
+    {
+      "username": "yongshan"
+    }
+  ],
+  "executable_stable": true,
+  "executable_latest": true,
+  "dateOfPublication": "2026-07-20T00:00:00+00:00",
+  "dateOfLastModification": "2026-07-20T00:00:00+00:00",
+  "categories": [],
+  "tags": [],
+  "previewImages": [
+    {
+      "type": "thumbnail",
+      "uri": "/_static/demo_thumbnails/regular_demo_thumbnails/pennylane-demo-qram-thumbnail.png"
+    },
+    {
+      "type": "large_thumbnail",
+      "uri": "/_static/demo_thumbnails/large_demo_thumbnails/pennylane-demo-qram-large-thumbnail.png"
+    }
+  ],
+  "seoDescription": "Learn how quantum random access memory can ",
+  "doi": "",
+  "references": [],
+  "basedOnPapers": [],
+  "referencedByPapers": [],
+  "relatedContent": []
+}
