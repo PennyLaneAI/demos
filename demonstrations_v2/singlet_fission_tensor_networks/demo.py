@@ -282,8 +282,7 @@ def circuit():
 # 256          ~27 h\*  4.3 h    **~6×**
 # ============ ======== ======== =================
 # 
-# * CPU :math:`\chi = 256` estimated from scaling trend (5.1× per doubling at
-# :math:`\chi \geq 128`).*
+# *CPU :math:`\chi = 256` estimated from scaling trend (5.1× per doubling at :math:`\chi \geq 128`).*
 # 
 # The hardware used for this experiment were based on standard VMs on Google Cloud:
 # 
