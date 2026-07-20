@@ -11,20 +11,28 @@
   "executable_stable": true,
   "executable_latest": true,
   "dateOfPublication": "2026-07-20T00:00:00+00:00",
-  "dateOfLastModification": "2026-07-20T00:00:00+00:00",
-  "categories": [],
-  "tags": [],
-  "previewImages": [
-    {
-      "type": "thumbnail",
-      "uri": "/_static/demo_thumbnails/regular_demo_thumbnails/pennylane-demo-qram-thumbnail.png"
-    },
-    {
-      "type": "large_thumbnail",
-      "uri": "/_static/demo_thumbnails/large_demo_thumbnails/pennylane-demo-qram-large-thumbnail.png"
-    }
-  ],
-  "seoDescription": "Learn how quantum random access memory can ",
+"dateOfLastModification": "2026-07-20T00:00:00+00:00",
+"categories": [
+  "Quantum Computing"
+],
+"tags": [
+  "QRAM",
+  "QROM",
+  "quantum memory",
+  "data loading",
+  "quantum circuits"
+],
+"previewImages": [
+  {
+    "type": "thumbnail",
+    "uri": "/_static/demo_thumbnails/regular_demo_thumbnails/pennylane-demo-qram-thumbnail.png"
+  },
+  {
+    "type": "large_thumbnail",
+    "uri": "/_static/demo_thumbnails/large_demo_thumbnails/pennylane-demo-qram-large-thumbnail.png"
+  }
+],
+"seoDescription": "Compare select-only, bucket-brigade, and hybrid quantum random access memory architectures using executable PennyLane examples.",
   "doi": "",
   "references": [],
   "basedOnPapers": [],

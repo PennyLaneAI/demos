@@ -1,10 +1,11 @@
-r"""r”““Intro to quantum random access memory (QRAM)
-================================================
+r"""
+Intro to quantum random access memory (QRAM)
+============================================
 
 Many quantum algorithm that promises advantage or speedup (e.g., quantum machine learning, search,
 linear algebra, state preparation) quietly assumes that classical data can be efficiently and
 cheaply loaded onto a quantum computer. For some time, this assumption has been justified by
-pointing to Quantum Random Access Memory (QRAM). But in examining this assumption, it turns out that
+pointing to Quantum Random Access Memory (QRAM) [#qram]_. But in examining this assumption, it turns out that
 exactly how you build QRAM directly changes the cost of data loading, in both circuit depth and
 qubit count, before hardware or error correction overheads are even considered.
 
@@ -18,23 +19,26 @@ QRAM is more feasible than previously thought.
 
 We’ll use three implementations of QRAM in PennyLane to examine resource tradeoffs:
 
-:class:~.pennylane.SelectOnlyQRAM, the direct select-style construction that is closest to
-sequential QROM, :class:~.pennylane.BBQRAM, a bucket-brigade architecture that routes a bus qubit
-through a binary tree, and :class:~.pennylane.HybridQRAM, which interpolates between the two by
+:class:`~.pennylane.SelectOnlyQRAM`, the direct select-style construction that is closest to
+sequential QROM, :class:`~.pennylane.BBQRAM`, a bucket-brigade architecture that routes a bus qubit
+through a binary tree, and :class:`~.pennylane.HybridQRAM`, which interpolates between the two by
 combining a select prefix with a smaller bucket-brigade tree. Like classical virtual memory, this
-enables querying a larger address space than the qubits allocated. For a collection of N bitstrings
-:math:b_0, b_1, :raw-latex:`\ldots`, b\_{N-1} of length :math:m, each construction implements the
+enables querying a larger address space than the qubits allocated. For a collection of :math:`N`
+bitstrings :math:`b_0, b_1, \ldots, b_{N-1}` of length :math:`m`, each construction implements the
 same logical map:
 
 .. math::
-:raw-latex:`\text{QRAM}`:raw-latex:`\lvert `i:raw-latex:`\rangle `:raw-latex:`\lvert 0`^{:raw-latex:`\otimes `m}
-:raw-latex:`\rangle `=
-:raw-latex:`\lvert `i:raw-latex:`\rangle `:raw-latex:`\lvert `b_i:raw-latex:`\rangle`.
+
+   \operatorname{QRAM}
+   \lvert i\rangle
+   \lvert 0\rangle^{\otimes m}
+   =
+   \lvert i\rangle
+   \lvert b_i\rangle.
 
 Our goal in this demo is to understand what tradeoff each one makes between qubit count, circuit
 depth, and architectural complexity with executable examples in PennyLane.
 
-““”
 """
 
 ######################################################################
@@ -84,14 +88,14 @@ def decode_probs(probs, num_wires):
 # Select-only QRAM
 # ----------------
 #
-# We start with the most direct construction. :class:``~.pennylane.SelectOnlyQRAM`` applies the
+# We start with the most direct construction. :class:`~.pennylane.SelectOnlyQRAM` applies the
 # appropriate bit flips to the target register, controlled on the address register. Conceptually, this
-# is the QRAM analogue of the select-style QROM story: if the address is :math:``i``, we apply the
-# gates that write :math:``b_i`` into the target wires.
+# is the QRAM analogue of the select-style QROM story: if the address is :math:`i`, we apply the
+# gates that write :math:`b_i` into the target wires.
 #
-# More concretely, for every stored record whose :math:``j``-th data bit is :math:``1``, the circuit
-# applies an address-controlled :math:``X`` gate to target wire :math:``j``. This address-controlled
-# operation is a multi-controlled :math:``X`` gate: all address wires jointly control whether the
+# More concretely, for every stored record whose :math:`j`-th data bit is :math:`1`, the circuit
+# applies an address-controlled :math:`X` gate to target wire :math:`j`. This address-controlled
+# operation is a multi-controlled :math:`X` gate: all address wires jointly control whether the
 # target bit is flipped. Repeating this over all addresses and target positions implements the full
 # lookup map.
 #
@@ -158,7 +162,8 @@ print("Two-qubit gates:", select_specs.gate_sizes.get(2, 0))
 # -------------------
 #
 # The bucket-brigade idea reorganizes the problem. Instead of using one large global selection gadget,
-# it stores routing information in a binary tree. At a high level, the query has three stages:
+# it stores routing information in a binary tree [#selectqram]_. At a high level, the query has three
+# stages:
 #
 # 1. **Address loading.** The address qubits are routed into the binary tree, where they set the
 #    direction information along the path corresponding to the queried address.
@@ -169,14 +174,14 @@ print("Two-qubit gates:", select_specs.gate_sizes.get(2, 0))
 # 3. **Address unloading.** The address-loading operation is reversed so that the routing tree is
 #    restored and the work wires can be reused.
 #
-# In PennyLane, :class:``~.pennylane.BBQRAM`` uses one bus wire plus three wires per internal node of
+# In PennyLane, :class:`~.pennylane.BBQRAM` uses one bus wire plus three wires per internal node of
 # the routing tree:
 #
 # - one direction wire,
 # - one left-port wire, and
 # - one right-port wire.
 #
-# If the address register has :math:``n`` wires, then the work register must contain
+# If the address register has :math:`n` wires, then the work register must contain
 #
 # .. math:: 1 + 3(2^n - 1)
 #
@@ -216,7 +221,7 @@ for i in range(len(bitstrings)):
 
 
 ######################################################################
-# The tradeoff is now clear. :class:``~.pennylane.BBQRAM`` replaces large multi-controlled target
+# The tradeoff is now clear. :class:`~.pennylane.BBQRAM` replaces large multi-controlled target
 # updates with local routing operations, but it needs a substantial auxiliary memory architecture to
 # do so. This is precisely the kind of width-depth tradeoff that motivates QRAM design: depending on
 # the hardware model, extra qubits may be preferable to deeper control logic.
@@ -246,29 +251,29 @@ print("Two-qubit gates:", bb_specs.gate_sizes.get(2, 0))
 # Hybrid QRAM
 # -----------
 #
-# :class:``~.pennylane.HybridQRAM`` combines the previous two ideas. We split the address into a
-# select prefix of size :math:``k`` and a bucket-brigade suffix of size :math:``n-k``. The prefix
+# :class:`~.pennylane.HybridQRAM` combines the previous two ideas. We split the address into a
+# select prefix of size :math:`k` and a bucket-brigade suffix of size :math:`n-k`. The prefix
 # chooses one block of the classical data, and a smaller bucket-brigade tree is reused inside that
 # block. The PennyLane template follows the circuit-level select/bucket-brigade hybridization idea in
-# [#hybridqram]\ *, while hybrid QRAM also appears in hardware-oriented architectures such as
-# [#hardwareefficient]*.
+# [#hybridqram]_, while hybrid QRAM also appears in hardware-oriented architectures such as
+# [#hardwareefficient]_.
 #
 # This gives us a tunable family of constructions:
 #
-# - small :math:``k`` means more bucket-brigade behavior and a larger routing tree,
-# - large :math:``k`` means more select-style behavior and less routing overhead.
+# - small :math:`k` means more bucket-brigade behavior and a larger routing tree,
+# - large :math:`k` means more select-style behavior and less routing overhead.
 #
 # Notably, both Select-only QROM and BB QRAM are two special cases (extreme cases) for hybrid QRAM,
 # with k=n and k=0, respectively.
 #
-# For our 2-qubit address register, the only nontrivial choice is :math:``k=1``: one address bit acts
+# For our 2-qubit address register, the only nontrivial choice is :math:`k=1`: one address bit acts
 # as the select prefix, while the remaining bit routes through a depth-1 bucket-brigade tree.
 #
-# The following figure illustrates the hybrid decomposition using a minimal :math:``k=1, n=2``
+# The following figure illustrates the hybrid decomposition using a minimal :math:`k=1, n=2`
 # example. The high-order address bit acts as a block selector, partitioning the memory into two
 # blocks, while the remaining address bits are routed through a shared bucket-brigade subtree.
-# Operationally, this construction can be viewed as reusing a smaller :math:``n=2`` bucket-brigade
-# QRAM query twice, once for each block, with the :math:``k=1`` selector determining which block
+# Operationally, this construction can be viewed as reusing a smaller :math:`n=2` bucket-brigade
+# QRAM query twice, once for each block, with the :math:`k=1` selector determining which block
 # output is activated. This example makes explicit how the hybrid design trades replicated block-level
 # structure for a reusable intra-block QRAM query path.
 #
@@ -305,7 +310,7 @@ for i in range(len(bitstrings)):
 
 
 ######################################################################
-# Because :class:``~.pennylane.HybridQRAM`` exposes the parameter :math:``k``, it gives us a continuum
+# Because :class:`~.pennylane.HybridQRAM` exposes the parameter :math:`k`, it gives us a continuum
 # between the other two constructions. In larger examples, this can be a practical design knob: we can
 # spend more auxiliary qubits to shrink the effective routing problem, or keep the work register
 # smaller and accept a deeper bucket-brigade component.
@@ -333,7 +338,7 @@ print("Two-qubit gates:", hybrid_specs.gate_sizes.get(2, 0))
 
 
 ######################################################################
-# The tunable parameter :math:``k`` is more meaningful once the address register is larger. To keep
+# The tunable parameter :math:`k` is more meaningful once the address register is larger. To keep
 # the demo lightweight, the next cell does not compile a larger circuit. It only uses the work-wire
 # formula
 #
@@ -343,10 +348,6 @@ print("Two-qubit gates:", hybrid_specs.gate_sizes.get(2, 0))
 # Full gate-level compilation is still useful, but for larger examples it can dominate the runtime of
 # a tutorial notebook.
 #
-# **Figure placeholder:** Add a width-depth tradeoff graphic showing how increasing :math:``k``
-# reduces the shared tree size while increasing the select-style part of the construction.
-#
-
 num_address_wires = 4
 num_target_wires = len(target_wires)
 
@@ -364,8 +365,8 @@ for k_value in range(num_address_wires):
 # ---------------------------------
 #
 # At the logical level, all three templates implement the same map. What changes is the mechanism used
-# to realize it, and therefore the asymptotic scaling. Let :math:``N=2^n`` be the number of stored
-# records, where :math:``n`` is the number of address wires, and let :math:``m`` be the bitstring
+# to realize it, and therefore the asymptotic scaling. Let :math:`N=2^n` be the number of stored
+# records, where :math:`n` is the number of address wires, and let :math:`m` be the bitstring
 # length.
 #
 # +------------------------+------------------------+------------------------+------------------------+
@@ -421,10 +422,10 @@ for name, summary in resource_table.items():
 
 ######################################################################
 # Even in this small example, the qualitative pattern is already visible.
-# :class:``~.pennylane.SelectOnlyQRAM`` keeps the qubit count low but leans on address-wide control
-# logic. :class:``~.pennylane.BBQRAM`` introduces a dedicated memory architecture that can replace
-# some of that global control with local routing. :class:``~.pennylane.HybridQRAM`` then turns this
-# into a tunable tradeoff through the parameter :math:``k``. For very small tables, this extra
+# :class:`~.pennylane.SelectOnlyQRAM` keeps the qubit count low but leans on address-wide control
+# logic. :class:`~.pennylane.BBQRAM` introduces a dedicated memory architecture that can replace
+# some of that global control with local routing. :class:`~.pennylane.HybridQRAM` then turns this
+# into a tunable tradeoff through the parameter :math:`k`. For very small tables, this extra
 # structure can look expensive; the purpose of the hybrid construction is to expose a design knob that
 # becomes more useful as the address space grows.
 #
@@ -436,13 +437,16 @@ for name, summary in resource_table.items():
 # abstract operation,
 #
 # .. math::
-# :raw-latex:`\lvert `i:raw-latex:`\rangle `:raw-latex:`\lvert 0`:raw-latex:`\rangle `:raw-latex:`\mapsto `:raw-latex:`\lvert `i:raw-latex:`\rangle `:raw-latex:`\lvert `b_i:raw-latex:`\rangle`,
+#
+#    \lvert i\rangle \lvert 0\rangle
+#    \mapsto
+#    \lvert i\rangle \lvert b_i\rangle,
 #
 # but they do so with different architectural tradeoffs. The direct select-style construction keeps
 # the width small, but pays for it with exponentially many address-wide controlled operations.
-# Bucket-brigade QRAM moves in the opposite direction: it spends :math:``O(2^n)`` auxiliary wires on a
+# Bucket-brigade QRAM moves in the opposite direction: it spends :math:`O(2^n)` auxiliary wires on a
 # routing tree so that a query follows a local path through memory. Hybrid QRAM sits between these
-# extremes, using :math:``k`` select-prefix bits to shrink the routing tree while increasing the
+# extremes, using :math:`k` select-prefix bits to shrink the routing tree while increasing the
 # select-style part of the computation.
 #
 # The main takeaway is that the logical data-loading task does not determine a unique circuit
@@ -455,35 +459,20 @@ for name, summary in resource_table.items():
 # References
 # ----------
 #
-# .. [#qram]
-#
-# ::
-#
-#    Vittorio Giovannetti, Seth Lloyd, and Lorenzo Maccone,
+# .. [#qram] Vittorio Giovannetti, Seth Lloyd, and Lorenzo Maccone,
 #    "Quantum random access memory",
 #    `arXiv:0708.1879 <https://arxiv.org/abs/0708.1879>`__, 2007.
 #
-# .. [#selectqram]
-#
-# ::
-#
-#    Connor T. Hann, Gideon Lee, S. M. Girvin, and Liang Jiang,
+# .. [#selectqram] Connor T. Hann, Gideon Lee, S. M. Girvin, and Liang Jiang,
 #    "Resilience of quantum random access memory to generic noise",
 #    `arXiv:2012.05340 <https://arxiv.org/abs/2012.05340>`__, 2012.
 #
-# .. [#hybridqram]
-#
-# ::
-#
-#    Shifan Xu, Connor T. Hann, Ben Foxman, Steven M. Girvin, and Yongshan Ding,
+# .. [#hybridqram] Shifan Xu, Connor T. Hann, Ben Foxman, Steven M. Girvin, and Yongshan Ding,
 #    "Systems Architecture for Quantum Random Access Memory",
 #    `arXiv:2306.03242 <https://arxiv.org/abs/2306.03242>`__, 2023.
 #
-# .. [#hardwareefficient]
-#
-# ::
-#
-#    Connor T. Hann, Chang-Ling Zou, Yaxing Zhang, Yiwen Chu, Robert J. Schoelkopf, Steven M. Girvin, and Liang Jiang,
+# .. [#hardwareefficient] Connor T. Hann, Chang-Ling Zou, Yaxing Zhang, Yiwen Chu,
+#    Robert J. Schoelkopf, Steven M. Girvin, and Liang Jiang,
 #    "Hardware-efficient quantum random access memory with hybrid quantum acoustic systems",
 #    `https://arxiv.org/abs/1906.11340 <https://arxiv.org/abs/1906.11340>`__, 2019.
 #
