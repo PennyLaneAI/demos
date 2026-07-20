@@ -279,7 +279,7 @@ def circuit():
 # 32           19 min   1.0 h    0.3× (CPU faster)
 # 64           63 min   1.4 h    0.7×
 # 128          5.3 h    2.3 h    **2.3×**
-# 256          ~27 h\*  4.3 h    **~6×**
+# 256          ~27 h  4.3 h    **~6×**
 # ============ ======== ======== =================
 # 
 # *CPU* :math:`\chi = 256` *estimated from scaling trend (5.1× per doubling at* :math:`\chi \geq 128`\ *).*
