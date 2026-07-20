@@ -58,7 +58,7 @@ r"""Simulating Singlet Fission Dynamics with Tensor Networks: From Quantum Algor
 # 
 # The key physics: starting in the singlet excited state :math:`S_1`, vibronic coupling drives
 # population transfer into the triplet-pair state :math:`^1(TT)` — this *is* singlet fission. The rate
-# and efficiency of this process depend sensitively on all 19 vibrational modes, making it a genuinely
+# and efficiency of this process depend on all 19 vibrational modes, making it a genuinely
 # high-dimensional quantum dynamics problem.
 # 
 # Qubit Encoding
