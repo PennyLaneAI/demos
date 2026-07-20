@@ -2,26 +2,38 @@ r"""
 Simulating Vibronic Dynamics
 ############################
 
-Simulating static systems will not get us very far.
+Simulating static properties will not get us very far.
 
 It is difficult to find an advancement in science or technology that did not
-incorporate simulation into its discovery process. The field of simulation, as a
-result, is constantly striving to strengthen capabilities in favour of achieving
-bigger, better results. The tools that we have available to us at present are
-powerful, but their limitations show as we push forward in our aspirations. 
+happen through a painstaking process of trial and error. For most of human
+history, testing of new ideas was only possible in the slow, costly physical world,
+leaving many avenues outright impossible to explore. With the advent of computers,
+this changed. The ability to digitally simulate ideas significantly accelerated
+the development cycle of new technologies and cut costs, leading to a substantial increase in the pace of human
+innovation. As we have pushed forward and progressed our technologies
+toward the atomic scale where quantum effects become relevant to simulation,
+the limitations of our current technologies have been made clear.
 
-Classical simulation is well poised to handle systems that, for the most part,
-stay still. Ground state energies, isolated systems, and other scenarios that
-deal with a small number of possible states are important but far from
-everything. Expanding beyond these limited models into dynamic scenarios,
-though, has proven to be technologically difficult. One such area of interest is
+When it comes to simulating these complex quantum effects, classical simulation 
+is well poised to handle systems that, for the most part,
+stay still. Ground state energies and other static quantities are good heuristics,
+but the simulations that we need to carry out to continue to advance areas
+such as materials discovery are dynamical in nature. This is something 
+that classical computers just can't seem to crack. 
+
+An important area of interest in dynamic simualtion is
 `vibronics <https://en.wikipedia.org/wiki/Vibronic_coupling>`_, concerned
-specifically with electronic and nuclear vibrational interactions. Vibronic
+specifically with the interaction between electrons and nuclei in
+a molecule. Vibronic
 simulations push beyond the `Born-Oppenheimer approximation
 <https://en.wikipedia.org/wiki/Born%E2%80%93Oppenheimer_approximation>`_,
-opening many useful doors in theoretical chemistry. 
+which assumes nuclei and electrons can be treated as completely seperate
+entities within a molecule. Born-Oppenheimer holds extremely well for 
+ground-state systems, enabling the aforementioned classical accessiblity of
+these scenarios.  
 
-When we go beyond Born-Oppenheimer, it is no longer possible to isolate
+When we go beyond Born-Oppenheimer to accurately model dynamic systems, 
+it is no longer possible to isolate
 electronic degrees of freedom (DOFs) from nuclear DOFs, meaning their paths
 cannot be simulated separately. Long story short, if we want to capture the
 realistic dynamics of a molecular system, we lose access to approximations that
@@ -54,9 +66,9 @@ carry out time-evolution for a vibronic system, the following steps must be
 fulfilled.
 
 1. Load the initial state of the system into the simulation,
-2. Partition the terms of the Hamiltonian into mutually non-commuting fragments
+2. Partition the terms of the Hamiltonian into mutually commuting fragments
    for Trotterization,
-3. Diagonalize fragments for exponentiation, if necessary,
+3. Diagonalize fragments for exponentiation,
 4. Carry out Trotterization to evolve the Hamiltonian in time,
 5. Read out your desired observable.
 
@@ -66,13 +78,18 @@ building the core of our vibronic simulation.
 Grid Encoding
 -------------
 To keep our operations efficient, it is important to select a space
-representation that allows for easy basis transformation. A standard approach is
-the use of spatial grid discretization to represent the system's operators in
-real-space. When dealing with a dynamic system, it is expected that we will be
-mainly concerned with the position operator :math:`Q` and momentum operator
-:math:`P`, so this representation is convenient. Letting :math:`k` be the number
-of qubits per mode, the number of grid points required is :math:`K=2^k`. From
-this, we will take for granted that the eigenvectors of :math:`Q` are given by
+representation that allows for easy basis transformation. In classical 
+computation, it is rare to use real space for simulations due to its demanding
+memory requirements. However, using real space relaxes boundary condition
+constraints and provides optimal conditions for implementing operators. In quantum
+computing, memory is not the bottleneck. Therefore, our focus must turn to 
+which basis allows for the most effective implementation of the required operators,
+leading us to real space.
+
+Going forward, we will take the position operator :math:`Q` and momentum operator
+:math:`P` to be our operators of interest. Letting the total number of required
+grid points be :math:`K` (from which we can determined the number of required
+qubits in the system :math:`k=\log_2(K)`), we can represent :math:`Q` as
 
 .. math::
    Q|x\rangle = \Delta(x-K/2)|x\rangle,
@@ -94,20 +111,19 @@ Since position and momentum are non-commuting operators, they must be sliced for
 Trotterization. To review, Trotterization is a Hamiltonian simulation method
 used to carry out time evolution in a non-commuting system. It addresses the
 fact that, if a Hamiltonian is constructed from non-commuting operators, it
-cannot be exponentiated as a whole and the time evolution operator
+cannot be easily exponentiated and the time evolution operator
 :math:`e^{iHt}` cannot be conventionally realized. As such, the Hamiltonian can
 be separated into groups of non-commuting operators called *fragments* to be
 individually exponentiated and interleaved in partial time steps to simulate
 simultaneous time evolution.
 
-The kinetic energy Hamiltonian fragment is, comparatively, simple to establish
-and evolve in time. Cutting to the chase, the kinetic step should:
+The kinetic energy fragment is, comparatively, simple to establish
+and evolve in time. Cutting to the chase, the kinetic step should, for each mode:
 
-1. Perform a basis switch on the input state to momentum space,
-2. Introduce the kinetic energy coefficients to the state register,
-3. Square the state values in the momentum state representation,
-4. Apply a rotation to the state register,
-5. Uncompute. 
+1. Perform a change of basis on the input state to momentum space,
+2. Square the corresponding mode's register and store the result in an ancillary register,
+3. Apply a rotation to the state register via a :doc:`multiplexed phase gradient register <demos/efficient_rotations_with_phase_gradient_states>,
+4. Uncompute the ancillary register. 
 
 It is specified in "Quantum Algorithm for Vibronic Dynamics" that the basis
 transformation should take place via the sequence
@@ -127,8 +143,8 @@ of electronic state. This makes our lives easy! Rather than loading
 state-dependent coefficients into the system, we can simply encode calculated
 coefficients into the register. An intuitive way to understand these
 coefficients is to take them as describing the motion of the nuclear states. If
-:math:`C_{kin}=0`, the nucleus is understood to be frozen and, therefore, there
-is nothing vibronic to simulate.
+the kinetic term coefficient is equal to 0, the nucleus is understood to be frozen and, 
+therefore, there is nothing vibronic to simulate.
 
 Executing the kinetic energy step is, at this point, merely a question of
 determining which tools are ideal to carry out our desired procedure. Once the
@@ -147,7 +163,8 @@ general form
 .. math::
    |R\rangle = \frac{1}{2^{b-1}}\sum e^{-i2\pi y/2^b}|y\rangle,
 
-where :math:`b` is the number of wires in the gradient register.
+where :math:`b` is the number of wires in the gradient register and determines the
+precision of the rotation.
 
 A major benefit of phase gradient states are that they only need to be prepared
 once, since the addition step does not change it. To carry out the addition
