@@ -13,11 +13,11 @@ r"""Simulating Singlet Fission Dynamics with Tensor Networks: From Quantum Algor
 # of **singlet fission** — a quantum mechanical process in organic semiconductors where a high-energy
 # singlet exciton splits into two lower-energy triplet excitons. If harnessed in solar cells, singlet
 # fission could push efficiencies past the Shockley-Queisser limit, the theoretical ceiling for
-# conventional single-junction devices [1].
+# conventional single-junction devices [#singletfission]_.
 # 
 # But here’s the catch: understanding singlet fission requires simulating the coupled dynamics of
 # electronic states and nuclear vibrations — a *vibronic* problem where quantum effects are essential.
-# In a recent work [2], a quantum algorithm was developed for simulating vibronic dynamics and applied
+# In a recent work [#quantumalgorithm]_, a quantum algorithm was developed for simulating vibronic dynamics and applied
 # to singlet fission in anthracene dimers, a prototypical organic photovoltaic material. The algorithm
 # maps the vibronic Hamiltonian onto qubits and evolves it using Trotterized time evolution.
 # 
@@ -26,7 +26,7 @@ r"""Simulating Singlet Fission Dynamics with Tensor Networks: From Quantum Algor
 # `Maestro <https://www.github.com/qoroquantum/maestro>`__ simulator, accessed through PennyLane. We
 # show that:
 # 
-# 1. The vibronic dynamics algorithm from [2] can be efficiently simulated at scale using MPS methods
+# 1. The vibronic dynamics algorithm from [#quantumalgorithm]_ can be efficiently simulated at scale using MPS methods
 # 2. Bond dimension convergence analysis reveals the entanglement structure of the singlet fission
 #    process
 # 3. **GPU-accelerated MPS** delivers up to **6.2× speedup** over CPU at the bond dimensions required
@@ -42,7 +42,7 @@ r"""Simulating Singlet Fission Dynamics with Tensor Networks: From Quantum Algor
 # ------------------------
 # 
 # The system we’re simulating is an anthracene dimer — two anthracene molecules whose electronic
-# states are coupled to 19 vibrational (phonon) modes. The vibronic Hamiltonian takes the form [2]:
+# states are coupled to 19 vibrational (phonon) modes. The vibronic Hamiltonian takes the form [#quantumalgorithm]_:
 # 
 # .. math::
 # 
@@ -94,7 +94,7 @@ r"""Simulating Singlet Fission Dynamics with Tensor Networks: From Quantum Algor
 # Trotter step, since each one translates to tensor network contractions in the MPS backend.
 # 
 # The vibronic Hamiltonian is decomposed into Pauli terms using PennyLane’s ``pauli_decompose``. The
-# second-order Trotter step (Eq. 5 of [2]) applies:
+# second-order Trotter step (Eq. 5 of [#quantumalgorithm]_) applies:
 # 
 # 1. A **forward half-step** of potential + coupling terms (Pauli rotations)
 # 2. A **full kinetic step** in momentum space (QFT → Pauli rotations → iQFT)
@@ -415,14 +415,28 @@ def circuit():
 # References
 # ----------
 # 
-# [1] M. B. Smith and J. Michl, “Singlet Fission,” *Chem. Rev.* **110**, 6891 (2010). `DOI:
-# 10.1021/cr1002613 <https://doi.org/10.1021/cr1002613>`__
+# .. [#singletfission]
 # 
-# [2] J. Huh *et al.*, “Quantum Algorithm for Vibronic Dynamics: Case Study on Singlet Fission Solar
-# Cell Design,” arXiv:2411.13669 (2024). `arXiv: 2411.13669 <https://arxiv.org/abs/2411.13669>`__
+#     M. B. Smith and J. Michl
+#     "Singlet Fission",
+#     Chem. Rev. 110, 6891
+#     `arXiv:10.1021/cr1002613 <https://doi.org/10.1021/cr1002613>`__, 2010.
 # 
-# [3] Qoro Quantum, “Maestro Quantum Simulator.” https://www.github.com/qoroquantum/maestro
+# .. [#quantumalgorithm]
 # 
-# [4] V. Bergholm *et al.*, “PennyLane: Automatic differentiation of hybrid quantum-classical
-# computations,” arXiv:1811.04968 (2018). `arXiv: 1811.04968 <https://arxiv.org/abs/1811.04968>`__
+#     J. Huh *et al.*
+#     "Quantum Algorithm for Vibronic Dynamics: Case Study on Singlet Fission Solar Cell Design"
+#     `arXiv:2411.13669 <https://arxiv.org/abs/2411.13669>`__, 2024.
 # 
+# .. [#qoromaestro]
+# 
+#     Qoro Quantum
+#     "Maestro Quantum Simulator"
+#     `GitHub <https://www.github.com/qoroquantum/maestro>`__, 2026.
+# 
+# .. [#pennylane]
+# 
+#     V. Bergholm *et al.*
+#     "PennyLane: Automatic differentiation of hybrid quantum-classical computations"
+#     `arXiv:1811.04968 <https://arxiv.org/abs/1811.04968>`__, 2018.
+#
