@@ -10,21 +10,16 @@ history, testing new ideas was only possible in the slow, costly physical world,
 making many avenues impossible to explore. With the advent of computers,
 this changed. The ability to digitally simulate ideas significantly accelerated
 the development cycle of new technologies and cut costs, leading to a substantial increase in the pace of human
-innovation. Though we have pushed forward and progressed our technologies
-toward the atomic scale where quantum effects become relevant to simulation,
-the limitations of our current technologies have been made clear.
+innovation.
 
 When it comes to simulating complex quantum effects, classical simulation 
 is well poised to handle systems that, for the most part,
-stay still. Ground state energies and other static quantities are good static benchmarks,
+stay still. Ground state energies and other static quantities are good heuristics,
 but the simulations we need to carry out to continue progressing areas
 such as advanced materials discovery are dynamical in nature. This is something 
 classical computers just can't seem to crack. 
 
-An important area of interest in dynamic simulation is
-`vibronics <https://en.wikipedia.org/wiki/Vibronic_coupling>`_, which is specifically concerned 
-with the interaction between electrons and nuclei in
-a molecule. Classical simulations tend to take the 
+In theoretical chemistry, classical simulations tend to take the 
 `Born-Oppenheimer approximation
 <https://en.wikipedia.org/wiki/Born%E2%80%93Oppenheimer_approximation>`_, which 
 assumes electrons and nuclei can be treated as completely separate entities. 
@@ -38,17 +33,15 @@ cannot be simulated separately. Long story short, if we want to capture the
 realistic dynamics of a molecular system, we lose access to approximations that
 allow for a reduction in the number of simulation variables and, as a result,
 the size of the system will very quickly exceed standard computational
-resources. So, what comes to mind when we want to simulate realistic atomic
-system dynamics that scale exponentially in resource requirements and require
-nuanced modelling of phenomena such as entanglement? Quantum computing!
+resources. This is true when we set out to simulate `vibronic systems <https://en.wikipedia.org/wiki/Vibronic_coupling>`, which is specifically concerned with these vibrational
+interactions between electrons and nuclei.
 
 In `"Quantum Algorithm for Vibronic Dynamics"
 <https://arxiv.org/abs/2411.13669>`_ Motlagh et al. propose a novel quantum
 algorithm for vibronic simulations. This algorithm leverages several quantum
-tools such as `phase gradient states
-<https://pennylane.ai/compilation/phase-gradient>`_, `Trotterization
-<https://pennylane.ai/challenges/a_simple_trotterization>`_, and `QROM
-coefficient loading <https://pennylane.ai/demos/tutorial_intro_qrom>`_ to reach
+tools including :doc:`phase gradient states <demos/efficient_rotations_with_phase_gradient_states>`, 
+:doc:`QROM
+coefficient loading <demos/tutorial_intro_qrom>`, and, foundationally, :doc:`Trotterization <demos/exploring_trotterization>` to reach
 beyond Born-Oppenheimer and toward more realistic, capable dynamic simulations.
 
 Why don't we add this to our quantum toolkits!
@@ -64,20 +57,19 @@ form
    H = \mathcal{I}_{el} \otimes (T_{nuc}+V_0)+\textbf{W}
 
 where :math:`T_{nuc}` is the vibrational
-kinetic operator, :math:`V_0` is the potential
-energy operator, and
+kinetic operator, :math:`V_0` is the reference 
+potential energy operator, and
 :math:`\textbf{W}` is a coupling matrix representing the diabatic
 potential [#Motlagh2025]_. The source paper defines this potential
-in a truncated quadratic vibronic coupling model as
+in a truncated quadratic vibronic coupling (QVC) model as
 
 .. math:: 
    \mathbf{W}'_{ij}(\vec{Q})=\lambda^{(i,j)}+\sum_r a_r^{(i,j)}Q_r+\sum_{r,r'} b_{r,r'}^{(i,j)}Q_rQ_{r^\prime}.
 
 We can interpret this expression by understanding :math:`\lambda^{(i,j)}`,
 :math:`a_r^{(i,j)}`, and :math:`b_{rr'}^{(i,j)}` as coupling coefficients and
-:math:`\vec{Q}` as mode-dependent position operators [#Motlagh2025]_. In this
-truncation, we deal with only the linear and quadratic coordinate terms, which is 
-adequate to minimize error and ensure implementability.
+:math:`\vec{Q_r}` as mode-dependent position operators (with :math:`r` being a specific mode) [#Motlagh2025]_. In this truncation, we deal with only the linear and quadratic coordinate terms, which is 
+adequate to both shrink error and ensure implementability.
 
 We can take the kinetic and potential operators as
 
@@ -89,32 +81,18 @@ and
 .. math:: 
    V =\sum_{i,j=0}^{N-1}|j\rangle\langle i| \otimes V_{ji}
 
-respectively, where :math:`P` is the momentum operator,
+respectively, where :math:`\mathcal{I_el}` is the electronic space identity operator,
+:math:`P` is the momentum operator,
 :math:`V_{ji}` represents the sum of the expansion of
 :math:`\textbf{W'}` in coefficient form and the ground-state 
 potential :math:`V_0`.
 
-Carrying out a time evolution of the KDC Hamiltonian is useful for
+Carrying out a time evolution of the KDC Hamiltonian is useful for applications such as 
 spectroscopy and energy transfer dynamics, among other things. For this
-demonstration, we will aim to simulate electron state population evolution for a
-small, simple system.
+demonstration, we will aim to simulate electronic state population evolution for a
+small, simple system. 
 
-
-To simulate the time evolution of a specific vibronic Hamiltonian, we need to
-take the particularities of that system into consideration. Before considering
-where each Hamiltonian differs, though, we can explore what needs they share. To
-carry out time-evolution for a vibronic system, the following steps must be
-fulfilled.
-
-1. Load the initial state of the system into the simulation,
-2. Partition the terms of the Hamiltonian into fragments
-   for Trotterization,
-3. Diagonalize fragments for exponentiation,
-4. Carry out Trotterization to evolve the Hamiltonian in time,
-5. Measure the electronic register to extract state populations.
-
-Sounds like a walk in the park! Or, at least, the start we need to begin
-building the core of our vibronic simulation. 
+Let's get started.
 
 Grid Encoding
 -------------
@@ -122,10 +100,12 @@ To keep our operations efficient, it is important to select a space
 representation that allows for easy basis transformation. In classical 
 computation, it is difficult to use real space for simulations due to the exponential
 memory requirements of storing a grid wave packet. However, using real space provides optimal conditions 
-for implementing our Hamiltonian since both potential and kinetic energy operators are diagonal in real space.
-In quantum computing, memory is not the main bottleneck and we are free to use real space
-as we please.
+for implementing our Hamiltonian since we can represent both position and momentum operators diagonally,
+pending a simple change of basis. This is a clear advantage of using quantum computers
+to carry out vibronic simulations. Since memory is not a main bottleneck in the quantum case,
+we are free to use real space as we please!
 
+To do this, we need to define the grid on which our system will exist. 
 Letting the total number of required
 grid points be :math:`K` (from which we can determine the number of required
 qubits in the system :math:`k=\log_2(K)`), we can represent our mode-dependent
@@ -136,21 +116,21 @@ qubits in the system :math:`k=\log_2(K)`), we can represent our mode-dependent
 
 where :math:`\Delta=\sqrt{2\pi/K}` is the grid spacing term and :math:`x` is a
 position-basis grid point index. It is more convenient to take the signed
-integer representation
+integer representation 
 
 .. math::
-   Q|x\rangle = \Delta \cdot x |x\rangle,
+   Q|x\rangle = \Delta \cdot x |x\rangle
 
-letting :math:`x \in \{-\frac{K}{2}, -\frac{K}{2}+1, \dots, \frac{K}{2}-1\}`. This discretization dictates the 
+for our implementation, letting :math:`x \in \{-\frac{K}{2}, -\frac{K}{2}+1, \dots, \frac{K}{2}-1\}`. This discretization dictates the 
 size of our space and the number of qubits required for our system.
 
 The Kinetic Step
 ----------------
 Since position and momentum are non-commuting operators, they must be fragmented for
-:doc:`Trotterization <demos/exploring_trotterization>`. To review, Trotterization is a Hamiltonian
+Trotterization. To review, Trotterization is a Hamiltonian
 simulation method that addresses the issue of exponentiating non-commuting terms in
-a Hamiltonian. In this method, a target Hamiltonian is separated into groups of commuting operators (where these groups
-do not commute with each other) called *fragments* to be
+a Hamiltonian. In this method, a target Hamiltonian is separated into groups of commuting operators (ensuring these groups
+do not commute with each other to the greatest extent possible) called *fragments* to be
 individually exponentiated and interleaved in partial time steps to simulate
 simultaneous time evolution.
 
@@ -159,18 +139,15 @@ and evolve in time. Cutting to the chase, the kinetic step should, for each mode
 
 1. Perform a change of basis on the input state to momentum space,
 2. Square the corresponding mode's register and store the result in an ancillary register,
-3. Apply a rotation to the state register via a :doc:`multiplexed phase gradient register <demos/efficient_rotations_with_phase_gradient_states>`,
+3. Apply a rotation to the state register via a :doc:`phase gradient register <demos/efficient_rotations_with_phase_gradient_states>`,
 4. Uncompute the ancillary register. 
 
-Motlagh et al. specify that the basis
-transformation should take place via the sequence
+Motlagh et al. specify that the basis transformation should take place via the sequence
 
 .. math::
    P = QFT^\dagger X_{k-1} Q X_{k-1} QFT
 
-in which the X-gates are applied as a means of bit-ordering. These additional gates are sometimes unnecessary
-depending on the symmetry of the system, but we will see it through
-in our implementation
+in which the X-gates are applied as a means of bit-ordering. 
 
 We also know that the kinetic energy coefficients will always be proportional to
 :math:`P^2` and will be independent of the electronic state. This makes our lives easy! Rather than loading
@@ -186,7 +163,7 @@ basis has been switched, an
 equivalent to :math:`x^2` in the signed-integer picture) can be used to carry
 out the squaring operation on the state register.
 
-To apply the rotation step, a :doc:`multiplexed phase gradient <demos/efficient_rotations_with_phase_gradient_states>`
+To apply the rotation step, a :doc:`phase gradient <demos/efficient_rotations_with_phase_gradient_states>`
 approach will be implemented.
 Phase gradient rotations work by storing a pre-computed, catalytic state that
 holds position-dependent rotation angles. Via quantum addition, these angles can be
@@ -199,10 +176,10 @@ general form
 where :math:`b` is the number of wires in the gradient register and determines the
 precision of the rotation.
 
-A major benefit of phase gradient states is they only need to be prepared
-once, since the addition step does not change it. To carry out the addition
+A major benefit of using phase gradients is they only need to be prepared
+once, since the addition step does not have any impact on the state. To carry out the addition
 without error, a "slicing" step should be implemented to determine how many
-wires in the allocated registers are actually required due to the weighted
+wires in the allocated registers are actually required as a result of the weighted
 binary representation used in this implementation. This is, essentially,
 equivalent to carrying out a `logical left shift
 <https://en.wikipedia.org/wiki/Logical_shift>`_ in classical computing. 
@@ -301,7 +278,7 @@ def KineticStep(time_step, kinetic_coeffs, num_modes, state_wires, gradient_wire
 # ------------------
 # The goal of the potential energy step is to construct the full potential
 # energy operator (with coefficients) for each electron state and coupled
-# vibrational states. To do this, we
+# vibrational state. To do this, we
 # must consider the state-dependent potential coefficients and the vibrational
 # modes of the system. The operations that will need to be carried out by this
 # function are:
@@ -324,7 +301,7 @@ def KineticStep(time_step, kinetic_coeffs, num_modes, state_wires, gradient_wire
 # potential step function for use.
 #
 #
-# As shown in our truncated representation of :math:`\textbf{W}`, we are only
+# As shown in our QVC representation of :math:`\textbf{W'}`, we are only
 # concerned with scenarios with one or two mode states. Thus, in the case our system 
 # is quadratic, we simply need to apply an :func:`~qp.OutPoly`
 # operator that multiplies the two mode registers together, just like we did in
@@ -470,7 +447,6 @@ def KDCFrag(fragment, load_coeffs, mode_list, coeff_data, state_wires, electron_
 #
 # Assembling the Trotter Step
 # ---------------------------
-#
 # To efficiently exponentiate our fragments and maintain compatibility with
 # architecture, each fragment must be *diagonal*. In a vibronic system, off-diagonal terms
 # run rampant due to the high degree of coupling. Thus, the
@@ -478,7 +454,7 @@ def KDCFrag(fragment, load_coeffs, mode_list, coeff_data, state_wires, electron_
 #
 # 1. Perform a kinetic half-step on the system,
 # 2. Diagonalize each fragment to represent coupling behaviour,
-# 3. Perform a full potential step for each fragment,
+# 3. Perform a potential step for each fragment,
 # 4. Uncompute the diagonalization step,
 # 5. Perform another kinetic half-step on the system.
 #
@@ -492,9 +468,9 @@ def KDCFrag(fragment, load_coeffs, mode_list, coeff_data, state_wires, electron_
 #    H_m = \sum_{j=0}^{N-1}|j\rangle \langle m \oplus j|\otimes
 #    V_{j,m\oplus j},
 # 
+# where :math:`m` and :math:`j` are electronic state indices. 
 # Since :math:`|j\rangle \langle m \oplus j|\otimes` constructs the matrix geometry of
-# the fragment (being the row and column terms of the Hamiltonian matrix), the
-# difference between :math:`j` and :math:`m\oplus j` (representing the `Hamming
+# the fragment, the difference between :math:`j` and :math:`m\oplus j` (representing the `Hamming
 # weight <https://en.wikipedia.org/wiki/Hamming_weight>`_ in this case) will
 # dictate how the block should be treated. The logic is as follows:
 #
@@ -509,9 +485,10 @@ def KDCFrag(fragment, load_coeffs, mode_list, coeff_data, state_wires, electron_
 #
 # .. figure::
 #    ../demonstrations_v2/simulating_vibronic_dynamics/Diagonalization.png
-#    :align: center :width: 700px
+#    :align: center 
+#    :width: 700px
 #    
-#    *Clifford gate diagonalization scheme* [#Motlagh2025]_
+#    *Clifford gate diagonalization scheme* [#Motlagh2025]_.
 #
 # This can be implemented simply by comparing two indices and
 # applying the required gates.
@@ -591,8 +568,11 @@ def TrotterStepKDC(k, dt, frag_list, coupler, PotentialStep, KineticStep, kineti
 #
 # Registers
 # ---------
+# The registers can be defined according to the requirements of the system. As mentioned
+# the phase gradient steps require a register of size :math:`b`, which can be computed
+# in terms of the desired rotation precision :math:`\delta`. This is the main
+# driver of resolution for our task.
 
-# Finally, the registers can be defined according to the requirements of the system.
 def WirePrepKDC(num_modes, k, n, delta):
 
     precision_qubits = int(math.ceil(np.log2(1/delta))) #b
@@ -610,7 +590,7 @@ def WirePrepKDC(num_modes, k, n, delta):
 
     return qp.registers(registers)
 ###############################################################################
-# Which can be unpacked and labelled for use.
+# This register definition can be unpacked and labelled for use.
 
 qp.decomposition.enable_graph() #enable graph-based decomposition for performance
 
@@ -668,7 +648,7 @@ def KDCStatePrep(k):
 # Time Evolution of Electronic State Population
 # ---------------------------------------------
 # Finally, we have adequately built up the skeleton of the KDC Hamiltonian
-# simulation! Now, we can combine our previously constructed tools to carry out
+# simulation! Now, we can combine our independently constructed tools to carry out
 # a Trotterization of this system and observe the population dynamics for a
 # short time scale. 
 #
@@ -723,8 +703,6 @@ for fragment_data in coeff_data:
     time_coeffs.append(fragment_row)      
 ################################################################################
 # Now, at long last, we can carry out our time evolution. 
-# Since we so diligently built up our functionality under the guidance of
-# Motlagh et al.'s innovations, we are well equipped to carry this out smoothly! 
 
 #Define argument lists
 kinetic_args = [omega, num_modes, state_wires, gradient_wires, coeff_wires, scratch_wires, cache_wires]
