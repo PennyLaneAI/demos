@@ -510,7 +510,7 @@ def KDCDiag(fragment, electron_wires):
         for bit in bits[1:]:
             qp.CNOT([ctrl_wire, electron_wires[bit]])
         qp.Hadamard(wires=ctrl_wire)
-
+###############################################################################
 # In "Quantum Algorithm for Vibronic Dynamics", it is specified that either a
 # first or second order Trotterization can be carried out. While first order
 # Trotterization is less resource intensive, second order allows for reduced
