@@ -15,7 +15,8 @@ table, QRAM asks the architectural question: how can classical memory be queried
 superposition?
 
 This question is timely; a recent successful small-scale experimental demonstration indicates that
-QRAM is more feasible than previously thought.
+This question is timely; a recent successful small-scale experimental demonstration indicates that
+`QRAM is more feasible than previously thought <https://arxiv.org/abs/2506.16682>`__ [#expBBQRAM]_.
 
 We’ll use three implementations of QRAM in PennyLane to examine resource tradeoffs:
 
