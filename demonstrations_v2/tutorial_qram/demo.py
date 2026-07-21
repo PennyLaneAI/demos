@@ -20,7 +20,7 @@ QRAM is more feasible than previously thought.
 We’ll use three implementations of QRAM in PennyLane to examine resource tradeoffs:
 
 :class:`~.pennylane.SelectOnlyQRAM`, the direct select-style construction that is closest to
-sequential QROM, :class:`~.pennylane.BBQRAM`, a bucket-brigade architecture that routes a bus qubit
+sequential :doc:`QROM <demos/tutorial_intro_qrom>`, :class:`~.pennylane.BBQRAM`, a bucket-brigade architecture that routes a bus qubit
 through a binary tree, and :class:`~.pennylane.HybridQRAM`, which interpolates between the two by
 combining a select prefix with a smaller bucket-brigade tree. Like classical virtual memory, this
 enables querying a larger address space than the qubits allocated. For a collection of :math:`N`
