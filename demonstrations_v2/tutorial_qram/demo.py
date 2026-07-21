@@ -121,9 +121,7 @@ def select_only_qram(index):
 for i in range(len(bitstrings)):
     output = decode_probs(select_only_qram(i), len(target_wires))
     print(f"address {i:02b} -> {output}")
-
-
-# This line is included for drawing purposes only.
+    
 @partial(qp.transforms.decompose, max_expansion=1)
 @qp.qnode(qp.device("default.qubit"))
 def select_only_qram_draw(index):
