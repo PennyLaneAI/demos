@@ -193,7 +193,6 @@ print("Two-qubit gates:", select_specs.gate_sizes.get(2, 0))
 bb_num_work_wires = 1 + 3 * ((1 << len(control_wires)) - 1)
 bb_work_wires = list(range(5, 5 + bb_num_work_wires))
 
-
 @qp.qnode(qp.device("default.qubit"))
 def bucket_brigade_qram(index):
     qp.BasisEmbedding(index, wires=control_wires)
