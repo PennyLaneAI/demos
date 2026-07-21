@@ -99,8 +99,8 @@ def decode_probs(probs, num_wires):
 # target bit is flipped. Repeating this over all addresses and target positions implements the full
 # lookup map.
 #
-# This is the simplest way to think about data loading, and it is the closest construction to the QROM
-# demo. The drawback is that the controls are global: every address bit participates in the selection
+# This is the simplest way to think about data loading, and it is the closest construction to the :doc:`QROM demo <demos/tutorial_intro_qrom>`. 
+# The drawback is that the controls are global: every address bit participates in the selection
 # logic for every stored record, so the circuit can require many costly multi-controlled operations.
 #
 
