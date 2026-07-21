@@ -293,7 +293,6 @@ def hybrid_qram(index):
     )
     return qp.probs(wires=target_wires)
 
-
 print(f"HybridQRAM uses k = {k} and {len(hybrid_work_wires)} work wires.")
 for i in range(len(bitstrings)):
     output = decode_probs(hybrid_qram(i), len(target_wires))
