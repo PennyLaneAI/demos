@@ -280,7 +280,6 @@ n_tree = len(control_wires) - k
 hybrid_num_work_wires = 2 + 3 * ((1 << n_tree) - 1)
 hybrid_work_wires = list(range(5, 5 + hybrid_num_work_wires))
 
-
 @qp.qnode(qp.device("default.qubit"))
 def hybrid_qram(index):
     qp.BasisEmbedding(index, wires=control_wires)
