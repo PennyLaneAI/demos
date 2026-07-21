@@ -111,7 +111,6 @@ def select_only_qram(index):
     qp.SelectOnlyQRAM(bitstrings, control_wires=control_wires, target_wires=target_wires)
     return qp.probs(wires=target_wires)
 
-
 for i in range(len(bitstrings)):
     output = decode_probs(select_only_qram(i), len(target_wires))
     print(f"address {i:02b} -> {output}")
