@@ -463,6 +463,10 @@ for name, summary in resource_table.items():
 #    "Quantum random access memory",
 #    `arXiv:0708.1879 <https://arxiv.org/abs/0708.1879>`__, 2007.
 #
+# .. [#expBBQRAM] Fanhao Shen, Yujie Ji, Debin Xiang, Yanzhe Wang, Ke Wang, Chuanyu Zhang, Aosai Zhang, Yiren Zou, Yu Gao, Zhengyi Cui, Gongyu Liu, Jianan Yang, Yihang Han, Jinfeng Deng, Anbang Wang, Zhihong Zhang, Hekang Li, Qiujiang Guo, Pengfei Zhang, Chao Song, Liqiang Lu, Zhen Wang, and Jianwei Yin,
+#    "Experimental realization of the bucket-brigade quantum random access memory",
+#    `arXiv:2506.16682 <https://arxiv.org/abs/2506.16682>`__, 2025.
+#
 # .. [#selectqram] Connor T. Hann, Gideon Lee, S. M. Girvin, and Liang Jiang,
 #    "Resilience of quantum random access memory to generic noise",
 #    `arXiv:2012.05340 <https://arxiv.org/abs/2012.05340>`__, 2012.
