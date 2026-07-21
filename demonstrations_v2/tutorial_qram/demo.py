@@ -424,7 +424,7 @@ for name, summary in resource_table.items():
 # ----------
 #
 # QRAM is not a single circuit pattern, but a family of architectures for loading classical data into
-# quantum registers. ``SelectOnlyQRAM``, ``BBQRAM``, and ``HybridQRAM`` all implement the same
+# quantum registers. :class:`~.pennylane.SelectOnlyQRAM`, :class:`~.pennylane.BBQRAM`, and :class:`~.pennylane.HybridQRAM` all implement the same
 # abstract operation,
 #
 # .. math::
