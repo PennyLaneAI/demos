@@ -254,7 +254,7 @@ print("Two-qubit gates:", bb_specs.gate_sizes.get(2, 0))
 # - small :math:`k` means more bucket-brigade behavior and a larger routing tree,
 # - large :math:`k` means more select-style behavior and less routing overhead.
 #
-# Notably, both Select-only QROM and BB QRAM are two special cases (extreme cases) for hybrid QRAM,
+# Notably, both :class:`~.pennylane.SelectOnlyQRAM` and :class:`~.pennylane.BBQRAM` are two special cases (extreme cases) for hybrid QRAM,
 # with k=n and k=0, respectively.
 #
 # For our 2-qubit address register, the only nontrivial choice is :math:`k=1`: one address bit acts
