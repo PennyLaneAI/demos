@@ -373,7 +373,7 @@ for k_value in range(num_address_wires):
 # |                        |                        | plus address           |                        |
 # |                        |                        | load/unload overhead   |                        |
 # +------------------------+------------------------+------------------------+------------------------+
-# | ``HybridQRAM``         | :math:`O(2^{n-k}+n+m)` | Select over            | Tunable interpolation  |
+# | :class:`~.pennylane.HybridQRAM`         | :math:`O(2^{n-k}+n+m)` | Select over            | Tunable interpolation  |
 # |                        |                        | :math:`2^k` blocks and | controlled by          |
 # |                        |                        | route through a tree   | :math:`k`              |
 # |                        |                        | of depth :math:`n-k`   |                        |
