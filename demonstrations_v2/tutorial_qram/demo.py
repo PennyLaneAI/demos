@@ -79,7 +79,6 @@ bitstrings = ["010", "111", "110", "000"]
 control_wires = [0, 1]
 target_wires = [2, 3, 4]
 
-
 def decode_probs(probs, num_wires):
     return format(int(np.argmax(probs)), f"0{num_wires}b")
 
