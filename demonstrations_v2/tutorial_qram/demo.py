@@ -44,7 +44,7 @@ depth, and architectural complexity with executable examples in PennyLane.
 ######################################################################
 # The figure below presents a side-by-side conceptual comparison of three different constructions
 # included in this demo: (a) a direct address-controlled QRAM implementation for
-# ``SelectOnlyQRAM (QROM)``, (b) a binary routing tree for ``BBQRAM``, and (c) a select-prefix plus
+# :class:`~.pennylane.SelectOnlyQRAM`, (b) a binary routing tree for :class:`~.pennylane.BBQRAM`, and (c) a select-prefix plus
 # smaller tree for :class:`~.pennylane.HybridQRAM`.
 #
 
