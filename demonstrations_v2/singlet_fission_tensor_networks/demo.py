@@ -2,28 +2,28 @@ r"""Simulating Singlet Fission Dynamics with Tensor Networks: From Quantum Algor
 =========================================================================================================================
 
 .. tip::
-    *This is a joint demo by Qoro Quantum and Xanadu*
+    *This is a joint demo by* `Qoro Quantum <https://qoroquantum.net>`__ *and Xanadu*
 """
 
 ######################################################################
 # Introduction
 # ------------
 # 
-# What if a single photon could generate *two* electron-hole pairs instead of one? That’s the promise
-# of **singlet fission** — a quantum mechanical process in organic semiconductors where a high-energy
+# What if a single photon could generate *two* electron-hole pairs instead of one? That's the promise
+# of `**singlet fission** <https://pennylane.ai/blog/2025/02/material-discovery-quantum-dynamics/>`__ — a quantum mechanical process in organic semiconductors where a high-energy
 # singlet exciton splits into two lower-energy triplet excitons. If harnessed in solar cells, singlet
-# fission could push efficiencies past the Shockley-Queisser limit, the theoretical ceiling for
+# fission could push efficiencies past the `Shockley–Queisser limit <https://en.wikipedia.org/wiki/Shockley%E2%80%93Queisser_limit>`__, the theoretical ceiling for
 # conventional single-junction devices [#singletfission]_.
 # 
-# But here’s the catch: understanding singlet fission requires simulating the coupled dynamics of
+# The challenge is that understanding singlet fission requires simulating the coupled dynamics of
 # electronic states and nuclear vibrations — a *vibronic* problem where quantum effects are essential.
 # In a recent work [#quantumalgorithm]_, a quantum algorithm was developed for simulating vibronic dynamics and applied
 # to singlet fission in anthracene dimers, a prototypical organic photovoltaic material. The algorithm
-# maps the vibronic Hamiltonian onto qubits and evolves it using Trotterized time evolution.
+# maps the vibronic Hamiltonian onto qubits and evolves it using `Trotterized time evolution <https://pennylane.ai/codebook/hamiltonian-simulation/trotterization>`__.
 # 
-# In this demo, we take that quantum algorithm and simulate it classically using **Matrix Product
-# State (MPS)** tensor networks on Qoro Quantum’s
-# `Maestro <https://www.github.com/qoroquantum/maestro>`__ simulator, accessed through PennyLane. We
+# In this demo, we take that quantum algorithm and simulate it classically using :doc:`**Matrix Product
+# State (MPS)** <demos/tutorial_mps>` tensor networks on `Qoro Quantum's <https://qoroquantum.net>`__
+# `Maestro <https://github.com/qoroquantum/maestro>`__ simulator, accessed through PennyLane. We
 # show that:
 # 
 # 1. The vibronic dynamics algorithm from [#quantumalgorithm]_ can be efficiently simulated at scale using MPS methods
@@ -38,7 +38,7 @@ r"""Simulating Singlet Fission Dynamics with Tensor Networks: From Quantum Algor
 # 
 
 ######################################################################
-# The Vibronic Hamiltonian
+# The vibronic Hamiltonian
 # ------------------------
 # 
 # The system we’re simulating is an anthracene dimer — two anthracene molecules whose electronic
@@ -46,22 +46,24 @@ r"""Simulating Singlet Fission Dynamics with Tensor Networks: From Quantum Algor
 # 
 # .. math::
 # 
-# 
 #    H = H_{\text{el}} \otimes I + \sum_m \frac{\omega_m}{2}(p_m^2 + q_m^2) + \sum_m \kappa_m \otimes q_m
 # 
-# where: - :math:`H_{\text{el}}` is the **electronic Hamiltonian** describing 5 states: the ground
-# state :math:`S_0`, singlet excited state :math:`S_1`, correlated triplet pair :math:`^1(TT)`,
-# separated triplets :math:`T_1 T_1`, and charge-separated state :math:`CS` - :math:`\omega_m` are the
-# harmonic **vibrational frequencies** of each mode - :math:`q_m` and :math:`p_m` are the position and
-# momentum operators for mode :math:`m` - :math:`\kappa_m` are the **vibronic coupling tensors** —
-# these encode how electronic transitions are driven by nuclear motion
+# where:
+# 
+# * :math:`H_{\text{el}}` is the **electronic Hamiltonian** describing 5 states: the ground
+#   state :math:`S_0`, singlet excited state :math:`S_1`, correlated triplet pair :math:`{}^1(TT)`,
+#   separated triplets :math:`T_1 T_1`, and charge-separated state :math:`CS`.
+# * :math:`\omega_m` are the harmonic **vibrational frequencies** of each mode.
+# * :math:`q_m` and :math:`p_m` are the position and momentum operators for mode :math:`m`.
+# * :math:`\kappa_m` are the **vibronic coupling tensors**, which encode how electronic transitions
+#   are driven by nuclear motion.
 # 
 # The key physics: starting in the singlet excited state :math:`S_1`, vibronic coupling drives
-# population transfer into the triplet-pair state :math:`^1(TT)` — this *is* singlet fission. The rate
+# population transfer into the triplet-pair state :math:`{}^1(TT)` — this *is* singlet fission. The rate
 # and efficiency of this process depend on all 19 vibrational modes, making it a genuinely
 # high-dimensional quantum dynamics problem.
 # 
-# Qubit Encoding
+# Qubit encoding
 # ~~~~~~~~~~~~~~
 # 
 # The electronic register requires :math:`\lceil \log_2 5 \rceil = 3` qubits. Each vibrational mode is
@@ -81,35 +83,30 @@ r"""Simulating Singlet Fission Dynamics with Tensor Networks: From Quantum Algor
 # 
 
 ######################################################################
-# Resource Estimation
+# Resource estimation
 # -------------------
 # 
 # Before running any simulation, it’s valuable to understand the computational cost of the algorithm.
 # How many gates does each Trotter step require? How does this scale with system size?
 # 
-# Gate Counting for Classical Simulation
+# Gate counting for classical simulation
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # 
 # From the classical simulation perspective, we care about the number of **Pauli rotation gates** per
 # Trotter step, since each one translates to tensor network contractions in the MPS backend.
 # 
-# The vibronic Hamiltonian is decomposed into Pauli terms using PennyLane’s ``pauli_decompose``. The
+# The vibronic Hamiltonian is decomposed into Pauli terms using PennyLane's :func:`~pennylane.pauli_decompose`. The
 # second-order Trotter step (Eq. 5 of [#quantumalgorithm]_) applies:
 # 
 # 1. A **forward half-step** of potential + coupling terms (Pauli rotations)
 # 2. A **full kinetic step** in momentum space (QFT → Pauli rotations → iQFT)
 # 3. A **backward half-step** of potential + coupling (reversed)
 # 
-# We shall do so below with some methods in vibronic_utils.py. 
 
-
-import numpy as np
 import pennylane as qp
-from vibronic_utils import build_pauli_hamiltonian, _FREQS, _H_EL, _KAPPA
-
+from vibronic_utils import build_pauli_hamiltonian, electronic_pop_observable, _FREQS, _H_EL, _KAPPA
 
 # Build Pauli decomposition from embedded Hamiltonian data
-
 pot_coup_terms, kinetic_modes = build_pauli_hamiltonian(_FREQS, _H_EL, _KAPPA, n_q=3)
 
 n_pot_coup = len(pot_coup_terms)
@@ -120,10 +117,10 @@ print(f"Kinetic Pauli terms: {n_kinetic}")
 print(f"PauliRots per Trotter step: {2 * n_pot_coup + n_kinetic}")
 
 ######################################################################
-# Using :math:`n_q = 3` instead of :math:`n_q = 4` reduces the gate count by **~28%** per step (1,732
-# vs 2,400 PauliRots). Combined with fewer Trotter steps (10 vs 20), the total circuit is **~64%
-# shallower** — a significant reduction that makes the simulation more practical while preserving the
-# essential physics.
+# Choosing :math:`n_q = 3` instead of :math:`n_q = 4` is a tractability decision: it reduces the gate
+# count by **~28%** per step (1,732 vs 2,400 PauliRots) and the qubit count from 79 to 60. Combined
+# with fewer Trotter steps (10 vs 20), the total circuit is **~64% shallower**. This keeps the problem
+# within reach of MPS simulation while preserving the essential physics of singlet fission.
 # 
 # The Pauli weight distribution tells us about the entanglement cost:
 # 
@@ -146,23 +143,23 @@ print(f"PauliRots per Trotter step: {2 * n_pot_coup + n_kinetic}")
 # Simulating with Maestro MPS
 # ---------------------------
 # 
-# The Maestro Device
+# The Maestro device
 # ~~~~~~~~~~~~~~~~~~
 # 
-# `Maestro <https://www.github.com/qoroquantum/maestro>`__ is Qoro Quantum’s high-performance quantum
+# `Maestro <https://github.com/qoroquantum/maestro>`__ is `Qoro Quantum's <https://qoroquantum.net>`__ high-performance quantum
 # circuit simulator, available as a PennyLane plugin. It supports multiple simulation backends
-# including statevector, MPS, stabilizer, and Pauli propagation. For this demo, we use the **Matrix
+# including statevector, :doc:`MPS <demos/tutorial_mps>`, :doc:`stabilizer <demos/tutorial_clifford_circuit_simulations>`, and :doc:`Pauli propagation <demos/tutorial_classical_expval_estimation>`. For this demo, we use the **Matrix
 # Product State (MPS)** backend, which represents the quantum state as a chain of tensors with tunable
 # bond dimension :math:`\chi`.
 # 
 # The key advantage of MPS: while a full statevector for 60 qubits would require
 # :math:`2^{60} \approx 10^{18}` complex amplitudes (exabytes of memory), an MPS with bond dimension
-# :math:`\chi = 256` uses only :math:`60 \times 256^2 \times 2 \approx 8 \times 10^6` parameters — a
-# compression factor of :math:`10^{11}`.
+# :math:`\chi = 256` uses only :math:`60 \times 256^2 \times 2 \approx 8 \times 10^6` parameters
+# (~64 MB at double precision) — a compression factor of :math:`10^{11}`.
 # 
 # This demo requires an additional package beyond PennyLane:
 # 
-# -  ```pennylane-maestro`` <https://www.github.com/qoroquantum/pennylane-maestro>`__ — the PennyLane
+# -  `pennylane-maestro <https://github.com/qoroquantum/pennylane-maestro>`__ — the PennyLane
 #    plugin for Maestro
 # 
 # .. code:: bash
@@ -172,7 +169,7 @@ print(f"PauliRots per Trotter step: {2 * n_pot_coup + n_kinetic}")
 # Once installed, setting up the Maestro device in PennyLane is straightforward:
 # 
 
-import pennylane as qp
+# (pennylane already imported above as qp)
 
 # CPU MPS backend
 dev = qp.device(
@@ -193,13 +190,23 @@ dev_gpu = qp.device(
 )
 
 ######################################################################
-# The circuit construction uses PennyLane’s standard API. Each Trotter step is built from
+# The circuit construction uses PennyLane's standard API. Each Trotter step is built from
 # ``qp.PauliRot`` gates for the Hamiltonian terms and ``qp.QFT`` / ``qp.IQFT`` for the kinetic
-# energy in momentum space:
-# 
+# energy in momentum space.
+#
+# .. note::
+#
+#     The simulation results shown below are precomputed — running the full 60-qubit circuit
+#     requires Maestro's MPS backend and takes several hours on GPU. The gate-counting code
+#     above executes live to verify the algorithm structure.
+#
+
+n_steps = 10
+dt = 1.0
+state_projectors = [electronic_pop_observable(s) for s in range(5)]
+
 
 @qp.qnode(dev)
-
 def circuit():
     # Initialize in S₁ (singlet excited state)
     qp.PauliX(wires=2)
@@ -207,7 +214,7 @@ def circuit():
     # Time evolution via second-order Trotter
     for _ in range(n_steps):
         # Forward half-step: potential + coupling
-        for coeff, pauli_word, wires in pot_coup_terms:
+        for _, coeff, pauli_word, wires in pot_coup_terms:
             qp.PauliRot(coeff * dt, pauli_word, wires=wires)
 
         # Full kinetic step in momentum basis
@@ -218,14 +225,23 @@ def circuit():
             qp.adjoint(qp.QFT)(wires=mode_wires)
 
         # Backward half-step: potential + coupling (reversed)
-        for coeff, pauli_word, wires in reversed(pot_coup_terms):
+        for _, coeff, pauli_word, wires in reversed(pot_coup_terms):
             qp.PauliRot(coeff * dt, pauli_word, wires=wires)
 
     # Measure electronic state populations
     return [qp.expval(projector) for projector in state_projectors]
 
 ######################################################################
-# Bond Dimension Convergence
+# To execute the circuit on the Maestro MPS backend:
+#
+# .. code-block:: python
+#
+#     results = circuit()
+#     for label, pop in zip(["S₀", "S₁", "¹TT", "T₁T₁", "CS"], results):
+#         print(f"{label}: {pop:.4f}")
+
+######################################################################
+# Bond dimension convergence
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~
 # 
 # The critical question for any MPS simulation: *how large does the bond dimension need to be?* If
@@ -243,14 +259,14 @@ def circuit():
 # 
 # The results tell a clear story:
 # 
-# ============ =================== ====================== ==========
-# :math:`\chi` :math:`S_1` (final) :math:`^1(TT)` (final) Converged?
-# ============ =================== ====================== ==========
-# 32           0.429               0.276                  ✗
-# 64           0.324               0.280                  ✗
-# 128          0.299               0.268                  ~
-# 256          0.289               0.263                  ✓
-# ============ =================== ====================== ==========
+# ============ =================== ======================== ==========
+# :math:`\chi` :math:`S_1` (final) :math:`{}^1(TT)` (final) Converged?
+# ============ =================== ======================== ==========
+# 32           0.429               0.276                    ✗
+# 64           0.324               0.280                    ✗
+# 128          0.299               0.268                    ~
+# 256          0.289               0.263                    ✓
+# ============ =================== ======================== ==========
 # 
 # At :math:`\chi = 32`, the :math:`S_1` population is **50% higher** than the converged value — a
 # qualitatively wrong picture of the singlet fission dynamics. The populations only stabilize at
@@ -263,10 +279,10 @@ def circuit():
 # 
 
 ######################################################################
-# GPU Acceleration: Where It Matters
+# GPU acceleration: where it matters
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # 
-# Here’s where things get interesting. Each gate in the MPS simulation involves contracting and
+# The GPU advantage depends strongly on bond dimension. Each gate in the MPS simulation involves contracting and
 # re-decomposing tensors of dimension :math:`\chi \times \chi`. At small :math:`\chi`, these are tiny
 # matrix operations where GPU kernel launch overhead dominates. But at large :math:`\chi`, they become
 # substantial linear algebra problems — exactly what GPUs are built for.
@@ -279,15 +295,15 @@ def circuit():
 # 32           19 min   1.0 h    0.3× (CPU faster)
 # 64           63 min   1.4 h    0.7×
 # 128          5.3 h    2.3 h    **2.3×**
-# 256          ~27 h    4.3 h    **~6×**
+# 256          ~27 h\*  4.3 h    **6.2×**
 # ============ ======== ======== =================
 # 
-# *CPU* :math:`\chi = 256` *estimated from scaling trend (5.1× per doubling at* :math:`\chi \geq 128`\ *).*
+# *\*CPU χ = 256 estimated from scaling trend (5.1× per doubling for χ ≥ 128).*
 # 
-# The hardware used for this experiment were based on standard VMs on Google Cloud:
+# The hardware used for this experiment was based on standard VMs on Google Cloud:
 # 
-# -  CPU: c2-standard-30 (30 vCPUs, 120 GB Memory)
-# -  GPU: a2-highgpu-1g (12 vCPUs, 85 GB Memory, 1 NVIDIA A100 40GB)
+# -  CPU: c2-standard-30 (30 vCPUs, 120 GB memory)
+# -  GPU: a2-highgpu-1g (12 vCPUs, 85 GB memory, 1 NVIDIA A100 40 GB)
 # 
 # .. figure:: ../_static/demonstration_assets/singlet_fission_tensor_networks/vibronic_cpu_vs_gpu.png
 #    :alt: CPU vs GPU comparison
@@ -304,16 +320,16 @@ def circuit():
 # 
 # At :math:`\chi = 256` — the bond dimension needed for converged physics — GPU turns a **~27-hour CPU
 # job into a 4-hour GPU run**. For research workflows where you need to iterate on parameters, run
-# convergence studies, or explore different molecular systems, this is the difference between waiting
-# a day and getting results before lunch.
+# convergence studies, or explore different molecular systems, this speedup becomes essential for
+# practical research workflows.
 # 
 
 ######################################################################
-# The Singlet Fission Story
-# -------------------------
+# Singlet fission dynamics
+# ~~~~~~~~~~~~~~~~~~~~~~~~
 # 
-# Putting it all together, here’s what the converged simulation (:math:`\chi = 256`) tells us about
-# singlet fission in the anthracene dimer:
+# Putting it all together, the converged simulation (:math:`\chi = 256`) reveals the following
+# dynamics of singlet fission in the anthracene dimer:
 # 
 # .. figure:: ../_static/demonstration_assets/singlet_fission_tensor_networks/vibronic_gpu_populations.png
 #    :alt: Population dynamics
@@ -324,14 +340,14 @@ def circuit():
 # Starting from the photoexcited :math:`S_1` state:
 # 
 # 1. **Rapid initial decay** (0–2 a.u.): :math:`S_1` drops from 1.0 to ~0.45, with population flowing
-#    primarily into the triplet-pair state :math:`^1(TT)`. This is the singlet fission event.
+#    primarily into the triplet-pair state :math:`{}^1(TT)`. This is the singlet fission event.
 # 
 # 2. **Vibrational redistribution** (2–6 a.u.): Population oscillates between :math:`S_1` and
-#    :math:`^1(TT)` as vibrational modes exchange energy with the electronic subsystem. The
+#    :math:`{}^1(TT)` as vibrational modes exchange energy with the electronic subsystem. The
 #    charge-separated state :math:`CS` gradually accumulates population.
 # 
 # 3. **Quasi-equilibrium** (6–10 a.u.): The system approaches a quasi-steady state with
-#    :math:`S_1 \approx 0.29`, :math:`^1(TT) \approx 0.26`, and significant population in
+#    :math:`S_1 \approx 0.29`, :math:`{}^1(TT) \approx 0.26`, and significant population in
 #    :math:`CS \approx 0.22`.
 # 
 # The trace (sum of all populations) is preserved to better than :math:`\Sigma = 0.9995` throughout,
@@ -339,7 +355,7 @@ def circuit():
 # 
 
 ######################################################################
-# Where Classical Simulation Meets Its Limits
+# Where classical simulation meets its limits
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # 
 # An important question emerges from these results: if MPS can simulate the 60-qubit vibronic dynamics
@@ -385,7 +401,7 @@ def circuit():
 #    qualitatively incorrect dynamics.
 # 
 # -  **GPU acceleration is essential at high bond dimension.** At :math:`\chi = 256`, Maestro’s GPU
-#    backend delivers ~6× speedup over CPU, reducing simulation time from ~27 hours to ~4 hours. The
+#    backend delivers 6.2× speedup over CPU, reducing simulation time from ~27 hours to ~4 hours. The
 #    advantage grows with :math:`\chi`, making GPU-accelerated MPS the practical choice for
 #    production-quality tensor network simulations.
 # 
@@ -396,19 +412,7 @@ def circuit():
 # -  **PennyLane makes it seamless.** Switching between CPU and GPU backends requires changing a
 #    single parameter (``simulator_type``). The same PennyLane circuit code runs on statevector, CPU
 #    MPS, and GPU MPS — enabling rapid prototyping and cross-validation.
-# 
-# Want to try it yourself? Install ``pennylane-maestro`` and run:
-# 
-# .. code:: bash
-# 
-#    pip install pennylane pennylane-maestro
-# 
-#    # Quick test (12 qubits, ~5 seconds)
-#    python vibronic_demo_gpu.py --n-modes 3 --n-steps 5 --chi 32
-# 
-#    # Full GPU convergence study (60 qubits, ~9 hours)
-#    python vibronic_demo_gpu.py --convergence --gpu
-# 
+#
 
 ######################################################################
 # References
@@ -416,26 +420,14 @@ def circuit():
 # 
 # .. [#singletfission]
 # 
-#     M. B. Smith and J. Michl
+#     M. B. Smith and J. Michl,
 #     "Singlet Fission",
-#     Chem. Rev. 110, 6891
-#     `arXiv:10.1021/cr1002613 <https://doi.org/10.1021/cr1002613>`__, 2010.
+#     *Chem. Rev.* **110**, 6891 (2010).
+#     `DOI: 10.1021/cr1002613 <https://doi.org/10.1021/cr1002613>`__.
 # 
 # .. [#quantumalgorithm]
 # 
-#     J. Huh *et al.*
-#     "Quantum Algorithm for Vibronic Dynamics: Case Study on Singlet Fission Solar Cell Design"
+#     D. Motlagh, R. A. Lang, W. Maxwell, T. Zeng, P. Jain, J. A. Campos-Gonzalez-Angulo, A. Aspuru-Guzik, and J. M. Arrazola,
+#     "Quantum Algorithm for Vibronic Dynamics: Case Study on Singlet Fission Solar Cell Design",
 #     `arXiv:2411.13669 <https://arxiv.org/abs/2411.13669>`__, 2024.
-# 
-# .. [#qoromaestro]
-# 
-#     Qoro Quantum
-#     "Maestro Quantum Simulator"
-#     `GitHub <https://www.github.com/qoroquantum/maestro>`__, 2026.
-# 
-# .. [#pennylane]
-# 
-#     V. Bergholm *et al.*
-#     "PennyLane: Automatic differentiation of hybrid quantum-classical computations"
-#     `arXiv:1811.04968 <https://arxiv.org/abs/1811.04968>`__, 2018.
 #
