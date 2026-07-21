@@ -53,16 +53,6 @@ depth, and architectural complexity with executable examples in PennyLane.
 #    ../_static/demonstration_assets/intro_to_qram/pennylane-demo-qram-hero.png
 #    :alt: Three styles of QRAM compared
 #
-
-import pennylane as qp
-import numpy as np
-import matplotlib.pyplot as plt
-from functools import partial
-
-# This notebook uses the QRAM operators shipped with PennyLane.
-
-# A toy dataset
-# -------------
 #
 # To keep the circuits readable, we will use four classical records, each encoded as a 3-bit string:
 #
@@ -72,7 +62,12 @@ from functools import partial
 # loads ``010``, the address ``01`` loads ``111``, and so on. We will reuse the same dataset
 # throughout the demo so that the differences between the three constructions are entirely due to the
 # QRAM architecture itself.
-#
+# 
+
+import pennylane as qp
+import numpy as np
+import matplotlib.pyplot as plt
+from functools import partial
 
 bitstrings = ["010", "111", "110", "000"]
 
