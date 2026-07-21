@@ -122,7 +122,6 @@ def select_only_qram_draw(index):
     qp.SelectOnlyQRAM(bitstrings, control_wires=control_wires, target_wires=target_wires)
     return qp.probs(wires=target_wires)
 
-
 qp.draw_mpl(select_only_qram_draw, style="pennylane")(2)
 plt.show()
 
