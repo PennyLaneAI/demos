@@ -276,7 +276,7 @@ def TrotterStepperPG(t, coeffs, r):
         qp.RZ(2 * coeffs[0] * del_t, wires=0)
         qp.Hadamard(wires=0)
 
-        U_B = qp.RZ(2 * coeffs[1] * del_t, wires=0)
+        qp.RZ(2 * coeffs[1] * del_t, wires=0)
 
     return [qp.expval(qp.PauliX(0)), qp.expval(qp.PauliY(0)), qp.expval(qp.PauliZ(0))]
 
