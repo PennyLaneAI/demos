@@ -1,4 +1,4 @@
-r"""Simulating Singlet Fission Dynamics with Tensor Networks: From Quantum Algorithms to GPU-Accelerated Classical Simulation
+r"""Simulating Singlet Fission Dynamics with GPU-Accelerated Tensor Networks
 =========================================================================================================================
 
 .. tip::
@@ -21,8 +21,8 @@ r"""Simulating Singlet Fission Dynamics with Tensor Networks: From Quantum Algor
 # to singlet fission in anthracene dimers, a prototypical organic photovoltaic material. The algorithm
 # maps the vibronic Hamiltonian onto qubits and evolves it using `Trotterized time evolution <https://pennylane.ai/codebook/hamiltonian-simulation/trotterization>`__.
 # 
-# In this demo, we take that quantum algorithm and simulate it classically using :doc:`Matrix Product
-# State (MPS) <demos/tutorial_mps>` tensor networks on `Qoro Quantum's <https://qoroquantum.net>`__
+# In this demo, we take that quantum algorithm and simulate it classically using `Matrix Product
+# State (MPS) <demos/tutorial_mps>`__ tensor networks on `Qoro Quantum's <https://qoroquantum.net>`__
 # `Maestro <https://github.com/qoroquantum/maestro>`__ simulator, accessed through PennyLane. We
 # show that:
 # 
@@ -99,7 +99,7 @@ r"""Simulating Singlet Fission Dynamics with Tensor Networks: From Quantum Algor
 # second-order Trotter step (Eq. 5 of [#quantumalgorithm]_) applies:
 # 
 # 1. A **forward half-step** of potential + coupling terms (Pauli rotations)
-# 2. A **full kinetic step** in momentum space (QFT → Pauli rotations → iQFT)
+# 2. A **full kinetic step** in momentum space (QFT → Pauli rotations → adjoint QFT)
 # 3. A **backward half-step** of potential + coupling (reversed)
 # 
 
@@ -191,7 +191,7 @@ dev_gpu = qp.device(
 
 ######################################################################
 # The circuit construction uses PennyLane's standard API. Each Trotter step is built from
-# ``qp.PauliRot`` gates for the Hamiltonian terms and ``qp.QFT`` / ``qp.IQFT`` for the kinetic
+# ``qp.PauliRot`` gates for the Hamiltonian terms and ``qp.QFT`` / ``qp.adjoint(QFT)`` for the kinetic
 # energy in momentum space.
 #
 # .. note::
@@ -220,8 +220,10 @@ def circuit():
         # Full kinetic step in momentum basis
         for mode_wires, ke_terms in kinetic_modes:
             qp.QFT(wires=mode_wires)
+            qp.PauliX(wires=mode_wires[0])
             for coeff, pauli_word, wires in ke_terms:
                 qp.PauliRot(2 * coeff * dt, pauli_word, wires=wires)
+            qp.PauliX(wires=mode_wires[0])
             qp.adjoint(qp.QFT)(wires=mode_wires)
 
         # Backward half-step: potential + coupling (reversed)
@@ -320,8 +322,7 @@ def circuit():
 # 
 # At :math:`\chi = 256` — the bond dimension needed for converged physics — GPU turns a **~27-hour CPU
 # job into a 4-hour GPU run**. For research workflows where you need to iterate on parameters, run
-# convergence studies, or explore different molecular systems, this speedup becomes essential for
-# practical research workflows.
+# convergence studies, or explore different molecular systems, this speedup becomes essential.
 # 
 
 ######################################################################
