@@ -25,14 +25,13 @@
   "seoDescription": "Hamiltonian simulation is a leading application of quantum computers, and the tools used to carry it out can be the difference between success and failure. Trotterization is a key addition to the quantum simulation toolkit.",
   "references": [
     {
-      "id": "Paetznick2014",
-      "type": "article",
-      "title": "Repeat-Until-Success: Non-deterministic decomposition of single-qubit unitaries",
-      "authors": "Paetznick and Svore",
-      "year": "2014",
-      "journal": "Quantum Information and Computation",
-      "doi": "10.48550/arXiv.1311.1074",
-      "url": "https://doi.org/10.48550/arXiv.1311.1074"
+      "id": "Su2020",
+      "type": "speech",
+      "title": "A Theory of Trotter Error",
+      "authors": "Su",
+      "year": "2020",
+      "publisher": "Simons Institute for the Theory of Computing",
+      "url": "https://simons.berkeley.edu/sites/default/files/docs/15639/trottererrortheorysimons.pdf"
     },
     {
       "id": "Childs2010",
@@ -48,7 +47,7 @@
       "id": "Cirstoiu2020",
       "type": "article",
       "title": "Variational fast forwarding for quantum simulation beyond the coherence time",
-      "authors": "Cirstoiu, Holmes, Holmes, Iosue, Cincio, Coles, and Sornborger",
+      "authors": "Cirstoiu, Holmes, Iosue, Cincio, Coles, and Sornborger",
       "year": "2020",
       "journal": "npj Quantum Information",
       "doi": "10.48550/arXiv.1910.04292",
@@ -63,16 +62,6 @@
       "journal": "Quantum",
       "doi": "10.22331/q-2018-06-18-74",
       "url": "https://doi.org/10.22331/q-2018-06-18-74"
-    },
-    {
-      "id": "Childs2021",
-      "type": "article",
-      "title": "Theory of Trotter Error with Commutator Scaling",
-      "authors": "Childs, Su, Tran, Wiebe, and Zhu",
-      "year": "2021",
-      "journal": "Physical Review X",
-      "doi": "10.1103/PhysRevX.11.011020",
-      "url": "https://doi.org/10.1103/PhysRevX.11.011020"
     },
     {
       "id": "Strang1968",
