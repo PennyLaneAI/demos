@@ -850,7 +850,9 @@ def plot_qpe_spectrum_tools(amplitude, H_traceless, n_omega, eta=0.2, xmax=4.0):
 #
 # .. figure::
 #    ../demonstrations_v2/simulating_resonant_inelastic_x_ray_scattering/pennylane-demo-simulating-resonant-inelastic-xray-scattering-AnalyticalSolution.png
-#    :align: center :width: 500px :alt: A plot depicting the analytical solution
+#    :align: center 
+#    :width: 500px 
+#    :alt: A plot depicting the analytical solution
 #    of the target Hamiltonian.
 #
 #    *Analytical spectrum*
@@ -860,7 +862,9 @@ def plot_qpe_spectrum_tools(amplitude, H_traceless, n_omega, eta=0.2, xmax=4.0):
 #
 # .. figure::
 #    ../demonstrations_v2/simulating_resonant_inelastic_x_ray_scattering/pennylane-demo-simulating-resonant-inelastic-xray-scattering-RIXSspectrum.png
-#    :align: center :width: 500px :alt: A plot depicting the simulation output
+#    :align: center 
+#    :width: 500px 
+#    :alt: A plot depicting the simulation output
 #    of the target Hamiltonian.
 #
 #    *Simulated spectrum*
