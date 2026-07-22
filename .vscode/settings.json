@@ -1,7 +1,0 @@
-{
-    "python.analysis.ignore": [
-        ".venv/**",
-        ".venv-build/**",
-        "_build/**"
-    ]
-}
