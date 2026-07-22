@@ -63,7 +63,7 @@ depth, and architectural complexity with executable examples in PennyLane.
 # loads ``010``, the address ``01`` loads ``111``, and so on. We will reuse the same dataset
 # throughout the demo so that the differences between the three constructions are entirely due to the
 # QRAM architecture itself.
-# 
+#
 
 import pennylane as qp
 import numpy as np
@@ -74,6 +74,7 @@ bitstrings = ["010", "111", "110", "000"]
 
 control_wires = [0, 1]
 target_wires = [2, 3, 4]
+
 
 def decode_probs(probs, num_wires):
     return format(int(np.argmax(probs)), f"0{num_wires}b")
@@ -94,7 +95,7 @@ def decode_probs(probs, num_wires):
 # target bit is flipped. Repeating this over all addresses and target positions implements the full
 # lookup map.
 #
-# This is the simplest way to think about data loading, and it is the closest construction to the :doc:`QROM demo <demos/tutorial_intro_qrom>`. 
+# This is the simplest way to think about data loading, and it is the closest construction to the :doc:`QROM demo <demos/tutorial_intro_qrom>`.
 # The drawback is that the controls are global: every address bit participates in the selection
 # logic for every stored record, so the circuit can require many costly multi-controlled operations.
 #
@@ -112,16 +113,19 @@ def select_only_qram(index):
     qp.SelectOnlyQRAM(bitstrings, control_wires=control_wires, target_wires=target_wires)
     return qp.probs(wires=target_wires)
 
+
 for i in range(len(bitstrings)):
     output = decode_probs(select_only_qram(i), len(target_wires))
     print(f"address {i:02b} -> {output}")
-    
+
+
 @partial(qp.transforms.decompose, max_expansion=1)
 @qp.qnode(qp.device("default.qubit"))
 def select_only_qram_draw(index):
     qp.BasisEmbedding(index, wires=control_wires)
     qp.SelectOnlyQRAM(bitstrings, control_wires=control_wires, target_wires=target_wires)
     return qp.probs(wires=target_wires)
+
 
 qp.draw_mpl(select_only_qram_draw, style="pennylane")(2)
 plt.show()
@@ -192,6 +196,7 @@ print("Two-qubit gates:", select_specs.gate_sizes.get(2, 0))
 bb_num_work_wires = 1 + 3 * ((1 << len(control_wires)) - 1)
 bb_work_wires = list(range(5, 5 + bb_num_work_wires))
 
+
 @qp.qnode(qp.device("default.qubit"))
 def bucket_brigade_qram(index):
     qp.BasisEmbedding(index, wires=control_wires)
@@ -202,6 +207,7 @@ def bucket_brigade_qram(index):
         work_wires=bb_work_wires,
     )
     return qp.probs(wires=target_wires)
+
 
 print(f"BBQRAM uses {len(bb_work_wires)} work wires.")
 for i in range(len(bitstrings)):
@@ -278,6 +284,7 @@ n_tree = len(control_wires) - k
 hybrid_num_work_wires = 2 + 3 * ((1 << n_tree) - 1)
 hybrid_work_wires = list(range(5, 5 + hybrid_num_work_wires))
 
+
 @qp.qnode(qp.device("default.qubit"))
 def hybrid_qram(index):
     qp.BasisEmbedding(index, wires=control_wires)
@@ -289,6 +296,7 @@ def hybrid_qram(index):
         k=k,
     )
     return qp.probs(wires=target_wires)
+
 
 print(f"HybridQRAM uses k = {k} and {len(hybrid_work_wires)} work wires.")
 for i in range(len(bitstrings)):
