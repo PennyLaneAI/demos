@@ -432,7 +432,7 @@ qp.draw_mpl(be_circuit)(feature_vector, main_wires, ancilla_wires)
 # :func:`~pennylane.poly_to_angles` computes QSVT phase angles from the polynomial coefficients (ordered from
 # lowest to highest power). The resulting angles can be used to build the projector phases and apply
 # the transformation via :class:`~pennylane.QSVT`. See the PennyLane API docs
-for :func:`~pennylane.poly_to_angles and :func:`~pennylane.qsvt` for details.
+# for :func:`~pennylane.poly_to_angles` and :func:`~pennylane.qsvt` for details.
 # 
 
 ######################################################################
