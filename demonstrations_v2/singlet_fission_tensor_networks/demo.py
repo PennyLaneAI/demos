@@ -10,7 +10,7 @@ r"""Simulating Singlet Fission Dynamics with Tensor Networks: From Quantum Algor
 # ------------
 # 
 # What if a single photon could generate *two* electron-hole pairs instead of one? That's the promise
-# of **`singlet fission <https://pennylane.ai/blog/2025/02/material-discovery-quantum-dynamics/>`__** — a quantum mechanical process in organic semiconductors where a high-energy
+# of `singlet fission <https://pennylane.ai/blog/2025/02/material-discovery-quantum-dynamics/>`__ — a quantum mechanical process in organic semiconductors where a high-energy
 # singlet exciton splits into two lower-energy triplet excitons. If harnessed in solar cells, singlet
 # fission could push efficiencies past the `Shockley–Queisser limit <https://en.wikipedia.org/wiki/Shockley%E2%80%93Queisser_limit>`__, the theoretical ceiling for
 # conventional single-junction devices [#singletfission]_.
