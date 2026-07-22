@@ -456,7 +456,7 @@ for name, summary in resource_table.items():
 #
 # .. [#selectqram] Connor T. Hann, Gideon Lee, S. M. Girvin, and Liang Jiang,
 #    "Resilience of quantum random access memory to generic noise",
-#    `arXiv:2012.05340 <https://arxiv.org/abs/2012.05340>`__, 2012.
+#    `arXiv:2012.05340 <https://arxiv.org/abs/2012.05340>`__, 2020.
 #
 # .. [#hybridqram] Shifan Xu, Connor T. Hann, Ben Foxman, Steven M. Girvin, and Yongshan Ding,
 #    "Systems Architecture for Quantum Random Access Memory",
