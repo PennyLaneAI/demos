@@ -21,8 +21,8 @@ r"""Simulating Singlet Fission Dynamics with Tensor Networks: From Quantum Algor
 # to singlet fission in anthracene dimers, a prototypical organic photovoltaic material. The algorithm
 # maps the vibronic Hamiltonian onto qubits and evolves it using `Trotterized time evolution <https://pennylane.ai/codebook/hamiltonian-simulation/trotterization>`__.
 # 
-# In this demo, we take that quantum algorithm and simulate it classically using **:doc:`Matrix Product
-# State (MPS) <demos/tutorial_mps>`** tensor networks on `Qoro Quantum's <https://qoroquantum.net>`__
+# In this demo, we take that quantum algorithm and simulate it classically using :doc:`Matrix Product
+# State (MPS) <demos/tutorial_mps>` tensor networks on `Qoro Quantum's <https://qoroquantum.net>`__
 # `Maestro <https://github.com/qoroquantum/maestro>`__ simulator, accessed through PennyLane. We
 # show that:
 # 
