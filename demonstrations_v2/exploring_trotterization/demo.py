@@ -130,7 +130,7 @@ def FirstOrderExpansion(time, theta, phi):
 
 @qp.qnode(dev)
 def BuiltInTrotter(time, theta, phi, num_trotter_steps):
-    qp.trotterize(FirstOrderExpansion, n=num_trotter_steps, order=1)(time, theta, phi, wires=[0])
+    qp.trotterize(FirstOrderExpansion, n=num_trotter_steps, order=1)(time, theta, phi)
     return [qp.expval(qp.PauliX(0)), qp.expval(qp.PauliY(0)), qp.expval(qp.PauliZ(0))]
 
 
