@@ -25,10 +25,11 @@ the bonding of oxygen dimers to transition metals in the battery materials.
 Though this wasn't necessarily a "back to the drawing board" moment, this shift in
 interpretation and understanding shed light on the need for reliable simulations
 that can help with the validation and interpretation of experimental results. The 
-problem? Classical computers simply cannot handle RIXS simulation. This
-is precisely the case made by Loaiza et al. in "Quantum algorithm for simulating
-resonant inelastic X-ray scattering of battery materials". Here, the team puts
-forward a quantum algorithm designed to tackle the problem of RIXS simulation
+problem? Classical computers simply cannot handle RIXS simulation. 
+
+This is precisely the case made by Loaiza et al. in "Quantum algorithm for simulating
+resonant inelastic X-ray scattering of battery materials". Here, a quantum algorithm
+is put forward to tackle the problem of RIXS simulation
 using a novel combination of :doc:`generalized quantum signal processing (GQSP)
 <demos/tutorial_estimator_hamiltonian_simulation_gqsp>`, :doc:`amplitude
 amplification <demos/tutorial_intro_amplitude_amplification>`, :doc:`quantum
