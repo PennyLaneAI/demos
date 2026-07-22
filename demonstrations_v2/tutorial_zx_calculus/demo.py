@@ -283,7 +283,7 @@ Teleportation
 Now that we have all the necessary tools, let's see how to describe teleportation as a ZX-diagram and simplify it
 with our rewriting rules. The results are surprisingly elegant! We follow the explanation from [#JvdW2020]_. You can
 find an introduction to teleportation in
-`the MBQC demo <https://pennylane.ai/qml/demos/tutorial_mbqc>`__.
+:doc:`the MBQC demo <demos/tutorial_mbqc>`.
 
 Teleportation is a protocol for transferring quantum information (a state) from Alice (the sender) to Bob (the
 receiver). To perform this, Alice and Bob first need to share a maximally entangled state. The protocol for Alice to send
@@ -395,7 +395,7 @@ The ZX-calculus for quantum machine learning
 
 We now move away from the standard use of the ZX-calculus in order to show its utility for calculus and,
 more specifically, for quantum derivatives (`the parameter-shift rule
-<https://pennylane.ai/qml/glossary/parameter_shift.html>`__). What follows is not implemented in PennyLane or PyZX.
+<https://pennylane.ai/glossary/parameter_shift>`__). What follows is not implemented in PennyLane or PyZX.
 By adding derivatives to the framework, it shows that the ZX-calculus has a role to play in analyzing quantum machine
 learning problems. After reading this section, you should be convinced that the ZX-calculus can be used to study any
 kind of quantum-related problem.

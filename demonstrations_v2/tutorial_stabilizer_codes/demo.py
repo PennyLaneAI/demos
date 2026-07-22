@@ -11,7 +11,7 @@ been gaining traction.
 Quantum error correction is implemented through **error correction codes,** which come in many varieties that address different error types.
 Is there a unified way to understand all these codes? The **stabilizer formalism** provides such a framework for
 a large class of quantum error correction codes [#Gottesman1997]_. The so-called
-**stabilizer codes**, such as the repetition, Shor, Steane, and surface codes,
+**stabilizer codes**, such as the repetition, Shor, Steane, and :doc:`surface codes <demos/intro_to_surface_code>`,
 all fall under this formalism.
 
 In this demo, we will introduce the stabilizer formalism using a bottom-up approach. We build

@@ -13,7 +13,7 @@ take a complementary perspective, and walk slowly through a specific compilation
 
 For readers unfamiliar with ZX-diagrams, it will be useful (but not necessary) to take a look at
 our :doc:`introduction to ZX-calculus <demos/tutorial_zx_calculus>` first.
-Further, it can be instructive to get a :doc:`primer on lattice surgery <demos/tutorial_lattice_surgery>`
+Further, it can be instructive to get a primer on :doc:`the surface code <demos/intro_to_surface_code>`, :doc:`lattice surgery <demos/tutorial_lattice_surgery>`
 and dive into the :doc:`Game of Surface Codes <demos/tutorial_game_of_surface_codes>`, but this
 is not a requirement either.
 
@@ -560,7 +560,7 @@ other order without worrying about data dependencies between them. So do we *eve
 the quantum state using the information from measurements and Pauli corrections?
 
 To answer this question, we need to consider non-Clifford operations. As mentioned further up,
-these are implemented via `magic state injection <https://pennylane.ai/qml/glossary/what-are-magic-states>`__.
+these are implemented via `magic state injection <https://pennylane.ai/glossary/what-are-magic-states>`__.
 As a general rule, operations implemented via
 Pauli measurements require a correction that is one level lower in the Clifford hierarchy.
 So Clifford gates require a Pauli correction (similar to our corrections in the teleportation
@@ -652,7 +652,7 @@ of information only. This compression of quantum circuits reduces the cost of th
 dramatically.
 For details on the abstraction of the active volume computer, many additional
 compilation examples, and details about the implementation in a photonic quantum computer,
-we recommend to read the original paper as well.
+we recommend reading the original paper as well.
 Additionally, you may want to
 
 - dive into the background of :doc:`lattice surgery <demos/tutorial_lattice_surgery>`,

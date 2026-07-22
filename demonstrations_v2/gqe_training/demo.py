@@ -5,7 +5,7 @@ We will be demonstrating and evaluating a novel algorithm proposed by Nakaji et 
 `The generative quantum eigensolver (GQE) and its application for ground state search <https://arxiv.org/abs/2401.09253>`__
 that employs a classical generative model of quantum circuits for the purpose of ground-state
 energy estimation of any molecular Hamiltonian [#nakaji2024]_.  
-It has been proposed as a scalable alternative to the `variational quantum eigensolver (VQE) <https://pennylane.ai/qml/demos/tutorial_vqe/>`__ approach,
+It has been proposed as a scalable alternative to the :doc:`variational quantum eigensolver (VQE) <demos/tutorial_vqe>` approach,
 where the quantum state is represented as a quantum circuit with tunable parameters which are then optimized during training in order to arrive at a 
 state minimizing the corresponding energy :math:`E.` Instead, in GQE, the structure of the quantum circuit is given by a trained generative model.
 
@@ -36,7 +36,7 @@ state. And lastly, we discuss the results, potential ways optimizing the code, a
 # classical machine learning (ML) algorithms for large problems. To bypass this, the GQE algorithm was 
 # proposed. Specifically, GQE uses a classical generative model where quantum circuits are sampled as a
 # sequence of unitaries from a given operator pool. This generative model is then trained so that it learns to
-# predict quantum circuits that evolves an initial state to the states better approximating the ground state. 
+# predict quantum circuits that evolve an initial state to the states better approximating the ground state. 
 # 
 # The main difference between the two approaches is where the tunable parameters are embedded.
 # That is, it is the classical GQE model that is being optimized as opposed to the variable
@@ -367,7 +367,7 @@ opt = gpt.configure_optimizers(
 # 
 #    - Calculate the true energies using PennyLane
 # 
-#    - Calculate the mean absolute error as a metric to track the learning progress and save the GPT model everytime the metric gets better
+#    - Calculate the mean absolute error as a metric to track the learning progress and save the GPT model every time the metric gets better
 # 
 
 # %%time 

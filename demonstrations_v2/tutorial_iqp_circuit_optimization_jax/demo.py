@@ -410,7 +410,7 @@ stepsize = 0.001
 trainer = iqp.Trainer(optimizer, loss_fn, stepsize)
 
 ######################################################################
-# Any differentiable loss function expressible in `JAX <https://pennylane.ai/qml/demos/tutorial_jax_transformations>`__ can be defined, but must have a first argument
+# Any differentiable loss function expressible in :doc:`JAX <demos/tutorial_jax_transformations>` can be defined, but must have a first argument
 # ``params`` that corresponds to the optimization parameters of the circuit. To minimize the loss
 # function, we call the method ``train()`` , which requires the number of iterations ``n_iters`` and
 # the initial arguments of the loss function ``loss_kwargs`` given as a dictionary object. This

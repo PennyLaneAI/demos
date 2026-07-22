@@ -22,8 +22,7 @@ The problem of such barren plateaus manifests in a different
 form in variational quantum circuits, which are at the heart
 of techniques such as quantum neural networks or approximate
 optimization e.g., QAOA (Quantum Adiabatic Optimization Algorithm)
-which can be found in this `PennyLane QAOA tutorial
-<https://pennylane.ai/qml/demos/tutorial_qaoa_intro>`_.
+which can be found in this :doc:`PennyLane QAOA tutorial <demos/tutorial_qaoa_intro>`.
 
 While starting from a parameterized
 random quantum circuit seems like a good unbiased choice if

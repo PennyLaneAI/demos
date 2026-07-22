@@ -790,9 +790,9 @@ If you'd like to learn more, there are many papers on the topic. Two particularl
 
 Handily, both references have an associated PennyLane demo!
 
-- `Quantum models as Fourier series <https://pennylane.ai/qml/demos/tutorial_expressivity_fourier_series>`__ (2020). Maria Schuld, Ryan Sweke, Johannes Jakob Meyer.
-- `Generalized parameter-shift rules <https://pennylane.ai/qml/demos/tutorial_general_parshift>`__ (2021). David Wierichs.
+- :doc:`Quantum models as Fourier series <demos/tutorial_expressivity_fourier_series>` (2020). Maria Schuld, Ryan Sweke, Johannes Jakob Meyer.
+- :doc:`Generalized parameter-shift rules <demos/tutorial_general_parshift>` (2021). David Wierichs.
 
 Finally, PennyLane is jam-packed with tools for analyzing circuits as Fourier series.
-Check out the documentation on the `Fourier module <https://docs.pennylane.ai/en/stable/code/qml_fourier.html>`__ to learn more!
+Check out the documentation on the :mod:`Fourier module <pennylane.fourier>` to learn more!
 """

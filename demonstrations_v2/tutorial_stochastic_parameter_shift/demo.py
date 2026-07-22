@@ -157,7 +157,7 @@ gradient = qp.grad(rotation_circuit, argnums=0)
 expvals = [rotation_circuit(theta) for theta in angles]
 grad_vals = [gradient(theta) for theta in angles]
 param_shift_vals = [param_shift(theta) for theta in angles]
-plt.plot(angles, expvals, 'b', label="Expecation value")
+plt.plot(angles, expvals, 'b', label="Expectation value")
 plt.plot(angles, grad_vals, 'r', label="qp.grad function")
 plt.plot(angles, param_shift_vals, 'mx', label="Parameter-shift rule")
 plt.xlabel("theta")

@@ -28,7 +28,7 @@ To avoid exponentially large resources, however, one typically sets a finite bon
 For some specific classes of states, this is provably sufficient to have faithful representations (see :ref:`Area Law`). 
 But because MPS come with a lot of powerful computational features that we are going to discuss later (in particular :ref:`canonical forms <Canonical Forms>`),
 they are still used in much more complex systems where these requirements do not hold anymore, and still yield good results.
-For example, state-of-the-art `quantum chemistry <https://pennylane.ai/qml/quantum-chemistry/>`__ simulations were performed using MPS [#Baiardi]_ 
+For example, state-of-the-art `quantum chemistry <https://pennylane.ai/quantum-chemistry/>`__ simulations were performed using MPS [#Baiardi]_ 
 and similar methods have been used to simulate experiments on the largest available quantum computers at the time [#Patra]_.
 
 It is known that there are more suitable tensor network states like projected entangled pair states (PEPS) for 

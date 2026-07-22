@@ -15,7 +15,7 @@ enable parity measurements of arbitrary Pauli operators, which unlock universal 
     :width: 50%
     :target: javascript:void(0)
 
-For self-consistency, we are going to briefly recap the basic concepts of the surface code and explain why `Pauli product measurements <https://pennylane.ai/compilation/pauli-based-computation>`__ are sufficient 
+For self-consistency, we are going to briefly recap the basic concepts of the :doc:`rotated surface code <demos/intro_to_surface_code>` and explain why `Pauli product measurements <https://pennylane.ai/compilation/pauli-based-computation>`__ are sufficient 
 for universal computing. We are then going to explain how to perform such 
 `homological measurements <https://arxiv.org/abs/2410.02753>`__ using lattice splitting and merging.
 
@@ -62,8 +62,8 @@ of each logical qubit patch, indicated here by the red line exemplarily for one 
     :target: javascript:void(0)
 
 This is called a transversal operation because the logical operation just corresponds to performing the physical operation on each qubit.
-For a two-qubit gate, this is problematic on hardware with only local (physical) connectivity (like those built of `superconducting qubits <https://pennylane.ai/qml/demos/tutorial_sc_qubits>`__).
-In that case, we want to perform CNOT gates non-transversally to accomodate the connectivity constraints of such hardware platforms.
+For a two-qubit gate, this is problematic on hardware with only local (physical) connectivity (like those built of :doc:`superconducting qubits <demos/tutorial_sc_qubits>`).
+In that case, we want to perform CNOT gates non-transversally to accommodate the connectivity constraints of such hardware platforms.
 In the early days, this was achieved via braiding [#braiding]_, 
 a concept commonly encountered in algebraic topology.
 In this setting, qubits are encoded by defects in the code, and operations via continuous deformations of the code.
@@ -77,7 +77,7 @@ Universal quantum computing with Pauli product measurements
 -----------------------------------------------------------
 
 To achieve universal quantum computing, we need to be able to perform all Clifford gates, particularly CNOT gates.
-Furthermore, we need to be able to reliably inject states to enable `magic state injection <https://pennylane.ai/qml/glossary/what-are-magic-states>`__.
+Furthermore, we need to be able to reliably inject states to enable `magic state injection <https://pennylane.ai/glossary/what-are-magic-states>`__.
 This line of reasoning is a bottom-up way to show that lattice surgery enables universal quantum computing, which was done in its original introduction [#latticesurgery]_.
 
 Let us alternatively take a top-down approach here and show that we can perform arbitrary `Pauli product measurements <https://pennylane.ai/compilation/pauli-based-computation>`__ (PPMs), 
@@ -109,7 +109,7 @@ Non-Clifford PPRs can be realized using a magic resource state in the following 
     :width: 50%
     :target: javascript:void(0)
 
-Here, we injected a magic state :math:`T|+\rangle = \tfrac{1}{\sqrt{2}} \left(|0\rangle + e^{-i \tfrac{1}{4}} |1\rangle\right)` that was produced separately via `magic state distillation <https://pennylane.ai/qml/demos/tutorial_magic_state_distillation>`__.
+Here, we injected a magic state :math:`T|+\rangle = \tfrac{1}{\sqrt{2}} \left(|0\rangle + e^{-i \tfrac{1}{4}} |1\rangle\right)` that was produced separately via :doc:`magic state distillation <demos/tutorial_magic_state_distillation>`.
 Note that Pauli operations that have angles that are multiples of 
 :math:`\pi` do not need to be executed on hardware, but can be tracked in software.
 In addition, we stress that there are different circuit identities to realize PPRs via PPMs. Here, we showed just the basic examples from [#Litinski]_.
@@ -142,10 +142,17 @@ state out of the code space (:math:`O_L S |\psi\rangle_L = S O_L |\psi\rangle_L`
 The commutation can be seen from the fact
 that the logical operator only ever overlaps with an even multiple of X or Z operators, and thus commutes with any other stabilizer.
 
-We also note that the logical :math:`Y_L` measurement is a topic on its own. In principle, one could measure :math:`Y_L` by simultaneously measuring the logical
-:math:`X_L` and :math:`Z_L` with a physical :math:`Y` measurement on the intersecting data qubit.
-However, this is not a properly defined logical operator anymore as it does not commute with the stabilizers, and thus moves the qubit out of the code space.
-Measuring (and applying, it's the same really) logical :math:`Y_L` operators is still possible, just a little more complicated as we will show further below.
+We have defined the logical operators :math:`Z_L` and :math:`X_L` as strings of their respective physical counterparts.
+We can perform their terminal (destructive) measurements by simply measuring all qubits in a single-qubit basis. 
+For :math:`Z_L` that corresponds to measuring all data qubits in the :math:`Z` basis.
+In this procedure, we lose the information about the :math:`X` stabilizers but still preserve the information about the :math:`Z` stabilizers, 
+which suffices to perform the measurement fault-tolerantly.
+
+In principle, :math:`Y_L = i X_L Z_L` is a valid logical operator, i.e., the crossing of a logical :math:`X_L` and :math:`Z_L` string. 
+However, we cannot read it out with a simple transversal measurement the way we did for :math:`X_L` and :math:`Z_L`.
+Instead, we use the non-perturbative homological procedure below to construct a 
+fault-tolerant :math:`Y_L` measurement by introducing a twist defect with an auxiliary qubit patch. Logical :math:`Y_L` measurements 
+in the rotated surface code are a topic on their own and we dedicate a special section to it at the end of this demo.
 
 Arbitrary Pauli product measurements via lattice merging and splitting
 ----------------------------------------------------------------------
@@ -245,7 +252,7 @@ As we can see, the bulk of the qubit is untouched and all that is changed is the
     :target: javascript:void(0)
   
 Here we show an extended single-qubit patch and three example re-orientations of the type of edges.
-The smaller images are guides to the eye to indicate the settings, with X edges as solid lines and Z edges as dashed lines (i.e. the same as the logical measurements moved to the edges).
+The smaller images are guides to the eye to indicate the settings, with Z edges as solid lines and X edges as dashed lines (i.e. the same as the logical measurements moved to the edges).
 Note that the important property is for neighboring X and Z edges to overlap on two data qubits for the corresponding stabilizers to commute. 
 This is why the right patches introduce the triangle-shaped stabilizers of three :math:`Z` operators.
 

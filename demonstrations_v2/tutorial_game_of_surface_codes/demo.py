@@ -2,7 +2,7 @@ r"""A Game of Surface Codes: Large-Scale Quantum Computing with Lattice Surgery
 ===============================================================================
 
 In surface-code based fault tolerant quantum computing architectures, 
-T gates are typically implemented via injected `magic states <https://pennylane.ai/qml/glossary/what-are-magic-states>`__.
+T gates are typically implemented via injected `magic states <https://pennylane.ai/glossary/what-are-magic-states>`__.
 The layout and design of the architecture plays a crucial role in how fast a magic state can be reliably produced and consumed for computation.
 The game of surface codes [#Litinski]_ allows us to reason about such space-time tradeoffs in architecture designs, without having to get into
 the nitty-gritty details of surface code physics. In this demo, we will see how different designs can lead to faster computations at the cost of involving more qubits and vice versa.
@@ -16,7 +16,7 @@ the nitty-gritty details of surface code physics. In this demo, we will see how 
 Introduction
 ------------
 
-The game of surface codes is a high-level framework for designing surface code quantum computing architectures.
+The game of surface codes is a high-level framework for designing :doc:` surface code <demos/intro_to_surface_code>` quantum computing architectures.
 The game helps us understand space-time trade-offs, where designs with a higher qubit overhead allow for faster computations and vice versa.
 For example, a space-efficient design might allow a computation with :math:`10^8` T gates to run in :math:`4` hours using :math:`55k` physical qubits, 
 whereas an intermediate design may run the same computation in :math:`22` minutes using :math:`120k` physical qubits, 
@@ -30,7 +30,7 @@ However, it still helps to understand the correspondences in physical fault tole
 First of all it is important to note that we consider surface codes that implement `(Clifford + T) <https://pennylane.ai/compilation/clifford-t-gate-set>`__ circuits.
 In particular, these circuits can be compiled to circuits that just perform `Pauli product measurements <https://pennylane.ai/compilation/pauli-based-computation>`__.
 This is because all Clifford operations can be moved to the end of the circuit and merged with measurements. 
-The remaining non-Clifford gates are realized by `magic state injection <https://pennylane.ai/qml/glossary/what-are-magic-states>`__ and more Clifford operations, which can be merged with measurements again.
+The remaining non-Clifford gates are realized by `magic state injection <https://pennylane.ai/glossary/what-are-magic-states>`__ and more Clifford operations, which can be merged with measurements again.
 Hence, we mainly care about performing measurements on qubits in arbitrary bases and efficiently distilling and injecting magic states.
 
 We also note that the patches that represent qubits correspond to surface code qubits.
@@ -60,7 +60,7 @@ This is shown in the figure below.
     Image source: Daniel Litinski [1].
 
 Every operation in the game has an associated time cost that we measure in units of code cycles 🕒.
-There are some discrepancies to actual surface code cycles, but the correspondance is close enough to weigh out space-time trade-offs in architecture designs.
+There are some discrepancies to actual surface code cycles, but the correspondence is close enough to weigh out space-time trade-offs in architecture designs.
 We are not going to give an exhaustive overview of all possible operations, but focus on a few important ones and fill the remaining gaps necessary for the architecture designs in the respective sections below.
 
 
@@ -78,7 +78,7 @@ At the cost of 0🕒 we can measure patches in the X and Z basis. If two patches
     Image source: Daniel Litinski [1].
 
 In particular, if the shared edge contains both Z and X edges, we can measure in the Y basis. In the following example, the upper qubit A has both operator edges :math:`Z_A` and :math:`X_A` exposed.
-Measuring it together with the auxillary qubit B, initialized in the :math:`|0\rangle` state below, we measure :math:`(Z_A X_A) \otimes Z_B \propto Y_A \otimes Z_B` alltogether.
+Measuring it together with the auxiliary qubit B, initialized in the :math:`|0\rangle` state below, we measure :math:`(Z_A X_A) \otimes Z_B \propto Y_A \otimes Z_B` all together.
 
 .. figure:: ../_static/demonstration_assets/game_of_surface_codes/Y_measurement.png
     :align: center
@@ -96,7 +96,7 @@ The entire protocol costs 2🕒 and is shown below:
     :width: 50%
     :target: javascript:void(0)
 
-    The protocol for measuring a single qubit in the Y basis involves deforming the patch (Step 2, 1🕒), initializing an auxillary qubit in :math:`|0\rangle` (0🕒), simultaneously measuring both patches (1🕒) and deforming the qubit back again (0🕒).
+    The protocol for measuring a single qubit in the Y basis involves deforming the patch (Step 2, 1🕒), initializing an auxiliary qubit in :math:`|0\rangle` (0🕒), simultaneously measuring both patches (1🕒) and deforming the qubit back again (0🕒).
     Image source: Daniel Litinski [1].
 
 Auxiliary qubits play an important role as they allow measuring products of Pauli operators on different qubits, 
@@ -114,7 +114,7 @@ which is the most crucial operation in this framework, since everything is mappe
 Non-Clifford Pauli rotations
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Non-Clifford Pauli rotations :math:`e^{-i \frac{\pi}{8} P}` for some Pauli word :math:`P` are realized via `magic state distillation and injection <https://pennylane.ai/qml/glossary/what-are-magic-states>`__.
+Non-Clifford Pauli rotations :math:`e^{-i \frac{\pi}{8} P}` for some Pauli word :math:`P` are realized via `magic state distillation and injection <https://pennylane.ai/glossary/what-are-magic-states>`__.
 Magic state distillation blocks are a crucial part of the architecture design that we are going to cover later. 
 For the moment we assume that we have means to prepare magic states :math:`|m\rangle = |0\rangle + e^{-i \frac{\pi}{4}} |1\rangle` on special qubit tiles (distillation blocks).
 Magic state injection in this case then refers to the following protocol:
@@ -296,7 +296,7 @@ These magic states need to be distilled in separate blocks, which can in princip
 the blocks are used for a fixed protocol, this knowledge can be used for simplifications.
 
 There are different approaches to perform magic state distillation. We consider the case where we can prepare a magic state with infidelity :math:`p`.
-The distillation protocol is then such that this infidelity is decreased to an acceptable level. All other operations of the protocol are Clifford, so we can measure if an error has occured.
+The distillation protocol is then such that this infidelity is decreased to an acceptable level. All other operations of the protocol are Clifford, so we can measure if an error has occurred.
 This then determines the success probability of the protocol, which in the case below is roughly :math:`(1-p)^n` for an :math:`n`-qubit protocol.
 We are going to go through the simplest protocol in a 15-to-1 distillation block.
 
@@ -352,7 +352,7 @@ For example, assume we tolerate a T infidelity of :math:`10^{-10}` and have :mat
 the 15-to-1 protocol would suffice as it yields an infidelity of :math:`35p^3 = 3.5 \times 10^{-11} < 10^{-10}`.
 
 Another consideration is to combine data and distillation blocks that match in their maximum time requirements.
-Since the 15-to-1 distillation above takes 11🕒 to procude a magic state, there is no point in using the fast or intermediate data blocks, and we can just resort to the compact one.
+Since the 15-to-1 distillation above takes 11🕒 to produce a magic state, there is no point in using the fast or intermediate data blocks, and we can just resort to the compact one.
 
 A minimal setup can be seen below. It consists of 100 logical qubits on 153 tiles in a compact block, as well as a 15-to-1 distillation block using another 11 tiles.
 
