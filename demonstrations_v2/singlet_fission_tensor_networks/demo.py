@@ -10,7 +10,7 @@ r"""Simulating Singlet Fission Dynamics with Tensor Networks: From Quantum Algor
 # ------------
 # 
 # What if a single photon could generate *two* electron-hole pairs instead of one? That's the promise
-# of `**singlet fission** <https://pennylane.ai/blog/2025/02/material-discovery-quantum-dynamics/>`__ — a quantum mechanical process in organic semiconductors where a high-energy
+# of **`singlet fission <https://pennylane.ai/blog/2025/02/material-discovery-quantum-dynamics/>`__** — a quantum mechanical process in organic semiconductors where a high-energy
 # singlet exciton splits into two lower-energy triplet excitons. If harnessed in solar cells, singlet
 # fission could push efficiencies past the `Shockley–Queisser limit <https://en.wikipedia.org/wiki/Shockley%E2%80%93Queisser_limit>`__, the theoretical ceiling for
 # conventional single-junction devices [#singletfission]_.
@@ -21,8 +21,8 @@ r"""Simulating Singlet Fission Dynamics with Tensor Networks: From Quantum Algor
 # to singlet fission in anthracene dimers, a prototypical organic photovoltaic material. The algorithm
 # maps the vibronic Hamiltonian onto qubits and evolves it using `Trotterized time evolution <https://pennylane.ai/codebook/hamiltonian-simulation/trotterization>`__.
 # 
-# In this demo, we take that quantum algorithm and simulate it classically using :doc:`**Matrix Product
-# State (MPS)** <demos/tutorial_mps>` tensor networks on `Qoro Quantum's <https://qoroquantum.net>`__
+# In this demo, we take that quantum algorithm and simulate it classically using **:doc:`Matrix Product
+# State (MPS) <demos/tutorial_mps>`** tensor networks on `Qoro Quantum's <https://qoroquantum.net>`__
 # `Maestro <https://github.com/qoroquantum/maestro>`__ simulator, accessed through PennyLane. We
 # show that:
 # 
