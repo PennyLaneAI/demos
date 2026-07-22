@@ -8,7 +8,7 @@ Even more frustrating, things tend to change with time, which we cannot neglect 
 
 Luckily, quantum computers have shown promise in addressing this issue. Instead of having to represent each possible state contained in the problem's Hilbert space, qubits can themselves act as analogues for the particles that make up the system. This has the potential to enable polynomial scaling with particle count rather than exponential scaling. `Maybe Feynman was onto something <https://s2.smu.edu/~mitch/class/5395/papers/feynman-quantum-1981.pdf>`_!
 
-To make this feasible, we need to take advantage of tools that aid in the task of `Hamiltonian simulation <https://pennylane.ai/topics/hamiltonian-simulation>`_. This demo will focus on **Trotterization**, a simulation method that implements time evolution by segmenting and iteratively "walking" a Hamiltonian forward in time. `Recent developments <https://arxiv.org/abs/2606.30741>`_ have pushed this method further in capability and importance. Together, we will explore why Trotterization is an essential tool for quantum algorithms, work through a simple implementation to various orders, and determine what trade-offs may be necessary in the fault tolerant picture.
+To make this feasible, we need to take advantage of tools that aid in the task of `Hamiltonian simulation <https://pennylane.ai/topics/hamiltonian-simulation>`_. This demo will focus on **Trotterization**, a simulation method that implements time evolution by segmenting and iteratively "walking" a Hamiltonian forward in time. `Recent developments <https://arxiv.org/abs/2606.30741>`_ have pushed this method further in capability and importance. Together, we will explore why Trotterization is an essential tool for quantum algorithms, work through a simple implementation to various orders, and determine what trade-offs may be necessary in the fault-olerant picture.
 
 The commutation problem
 -----------------------
@@ -123,7 +123,7 @@ print(TrotterStepper(t, coeffs, R[4]))
 ###############################################################################
 # Luckily for us, PennyLane has the tools to make this much simpler. Using :func:`~pennylane.trotterize`, the exact same procedure can be carried out on the target Hamiltonian.
 #
-def FirstOrderExpansion(time, theta, phi, wires=none):
+def FirstOrderExpansion(time, theta, phi, wires=None):
     qp.RX(2 * time * theta, wires=0)
     qp.RZ(2 * time * phi, wires=0)
 
@@ -238,7 +238,7 @@ for r in R:
 #   :width: 700px
 #   :alt: Comparison of Trotter error in the first- and second-order cases.
 #
-# Beyond second-order, higher-order Trotterizations can be achieved via the nested application of the second-order Trotterization sequence. A well known example is the Suzuki five-step ladder [#Suzuki1990]_, which achieves a fourth-order implementation represented as
+# Beyond second-order, higher-order Trotterizations can be achieved via the nested application of the second-order Trotterization sequence. A well-known example is the Suzuki five-step ladder [#Suzuki1990]_, which achieves a fourth-order implementation represented as
 #
 # .. math::
 #    S_4(t)=S_2(s_1 t)S_2(s_1 t)S_2((1-4s_1)t)S_2(s_1 t)S_2(s_1 t).
@@ -247,7 +247,7 @@ for r in R:
 #
 # Gate Synthesis Considerations
 # -----------------------------
-# Before we can officially add Trotterization to our list of capabilities, we must consider how our simulations will interface with eventual fault tolerant quantum hardware. As upsetting as it can be, the resources provided by quantum hardware will be, in some way, limited. With this in mind, it is important that the resource requirements of the systems we work with are quantified and evaluated. One metric of interest is the number of `T-gates <https://pennylane.ai/blog/2025/01/optimizing-with-op-t-mize-dataset>`_ required to synthesize our operations.
+# Before we can officially add Trotterization to our list of capabilities, we must consider how our simulations will interface with eventual fault-tolerant quantum hardware. As upsetting as it can be, the resources provided by quantum hardware will be, in some way, limited. With this in mind, it is important that the resource requirements of the systems we work with are quantified and evaluated. One metric of interest is the number of `T-gates <https://pennylane.ai/blog/2025/01/optimizing-with-op-t-mize-dataset>`_ required to synthesize our operations.
 #
 # The PennyLane :func:`~pennylane.estimator.estimate.estimate` tool can be implemented to approximate the number of gates used to carry out a given process, taking a naïve approach. There are ample optimized methods that can be used to reduce resource requirements. Alternatively, the :doc:`multiplexed phase gradient method <demos/efficient_rotations_with_phase_gradient_states>`, which takes advantage of a static register that holds spatially dependent phase values which can be *added* to a target state as needed, can be used for synthesis.
 #
@@ -321,9 +321,9 @@ for r in R:
         f"{r:>5} | {X_error_PG:>8.5f} | {Y_error_PG:>8.5f} | {Z_error_PG:>8.5f} | {total_error_PG:>11.5f}"
     )
 #############################################################################################################
-# Ah ha! A tradeoff has made itself clear! In the phase gradient implementation, the Trotter error is universally higher. What is also (maybe even more) interesting is that, after a certain :math:`r` threshold is reached, the phase gradient system no longer evolves. This is an example of `underflow <https://en.wikipedia.org/wiki/Arithmetic_underflow>`_ in `quantum arithmetic <https://pennylane.ai/demos/tutorial_how_to_use_quantum_arithmetic_operators>`_, where, put very simply, the simulation has reached a limit and is stuck rounding to the same value each pass. Since the phase gradient method relies on quantum addition, it may not be the right tool here if our main goal is to reduce error. So, when we choose which techniques to use for gate synthesis, we must consider the needs of our system in tandem with the cost of our system. Sometimes an investment is necessary.
+# Ah ha! A trade-off has made itself clear! In the phase gradient implementation, the Trotter error is universally higher. What is also (maybe even more) interesting is that, after a certain :math:`r` threshold is reached, the phase gradient system no longer evolves. This is an example of `underflow <https://en.wikipedia.org/wiki/Arithmetic_underflow>`_ in `quantum arithmetic <https://pennylane.ai/demos/tutorial_how_to_use_quantum_arithmetic_operators>`_, where, put very simply, the simulation has reached a limit and is stuck rounding to the same value each pass. Since the phase gradient method relies on quantum addition, it may not be the right tool here if our main goal is to reduce error. So, when we choose which techniques to use for gate synthesis, we must consider the needs of our system in tandem with the cost of our system. Sometimes an investment is necessary.
 #
-# Another thing to consider is the potential **fast-forwardability** of the system [#Cirstoiu2020]_. As shown, carrying out quantum simulation on hardware requires a series of gates to be implemented for each time step, meaning the depth of the circuit grows notably with increasing time. If the depth of a simulation circuit maintains proportionality to the length of the time interval being simulated, for example, it runs the (very real) risk of exceeding the `coherence time <https://en.wikipedia.org/wiki/Quantum_decoherence>`_ of the system. Ideally, running a simulation for time :math:`t` would require a complexity less than :math:`\mathcal{O}(t)` or, in other words, a complexity that is sublinear in :math:`t`. This, in theory, can be achieved by employing a fast-forwarding technique, in which the phase angles used in the time evolution operator can be strategically altered to cover more time in a single step to achieve sub-linear complexity. This technique requires the Hamiltonian have a known analytical solution (or, in other words, that it is "exactly integrable"), which is often not the case.
+# Another thing to consider is the potential **fast-forwardability** of the system [#Cirstoiu2020]_. As shown, carrying out quantum simulation on hardware requires a series of gates to be implemented for each time step, meaning the depth of the circuit grows notably with increasing time. If the depth of a simulation circuit maintains proportionality to the length of the time interval being simulated, for example, it runs the (very real) risk of exceeding the `coherence time <https://en.wikipedia.org/wiki/Quantum_decoherence>`_ of the system. Ideally, running a simulation for time :math:`t` would require a complexity less than :math:`\mathcal{O}(t)` or, in other words, a complexity that is sublinear in :math:`t`. This, in theory, can be achieved by employing a fast-forwarding technique, in which the phase angles used in the time evolution operator can be strategically altered to cover more time in a single step to achieve sublinear complexity. This technique requires the Hamiltonian have a known analytical solution (or, in other words, that it is "exactly integrable"), which is often not the case.
 #
 # Conclusion
 # ----------
