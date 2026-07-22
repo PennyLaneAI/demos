@@ -123,14 +123,14 @@ print(TrotterStepper(t, coeffs, R[4]))
 ###############################################################################
 # Luckily for us, PennyLane has the tools to make this much simpler. Using :func:`~pennylane.trotterize`, the exact same procedure can be carried out on the target Hamiltonian.
 #
-def FirstOrderExpansion(time, theta, phi):
+def FirstOrderExpansion(time, theta, phi, wires=none):
     qp.RX(2 * time * theta, wires=0)
     qp.RZ(2 * time * phi, wires=0)
 
 
 @qp.qnode(dev)
 def BuiltInTrotter(time, theta, phi, num_trotter_steps):
-    qp.trotterize(FirstOrderExpansion, n=num_trotter_steps, order=1)(time, theta, phi)
+    qp.trotterize(FirstOrderExpansion, n=num_trotter_steps, order=1)(time, theta, phi, wires=[0])
     return [qp.expval(qp.PauliX(0)), qp.expval(qp.PauliY(0)), qp.expval(qp.PauliZ(0))]
 
 
