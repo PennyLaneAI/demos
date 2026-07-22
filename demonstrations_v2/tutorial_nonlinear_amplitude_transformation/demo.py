@@ -1,8 +1,14 @@
 r"""Nonlinear amplitude transformation
-==========================
+===========================================
 
 
-The macroscopic world is inherently nonlinear. From the complex dynamics of financial markets to the activation functions in neural networks, nonlinear functions are the backbone of engineering, optimization, and machine learning. In contrast, quantum mechanics is fundamentally linear: the evolution of a closed system is always governed by unitary operators. A central challenge in quantum algorithm design is bridging this gap to implement nonlinear transformations on a quantum computer.
+The macroscopic world is inherently nonlinear. 
+
+From the complex dynamics of financial markets to the activation functions in neural networks, nonlinear functions are the backbone of engineering, optimization, and machine learning. 
+
+In contrast, quantum mechanics is fundamentally linear: the evolution of a closed system is always governed by unitary operators. 
+
+A central challenge in quantum algorithm design is bridging this gap to implement nonlinear transformations on a quantum computer.
 
 """
 
@@ -17,7 +23,7 @@ The macroscopic world is inherently nonlinear. From the complex dynamics of fina
 # 
 # To transform these amplitudes nonlinearly, we need a generalized approach. The Nonlinear Amplitude
 # Transformation framework [#ntca]_,
-# [#importancesampling]_ enable us to map an input state
+# [#importancesampling]_ enables us to map an input state
 # :math:`|\psi\rangle = \sum x_i |i\rangle` to a target state
 # :math:`|\phi\rangle \propto \sum f(x_i) |i\rangle`, using only unitary operations, ancillas, and
 # (typically) postselection. The key conceptual move is to convert “amplitudes-as-data” into a form
@@ -35,7 +41,7 @@ The macroscopic world is inherently nonlinear. From the complex dynamics of fina
 #   :width: 95%
 #   :align: center
 # 
-#   Figure 1: *A schematic of the nonlinear transformation transformation with QSVT*
+#   Figure 1: *A schematic of the nonlinear transformation with QSVT*
 # 
 
 ######################################################################
@@ -115,14 +121,14 @@ The macroscopic world is inherently nonlinear. From the complex dynamics of fina
 #    \cdot & \cdot
 #    \end{pmatrix}.
 # 
-# This is in sense equivalent to “encoding the first column into a diagonal,” but the key point is
+# This is in a sense equivalent to “encoding the first column into a diagonal,” but the key point is
 # subtler: :math:`U` is not modified. Instead, an auxiliary unitary :math:`U_\Psi` is engineered so
 # that the amplitudes :math:`\psi_i` appear as the diagonal entries of the encoded operator. In the
 # constructions of [#ntca]_,
 # [#importancesampling]_, this requires only a constant number of controlled
 # invocations of :math:`U` and :math:`U^\dagger`. For the purposes of this demo, we treat
-# :math:`U_\Psi` as a primitive and focus on what it enables. The construction idea is intuitionally
-# similar to building a quantum walk operator, and interested readers are encouraged to read original
+# :math:`U_\Psi` as a primitive and focus on what it enables. The construction idea is intuitively
+# similar to building a quantum walk operator, and interested readers are encouraged to read the original
 # papers for details.
 # 
 # With :math:`\Psi` block-encoded, QSVT can be used to implement :math:`P(\Psi)` for a chosen
@@ -285,7 +291,7 @@ def W_adj(base, wires, p, *args, **kwargs):
 
 
 # G_block implements the operator G = W S0 W^† Z_B.  Its adjoint is defined
-# similarly.  See Eq. (9) of the Guo *et al.* (2024).
+# similarly.  See Eq. (9) of Guo *et al.* (2024).
 def G(base, wires, p, *args, **kwargs):
     assert len(wires) % 2 == 1
     n = len(wires)//2
@@ -423,10 +429,10 @@ qp.draw_mpl(be_circuit)(feature_vector, main_wires, ancilla_wires)
 # ~~~~~~~~~~~~~~~~~
 # 
 # PennyLane provides tools to implement QSVT once a block encoding is available. The function
-# ``qp.poly_to_angles`` computes QSVT phase angles from the polynomial coefficients (ordered from
+# :func:`~pennylane.poly_to_angles` computes QSVT phase angles from the polynomial coefficients (ordered from
 # lowest to highest power). The resulting angles can be used to build the projector phases and apply
-# the transformation via ``qp.QSVT``. See the PennyLane API docs
-for :func:`~pennylane.poly_to_angles and :class:`~pennylane.qsvt` for details.
+# the transformation via :class:`~pennylane.QSVT`. See the PennyLane API docs
+for :func:`~pennylane.poly_to_angles and :func:`~pennylane.qsvt` for details.
 # 
 
 ######################################################################
@@ -561,7 +567,7 @@ plt.show()
 # 
 # So far, the demo has focused on the primitive itself: using diagonal block encodings and QSVT to
 # implement an elementwise nonlinear map on amplitude-encoded data. Finally, we showcase the nonlinear
-# transformation of complex amplitude (NTCA) method as a genuine non-linear activation layer within a
+# transformation of complex amplitude (NTCA) method as a genuine nonlinear activation layer within a
 # trainable quantum model. We build a small quantum analogue of a two-layer MLP: two trainable linear
 # layers (implemented as parameterized unitaries) separated by a :math:`\tanh` activation implemented
 # via NTCA:
