@@ -63,7 +63,7 @@ depth, and architectural complexity with executable examples in PennyLane.
 # loads ``010``, the address ``01`` loads ``111``, and so on. We will reuse the same dataset
 # throughout the demo so that the differences between the three constructions are entirely due to the
 # QRAM architecture itself.
-# 
+#
 
 import pennylane as qp
 import numpy as np
@@ -94,7 +94,7 @@ def decode_probs(probs, num_wires):
 # target bit is flipped. Repeating this over all addresses and target positions implements the full
 # lookup map.
 #
-# This is the simplest way to think about data loading, and it is the closest construction to the :doc:`QROM demo <demos/tutorial_intro_qrom>`. 
+# This is the simplest way to think about data loading, and it is the closest construction to the :doc:`QROM demo <demos/tutorial_intro_qrom>`.
 # The drawback is that the controls are global: every address bit participates in the selection
 # logic for every stored record, so the circuit can require many costly multi-controlled operations.
 #
@@ -143,7 +143,7 @@ def compiled_select_only_qram(index):
 
 
 select_specs = qp.specs(compiled_select_only_qram)(0)["resources"]
-print("Total qubits:", len(control_wires + target_wires))
+print("Total work wires:", len(control_wires + target_wires))
 print("One-qubit gates:", select_specs.gate_sizes.get(1, 0))
 print("Two-qubit gates:", select_specs.gate_sizes.get(2, 0))
 
