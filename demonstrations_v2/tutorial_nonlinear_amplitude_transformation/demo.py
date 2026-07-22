@@ -9,9 +9,9 @@ The macroscopic world is inherently nonlinear. From the complex dynamics of fina
 ######################################################################
 # The "gold standard" methods to implement matrix transformations are :doc:`block
 # encoding <demos/tutorial_block_encoding>`
-# [`1 <https://arxiv.org/abs/1804.01973>`__] and :doc:`quantum singular value
+# [#blockencoding]_ and :doc:`quantum singular value
 # transformation <demos/tutorial_intro_qsvt>`
-# [`2 <https://arxiv.org/abs/1806.01838>`__]. However, these techniques primarily transform the singular values (or eigenvalues) of an
+# [#qsvt]_. However, these techniques primarily transform the singular values (or eigenvalues) of an
 # operator. In many quantum machine learning settings - especially amplitude encoding - the data isn’t
 # stored in an operator at all. Instead, it lives directly in the amplitudes of a quantum state.
 # 
@@ -426,8 +426,7 @@ qp.draw_mpl(be_circuit)(feature_vector, main_wires, ancilla_wires)
 # ``qp.poly_to_angles`` computes QSVT phase angles from the polynomial coefficients (ordered from
 # lowest to highest power). The resulting angles can be used to build the projector phases and apply
 # the transformation via ``qp.QSVT``. See the PennyLane API docs
-# [`6 <https://docs.pennylane.ai/en/stable/code/api/pennylane.qsvt.html>`__,\ `7 <https://docs.pennylane.ai/en/stable/code/api/pennylane.poly_to_angles.html>`__]
-# for ``qp.poly_to_angles`` and ``qp.qsvt`` for details.
+for :func:`~pennylane.poly_to_angles and :class:`~pennylane.qsvt` for details.
 # 
 
 ######################################################################
