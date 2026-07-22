@@ -567,14 +567,11 @@ angles = AngleFinder(Gamma, lamb, E_0, omega_I)
 
 def RIXSStateEncodingUnitary(angles):
     #INITIAL STATE |E_0>
-
-    #Extract the initial Hamiltonian state
+    #Prep the initial state
     psi0 = H_evecs[:,0]
-    qp.StatePrep(psi0, wires = system_wires)
-
-    #INTERMEDIATE STATE |E_n>
-    #Encode excitation dipole operator
-    qp.BlockEncode(D_eps_mat_in_norm, wires = list(block_encilla_1) + list(system_wires))
+    D_psi0_state = D_eps_in_mat @ psi0 #Apply the dipole operator to the ground state
+    D_psi0 = D_psi0_state/np.linalg.norm(D_psi0_state)
+    qp.StatePrep(D_psi0, wires = system_wires)
 
     #Define the GQSP walk operator
     W = qp.Qubitization(H, control = control_wires)
@@ -589,7 +586,7 @@ def RIXSStateEncodingUnitary(angles):
     qp.BlockEncode(D_eps_mat_out_norm, wires = list(block_encilla_2) + list(system_wires))
     
     #Add success flag
-    flag_ctrl = list(GQSP_wire) + list(block_encilla_1) + list(block_encilla_2) + list(control_wires)
+    flag_ctrl = list(GQSP_wire) + list(block_encilla_2) + list(control_wires)
     qp.ctrl(qp.X, control = flag_ctrl, control_values = [0]*len(flag_ctrl))(wires=success_wire)
 ###############################################################################
 # With this implemented, we have our RIXS state ready!
