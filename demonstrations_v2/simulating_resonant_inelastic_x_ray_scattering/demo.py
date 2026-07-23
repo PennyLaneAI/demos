@@ -367,7 +367,7 @@ regs = qp.registers(registers)
 
 GQSP_wire = regs["GQSP"]
 success_wire = regs["success"]
-gqsp_walk_wires = regs["controllers"]
+gqsp_walk_wires = regs["GQSP_walk"]
 block_encilla = regs["block_encilla"]
 system_wires = regs["system"]
 QAE_wires = regs["QAE"]
