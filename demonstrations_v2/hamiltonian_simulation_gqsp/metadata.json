@@ -1,0 +1,74 @@
+{
+  "title": "How to do Hamiltonian Simulation with GQSP in PennyLane",
+  "authors": [
+    {
+      "username": "IpsiXboiI"
+    }
+  ],
+  "executable_stable": true,
+  "executable_latest": true,
+  "dateOfPublication": "2026-06-16T00:00:00+00:00",
+  "dateOfLastModification": "2026-06-17T00:00:00+00:00",
+  "categories": [
+    "Algorithms",
+    "How-to",
+    "Quantum Computing"
+  ],
+  "tags": [
+    "qsp",
+    "gqsp",
+    "qubitization",
+    "hamiltonian simulation"
+  ],
+  "previewImages": [
+    {
+      "type": "thumbnail",
+      "uri": "/_static/demo_thumbnails/regular_demo_thumbnails/thumbnail_placeholder.png"
+    }
+  ],
+  "seoDescription": "Learn how to simulate exp(-iHt) by block-encoding H as a qubitization walk and applying a single Jacobi-Anger polynomial of that walk with qp.GQSP, then verify against scipy.linalg.expm.",
+  "doi": "",
+  "references": [
+    {
+      "id": "MotlaghWiebe2024",
+      "type": "article",
+      "title": "Generalized Quantum Signal Processing",
+      "authors": "Danial Motlagh, Nathan Wiebe",
+      "year": "2024",
+      "journal": "PRX Quantum",
+      "doi": "10.1103/PRXQuantum.5.020368",
+      "url": "https://journals.aps.org/prxquantum/abstract/10.1103/PRXQuantum.5.020368"
+    },
+    {
+      "id": "LowChuang2019",
+      "type": "article",
+      "title": "Hamiltonian Simulation by Qubitization",
+      "authors": "Guang Hao Low, Isaac L. Chuang",
+      "year": "2019",
+      "journal": "Quantum",
+      "doi": "10.22331/q-2019-07-12-163",
+      "url": "https://quantum-journal.org/papers/q-2019-07-12-163/"
+    }
+  ],
+  "basedOnPapers": [
+    "10.1103/PRXQuantum.5.020368"
+  ],
+  "referencedByPapers": [],
+  "relatedContent": [
+    {
+      "type": "demonstration",
+      "id": "tutorial_estimator_hamiltonian_simulation_gqsp",
+      "weight": 1.0
+    },
+    {
+      "type": "demonstration",
+      "id": "tutorial_qubitization",
+      "weight": 1.0
+    },
+    {
+      "type": "demonstration",
+      "id": "tutorial_apply_qsvt",
+      "weight": 1.0
+    }
+  ]
+}
