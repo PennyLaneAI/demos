@@ -61,10 +61,10 @@ and used to compute the difference between the input and output photon energies.
 
 Though this simple explanation is sufficient to understand the observables,
 it obscures the fact that RIXS is fundamentally a second-order quantum scattering
-process. This means that the intermediate state (which exists between the relaxed
+process. This means that the intermediate state (which exists between the ground
 state and final excited state) is actually a coherent collection of virtual states.
 This means the system never actually collapses to this intermediate state, further 
-emphacizing the need for quantum effects to be properly emulated.
+emphasizing the need for quantum effects to be properly emulated.
 
 
 .. figure:: ../demonstrations_v2/simulating_resonant_inelastic_x_ray_scattering/pennylane-demo-simulating-resonant-inelastic-xray-scattering-EnergyLevelDiagram.png
@@ -150,7 +150,7 @@ the form
 .. math::
    \hat{H}=E^{0}+\sum_{p,q=1}^{N_{a}}\sum_{\sigma}h_{pq}\hat{c}_{p\sigma}^{\dagger}\hat{c}_{q\sigma}+\frac{1}{2}\sum_{p,q,r,s=1}^{N_{a}}\sum_{\sigma,\sigma^{\prime}}V_{pqrs}\hat{c}_{p\sigma}^{\dagger}\hat{c}_{q\sigma}\hat{c}_{r\sigma^{\prime}}^{\dagger}\hat{c}_{s\sigma^{\prime}},
 
-where :math:`N_a` is the number active orbitals used in the simulation, :math:`p,
+where :math:`N_a` is the number of active orbitals used in the simulation, :math:`p,
 q, r,` and :math:`s` are specific orbital indices, :math:`\sigma` and
 :math:`\sigma^\prime` are spin states, :math:`h_{pq}` are the one-electron
 integrals, :math:`V_{pqrs}` are the two-electron integrals, 
@@ -327,12 +327,12 @@ E_0 = H_evals[0] #Extract ground state eigenvalue
 #
 # The GQSP register, success flag register, and two block-encoding ancilla
 # registers only require one wire each. The number of wires included in the QPE
-# register and the ancilla register used for qubitization can vary depending on the
+# register and the ancilla registers used for qubitization can vary depending on the
 # desired precision. The system register should have the same number of qubits
 # as the system has active spin-orbitals, which is twice the number of spatial 
 # orbitals.
 #
-# The remaining two registers (the QAE wires and the phase wires) should be
+# The remaining two registers (the QAE wires and the QPE wires) should be
 # computed relative to the desired accuracy and resolution of the spectral
 # output. In general, the number of wires required to achieve accuracy
 # :math:`\epsilon` is given by
@@ -353,13 +353,12 @@ nQAE = np.ceil(np.log2(1/eps_QAE))
 registers = {
     "GQSP": 1,
     "success": 1,
-    "controllers": 4,
-    "block_encilla_1": 1,
-    "block_encilla_2": 1,
+    "GQSP_walk": 4,
+    "block_encilla": 1,
     "system": int(2*Na),
     "QAE": int(nQAE),
-    "phase": int(n_omega),
-    "QPE": 4
+    "QPE": int(n_omega),
+    "QPE_walk": 4
 }
 
 regs = qp.registers(registers)
@@ -368,13 +367,12 @@ regs = qp.registers(registers)
 
 GQSP_wire = regs["GQSP"]
 success_wire = regs["success"]
-control_wires = regs["controllers"]
-block_encilla_1 = regs["block_encilla_1"]
-block_encilla_2 = regs["block_encilla_2"]
+gqsp_walk_wires = regs["controllers"]
+block_encilla = regs["block_encilla"]
 system_wires = regs["system"]
 QAE_wires = regs["QAE"]
-phase_wires = regs["phase"]
-QPE_wires = regs["QPE"]
+QPE_wires = regs["phase"]
+qpe_walk_wires = regs["QPE"]
 ###############################################################################
 # With these registers defined, we can map our Hamiltonian to the set of wires
 # to ensure nothing gets crossed along the way.
@@ -542,13 +540,13 @@ angles = AngleFinder(Gamma, lamb, E_0, omega_I)
 # need to: 
 #
 # 1. Prepare the dipole-perturbed initial state :math:`U_\epsilon =
-#    D_\epsilon|E_0\rangle / ||D_\epsilonI|E_0\rangle||` 
+#    D_\epsilon|E_0\rangle / ||D_\epsilon|E_0\rangle||` 
 #    (the state you get from the incoming photon's dipole operator acting on the
 #    system's ground state) on the system register,
 # 2. Carry out the GQSP process, encoding the Green's function onto the system
 #    register and using a qubitized representation of the system Hamiltonian as
 #    our walk operator,
-# 3. Block-encode the final conjugate dipole operator D†_εS onto the system
+# 3. Block-encode the final conjugate dipole operator D\dagger_\epsilon onto the system
 #    register (the de-excitation step that fills the core hole),
 # 4. Carry out a controlled X operation that will flag if the block-encoding all
 #    inner block-encodings were successful.
@@ -574,7 +572,7 @@ def RIXSStateEncodingUnitary(angles):
     qp.StatePrep(D_psi0, wires = system_wires)
 
     #Define the GQSP walk operator
-    W = qp.Qubitization(H, control = control_wires)
+    W = qp.Qubitization(H, control = gqsp_walk_wires)
     
     #Implement GQSP and uncompute walk operator
     qp.GQSP(W, angles, control = GQSP_wire)
@@ -583,10 +581,10 @@ def RIXSStateEncodingUnitary(angles):
     
     #FINAL STATE |E_f>
     #Encode de-excitation dipole operator
-    qp.BlockEncode(D_eps_mat_out_norm, wires = list(block_encilla_2) + list(system_wires))
+    qp.BlockEncode(D_eps_mat_out_norm, wires = list(block_encilla) + list(system_wires))
     
     #Add success flag
-    flag_ctrl = list(GQSP_wire) + list(block_encilla_2) + list(control_wires)
+    flag_ctrl = list(GQSP_wire) + list(block_encilla) + list(gqsp_walk_wires)
     qp.ctrl(qp.X, control = flag_ctrl, control_values = [0]*len(flag_ctrl))(wires=success_wire)
 ###############################################################################
 # With this implemented, we have our RIXS state ready!
@@ -646,7 +644,7 @@ def RIXSStateEncodingUnitary(angles):
 # and the state being amplified. 
 #
 def GroverIterate():
-    R_reg = list(system_wires) + list(GQSP_wire) + list(block_encilla_1) + list(block_encilla_2) + list(control_wires)
+    R_reg = list(system_wires) + list(GQSP_wire) + list(block_encilla) + list(gqsp_walk_wires)
     
     qp.Z(wires = success_wire)
 
@@ -677,10 +675,10 @@ def QAE():
     for wire in QAE_wires:
         qp.Hadamard(wires=wire)
 
-    for i, phase_wire in enumerate(QAE_wires):
+    for i, qae_wire in enumerate(QAE_wires):
         exponents = 2**i
         for _ in range(exponents):
-            qp.ctrl(GroverIterate, control = phase_wire)()
+            qp.ctrl(GroverIterate, control = qae_wire)()
 
     qp.adjoint(qp.QFT)(wires = QAE_wires)
 
@@ -719,7 +717,7 @@ def HighProbRIXSState(probs):
 # ------------------------------------
 # The second step of the algorithm we laid out
 # previously is the application of walk-based QPE, which is the final piece
-# of the puzzle in Loaiza et al.'s novel RIXS simulation. This operator
+# of the puzzle in Loaiza et al.'s RIXS simulation. This operator
 # is defined as
 #
 # .. math:: \hat{\mathcal{W}}=\hat{\mathcal{R}}\cdot \text{PREP}^\dagger \cdot
@@ -728,21 +726,18 @@ def HighProbRIXSState(probs):
 # where :math:`\hat{\mathcal{R}}=(\hat{I}-2|0\rangle\langle0|)\otimes\hat{I}`
 # [#Loaiza2026]_. This can be taken as an implementable, efficient
 # representation of the walk operator :math:`e^{\pm i \arccos
-# \hat{H}/\lambda}`, therefore exponentiating the block encoded state. Carrying
-# out controlled applications of the walk operator between a control register
-# and a state register results in a phase :math:`\theta_f =
-# \arccos(E_f/\lambda)`, where :math:`E_f` is an eigenvalue of the Hamiltonian,
-# being kicked back onto the control register for readout.
+# \hat{H}/\lambda}`. Carrying
+# out controlled applications of the walk operator between the QPE register
+# and the state register results in a phase :math:`\theta_f =
+# \pm\arccos(E_f/\lambda)`, where :math:`E_f` is an eigenvalue of the Hamiltonian,
+# being kicked back onto the QPE register for readout.
 # 
 # The Kaiser Window
 # .................
-# Before we go further, let's quickly dig
-# into this nebulous "control register". The total RIXS circuit diagram depicts the walk operator
-# controlled by a register of size :math:`n_\omega`, which we will refer to as
-# the "phase wires" going forward. Prior to the walk operator, an operator
-# :math:`\mathcal{L}_\delta` operates on the register. This operator encodes a
+# Prior to the walk operator, an operator
+# :math:`\mathcal{L}_\delta` operates on the QPE register. This operator encodes a
 # `Kaiser lineshape <https://en.wikipedia.org/wiki/Kaiser_window>`_, 
-# replacing the typical Hadamard invoked sinc lineshape, which has long tails
+# replacing the typical sinc lineshape produced by the usual Hadamard initialization, which has long tails
 # and leads to worse convergence. Loaiza et al. state that this is to reduce "errors coming
 # from discretization and finite precision" [#Loaiza2026]_, which arise mainly
 # from the incapability of our system to replicate an infinite Dirac delta
@@ -759,14 +754,15 @@ def QPEReadout():
     KaiserWindowShifted = np.fft.ifftshift(KaiserWindow)
     KaiserWindowNorm = KaiserWindowShifted/np.linalg.norm(KaiserWindowShifted)
     
-    qp.StatePrep(KaiserWindowNorm, wires = phase_wires)
-    for i, wire in enumerate(phase_wires):
+    qp.StatePrep(KaiserWindowNorm, wires = QPE_wires)
+    for i, wire in enumerate(QPE_wires):
         for _ in range(2**(int(n_omega)-1-i)):
-            qp.ctrl(qp.Qubitization, control = wire)(H, control = QPE_wires)
-    qp.adjoint(qp.QFT)(wires = phase_wires)
+            qp.ctrl(qp.Qubitization, control = wire)(H, control = qpe_walk_wires)
+    qp.adjoint(qp.QFT)(wires = QPE_wires)
 
-    return qp.probs(wires = list(success_wire)+list(phase_wires))
+    return qp.probs(wires = list(success_wire)+list(QPE_wires))
 
+amplitude = QPEReadout(probs)
 ###############################################################################
 # Note that the amplitude estimation and amplification steps were skipped here
 # for computational simplicity. ``HighProbRIXSState()`` can easily replace 
@@ -788,11 +784,12 @@ def QPEReadout():
 # <https://en.wikipedia.org/wiki/Lorentzian>`_ with width :math:`\eta=0.2` eV to
 # smooth and account for expected broadening in a realistic system.
 #
-# An additional, relevant trick is the use of **spectral folding**, which
-# accounts for symmetries in the :math:`[0,2\pi]` range that the QPE step works
-# in. More specifically, the it compensates for the fact that the
-# eigenvalues of the walk operator are :math:`\pm arccos(E/\lambda)`. 
-# Essentially, this step folds the final phase output in half, compensating for the positive and negative branches.
+# An additional, relevant trick is the use of **spectral folding**.  It compensates for the fact that the
+# eigenvalues of the walk operator are :math:`e^{\pm i arccos(E/\lambda)}`, meaning the 
+# phases the QPE step reads out are :math:`\pm arccos(E/\lambda)`. This means that the QPE
+# output is mirror symmetric about the middle bin since each energy value appears in both the 
+# :math:`+\theta` and :math:`-\theta` phase branches. Folding recombines each mirrored pair
+# into a single physical energy.
 # 
 # .. figure:: ../demonstrations_v2/simulating_resonant_inelastic_x_ray_scattering/pennylane-demo-simulating-resonant-inelastic-xray-scattering-PreFoldedBins.png
 #    :align: center 
@@ -895,7 +892,7 @@ def plot_qpe_spectrum_tools(amplitude, H_traceless, n_omega, eta=0.2, xmax=4.0):
 # .. _references:
 #
 # References
-# ==========
+# ----------
 # .. [#Gao2025] X.\ Gao, B. Li, K. Kummer, A. Geondzhian, D. Aksyonov, R.
 # Dedryvère, D. Foix, G. Rousse, M. B. Yahia, M. L. Doublet, et al., "Clarifying
 # the origin of molecular O2 in cathode oxides," *Nature Materials*, vol. 24, p.
