@@ -128,7 +128,7 @@ has the highest value as the label.
 We can encode the output label as a particular quantum state that we want
 to end up in and use Pennylane to find the probability of ending up in that
 state after running the circuit. We construct an observable corresponding to
-the output label using the `Hermitian <https://pennylane.readthedocs.io/en/latest/code/ops/qubit.html#pennylane.ops.qubit.Hermitian>`_
+the output label using the `Hermitian <https://docs.pennylane.ai/en/stable/code/api/pennylane.Hermitian.html>`_
 operator. The expectation value of the observable gives the overlap or fidelity.
 We can then define the cost function as the sum of the fidelities for all
 the data points after passing through the circuit and optimize the parameters
