@@ -371,8 +371,8 @@ gqsp_walk_wires = regs["GQSP_walk"]
 block_encilla = regs["block_encilla"]
 system_wires = regs["system"]
 QAE_wires = regs["QAE"]
-QPE_wires = regs["phase"]
-qpe_walk_wires = regs["QPE"]
+QPE_wires = regs["QPE"]
+qpe_walk_wires = regs["QPE_walk"]
 ###############################################################################
 # With these registers defined, we can map our Hamiltonian to the set of wires
 # to ensure nothing gets crossed along the way.
@@ -762,7 +762,7 @@ def QPEReadout():
 
     return qp.probs(wires = list(success_wire)+list(QPE_wires))
 
-amplitude = QPEReadout(probs)
+amplitude = QPEReadout()
 ###############################################################################
 # Note that the amplitude estimation and amplification steps were skipped here
 # for computational simplicity. ``HighProbRIXSState()`` can easily replace 
