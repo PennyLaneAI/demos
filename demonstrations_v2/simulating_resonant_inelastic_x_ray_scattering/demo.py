@@ -124,14 +124,14 @@ The Hamiltonian
    When describing electrons in a molecular system represented using second-quantization, 
    it is conventional to use :doc:`Fermionic
    operators <demos/tutorial_fermionic_operators>` to describe the behaviour of
-   the indistinguishable particles that make up the system. In general, the operators ofS
+   the indistinguishable particles that make up the system. In general, the operators of
    concern are:
 
    |
 
-   1. :math:`c_i^\dagger`, the **creation operator**. This is used when a particle
+   1. :math:`\hat{c_i^\dagger}`, the **creation operator**. This is used when a particle
       is "created", effectively occupying some orbital.
-   2. :math:`c_i`, the **annihilation operator**. This is used when a particle is
+   2. :math:`\hat{c_i}`, the **annihilation operator**. This is used when a particle is
       "destroyed", effectively vacating some orbital.
 
    |
@@ -148,7 +148,7 @@ battery materials", Loaiza et al. focus on a second-quantized Hamiltonian of
 the form
 
 .. math::
-   \hat{H}=E^{0}+\sum_{p,q=1}^{N_{a}}\sum_{\sigma}h_{pq}\hat{c}_{p\sigma}^{\dagger}\hat{c}_{q\sigma}+\frac{1}{2}\sum_{p,q,r,s=1}^{N_{a}}\sum_{\sigma,\sigma^{\prime}}V_{pqrs}\hat{c}_{p\sigma}^{\dagger}\hat{c}_{q\sigma}\hat{c}_{r\sigma^{\prime}}^{\dagger}\hat{c}_{s\sigma^{\prime}},
+   \hat{H}=E^{0}+\sum_{p,q=1}^{N_{a}}\sum_{\sigma\in \{\uparrow, \downarrow\}}h_{pq}\hat{c}_{p\sigma}^{\dagger}\hat{c}_{q\sigma}+\frac{1}{2}\sum_{p,q,r,s=1}^{N_{a}}\sum_{\sigma,\sigma '\in \{\uparrow, \downarrow\}}V_{pqrs}\hat{c}_{p\sigma}^{\dagger}\hat{c}_{q\sigma}\hat{c}_{r\sigma^{\prime}}^{\dagger}\hat{c}_{s\sigma^{\prime}},
 
 where :math:`N_a` is the number of active orbitals used in the simulation, :math:`p,
 q, r,` and :math:`s` are specific orbital indices, :math:`\sigma` and
@@ -167,7 +167,7 @@ orbitals to be our focus. To do this, we will adapt the given Hamiltonian as
 
 where :math:`c_1` and :math:`c_2` are core orbitals, :math:`\nu_1` and
 :math:`\nu_2` are valence orbitals, and :math:`\epsilon_i` are on-site orbital
-energies. Note that the :math:`\sum_{p,q=1}^{N_{a}}\sum_{\sigma}h_{pq}\hat{c}_{p\sigma}^{\dagger}\hat{c}_{q\sigma}`
+energies. Note that the :math:`\sum_{p,q=1}^{N_{a}}\sum_{\sigma\in \{\uparrow, \downarrow\}}h_{pq}\hat{c}_{p\sigma}^{\dagger}\hat{c}_{q\sigma}`
 term has been explicitly broken up into the diagonal (first term) and off-diagonal (second term) components in 
 our Hamiltonian.
 
@@ -242,8 +242,7 @@ Hspin = V*(num_op_v2_up*num_op_v2_down)
 
 H_raw = qp.jordan_wigner((Hdiag_up+Hdiag_down)+(Hhybrid_up+Hhybrid_down)+Hspin).simplify()
 ###############################################################################
-# This Hamiltonian will be the core focus of our state definition and eventual
-# time evolution. Eventually, we will map this Hamiltonian onto our registers, but
+# Eventually, we will map this Hamiltonian onto our registers, but
 # for now we can extract its eigenvalues and eigenvectors for benchmarking. The algorithm itself
 # only needs the ground state energies and the value of :math:`E_0` to function, but we 
 # can construct a reference spectrum from the complete ``np.linalg.eigh()`` output later on.
@@ -270,14 +269,14 @@ E_0 = H_evals[0] #Extract ground state eigenvalue
 # their algorithm in two steps:
 # 
 # 1. Prepare the initial RIXS state :math:`|R_{\epsilon_I,\epsilon_S}(\omega_I)\rangle`,
-# 2. Carry out a walk-based :doc:`quantum phase estimation <demos/tutorial_qpe>` to evolve toward the final state.
+# 2. Carry out a walk-based :doc:`quantum phase estimation <demos/tutorial_qpe>` to read the final state.
 #
 # .. figure:: ../demonstrations_v2/simulating_resonant_inelastic_x_ray_scattering/pennylane-demo-simulating-resonant-inelastic-xray-scattering-RIXScircuit.png
 #    :align: center 
 #    :width: 700px 
 #    :alt: An illustrated circuit diagram depicting the general components of Loaiza et al.'s algorithm.
 #
-#    *The entire RIXS circuit involves preparing the RIXS state and executing time evolution via walk-based QPE*
+#    *The entire RIXS circuit involves preparing the RIXS state and executing walk-based QPE*
 #
 # Item 1 on this list does a lot of heavy lifting here. In fact, the process of
 # preparing the state *is* the algorithm in many ways. So, we can expand the
@@ -295,7 +294,7 @@ E_0 = H_evals[0] #Extract ground state eigenvalue
 #    implementation, 
 #
 #    c. Define the **dipole operator**
-#    :math:`\hat{D}_{\epsilon_i}`, which which captures, within the dipole approximation, the perturbation that occurs
+#    :math:`\hat{D}_{\epsilon_i}`, which captures, within the dipole approximation, the perturbation that occurs
 #    as a result of the incident photon excitation, 
 #
 #    d. Prepare a block-encoding
@@ -313,7 +312,7 @@ E_0 = H_evals[0] #Extract ground state eigenvalue
 #    encoded state to boost the success probability,
 # 
 # 2. Carry out a walk-based :doc:`quantum phase estimation <demos/tutorial_qpe>` to
-#    evolve toward the final state.
+#    read the final state.
 #
 # We have our work cut out for us! Thankfully, most of the tools we need are
 # built for us in PennyLane, so let us work through these steps systematically
@@ -410,7 +409,7 @@ H = H_traceless.map_wires(wire_map)
 #    \epsilon_S}(\omega_I)\rangle\equiv\frac{\hat{R}_{\epsilon_I,
 #    \epsilon_S}(\omega_I)|E_0\rangle}{|R_{\epsilon_I,\epsilon_S}(\omega_I)|}.
 #
-# We will take for granted that this state is equivalent to the block encoded
+# We will take for granted that this state is equivalent to the block-encoded
 # operator
 #
 # .. math:: \hat{\mathcal{U}}_R \equiv \begin{bmatrix}
@@ -435,7 +434,7 @@ H = H_traceless.map_wires(wire_map)
 # For a given polarization :math:`\epsilon`, the (one-electron) dipole operator can be generally defined as
 # 
 # .. math::
-#    \hat{D}_{\epsilon}=\sum_{pq,\sigma}d_{pq}^{(\epsilon)}\hat{c}_{p\sigma}^\dagger\hat{c}_{q\sigma}+\text{h.c.},
+#    \hat{D}_{\epsilon}=\sum_{pq}\sum_{\sigma\in \{\uparrow, \downarrow\}}d_{pq}^{(\epsilon)}\hat{c}_{p\sigma}^\dagger\hat{c}_{q\sigma}+\text{h.c.},
 #
 # where :math:`d_{pq}^{(\epsilon)}` are the dipole matrix elements. Note that, for simplicity, we do not consider different polarizations in our toy model.
 #
@@ -784,8 +783,8 @@ def QPEReadout():
 # smooth and account for expected broadening in a realistic system.
 #
 # An additional, relevant trick is the use of **spectral folding**.  It compensates for the fact that the
-# eigenvalues of the walk operator are :math:`e^{\pm i arccos(E/\lambda)}`, meaning the 
-# phases the QPE step reads out are :math:`\pm arccos(E/\lambda)`. This means that the QPE
+# eigenvalues of the walk operator are :math:`e^{\pm i \arccos(E/\lambda)}`, meaning the 
+# phases the QPE step reads out are :math:`\pm \arccos(E/\lambda)`. This means that the QPE
 # output is mirror symmetric about the middle bin since each energy value appears in both the 
 # :math:`+\theta` and :math:`-\theta` phase branches. Folding recombines each mirrored pair
 # into a single physical energy.
@@ -796,7 +795,7 @@ def QPEReadout():
 #    :alt: A plot depicting the output of the QPE run prior to folding.
 #
 #    *Prior to phase folding, the QPE output shows a mirrored set of phase
-#    values as a result of the mirrored eigenvalues of the qubitized walk
+#    values as a result of the mirrored phase branches of the qubitized walk
 #    operator*
 #
 # Finally, the spectral output should be plotted in terms of recovered energy loss (:math:`E_f-E_0`) versus normalized intensity. The recovered energy loss is given by Loaiza et al. as 
