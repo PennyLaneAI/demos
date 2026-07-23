@@ -1,0 +1,148 @@
+{
+    "title": "Nonlinear amplitude transformation",
+    "authors": [
+        {
+            "username": "rishabhgupta"
+        }
+    ],
+    "executable_stable": true,
+    "executable_latest": true,
+    "dateOfPublication": "2026-04-08T10:00:00+00:00",
+    "dateOfLastModification": "2026-04-08T15:48:14+00:00",
+    "categories": [
+        "Quantum Machine Learning"
+    ],
+    "tags": [],
+    "previewImages": [
+        {
+            "type": "thumbnail",
+            "uri": "/_static/demo_thumbnails/regular_demo_thumbnails/pennylane-demo-nonlinear-transformation-qsvt-thumbnail.png"
+        },
+        {
+            "type": "large_thumbnail",
+            "uri": "/_static/demo_thumbnails/large_demo_thumbnails/pennylane-demo-nonlinear-transformation-qsvt-large-thumbnail.png"
+        }
+    ],
+    "seoDescription": "Learn about the nonlinear amplitude transformation using QSVT",
+    "doi": "",
+    "references": [
+        {
+            "id": "Bravyi2004",
+            "type": "article",
+            "title": "Universal Quantum Computation with ideal Clifford gates and noisy ancillas",
+            "authors": "Sergei Bravyi and Alexei Kitaev",
+            "year": "2004",
+            "journal": "arXiv",
+            "url": "https://arxiv.org/abs/quant-ph/0403025"
+        },
+        {
+        "id": "Fowler",
+        "type": "article",
+        "title": "Surface codes: Towards practical large-scale quantum computation",
+        "authors": "Austin G. Fowler, Matteo Mariantoni, John M. Martinis, Andrew N. Cleland",
+        "year": "2012",
+        "journal": "Phys. Rev. A",
+        "url": "https://journals.aps.org/pra/abstract/10.1103/PhysRevA.86.032324"
+    },
+    {
+        "id": "Gidney2024",
+        "type": "article",
+        "title": "Magic state cultivation: growing T states as cheap as CNOT gates",
+        "authors": "Craig Gidney, Noah Shutty, Cody Jones",
+        "year": "2024",
+        "journal": "arXiv",
+        "url": "https://arxiv.org/abs/2409.17595"
+    },
+    {
+        "id": "QuEra2025",
+        "type": "article",
+        "title": "Experimental demonstration of logical magic state distillation",
+        "authors": "Pedro Sales Rodriguez, et al.",
+        "year": "2025",
+        "journal": "Nature",
+        "url": "https://www.nature.com/articles/s41586-025-09367-3"
+    },
+    {
+        "id": "Ruiz2025",
+        "type": "article",
+        "title": "Unfolded distillation: very low-cost magic state preparation for biased-noise qubits",
+        "authors": "Diego Ruiz, Jérémie Guillaud, Christophe Vuillot, Mazyar Mirrahimi",
+        "year": "2025",
+        "journal": "arXiv",
+        "url": "https://arxiv.org/abs/2507.12511"
+    },
+    {
+        "id": "Itogawa2025",
+        "type": "article",
+        "title": "Efficient magic state distillation by zero-Level distillation",
+        "authors": "Tomohiro Itogawa, Yugo Takada, Yutaka Hirano, Keisuke Fujii",
+        "year": "2025",
+        "journal": "PRX Quantum",
+        "url": "https://journals.aps.org/prxquantum/abstract/10.1103/thxx-njr6"
+    },
+    {
+        "id": "Hirano2024",
+        "type": "article",
+        "title": "Leveraging Zero-Level Distillation to Generate High-Fidelity Magic States",
+        "authors": "Yutaka Hirano, Tomohiro Itogawa, Keisuke Fujii",
+        "year": "2024",
+        "journal": "arXiv",
+        "url": "https://arxiv.org/abs/2404.09740"
+    },
+    {
+        "id": "Google2025",
+        "type": "article",
+        "title": "Magic state cultivation on a superconducting quantum processor",
+        "authors": "Emma Rosenfeld, et al.",
+        "year": "2025",
+        "journal": "arXiv",
+        "url": "https://arxiv.org/abs/2512.13908"
+    },
+    {
+        "id": "Chen2025",
+        "type": "article",
+        "title": "Efficient Magic State Cultivation on ℝ\u21192",
+        "authors": "Zi-Han Chen, Ming-Cheng Chen, Chao-Yang Lu, Jian-Wei Pan",
+        "year": "2025",
+        "journal": "arXiv",
+        "url": "https://arxiv.org/abs/2503.18657"
+    },
+    {
+        "id": "Hirano2025",
+        "type": "article",
+        "title": "Efficient magic state cultivation with lattice surgery",
+        "authors": "Yutaka Hirano, Riki Toshio, Tomohiro Itogawa, Keisuke Fujii",
+        "year": "2025",
+        "journal": "arXiv",
+        "url": "https://arxiv.org/abs/2510.24615"
+    },
+        {
+            "id": "Heinrich2019",
+            "type": "article",
+            "title": "Robustness of Magic and Symmetries of the Stabiliser Polytope",
+            "authors": "Markus Heinrich and David Gross",
+            "year": "2019",
+            "journal": "Quantum",
+            "url": "https://quantum-journal.org/papers/q-2019-04-08-132"
+        }
+    ],
+    "basedOnPapers": [],
+    "referencedByPapers": [],
+    "relatedContent": [
+        {
+            "type": "demonstration",
+            "id": "tutorial_magic_state_distillation",
+            "weight": 1.0
+        },
+        {
+            "type": "demonstration",
+            "id": "tutorial_game_of_surface_codes",
+            "weight": 0.5
+        },
+        {
+            "type": "demonstration",
+            "id": "tutorial_lattice_surgery",
+            "weight": 0.5
+        }
+    ]
+}
