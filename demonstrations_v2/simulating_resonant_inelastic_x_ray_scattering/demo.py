@@ -762,7 +762,6 @@ def QPEReadout():
 
     return qp.probs(wires = list(success_wire)+list(QPE_wires))
 
-amplitude = QPEReadout()
 ###############################################################################
 # Note that the amplitude estimation and amplification steps were skipped here
 # for computational simplicity. ``HighProbRIXSState()`` can easily replace 
