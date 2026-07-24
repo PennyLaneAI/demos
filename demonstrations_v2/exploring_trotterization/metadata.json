@@ -1,0 +1,116 @@
+{
+  "title": "Exploring Trotterization",
+  "doi":"",
+  "authors": [
+    {
+      "username": "emgem"
+    }
+  ],
+  "executable_stable": true,
+  "executable_latest": true,
+  "dateOfPublication": "2026-07-22T00:00:00+00:00",
+  "dateOfLastModification": "2026-07-22T00:00:00+00:00",
+  "categories": ["Algorithms"],
+  "tags": ["Trotterization","Phase Gradient", "Simulation"],
+  "previewImages": [
+    {
+      "type": "thumbnail",
+      "uri": "/_static/demo_thumbnails/regular_demo_thumbnails/pennylane-demo-trotterization-thumbnail.png"
+    },
+    {
+      "type": "large_thumbnail",
+      "uri": "/_static/demo_thumbnails/large_demo_thumbnails/pennylane-demo-trotterization-large-thumbnail.png"
+    }
+  ],
+  "seoDescription": "Hamiltonian simulation is a leading application of quantum computers, and the tools used to carry it out can be the difference between success and failure. Trotterization is a key addition to the quantum simulation toolkit.",
+  "references": [
+    {
+      "id": "Su2020",
+      "type": "other",
+      "title": "A Theory of Trotter Error",
+      "authors": "Su",
+      "year": "2020",
+      "publisher": "Simons Institute for the Theory of Computing",
+      "url": "https://simons.berkeley.edu/sites/default/files/docs/15639/trottererrortheorysimons.pdf"
+    },
+    {
+      "id": "Childs2010",
+      "type": "article",
+      "title": "Limitations on the simulation of non-sparse Hamiltonians",
+      "authors": "Childs and Kothari",
+      "year": "2010",
+      "journal": "Quantum Information and Computation",
+      "doi": "10.48550/arXiv.0908.4398",
+      "url": "https://doi.org/10.48550/arXiv.0908.4398"
+    },
+    {
+      "id": "Cirstoiu2020",
+      "type": "article",
+      "title": "Variational fast forwarding for quantum simulation beyond the coherence time",
+      "authors": "Cirstoiu, Holmes, Iosue, Cincio, Coles, and Sornborger",
+      "year": "2020",
+      "journal": "npj Quantum Information",
+      "doi": "10.48550/arXiv.1910.04292",
+      "url": "https://doi.org/10.48550/arXiv.1910.04292"
+    },
+    {
+      "id": "Gidney2018",
+      "type": "article",
+      "title": "Halving the cost of quantum addition",
+      "authors": "Gidney",
+      "year": "2018",
+      "journal": "Quantum",
+      "doi": "10.22331/q-2018-06-18-74",
+      "url": "https://doi.org/10.22331/q-2018-06-18-74"
+    },
+    {
+      "id": "Strang1968",
+      "type": "article",
+      "title": "On the Construction and Comparison of Difference Schemes",
+      "authors": "Strang",
+      "year": "1968",
+      "journal": "SIAM Journal on Numerical Analysis",
+      "doi": "10.1137/0705041",
+      "url": "https://doi.org/10.1137/0705041"
+    },
+    {
+      "id": "Verlet1967",
+      "type": "article",
+      "title": "Computer 'Experiments' on Classical Fluids. I. Thermodynamical Properties of Lennard-Jones Molecules",
+      "authors": "Verlet",
+      "year": "1967",
+      "journal": "Physical Review",
+      "doi": "10.1103/PhysRev.159.98",
+      "url": "https://doi.org/10.1103/PhysRev.159.98"
+    },
+    {
+      "id": "Suzuki1990",
+      "type": "article",
+      "title": "Fractal Decomposition of Exponential Operators to Many-Body Theories and Monte Carlo Simulations",
+      "authors": "Suzuki",
+      "year": "1990",
+      "journal": "Physics Letters A",
+      "doi": "10.1016/0375-9601(90)90962-N",
+      "url": "https://doi.org/10.1016/0375-9601(90)90962-N"
+    }
+  ],
+  "basedOnPapers": [],
+  "referencedByPapers": [],
+  "relatedContent": [
+    {
+      "type": "demonstration",
+      "id": "tutorial_error_prop",
+      "weight": 1.0
+    },
+    {
+      "type": "demonstration",
+      "id": "tutorial_resource_estimation_spectroscopy",
+      "weight": 1.0
+    },
+    {
+      "type": "demonstration",
+      "id": "tutorial_resource_estimation_vibronic_dynamics",
+      "weight": 1.0
+    }
+  ]
+}
