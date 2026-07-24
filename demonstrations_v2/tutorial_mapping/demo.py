@@ -171,7 +171,7 @@ qp.simplify(taper_op)
 # by storing both the occupation number and the parity non-locally. In this formalism, even-labelled
 # qubits store the occupation number of orbitals and odd-labelled qubits store parity
 # through partial sums of occupation numbers. The corresponding creation and annihilation operators
-# are defined `here <https://docs.pennylane.ai/en/stable/code/api/pennylane.fermi.bravyi_kitaev.html>`__.
+# are defined `here <https://docs.pennylane.ai/en/stable/code/api/pennylane.bravyi_kitaev.html>`__.
 # Let's use the :func:`~.pennylane.fermi.bravyi_kitaev` function to map our :math:`a_{5}^{\dagger}`
 # operator.
 

@@ -107,7 +107,7 @@ dev = qp.device("strawberryfields.fock", wires=4, cutoff_dim=4)
 #
 # Create a layer function which defines one layer of the QONN, consisting of a linear
 # `interferometer
-# <https://pennylane.readthedocs.io/en/stable/code/api/pennylane.templates.subroutines.Interferometer.html>`__
+# <https://docs.pennylane.ai/en/stable/code/api/pennylane.Interferometer.html>`__
 # (i.e., an array of beamsplitters and phase shifts) and a non-linear Kerr interaction layer. Both
 # the interferometer and the non-linear layer are applied to all modes. The triangular mesh scheme,
 # described in `Reck et al. (1994) <https://dx.doi.org/10.1103/PhysRevLett.73.58>`__ is chosen here

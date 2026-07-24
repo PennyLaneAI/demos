@@ -229,7 +229,7 @@ cdf_hamiltonian = {
 # :class:`~.pennylane.BasisRotation` operation, which implements the unitary transformation
 # :math:`\exp \left( \sum_{pq}[\log U]_{pq} (a^\dagger_p a_q - a^\dagger_q a_p) \right)`
 # using the `Givens rotation networks
-# <https://docs.pennylane.ai/en/stable/code/api/pennylane.qchem.givens_decomposition.html>`_
+# <https://docs.pennylane.ai/en/stable/code/api/pennylane.math.decomposition.givens_decomposition.html>`_
 # that can be efficiently implemented on quantum hardware. The ``leaf_unitary_rotation``
 # function below does this for a leaf tensor:
 #
