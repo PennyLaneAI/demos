@@ -151,7 +151,7 @@ def encoding(phi, gamma):
 # We now choose a parametrization for both the probe state and the POVM.
 # To be able to parametrize all possible probe states and all local measurements,
 # we make use of the
-# `ArbitraryStatePreparation <https://pennylane.readthedocs.io/en/stable/code/api/pennylane.templates.state_preparations.ArbitraryStatePreparation.html>`_
+# `ArbitraryStatePreparation <https://docs.pennylane.ai/en/stable/code/api/pennylane.ArbitraryStatePreparation.html>`_
 # template from PennyLane.
 
 
@@ -269,7 +269,7 @@ W = np.eye(2)
 
 ##############################################################################
 # We are now ready to perform the optimization. We will initialize the weights
-# at random. Then we make use of the `Adagrad <https://pennylane.readthedocs.io/en/stable/introduction/optimizers.html>`_
+# at random. Then we make use of the `Adagrad <https://docs.pennylane.ai/en/stable/code/api/pennylane.AdagradOptimizer.html>`_
 # optimizer. Adaptive gradient descent methods are advantageous as the optimization
 # of quantum sensing protocols is very sensitive to the step size.
 def opt_cost(weights, phi=phi, gamma=gamma, J=J, W=W):

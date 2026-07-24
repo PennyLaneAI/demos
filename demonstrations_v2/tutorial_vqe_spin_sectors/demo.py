@@ -92,7 +92,7 @@ print("The Hamiltonian is ", H)
 # creation operators, and
 # :math:`\langle \alpha, \beta \vert \hat{s}_1 \cdot \hat{s}_2 \vert \gamma, \delta \rangle`
 # is the `matrix element of the two-body spin operator
-# <https://pennylane.readthedocs.io/en/stable/code/api/pennylane.qchem.obs.spin2.html>`_
+# <https://docs.pennylane.ai/en/stable/code/api/pennylane.qchem.spin2.html>`_
 # :math:`\hat{s}_1 \cdot \hat{s}_2` in the basis of spin orbitals.
 #
 # We use the :func:`~.pennylane.qchem.obs.spin2` function to build the
