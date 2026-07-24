@@ -31,7 +31,7 @@ the set of quantum parameters that *minimize* a particular measurement expectati
 of the quantum device. Examples of such algorithms include the :doc:`variational quantum
 eigensolver (VQE) <demos/tutorial_vqe>`, the
 `quantum approximate optimization algorithm (QAOA) <https://arxiv.org/abs/1411.4028>`__,
-and :doc:`quantum neural networks (QNN) <demos/tutorial_quantum_neural_net>`.
+and :doc:`quantum neural networks (QNN) <demos/quantum_neural_net>`.
 
 Most recent demonstrations
 of variational quantum algorithms have used gradient-free classical optimization

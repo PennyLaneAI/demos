@@ -205,7 +205,7 @@ X_train, X_test, y_train, y_test = train_test_split(X_scaled, y_scaled)
 
 ######################################################################
 # We use the `angle-embedding
-# template <https://pennylane.readthedocs.io/en/stable/code/api/pennylane.templates.embeddings.AngleEmbedding.html>`__
+# template <https://docs.pennylane.ai/en/stable/code/api/pennylane.AngleEmbedding.html>`__
 # which needs as many qubits as there are features:
 #
 
