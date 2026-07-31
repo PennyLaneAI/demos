@@ -785,8 +785,8 @@ def mod_5_4():
 
 specs = qp.specs(mod_5_4)()
 
-print("Number of quantum gates:", specs["resources"].num_gates)
-print("Circuit gates:", specs["resources"].gate_types)
+print("Number of quantum gates:", specs.resources.total_quantum_operations)
+print("Circuit gates:", specs.resources.quantum_operations)
 
 #############################################################################
 #

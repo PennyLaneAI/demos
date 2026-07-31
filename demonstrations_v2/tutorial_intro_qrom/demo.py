@@ -58,11 +58,11 @@ We use :class:`~.pennylane.BasisState` as a useful template for implementing the
 
 """
 
-import pennylane as qp
-import numpy as np
 from functools import partial
-import matplotlib.pyplot as plt
 
+import matplotlib.pyplot as plt
+import numpy as np
+import pennylane as qp
 
 bitstrings = ["01", "11", "11", "00", "01", "11", "11", "00"]
 
@@ -105,8 +105,12 @@ bitstrings = ["01", "11", "11", "00", "01", "11", "11", "00"]
 control_wires = [0, 1, 2]
 target_wires = [3, 4]
 
+SINGLE_QUBIT_GATES = {qp.RX, qp.RY, qp.RZ, qp.T}
+TWO_QUBIT_GATES = {qp.CNOT}
+gate_set = SINGLE_QUBIT_GATES | TWO_QUBIT_GATES
 
-@partial(qp.compile, basis_set="CNOT")  # Line added for resource estimation purposes only.
+
+@qp.decompose(gate_set=gate_set)
 @qp.set_shots(1)
 @qp.qnode(dev)
 def circuit(index):
@@ -114,17 +118,14 @@ def circuit(index):
     qp.QROM(bitstrings, control_wires, target_wires, work_wires=None)
     return qp.sample(wires=target_wires)
 
-
-for i in range(8):
-    print(f"The bitstring stored in index {i} is: {circuit(i)[0]}")
-
 ##############################################################################
 # Although this approach works correctly, the number of multicontrol gates is high — gates with a costly decomposition.
 # Here we show the number of 1 and 2 qubit gates we use when decomposing the circuit:
 
-print("Number of qubits: ", len(control_wires + target_wires))
-print("One-qubit gates: ", qp.specs(circuit)(0)["resources"].gate_sizes[1])
-print("Two-qubit gates: ", qp.specs(circuit)(0)["resources"].gate_sizes[2])
+resources = qp.specs(circuit)(0).resources
+
+print("Number of qubits: ", resources.num_wires)
+print("Gates: ", resources.quantum_operations)
 
 ##############################################################################
 # You can learn more about these resource estimation methods in
@@ -145,10 +146,10 @@ bitstrings = ["01", "11", "11", "00", "01", "11", "11", "00"]
 
 control_wires = [0, 1, 2]
 target_wires = [3, 4]
-work_wires = [5, 6]
+work_wires = [5, 6, 7]
 
 
-@partial(qp.compile, basis_set="CNOT") 
+@qp.decompose(gate_set=gate_set)
 @qp.set_shots(1)
 @qp.qnode(dev)
 def circuit(index):
@@ -157,9 +158,11 @@ def circuit(index):
     qp.QROM(bitstrings, control_wires, target_wires, work_wires, clean=False)
     return qp.sample(wires=control_wires + target_wires + work_wires)
 
-print("Number of qubits: ", len(control_wires + target_wires + work_wires))
-print("One-qubit gates: ", qp.specs(circuit)(0)["resources"].gate_sizes[1])
-print("Two-qubit gates: ", qp.specs(circuit)(0)["resources"].gate_sizes[2])
+
+resources = qp.specs(circuit)(0).resources
+
+print("Number of qubits: ", resources.num_wires)
+print("Gates: ", resources.quantum_operations)
 
 ##############################################################################
 # The number of 1 and 2 qubit gates is significantly reduced!
