@@ -127,31 +127,43 @@ jobs:
       
       - name: Get artifact name
         id: get-artifact-name
+        env:
+          ARTIFACT_NAME_INPUT: ${{ inputs.artifact-name }}
+          REF_INPUT: ${{ inputs.ref }}
         run: |
-          if [ -z ${{ inputs.artifact-name }} ]
+          if [ -z "$ARTIFACT_NAME_INPUT" ]
           then
-            printf "artifact-name=%s" "demo-build-${{ inputs.ref }}" >> $GITHUB_OUTPUT
+            printf "artifact-name=%s" "demo-build-$REF_INPUT" >> $GITHUB_OUTPUT
           else
-            printf "artifact-name=%s" "${{ inputs.artifact-name }}" >> $GITHUB_OUTPUT
+            printf "artifact-name=%s" "$ARTIFACT_NAME_INPUT" >> $GITHUB_OUTPUT
           fi
 
       - name: Get demo names
         id: get-demo-names
+        env:
+          DEMO_NAMES_INPUT: ${{ inputs.demo-names }}
         run: |
-          if [ -z "${{ inputs.demo-names }}" ];
+          if [ -z "$DEMO_NAMES_INPUT" ];
           then
             printf "demo-names=%s" "$(cd demonstrations_v2 && ls | tr '\n' ' ')" >> $GITHUB_OUTPUT
           else
-            printf "demo-names=%s" "${{ inputs.demo-names }}" >> $GITHUB_OUTPUT
+            printf "demo-names=%s" "$DEMO_NAMES_INPUT" >> $GITHUB_OUTPUT
           fi
 
       - name: Create job chunk array
         id: get-chunk-array
-        run: printf "chunk-array=%s" "$(jq -nc '[$ARGS.positional | _nwise(${{ inputs.batch_size }})]' --args ${{ steps.get-demo-names.outputs.demo-names }})" >> $GITHUB_OUTPUT
+        env:
+          BATCH_SIZE: ${{ inputs.batch_size }}
+          DEMO_NAMES: ${{ steps.get-demo-names.outputs.demo-names }}
+        run: |
+          read -r -a demo_names <<< "$DEMO_NAMES"
+          printf "chunk-array=%s" "$(jq -nc --argjson batch_size "$BATCH_SIZE" '[$ARGS.positional | _nwise($batch_size)]' --args "${demo_names[@]}")" >> $GITHUB_OUTPUT
 
       - name: Get chunk indexes
         id: get-chunk-indexes
-        run: printf "chunk-indexes=%s" "$(jq -nc '${{ steps.get-chunk-array.outputs.chunk-array }} | [range(0, length)]')" >> $GITHUB_OUTPUT
+        env:
+          CHUNK_ARRAY: ${{ steps.get-chunk-array.outputs.chunk-array }}
+        run: printf "chunk-indexes=%s" "$(jq -nc --argjson chunk_array "$CHUNK_ARRAY" '$chunk_array | [range(0; length)]')" >> $GITHUB_OUTPUT
 
   build-demos:
     runs-on: ubuntu-latest
@@ -185,17 +197,43 @@ jobs:
 
       - name: Make demo name list
         id: demo-name-list
-        run: printf "demo-names=%s" "$(jq -nc '${{ needs.generate-build-variables.outputs.chunk-array }}[${{ matrix.chunk-index }}][]' | tr -s '\n"' ' ')" >> $GITHUB_OUTPUT
+        env:
+          CHUNK_ARRAY: ${{ needs.generate-build-variables.outputs.chunk-array }}
+          CHUNK_INDEX: ${{ matrix.chunk-index }}
+        run: printf "demo-names=%s" "$(jq -rnc --argjson chunk_array "$CHUNK_ARRAY" --argjson chunk_index "$CHUNK_INDEX" '$chunk_array[$chunk_index] | join(" ")')" >> $GITHUB_OUTPUT
 
       - name: Build demos
+        env:
+          DEMO_NAMES: ${{ steps.demo-name-list.outputs.demo-names }}
+          EXECUTE: ${{ inputs.execute }}
+          KEEP_GOING: ${{ inputs.keep-going }}
+          QUIET: ${{ inputs.quiet }}
+          DEV: ${{ inputs.dev }}
         run: |
-          demo build \
-            --format json \
-            ${{ inputs.execute && '--execute' || '--no-execute' }} \
-            ${{ inputs.keep-going && '--keep-going' || '--no-keep-going' }} \
-            ${{ inputs.quiet && '--quiet' || '--no-quiet' }} \
-            ${{ steps.demo-name-list.outputs.demo-names }} \
-            ${{ inputs.dev && '--dev' || '--no-dev' }}
+          args=(--format json)
+          read -r -a demo_names <<< "$DEMO_NAMES"
+          if [ "$EXECUTE" = "true" ]; then
+            args+=(--execute)
+          else
+            args+=(--no-execute)
+          fi
+          if [ "$KEEP_GOING" = "true" ]; then
+            args+=(--keep-going)
+          else
+            args+=(--no-keep-going)
+          fi
+          if [ "$QUIET" = "true" ]; then
+            args+=(--quiet)
+          else
+            args+=(--no-quiet)
+          fi
+          args+=("${demo_names[@]}")
+          if [ "$DEV" = "true" ]; then
+            args+=(--dev)
+          else
+            args+=(--no-dev)
+          fi
+          demo build "${args[@]}"
       
       - name: Upload artifacts
         id: upload-artifacts
