@@ -23,3 +23,4 @@ sg_execution_times.rst
 
 # Generated after installation
 .github/workflows/qml_pipeline_utils/build/
+.pennylanedemo/
