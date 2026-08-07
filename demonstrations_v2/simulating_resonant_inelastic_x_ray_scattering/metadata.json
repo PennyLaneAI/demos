@@ -1,0 +1,26 @@
+{
+  "title": "Simulating Resonant Inelastic X-Ray Scattering",
+  "authors": [
+    {
+      "username": "emgem"
+    }
+  ],
+  "executable_stable": true,
+  "executable_latest": true,
+  "dateOfPublication": "2026-07-13T00:00:00+00:00",
+  "dateOfLastModification": "2026-07-13T00:00:00+00:00",
+  "categories": ["Algorithms", "Quantum Chemistry"],
+  "tags": [],
+  "previewImages": [
+    {
+      "type": "thumbnail",
+      "uri": "/_static/demo_thumbnails/regular_demo_thumbnails/thumbnail_placeholder.png"
+    }
+  ],
+  "seoDescription": "Advanced material discovery and quantum simulation often relies on a strong understanding of molecular structure. Could quantum algorithms be the key to achieving this?",
+  "doi": "",
+  "references": [],
+  "basedOnPapers": [],
+  "referencedByPapers": [],
+  "relatedContent": []
+}
