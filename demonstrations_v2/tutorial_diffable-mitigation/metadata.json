@@ -5,10 +5,10 @@
             "username": "Qottmann"
         }
     ],
-    "executable_stable": false, 
-    "executable_latest": false, 
+    "executable_stable": true, 
+    "executable_latest": true, 
     "dateOfPublication": "2022-08-22T00:00:00+00:00",
-    "dateOfLastModification": "2026-04-17T15:48:14+00:00",
+    "dateOfLastModification": "2026-08-11T15:48:14+00:00",
     "categories": [
         "Optimization"
     ],
