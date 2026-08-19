@@ -1,0 +1,26 @@
+{
+  "title": "Solving the qubit maping problem with machine learning",
+  "authors": [
+    {
+      "username": "rscadrien"
+    }
+  ],
+  "executable_stable": true,
+  "executable_latest": true,
+  "dateOfPublication": "2026-06-30T00:00:00+00:00",
+  "dateOfLastModification": "2026-06-30T00:00:00+00:00",
+  "categories": ["Quantum Hardware", "Quantum Computing"],
+  "tags": [],
+  "previewImages": [
+    {
+      "type": "thumbnail",
+      "uri": "/_static/demo_thumbnails/regular_demo_thumbnails/thumbnail_placeholder.png"
+    }
+  ],
+  "seoDescription": "The demo introduces the qubit mapping problem and explores machine learning-based approaches for solving it.",
+  "doi": "",
+  "references": [],
+  "basedOnPapers": [],
+  "referencedByPapers": [],
+  "relatedContent": []
+}
