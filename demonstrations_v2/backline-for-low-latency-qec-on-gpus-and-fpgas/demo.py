@@ -253,7 +253,7 @@ CPU = qp.Controller(
 
 GPU = qp.Coprocessor(
     name="gpu-coproc",
-    coprocessor_fn=bd_decoder,  # our Python-defined BP decoder
+    coprocessor_fn=bp_decoder,  # our Python-defined BP decoder
     remote=True,
     endpoint=qp.Endpoint("192.168.1.2", 7760),
     executor_options={**SERVER, "port": 8813},
@@ -315,7 +315,7 @@ def encoded_decoded_circuit(error_qubit, error_kind):
         qp.SWAP(wires=[a, b])
 
     # QEC decoding using our belief propagation decoder
-    correction_rounds(error_qubit)
+    correction_rounds()
 
     return (qp.expval(mean_stabilizer(Hz, qp.Z)), qp.expval(mean_stabilizer(Hx, qp.X)))
 
@@ -327,9 +327,9 @@ def encoded_decoded_circuit(error_qubit, error_kind):
 # You may notice a few functions that have not yet been defined, such as
 # ``correction_rounds`` and ``mean_stabilizer``. Let's define them now.
 #
-# First up, ``correction_rounds``. This is a for loop that:
+# First up, ``correction_rounds``. This is a for loop over wires that:
 #
-# 1. Injects single qubit errors onto a data wire;
+# 1. Injects single qubit errors onto each data wire;
 # 2. Performs measurements in order to extract the syndrome;
 # 3. Calls the coprocessor to perform QEC decoding (via the
 #    :external+backline:func:`~pennylane.backline.decode` function);
@@ -413,7 +413,7 @@ def mean_stabilizer(checks, pauli):
 # backline:
 
 for error_kind, error_name in enumerate(["I", "X", "Y", "Z"]):
-    print(error_name, encoded_decoded_circuit(tk, error_kind))
+    print(error_name, encoded_decoded_circuit(error_kind))
 
 
 ######################################################################
@@ -517,7 +517,7 @@ def ghz():
     qp.CNOT([1, 2])
     return qp.sample([qp.measure(0), qp.measure(1), qp.measure(2)])
 
-print(sample(ghz()))
+print("samples:", ghz())
 
 
 ######################################################################
@@ -590,9 +590,10 @@ def steane_lookup(syndrome: tl.uint64):
 
 
 ######################################################################
-# We can use the provided :external+backline:func:`~pennylane.backline.triton_decoder` function to compile this for
-# our target system, and then it is simply a matter of providing the compiled
-# ``steane_triton_decoder`` as our coprocessing function when defining the GPU coprocessor:
+# We can use the provided :external+backline:func:`~pennylane.backline.triton_decoder` function to
+# compile this for our target system using ``triton.jit``, and then it is simply a matter of
+# providing the compiled ``steane_triton_decoder`` as our coprocessing function when defining the
+# GPU coprocessor:
 
 steane_triton_decoder = qp.backline.triton_decoder(
     (steane_lookup,),
@@ -621,7 +622,7 @@ def ghz():
     qp.CNOT([1, 2])
     return qp.sample([qp.measure(0), qp.measure(1), qp.measure(2)])
 
-print(sample(ghz()))
+print("samples:", ghz())
 
 ######################################################################
 # .. rst-class:: sphx-glr-script-out
