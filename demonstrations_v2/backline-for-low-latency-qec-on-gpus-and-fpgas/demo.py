@@ -52,7 +52,7 @@ Backlines, coprocessors, and controllers
 There are three main components to Backline:
 
 - **Controllers**: This is the classical hardware (such as a CPU or FPGA) that controls the QPU
-  (a quantum hardware or simulator :func:`~pennylane.device`), receives quantum measurement
+  (a quantum hardware or simulator :external+backline:func:`~pennylane.device`), receives quantum measurement
   results, and initiates data transfers with other hardware devices (*coprocessors*). For
   example, it might perform QEC syndrome measurements on the QPU, and send these to a coprocessor
   for decoding.
@@ -64,7 +64,7 @@ There are three main components to Backline:
 - **Backline**: A representation of the complete hardware infrastructure supporting the
   quantum-classical program. The backline includes a controller, one or more coprocessors, and a
   transport method. A backline object is given directly to a QNode in place of a traditional
-  QNode :func:`~pennylane.device`.
+  QNode :external+backline:func:`~pennylane.device`.
 
 In the examples below, we'll see how to create our controller, coprocessors, and backline, and how
 to use these to execute PennyLane programs.
@@ -107,7 +107,7 @@ steane_decode = qp.CoprocessorFunction("steane_coprocessor", STEANE_LIB_CPU)
 
 
 ######################################################################
-# Note the use of the :class:`~pennylane.CoprocessorFunction`. This allows us to register
+# Note the use of the :external+backline:class:`~pennylane.CoprocessorFunction`. This allows us to register
 # a coprocessing function that will be run on a coprocessor.
 #
 # Next, we can create our two CPUs: the controller, and the coprocessor. The controller will run
@@ -195,7 +195,7 @@ Hz = np.array([[1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
 
 
 ######################################################################
-# Next, we make use of the :func:`~pennylane.backline.css_bp_decoder` function to easily compile a
+# Next, we make use of the :external+backline:func:`~pennylane.backline.css_bp_decoder` function to easily compile a
 # CSS code's Tanner graph into a GPU-compatible belief propagation decoder function.
 
 bp_decoder = qp.backline.css_bp_decoder(Hx, Hz, postprocess="osd", num_iters=10, platform="hip:gfx90a:64")
@@ -246,7 +246,7 @@ CPU = qp.Controller(
 ######################################################################
 # ``executor_options`` specifies the remote machine and how it is reached, and ``init_args``
 # specifies the backend-specific initialization arguments, which are forwarded to the transport
-# backend. For more details, see the :class:`~pennylane.Controller` documentation.
+# backend. For more details, see the :external+backline:class:`~pennylane.Controller` documentation.
 #
 # We can now define a remote GPU coprocessor on the server, and specify the Python-defined belief
 # propagation decoding function it will be executing:
@@ -332,14 +332,14 @@ def encoded_decoded_circuit(error_qubit, error_kind):
 # 1. Injects single qubit errors onto a data wire;
 # 2. Performs measurements in order to extract the syndrome;
 # 3. Calls the coprocessor to perform QEC decoding (via the
-#    :func:`~pennylane.backline.decode` function);
+#    :external+backline:func:`~pennylane.backline.decode` function);
 # 4. Applies the corrections to the quantum device.
 #
 # .. note::
 #
-#     :func:`~pennylane.backline.decode` makes a series of runtime calls directly on the
+#     :external+backline:func:`~pennylane.backline.decode` makes a series of runtime calls directly on the
 #     coprocessor. The ability to manually perform runtime calls is also available via
-#     :func:`~pennylane.runtime_call`. If you are curious to see the internal runtime calls, `see
+#     :external+backline:func:`~pennylane.runtime_call`. If you are curious to see the internal runtime calls, `see
 #     the corresponding demo in the Backline repository
 #     <https://github.com/PennyLaneAI/backline-for-low-latency-qec-on-gpus-and-fpgas/blob/main/demos/demo_2a_remote_cpu_to_remote_gpu_triton_runtime_calls.py>`__.
 #     This demo expands out ``decode`` into explicit ``get_session``, ``stage_payload``, ``post``, and ``collect`` calls.
@@ -590,7 +590,7 @@ def steane_lookup(syndrome: tl.uint64):
 
 
 ######################################################################
-# We can use the provided :func:`~pennylane.backline.triton_decoder` function to compile this for
+# We can use the provided :external+backline:func:`~pennylane.backline.triton_decoder` function to compile this for
 # our target system, and then it is simply a matter of providing the compiled
 # ``steane_triton_decoder`` as our coprocessing function when defining the GPU coprocessor:
 
@@ -678,11 +678,15 @@ print(sample(ghz()))
 # To continue exploring heterogeneous quantum compilation and execution, check out the following
 # resources:
 #
-# - Backline demos
+# - View additional Backline demos in the `Backline repository on GitHub
+#   <https://github.com/PennyLaneAI/backline/blob/main/demos/>`__, including CPU-CPU interactions
+#   over RDMA, and explicit usage of :external+backline:func:`~pennylane.runtime_call` to execute
+#   coprocessor functions.
 #
-# - Technical paper
+# - Read the `Backline technical paper <tk>`__ to get a technical overview of the infrastructure and
+#   performance.
 #
-# - Blog post
+# - Check out the `PennyLane blog post <tk>`__ to learn more about Backline.
 
 
 

@@ -223,6 +223,7 @@ intersphinx_mapping = {
         None,
     ),
     "demo": ("https://pennylane.ai", "https://pennylane.ai/qml/objects.inv"),
+    "backline": ("https://docs.pennylane.ai/en/latest/", None),
 }
 
 # Enable :doc: references for intersphinx (disabled by default in Sphinx 5.0+)
