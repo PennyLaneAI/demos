@@ -15,7 +15,7 @@ In this demo, we will take a quantum error correction application and push it th
 levels of complexity and optimization, entirely from Python — scaling from local prototyping with CPUs, to
 low-latency remote hardware execution with FPGAs, GPUs, and Triton.
 
-.. figure:: ../_static/demonstration_assets/backline-for-low-latency-qec-on-gpus-and-fpgas/architecture.png
+.. figure:: ../demonstrations_v2/backline-for-low-latency-qec-on-gpus-and-fpgas/architecture.png
     :align: center
     :width: 50%
 
@@ -233,6 +233,8 @@ SERVER = {
 # difference is that now it is on a remote server rather than on the same local machine where the
 # quantum-classical workflow is defined.
 
+N = 13  # data wires
+AUX = N  # single reused auxiliary wire
 qdev = qp.device("lightning.qubit", wires=N + 1)
 
 CPU = qp.Controller(
@@ -279,9 +281,6 @@ dev = qp.Backline(controller=CPU, coprocessors=[GPU], transport="rdma")
 #
 # Luckily, PennyLane and Catalyst make this easy!
 
-N = 13  # data wires
-AUX = N  # single reused auxiliary wire
-
 encoder = {
     0: [6, 9, 11],
     1: [7, 9, 10, 11, 12],
@@ -294,7 +293,7 @@ encoder = {
 @qp.qjit(capture=True)
 @qp.set_shots(1)
 @qp.qnode(dev, mcm_method="one-shot")
-def encoded_decoded_circuit(error_qubit, error_kind):
+def encoded_decoded_circuit(error_kind):
     # ========= Encoded logical circuit =========
     # encode a logical 0 state
     for pivot, targets in encoder.items():
@@ -306,6 +305,12 @@ def encoded_decoded_circuit(error_qubit, error_kind):
     # encode a logical X gate
     for w in [6, 7, 8]:
         qp.X(wires=w)
+
+    # encode a logical H gate
+    for w in range(N):
+        qp.Hadamard(wires=w)
+    for a, b in [(1, 3), (2, 6), (5, 7), (10, 11)]:
+        qp.SWAP(wires=[a, b])
 
     # encode a logical Z gate
     for w in [2, 5, 8]:
@@ -349,7 +354,7 @@ def encoded_decoded_circuit(error_qubit, error_kind):
 
 
 @qp.for_loop(0, N, 1)
-def correction_rounds(error_qubit, error_kind):
+def correction_rounds(error_kind):
     # ========= Inject errors =========
     # Apply I/X/Y/Z to one chosen data wire.
     qp.cond(error_kind == 1, qp.X)(wires=error_qubit)
@@ -505,7 +510,7 @@ dev = qp.Backline(controller=FPGA, coprocessors=[GPU], transport="rdma", qec_cod
 ######################################################################
 # Our backline infrastructure looks as follows:
 #
-# .. figure:: ../_static/demonstration_assets/backline-for-low-latency-qec-on-gpus-and-fpgas/server-setup.png
+# .. figure:: ../demonstrations_v2/backline-for-low-latency-qec-on-gpus-and-fpgas/server-setup.png
 #     :align: center
 #     :width: 50%
 #
@@ -562,7 +567,7 @@ print("samples:", ghz())
 #
 # During execution, backline is managing the following communication pathways:
 #
-# .. figure:: ../_static/demonstration_assets/backline-for-low-latency-qec-on-gpus-and-fpgas/communications.png
+# .. figure:: ../demonstrations_v2/backline-for-low-latency-qec-on-gpus-and-fpgas/communications.png
 #     :align: center
 #     :width: 50%
 #

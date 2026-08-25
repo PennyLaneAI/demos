@@ -17,7 +17,15 @@
     "previewImages": [
         {
             "type": "thumbnail",
-            "uri": "/_static/demo_thumbnails/regular_demo_thumbnails/thumbnail_backline.png"
+            "uri": "/_static/demo_thumbnails/regular_demo_thumbnails/pennylane-demo-backline-thumbnail.png"
+        },
+        {
+            "type": "large_thumbnail",
+            "uri": "/_static/demo_thumbnails/large_demo_thumbnails/pennylane-demo-backline-large-thumbnail.png"
+        },
+        {
+            "type": "hero_image",
+            "uri": "/_static/hero_illustrations/pennylane-demo-backline-hero.png"
         }
     ],
     "seoDescription": "Learn how to scale quantum error correction from local CPU prototyping to remote FPGA and GPU execution using PennyLane, Backline, and custom Triton kernels.",
