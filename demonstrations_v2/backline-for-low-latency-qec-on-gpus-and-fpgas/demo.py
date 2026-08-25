@@ -1,3 +1,4 @@
+
 r"""
 How to use PennyLane and Backline for low-latency quantum error correction on GPUs and FPGAs
 ============================================================================================
@@ -30,11 +31,11 @@ write custom, highly optimized low-level hardware kernels.
 To showcase this, we'll take an example of a workflow that requires low-latency execution ---
 `quantum error correction <https://pennylane.ai/topics/fault-tolerant-quantum-computing>`__ --- and
 begin prototyping immediately with CPUs, before progressively including consumer-grade and
-enterprise GPUs, FPGAs, and ASICs — all from the same software environment.
+enterprise GPUs and FPGAs — all from the same software environment.
 
 To start with, we need to install the latest versions of PennyLane and Catalyst. We will need to
 install these from source; we can follow the build instructions available in the `Catalyst
-documentation <https://github.com/PennyLaneAI/backline-for-low-latency-qec-on-gpus-and-fpgas/blob/main/INSTALL.md>`__. To execute this
+documentation <https://github.com/PennyLaneAI/backline-for-low-latency-qec-on-gpus-and-fpgas/blob/main/INSTALL.md>`__. To execute all of the demos
 demo, including GPUs and FPGAs examples, you will need to make sure you have the required hardware
 and software, including:
 
@@ -203,7 +204,7 @@ bp_decoder = qp.backline.css_bp_decoder(Hx, Hz, postprocess="osd", num_iters=10,
 ######################################################################
 # .. note::
 #
-#     Under the hood, this function utilizes ``@triton.jit`` to compile an optimized GPU kernel ---
+#     Behind the scenes, this function utilizes ``@triton.jit`` to compile an optimized GPU kernel ---
 #     feel free to look under-the-hood at the `source code
 #     <https://github.com/PennyLaneAI/pennylane/blob/main/pennylane/backline-for-low-latency-qec-on-gpus-and-fpgas/functions.py#L134>`__ to
 #     see how Triton is being used. Later in this demo, we will also show you how to compile your
@@ -262,6 +263,8 @@ GPU = qp.Coprocessor(
 )
 
 ######################################################################
+# Here, the endpoint argument specifies the RDMA connection between
+# the controller and the coprocessor (which is distinct from the ``SERVER`` connection).
 # We now have all the pieces to define our backline!
 
 dev = qp.Backline(controller=CPU, coprocessors=[GPU], transport="rdma")
@@ -480,12 +483,12 @@ FPGA = qp.Controller(
 # Note that since we haven't provided a quantum device, the controller will default to using
 # ``null.qubit``, a convenient dummy device that performs no quantum processing (but simply accepts
 # quantum operations and returns 0). We can use the same remote GPU coprocessor we set up earlier,
-# but replace ``coprocessor_fn`` with ``'catalyst_gpu_steane_launcher'`` (a convenient alias for
-# Catalyst's precompiled Steane decoder, rather than loading the library directly).
+# but replace ``coprocessor_fn`` with ``'gpu_steane_launcher'`` (a convenient alias for
+# Catalyst's precompiled Steane decoder, which is already loaded and available for use).
 
 GPU = qp.Coprocessor(
     name="gpu-coproc",
-    coprocessor_fn="catalyst_gpu_steane_launcher",
+    coprocessor_fn="gpu_steane_launcher",
     remote=True,
     endpoint=qp.Endpoint("192.168.1.2", 7760),
     executor_options={**SERVER, "port": 8813},
@@ -688,6 +691,9 @@ print("samples:", ghz())
 #   performance.
 #
 # - Check out the `PennyLane blog post <tk>`__ to learn more about Backline.
+
+
+
 
 
 
