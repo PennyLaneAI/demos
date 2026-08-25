@@ -126,7 +126,7 @@ CPU2 = qp.Coprocessor(coprocessor_fn=steane_decode)
 # is another option), register it to our QNode, and run our workflow. Let's create a logical GHZ
 # state:
 
-dev = qp.Backline(CPU1, [CPU2], transport="memcpy", qec_code="steane")
+dev = qp.Backline(controller=CPU1, coprocessors=[CPU2], transport="memcpy", qec_code="steane")
 
 @qp.qjit(capture=True)
 @qp.set_shots(10)
