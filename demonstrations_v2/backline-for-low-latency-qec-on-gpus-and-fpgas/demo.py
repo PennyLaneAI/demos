@@ -381,7 +381,7 @@ def extract_syndromes():
         for q in np.flatnonzero(row):
             qp.CNOT(wires=[int(q), AUX])
 
-        z_syndrome += qp.measure(AUX, reset=True)
+        z_syndrome += [qp.measure(AUX, reset=True)]
 
     x_syndrome = []
 
@@ -392,7 +392,7 @@ def extract_syndromes():
             qp.CNOT(wires=[AUX, int(q)])
 
         qp.Hadamard(wires=AUX)
-        x_syndrome += qp.measure(AUX, reset=True)
+        x_syndrome += [qp.measure(AUX, reset=True)]
 
     return z_syndrome, x_syndrome
 
