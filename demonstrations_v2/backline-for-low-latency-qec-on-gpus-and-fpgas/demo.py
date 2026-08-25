@@ -219,9 +219,7 @@ SERVER = {
     'user': 'username',  # The SSH account of the user on the remote machine
     'triple': "x86_64-unknown-linux-gnu",  # The LLVM target triple for compilation
     'sudo': True,
-    'deploy': str(Path(os.environ.get("RDMA_DEV_ROOT"))
-                  / "cross-build-artifacts"
-                  / "threadripper-bundle"),
+    'deploy': [Path(os.environ["BACKLINE_BUNDLES"]) / "threadripper-bundle"],
     'executor_bin': "numactl -N 0 -m 0 ./catalyst-executor",
     'env': {"LD_LIBRARY_PATH": "."}
 }
@@ -468,7 +466,7 @@ FPGA_SERVER = {
     'user': "username",  # user on the FPGA server
     'triple': "aarch64-unknown-linux-gnu",
     'sudo': True,
-    'deploy': str(Path(os.environ.get("RDMA_DEV_ROOT")) / "cross-build-artifacts" / "vpk-bundle"),
+    'deploy': [Path(os.environ["BACKLINE_BUNDLES"]) / "vpk-bundle"],
     'env': {
         "XMM_SQ_TYPE": "PL", "XMM_RQ_TYPE": "PL", "XMM_CQ_TYPE": "PL",
         "XMM_APP_MAX_QP": "4", "XMM_APP_RQ_SGE": "1", "XMM_SQ_DEPTH": "64",
