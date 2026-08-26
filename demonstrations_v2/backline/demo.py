@@ -232,7 +232,7 @@ SERVER = {
 # quantum-classical workflow is defined.
 
 N = 13  # data wires
-AUX = N  # single reused auxiliary wire
+AUX = N  # index of the single re-used auxiliary wire
 qdev = qp.device("lightning.qubit", wires=N + 1)
 
 CPU = qp.Controller(
