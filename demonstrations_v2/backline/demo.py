@@ -576,11 +576,12 @@ print("samples:", ghz())
 # Steane decoder with a custom Triton decoder --- all written from Python.
 #
 # Since we are using the Steane code, a relatively simple QEC code that uses only 7 wires to encode
-# a logical qubit, we only have 64 possible error patterns to track. Due to this low number, one
-# decoding strategy is to simply pre-calculate every solution and store them in a lookup table.
+# a logical qubit, the error detection splits into two independent 3-bit checks: one for bit-flips
+# (:math:`X`) and one for phase-flips (:math:`Z`). Since :math:`X` and :math:`Z` errors don't
+# interfere, each check has only 8 possible outcomes.
 #
-# With 3 :math:`X` and 3 :math:`Z` stabilizers, there are :math:`2^3=8` possible syndromes for both
-# :math:`X` and :math:`Z`. We can create an highly efficient Triton function that maps each
+# Due to this low number, one decoding strategy is to simply pre-calculate every solution and store
+# them in a lookup table. We can create an highly efficient Triton function that maps each
 # three‑bit syndrome to a weight‑1 error.
 
 import triton
@@ -599,10 +600,12 @@ def steane_lookup(syndrome: tl.uint64):
 # We can use the provided :external+backline:func:`~pennylane.backline.triton_decoder` function to
 # compile this for our target system using ``triton.jit``, and then it is simply a matter of
 # providing the compiled ``steane_triton_decoder`` as our coprocessing function when defining the
-# GPU coprocessor:
+# GPU coprocessor. Note that we provide it twice --- while the lookup table works for decoding both
+# :math:`X` and :math:`Z` errors, this demonstrates native support for general CSS codes
+# with potentially different decoder functions.
 
 steane_triton_decoder = qp.backline.triton_decoder(
-    (steane_lookup,),
+    (steane_lookup, steane_lookup),
     platform="hip:gfx90a:64",
 )
 
