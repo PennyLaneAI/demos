@@ -167,7 +167,7 @@ print("samples:", ghz())
 # optimized GPU kernels.
 #
 # To further increase the complexity, this time we will upgrade our QEC encoding to use
-# a :doc:`qLDPC code <tutorial_qldpc_codes>`, which leverage high connectivity between qubits to
+# a :doc:`qLDPC code <tutorial_qldpc_codes>`, which leverages non-local connectivity between distant qubits to
 # drastically reduce qubit overheads. In particular, we will use the :math:`[[13, 1, 3]]`
 # Hypergraph Product code, a well-known family of qLDPC codes that uses 13 physical wires for
 # encoding, and a single auxiliary wire to extract syndromes. To *decode* the qLDPC code, we will
