@@ -15,7 +15,7 @@ In this demo, we will take a quantum error correction application and push it th
 levels of complexity and optimization, entirely from Python — scaling from local prototyping with CPUs, to
 low-latency remote hardware execution with FPGAs, GPUs, and Triton.
 
-.. figure:: ../demonstrations_v2/backline-for-low-latency-qec-on-gpus-and-fpgas/architecture.png
+.. figure:: ../demonstrations_v2/backline/architecture.png
     :align: center
     :width: 50%
 
@@ -35,7 +35,7 @@ enterprise GPUs and FPGAs — all from the same software environment.
 
 To start with, we need to install the latest versions of PennyLane and Catalyst. We will need to
 install these from source; we can follow the build instructions available in the `Catalyst
-documentation <https://github.com/PennyLaneAI/backline-for-low-latency-qec-on-gpus-and-fpgas/blob/main/INSTALL.md>`__. To execute all of the demos
+documentation <https://github.com/PennyLaneAI/backline/blob/main/INSTALL.md>`__. To execute all of the demos
 demo, including GPUs and FPGAs examples, you will need to make sure you have the required hardware
 and software, including:
 
@@ -122,7 +122,7 @@ CPU2 = qp.Coprocessor(coprocessor_fn=steane_decode)
 ######################################################################
 # And that's it — we can create our backline (using memcpy as our transport mechanism, although
 # `RDMA
-# <https://github.com/PennyLaneAI/backline-for-low-latency-qec-on-gpus-and-fpgas/blob/main/demos/demo_1a_local_cpu_to_local_cpu_rdma.py>`__
+# <https://github.com/PennyLaneAI/backline/blob/main/demos/demo_1a_local_cpu_to_local_cpu_rdma.py>`__
 # is another option), register it to our QNode, and run our workflow. Let's create a logical GHZ
 # state:
 
@@ -206,7 +206,7 @@ bp_decoder = qp.backline.css_bp_decoder(Hx, Hz, postprocess="osd", num_iters=10,
 #
 #     Behind the scenes, this function utilizes ``@triton.jit`` to compile an optimized GPU kernel ---
 #     feel free to look under-the-hood at the `source code
-#     <https://github.com/PennyLaneAI/pennylane/blob/main/pennylane/backline-for-low-latency-qec-on-gpus-and-fpgas/functions.py#L134>`__ to
+#     <https://github.com/PennyLaneAI/pennylane/blob/main/pennylane/backline/functions.py#L134>`__ to
 #     see how Triton is being used. Later in this demo, we will also show you how to compile your
 #     own Triton function for Backline coprocessing.
 #
@@ -347,7 +347,7 @@ def encoded_decoded_circuit(error_kind):
 #     coprocessor. The ability to manually perform runtime calls is also available via
 #     :external+backline:func:`~pennylane.runtime_call`. If you are curious to see the internal runtime calls, `see
 #     the corresponding demo in the Backline repository
-#     <https://github.com/PennyLaneAI/backline-for-low-latency-qec-on-gpus-and-fpgas/blob/main/demos/demo_2a_remote_cpu_to_remote_gpu_triton_runtime_calls.py>`__.
+#     <https://github.com/PennyLaneAI/backline/blob/main/demos/demo_2a_remote_cpu_to_remote_gpu_triton_runtime_calls.py>`__.
 #     This demo expands out ``decode`` into explicit ``get_session``, ``stage_payload``, ``post``, and ``collect`` calls.
 
 
@@ -508,7 +508,7 @@ dev = qp.Backline(controller=FPGA, coprocessors=[GPU], transport="rdma", qec_cod
 ######################################################################
 # Our backline infrastructure looks as follows:
 #
-# .. figure:: ../demonstrations_v2/backline-for-low-latency-qec-on-gpus-and-fpgas/server-setup.png
+# .. figure:: ../demonstrations_v2/backline/server-setup.png
 #     :align: center
 #     :width: 50%
 #
@@ -565,7 +565,7 @@ print("samples:", ghz())
 #
 # During execution, backline is managing the following communication pathways:
 #
-# .. figure:: ../demonstrations_v2/backline-for-low-latency-qec-on-gpus-and-fpgas/communications.png
+# .. figure:: ../demonstrations_v2/backline/communications.png
 #     :align: center
 #     :width: 50%
 #
