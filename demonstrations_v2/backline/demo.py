@@ -587,13 +587,23 @@ print("samples:", ghz())
 import triton
 import triton.language as tl
 
-def steane_lookup(syndrome: tl.uint64):
-    # Encode the Steane syndrome in 3 bits by using a bitwise mask.
-    s = syndrome & 0x7
+# The Steane decoding table: the qubit to flip for each three-bit syndrome, with -1 meaning the
+# syndrome was zero and nothing needs correcting.
+STEANE_QUBIT_BY_SYNDROME = (-1, 0, 4, 1, 6, 3, 5, 2)
 
-    # If the syndrome is 0, return 0
-    # Otherwise, return the correction as a bitmask.
-    return tl.where(s != 0, 1 << (s - 1), 0)
+# A compile-time constant, so the lookup below becomes a shift and a mask with no memory access.
+STEANE_LUT = tl.constexpr(_pack_lookup_table(STEANE_QUBIT_BY_SYNDROME))
+
+def steane_lookup(syndrome):
+    """Return the qubit to correct for one syndrome, or -1 if there is nothing to do."""
+    idx = tl.cast(0, tl.uint32)
+    for i in tl.static_range(3):
+        idx |= tl.cast((syndrome >> (8 * i)) & 1, tl.uint32) << i
+    qubit = (tl.cast(STEANE_LUT, tl.uint32) >> (idx * 4)) & 0xF
+
+    # All ones is -1 read as unsigned, which is how the controller recognises "no correction".
+    no_error = tl.cast(0xFFFFFFFFFFFFFFFF, tl.uint64)
+    return tl.where(qubit == 0xF, no_error, tl.cast(qubit, tl.uint64))
 
 
 ######################################################################
