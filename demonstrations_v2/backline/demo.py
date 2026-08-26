@@ -17,7 +17,7 @@ low-latency remote hardware execution with FPGAs, GPUs, and Triton.
 
 .. figure:: ../demonstrations_v2/backline/architecture.png
     :align: center
-    :width: 50%
+    :width: 70%
 
 Getting started
 ---------------
@@ -510,7 +510,7 @@ dev = qp.Backline(controller=FPGA, coprocessors=[GPU], transport="rdma", qec_cod
 #
 # .. figure:: ../demonstrations_v2/backline/server-setup.png
 #     :align: center
-#     :width: 50%
+#     :width: 80%
 #
 # We can now create and execute our logical quantum circuit:
 
@@ -567,7 +567,7 @@ print("samples:", ghz())
 #
 # .. figure:: ../demonstrations_v2/backline/communications.png
 #     :align: center
-#     :width: 50%
+#     :width: 70%
 #
 # Bring your own Triton decoder
 # -----------------------------
@@ -693,9 +693,10 @@ print("samples:", ghz())
 # - Read the `Backline technical paper <tk>`__ to get a technical overview of the infrastructure and
 #   performance.
 #
-# - Check out the `PennyLane blog post <tk>`__ to learn more about Backline.
-
-
+# - Check out the `PennyLane blog post <https://pennylane.ai/blog/2026/09/real-time-classical-processing-with-backline-amd>`__ to learn more about Backline.
+#
+# *Instinct and Xilinx are trademarks of Advanced Micro Devices, Inc.*
+#
 
 
 
