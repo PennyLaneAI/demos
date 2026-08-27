@@ -288,17 +288,19 @@ encoder = {
     5: [8, 12],
 }
 
-@qp.qjit(capture=True)
+@qp.qjit(capture=True, autograph=True)
 @qp.set_shots(1)
 @qp.qnode(dev, mcm_method="one-shot")
 def encoded_decoded_circuit(error_kind):
     # ========= Encoded logical circuit =========
     # encode a logical 0 state
-    for pivot, targets in encoder.items():
-        qp.Hadamard(wires=pivot)
+    cnots = np.array([[pivot, target] for pivot, targets in encoder.items() for target in targets])
 
-        for t in targets:
-            qp.CNOT(wires=[pivot, t])
+    for pivot in sorted(encoder):
+        qp.Hadamard(wires=pivot)
+    for control, target in cnots:
+        qp.CNOT(wires=[control, target])
+
 
     # encode a logical X gate
     for w in [6, 7, 8]:
@@ -351,60 +353,67 @@ def encoded_decoded_circuit(error_kind):
 #     This demo expands out ``decode`` into explicit ``get_session``, ``stage_payload``, ``post``, and ``collect`` calls.
 
 
-@qp.for_loop(0, N, 1)
 def correction_rounds(error_kind):
-    # ========= Inject errors =========
-    # Apply I/X/Y/Z to one chosen data wire.
-    qp.cond(error_kind == 1, qp.X)(wires=error_qubit)
-    qp.cond(error_kind == 2, qp.Y)(wires=error_qubit)
-    qp.cond(error_kind == 3, qp.Z)(wires=error_qubit)
+    for error_qubit in range(N):
 
-    # ========= Decoding =========
-    z_syndrome, x_syndrome = extract_syndromes()
+        # ========= Inject errors =========
+        # Apply I/X/Y/Z to one chosen data wire.
+        if error_kind == 1:
+            qp.X(wires=error_qubit)
+        elif error_kind == 2:
+            qp.Y(wires=error_qubit)
+        elif error_kind == 3:
+            qp.Z(wires=error_qubit)
 
-    correction_z = qp.backline.decode(x_syndrome, decoder_id=0)
-    correction_x = qp.backline.decode(z_syndrome, decoder_id=1)
+        # ========= Decoding ==============
+        z_syndrome, x_syndrome = extract_syndromes()
 
-    # Apply X to every data qubit whose correction bit is set
-    for q in range(N):
-        qp.cond(correction_x[q], qp.X)(wires=q)
+        correction_z = qp.backline.decode(x_syndrome, decoder_id=0)
+        correction_x = qp.backline.decode(z_syndrome, decoder_id=1)
 
-    # Apply Z to every data qubit whose correction bit is set
-    for q in range(N):
-        qp.cond(correction_z[q], qp.Z)(wires=q)
+        # Apply X to every data qubit whose correction bit is set
+        for q in range(N):
+            if correction_x[q]:
+                qp.X(wires=q)
 
+        # Apply Z to every data qubit whose correction bit is set
+        for q in range(N):
+            if correction_z[q]:
+                qp.Z(wires=q)
 
 def extract_syndromes():
-    z_syndrome = []
+    z_syndrome = np.zeros(len(Hz), dtype=int)
 
-    for row in Hz:
-        for q in np.flatnonzero(row):
-            qp.CNOT(wires=[int(q), AUX])
+    for check, row in enumerate(Hz):
+        for q in range(N):
 
-        z_syndrome += [qp.measure(AUX, reset=True)]
+            if row[q]:
+                qp.CNOT(wires=[q, AUX])
 
-    x_syndrome = []
+        z_syndrome[check] = qp.measure(AUX, reset=True)
 
-    for row in Hx:
+    x_syndrome = np.zeros(len(Hx), dtype=int)
+
+    for check, row in enumerate(Hx):
         qp.Hadamard(wires=AUX)
 
-        for q in np.flatnonzero(row):
-            qp.CNOT(wires=[AUX, int(q)])
+        for q in range(N):
+            if row[q]:
+                qp.CNOT(wires=[AUX, q])
 
         qp.Hadamard(wires=AUX)
-        x_syndrome += [qp.measure(AUX, reset=True)]
+        x_syndrome[check] = qp.measure(AUX, reset=True)
 
     return z_syndrome, x_syndrome
-
 
 ######################################################################
 # Next, ``mean_stabilizers``, which returns a linear combination of :math:`X` and :math:`Z`
 # stabilizers from the parity check matrices. By returning the expectation value of these operators
-# from the QNode, we are able to check if the quantum state remains within the valid code space;
+# from the QNode, we are able to check if the injected physical errors are corrected;
 # acting as a high-level diagnostic metric of "how healthy" the error-corrected quantum state is.
 #
 # In a perfect quantum error-correcting code with zero errors, the expectation value of every
-# single stabilizer is exactly 1. If errors occur, some of those stabilizers will flip
+# single stabilizer is exactly 1. Because single Pauli errors are injected, some of those stabilizers will flip
 # to -1, reducing the overall expectation value. So if the QNode is correctly error-encoded,
 # the returned value should be 1.
 
@@ -544,13 +553,13 @@ print("samples:", ghz())
 #       [fpga-controller] [127.0.0.1:7811] accepted connection from 127.0.0.1:39924 on pid 1209, waiting for next connection
 #       [fpga-controller]
 #       [fpga-controller]=== engine RTT (n=16000, 0 warmup dropped, hardware handshake) ===
-#       [fpga-controller]   min          4600 ns
-#       [fpga-controller]   p50          4855 ns
-#       [fpga-controller]   p95          5095 ns
-#       [fpga-controller]   p99          5570 ns
-#       [fpga-controller]   p99.9        5815 ns
-#       [fpga-controller]   max          9660 ns
-#       [fpga-controller]   mean         4931 ns
+#       [fpga-controller]   min          4245 ns
+#       [fpga-controller]   p50          4415 ns
+#       [fpga-controller]   p95          4690 ns
+#       [fpga-controller]   p99          5015 ns
+#       [fpga-controller]   p99.9        5165 ns
+#       [fpga-controller]   max      268509050 ns
+#       [fpga-controller]   mean        21249 ns
 #       samples: [[0 0 0]
 #        [0 0 0]
 #        [0 0 0]
@@ -562,6 +571,10 @@ print("samples:", ghz())
 #       JIT session error: disconnecting
 #       JIT session error: FD-transport disconnected
 #       JIT session error: disconnecting
+#
+# Note that the ``max`` number is particularly large for the very first round, which pays for the
+# connection initialization. By setting ``HWHS_RTT_WARMUP=1`` in the board's environment, we can
+# examine the steady state latency values.
 #
 # During execution, backline is managing the following communication pathways:
 #
@@ -591,8 +604,15 @@ import triton.language as tl
 # syndrome was zero and nothing needs correcting.
 STEANE_QUBIT_BY_SYNDROME = (-1, 0, 4, 1, 6, 3, 5, 2)
 
+def pack_lookup_table(values, no_error=0xF):
+    """Pack the lookup table into one integer, four bits per entry."""
+    word = 0
+    for i, value in enumerate(values):
+        word |= (no_error if value < 0 else value) << (4 * i)
+    return word
+
 # A compile-time constant, so the lookup below becomes a shift and a mask with no memory access.
-STEANE_LUT = tl.constexpr(_pack_lookup_table(STEANE_QUBIT_BY_SYNDROME))
+STEANE_LUT = tl.constexpr(pack_lookup_table(STEANE_QUBIT_BY_SYNDROME))
 
 def steane_lookup(syndrome):
     """Return the qubit to correct for one syndrome, or -1 if there is nothing to do."""
@@ -648,7 +668,6 @@ print("samples:", ghz())
 #
 #   .. code-block:: none
 #
-#       tk
 #       [fpga-controller] catalyst-executor: loaded /home/petalinux/catalyst-exec/librt_transport.so
 #       [fpga-controller] catalyst-executor: loaded /home/petalinux/catalyst-exec/librt_capi.so
 #       [fpga-controller] catalyst-executor: loaded /home/petalinux/catalyst-exec/librtd_null_qubit.so
@@ -661,21 +680,21 @@ print("samples:", ghz())
 #       [gpu-coproc] [127.0.0.1:7813#3133915] Accepted connection
 #       [fpga-controller] [127.0.0.1:7811] accepted connection from 127.0.0.1:39924 on pid 1209, waiting for next connection
 #       [fpga-controller]
-#       [fpga-controller]=== engine RTT (n=16000, 0 warmup dropped, hardware handshake) ===
-#       [fpga-controller]   min          4600 ns
-#       [fpga-controller]   p50          4855 ns
-#       [fpga-controller]   p95          5095 ns
-#       [fpga-controller]   p99          5570 ns
-#       [fpga-controller]   p99.9        5815 ns
-#       [fpga-controller]   max          9660 ns
-#       [fpga-controller]   mean         4931 ns
+#       [fpga-controller] === engine RTT (n=16000, 0 warmup dropped, hardware handshake) ===
+#       [fpga-controller]   min          4595 ns
+#       [fpga-controller]   p50          4750 ns
+#       [fpga-controller]   p95          5050 ns
+#       [fpga-controller]   p99          5350 ns
+#       [fpga-controller]   p99.9        5530 ns
+#       [fpga-controller]   max      96567640 ns
+#       [fpga-controller]   mean        10843 ns
 #       samples: [[0 0 0]
-#        [0 0 0]
-#        [0 0 0]
-#        ...
-#        [0 0 0]
-#        [0 0 0]
-#        [0 0 0]]
+#       [0 0 0]
+#       [0 0 0]
+#       ...
+#       [0 0 0]
+#       [0 0 0]
+#       [0 0 0]]
 #       JIT session error: FD-transport disconnected
 #       JIT session error: disconnecting
 #       JIT session error: FD-transport disconnected
