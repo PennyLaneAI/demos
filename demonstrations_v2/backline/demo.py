@@ -304,7 +304,6 @@ def encoded_decoded_circuit(error_kind):
     for control, target in cnots:
         qp.CNOT(wires=[control, target])
 
-
     # encode a logical X gate
     for w in [6, 7, 8]:
         qp.X(wires=w)
