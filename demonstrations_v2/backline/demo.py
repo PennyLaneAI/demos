@@ -3,7 +3,7 @@ r"""
 How to use PennyLane and Backline for low-latency quantum error correction on GPUs and FPGAs
 ============================================================================================
 
-Quantum is never purely quantum. Large-scale systems built for quantum computing, sensing, and
+The challenge today? Quantum is never purely quantum. Large-scale systems built for quantum computing, sensing, and
 networking rely heavily on robust classical processing, from processing of applications to
 low-level hardware control. Not only that, but tight communication and feedback between quantum
 processors and classical accelerators are essential to identify and correct errors --- a process
@@ -727,7 +727,7 @@ print("samples:", ghz())
 #   over RDMA, and explicit usage of `runtime_call <https://docs.pennylane.ai/en/latest/code/api/pennylane.runtime_call.html>`__ to execute
 #   coprocessor functions.
 #
-# - Read the `Backline technical paper <tk>`__ to get a technical overview of the infrastructure and
+# - Read the `Backline technical paper <https://arxiv.org/abs/2609.09270>`__ to get a technical overview of the infrastructure and
 #   performance.
 #
 # - Check out the `PennyLane blog post <https://pennylane.ai/blog/2026/09/real-time-classical-processing-with-backline-amd>`__ to learn more about Backline.
