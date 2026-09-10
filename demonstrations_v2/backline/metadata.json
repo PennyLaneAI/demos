@@ -2,7 +2,7 @@
     "title": "How to use PennyLane and Backline for low-latency quantum error correction on GPUs and FPGAs",
     "authors": [
         {
-            "username": "josh146"
+            "username": "josh"
         },
         {
             "username": "mehrdad2m"
@@ -17,7 +17,7 @@
     "executable_stable": false,
     "executable_latest": false,
     "dateOfPublication": "2026-09-10T00:00:00+00:00",
-    "dateOfLastModification": "2026-09-10T15:00:00+00:00",
+    "dateOfLastModification": "2024-12-19T20:30:00+00:00",
     "categories": [
         "Quantum Hardware",
         "Quantum Computing"
