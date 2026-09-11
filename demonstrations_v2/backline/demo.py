@@ -35,8 +35,8 @@ enterprise GPUs and FPGAs — all from the same software environment.
 
 To start with, we need to install the latest versions of PennyLane and Catalyst. We will need to
 install these from source; we can follow the build instructions available in the `Catalyst
-documentation <https://github.com/PennyLaneAI/backline/blob/main/INSTALL.md>`__. To execute all of the demos
-demo, including GPUs and FPGAs examples, you will need to make sure you have the required hardware
+documentation <https://github.com/PennyLaneAI/backline/blob/main/INSTALL.md>`__. To execute all of the demos,
+including GPU and FPGA examples, you will need to make sure you have the required hardware
 and software, including:
 
 - A server with an AMD Instinct™ GPU, ROCm 6 or newer, and an RDMA NIC;
@@ -82,11 +82,11 @@ For the first example, we will encode a logical circuit using the :doc:`Steane c
 <tutorial_bp_catalyst>` (:math:`[[7, 1, 3]]`), a specific type of Calderbank-Shor-Steane (CSS) code
 based on the classical :math:`[7, 4, 3]` `Hamming code
 <https://en.wikipedia.org/wiki/Hamming_code>`__. The Steane code encodes one logical qubit using 7
-physical qubits, and has the ability to correct arbitrary single qubit errors.
+physical qubits, and has the ability to correct arbitrary single-qubit errors.
 
 Conveniently, we can leverage PennyLane to simply define a **logical circuit**, and point Catalyst
 and Backline to existing optimization passes (for quantum error correction encoding) and
-pre-compiled libraries (for decoding), to allow the error correction to occur automatically within
+pre-compiled libraries (for decoding) to allow the error correction to occur automatically within
 the stack.
 
 We'll start by registering the Steane decoder. We will point to a pre-compiled library that comes
@@ -111,7 +111,7 @@ steane_decode = qp.CoprocessorFunction("steane_coprocessor", STEANE_LIB_CPU)
 # Note the use of the `CoprocessorFunction <https://docs.pennylane.ai/en/latest/code/api/pennylane.Coprocessor.html>`__. This allows us to register
 # a coprocessing function that will be run on a coprocessor.
 #
-# Next, we can create our two CPUs: the controller, and the coprocessor. The controller will run
+# Next, we can create our two CPUs: the controller and the coprocessor. The controller will run
 # quantum instructions on the PennyLane Lightning simulator, while the coprocessor will be
 # performing the decoding.
 
@@ -158,7 +158,7 @@ print("samples:", ghz())
 # Note that, as we define ``qec_code="steane"``, QEC encoding and decoding will be automatically
 # applied; the former during MLIR optimization, and the latter on our coprocessor.
 #
-# Remote CPU-to-GPU with a Python defined kernel
+# Remote CPU-to-GPU with a Python-defined kernel
 # ----------------------------------------------
 # Next, we'll consider a *remote* CPU-to-GPU interaction using a Python-defined QEC decoding kernel,
 # written using Triton. In this example, the controller and coprocessor are no longer local, but on
@@ -171,10 +171,10 @@ print("samples:", ghz())
 # drastically reduce qubit overheads. In particular, we will use the :math:`[[13, 1, 3]]`
 # Hypergraph Product code, a well-known family of qLDPC codes that uses 13 physical wires for
 # encoding, and a single auxiliary wire to extract syndromes. To *decode* the qLDPC code, we will
-# use a belief propagation decoder --- an iterative message-passing algorithm used to decode errors
+# use a belief-propagation decoder --- an iterative message-passing algorithm used to decode errors
 # by working on the `Tanner graph <https://en.wikipedia.org/wiki/Tanner_graph>`__ of the code.
 #
-# To start with, we define our belief propagation decoder. We do so using two parity check
+# To start, we define our belief-propagation decoder. We do so using two parity-check
 # matrices:
 
 import numpy as np
@@ -205,13 +205,13 @@ bp_decoder = qp.backline.css_bp_decoder(Hx, Hz, postprocess="osd", num_iters=10,
 # .. note::
 #
 #     Behind the scenes, this function utilizes ``@triton.jit`` to compile an optimized GPU kernel ---
-#     feel free to look under-the-hood at the `source code
+#     feel free to look under the hood at the `source code
 #     <https://github.com/PennyLaneAI/pennylane/blob/main/pennylane/backline/functions.py#L134>`__ to
 #     see how Triton is being used. Later in this demo, we will also show you how to compile your
 #     own Triton function for Backline coprocessing.
 #
 # With the decoder defined, we can now create our controller and coprocessor. To start, we'll define
-# our server configuration, representing our remote server carrying an AMD GPU and an RDMA capable
+# our server configuration, representing our remote server carrying an AMD GPU and an RDMA-capable
 # NIC (the server configuration will need to be updated as per your specific server details):
 
 SERVER = {
@@ -249,8 +249,8 @@ CPU = qp.Controller(
 # specifies the backend-specific initialization arguments, which are forwarded to the transport
 # backend. For more details, see the `Controller <https://docs.pennylane.ai/en/latest/code/api/pennylane.Controller.html>`__ documentation.
 #
-# We can now define a remote GPU coprocessor on the server, and specify the Python-defined belief
-# propagation decoding function it will be executing:
+# We can now define a remote GPU coprocessor on the server, and specify the Python-defined
+# belief-propagation decoding function it will be executing:
 
 GPU = qp.Coprocessor(
     name="gpu-coproc",
@@ -324,7 +324,7 @@ def encoded_decoded_circuit(error_kind):
     for a, b in [(1, 3), (2, 6), (5, 7), (10, 11)]:
         qp.SWAP(wires=[a, b])
 
-    # QEC decoding using our belief propagation decoder
+    # QEC decoding using our belief-propagation decoder
     correction_rounds()
 
     return (qp.expval(mean_stabilizer(Hz, qp.Z)), qp.expval(mean_stabilizer(Hx, qp.X)))
@@ -471,7 +471,7 @@ for error_kind, error_name in enumerate(["I", "X", "Y", "Z"]):
 # return to compiling a logical circuit with PennyLane, encoding the Steane code with Catalyst, and
 # using a pre-compiled decoder function.
 #
-# First, we create the FPGA controller. Here, it is a AMD Versal™ Premium Series VPK120 board:
+# First, we create the FPGA controller. Here, it is an AMD Versal™ Premium Series VPK120 board:
 
 FPGA_SERVER = {
     'host': "192.168.3.15",
@@ -577,7 +577,7 @@ print("samples:", ghz())
 #
 # Note that the ``max`` number is particularly large for the very first round, which pays for the
 # connection initialization. By setting ``HWHS_RTT_WARMUP=1`` in the board's environment, we can
-# examine the steady state latency values.
+# examine the steady-state latency values.
 #
 # During execution, backline is managing the following communication pathways:
 #
@@ -597,7 +597,7 @@ print("samples:", ghz())
 # interfere, each check has only 8 possible outcomes.
 #
 # Due to this low number, one decoding strategy is to simply pre-calculate every solution and store
-# them in a lookup table. We can create an highly efficient Triton function that maps each
+# them in a lookup table. We can create a highly efficient Triton function that maps each
 # three‑bit syndrome to a weight‑1 error.
 
 import triton
@@ -633,9 +633,9 @@ def steane_lookup(syndrome):
 # We can use the provided `decode <https://docs.pennylane.ai/en/latest/code/api/pennylane.backline.triton_decoder.html>`__ function to
 # compile this for our target system using ``triton.jit``, and then it is simply a matter of
 # providing the compiled ``steane_triton_decoder`` as our coprocessing function when defining the
-# GPU coprocessor. Note that we provide it twice --- while the lookup table works for decoding both
-# :math:`X` and :math:`Z` errors, this demonstrates native support for general CSS codes
-# with potentially different decoder functions.
+# GPU coprocessor. Note that we provide ``steane_lookup`` twice, once for each error type. For the
+# Steane code, the same lookup table can decode both :math:`X` and :math:`Z` errors, but more
+# general CSS codes may use a different decoder for each.
 
 steane_triton_decoder = qp.backline.triton_decoder(
     (steane_lookup, steane_lookup),
