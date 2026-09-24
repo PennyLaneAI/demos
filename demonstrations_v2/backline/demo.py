@@ -35,8 +35,8 @@ enterprise GPUs and FPGAs — all from the same software environment.
 
 To start with, we need to install the latest versions of PennyLane and Catalyst. We will need to
 install these from source; we can follow the build instructions available in the `Catalyst
-documentation <https://github.com/PennyLaneAI/backline/blob/main/INSTALL.md>`__. To execute all of the demos
-demo, including GPUs and FPGAs examples, you will need to make sure you have the required hardware
+documentation <https://github.com/PennyLaneAI/backline/blob/main/INSTALL.md>`__. To execute all of the demos,
+including GPUs and FPGAs examples, you will need to make sure you have the required hardware
 and software, including:
 
 - A server with an AMD Instinct™ GPU, ROCm 6 or newer, and an RDMA NIC;
