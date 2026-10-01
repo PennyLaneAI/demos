@@ -263,9 +263,17 @@ x = jnp.ones((n_param_batch, tbins * 2))
 
 res0, grad0 = value_and_grad_jax(x)
 res1, grad1 = value_and_grad_odegen(x)
-np.allclose(res0, res1, atol=1e-3), np.allclose(grad0, grad1, atol=1e-3)
+print(np.allclose(res0, res1, atol=1e-3), np.allclose(grad0, grad1, atol=1e-3))
 
 ##############################################################################
+# .. rst-class:: sphx-glr-script-out
+#
+#
+#  .. code-block:: none
+#
+#      True True
+#
+#
 # This allows us to use direct backpropagation in this demo, which is always faster in simulation.
 # We now have all the ingredients to run VQE with ODEgen and SPS. We define the following standard
 # optimization loop and run it from the same random initial values
@@ -315,6 +323,12 @@ plt.show()
 
 
 ##############################################################################
+# .. figure:: ../_static/demonstration_assets/odegen/vqe_convergence.png
+#     :align: center
+#     :width: 70%
+#     :alt: Energy error versus epoch for stochastic parameter-shift and ODEgen gradients
+#     :target: javascript:void(0);
+#
 # We see that with analytic gradients (ODEgen), we can reach the ground state energy within 100 epochs, whereas with SPS gradients we cannot find the path
 # towards the minimum due to the stochasticity of the gradient estimates. Note that the convergence of the optimization is sensitive to the initial guess.
 # In this demonstration, both optimizations start from the same (random) initial point. This picture solidifies when repeating this procedure for multiple

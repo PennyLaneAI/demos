@@ -716,6 +716,28 @@ plt.ylabel("Average reward")
 plt.grid(alpha=0.3)
 
 ######################################################################
+# .. rst-class:: sphx-glr-script-out
+#
+#
+#  .. code-block:: none
+#
+#      Iteration 0: reward 0.4762
+#      Iteration 40: reward 0.4869
+#      Iteration 80: reward 0.5662
+#      Iteration 120: reward 0.6629
+#      Iteration 160: reward 0.9731
+#      Iteration 200: reward 0.9803
+#      Iteration 240: reward 0.9803
+#      Iteration 280: reward 0.9796
+#      Iteration 319: reward 0.9791
+#
+#
+# .. figure:: ../_static/demonstration_assets/rl_pulse/training_reward.png
+#     :align: center
+#     :width: 60%
+#     :alt: Average reward of the reinforcement-learning agent over training iterations
+#     :target: javascript:void(0);
+#
 # The algorithm has converged to a policy with a very high average reward!! Let's see what this agent
 # is capable of.
 #
@@ -825,7 +847,7 @@ axs[1].plot(ts, qp.pulse.pwc(pulse_duration)(pulse_program[1], ts), color="#FFE0
 axs[1].set_ylabel("Phase (rad)", fontsize=14)
 axs[1].set_yticks(
     values_phase,
-    ["$-3\pi/4$", "$-\pi/2$", "$-\pi/4$", "0", "$\pi/4$", "$\pi/2$", "$3\pi/4$", "$\pi$"],
+    [r"$-3\pi/4$", r"$-\pi/2$", r"$-\pi/4$", "0", r"$\pi/4$", r"$\pi/2$", r"$3\pi/4$", r"$\pi$"],
 )
 axs[1].set_ylim([values_phase[0] - 0.1, values_phase[-1] + 0.1])
 
@@ -841,6 +863,12 @@ ax2.set_title(f"Average gate fidelity {avg_gate_fidelity:.3f}", fontsize=14)
 plt.show()
 
 ######################################################################
+# .. figure:: ../_static/demonstration_assets/rl_pulse/calibrated_pulse.png
+#     :align: center
+#     :width: 100%
+#     :alt: Calibrated pulse amplitude and phase, and the resulting rotation axis on the Bloch sphere
+#     :target: javascript:void(0);
+#
 # Beyond single-qubit quantum computers and gates
 # -----------------------------------------------
 #
