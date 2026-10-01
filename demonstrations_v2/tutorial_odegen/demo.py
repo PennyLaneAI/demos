@@ -1,6 +1,9 @@
 r"""Evaluating analytic gradients of pulse programs on quantum computers
 ========================================================================
 
+.. warning::
+
+    This demo is only compatible with PennyLane v0.45 or below.
 
 Are you tired of spending precious quantum resources on computing stochastic gradients of quantum pulse programs?
 In this demo we introduce ODEgen, a method to compute analytic gradients of pulse programs on quantum computers with high accuracy at lower cost!

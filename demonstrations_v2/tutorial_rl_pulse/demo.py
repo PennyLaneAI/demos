@@ -2,6 +2,10 @@ r"""
 Gate calibration with reinforcement learning
 ============================================
 
+.. warning::
+
+    This demo is only compatible with PennyLane v0.45 or below.
+
 Gate-based quantum circuits are the most common representation of quantum computations. These
 provide an abstraction layer that enables the development of quantum algorithms without considering
 the hardware in charge of the execution. However, every quantum platform offers a different set of

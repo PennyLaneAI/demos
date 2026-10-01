@@ -14,6 +14,10 @@ Neutral-atom quantum computers
    tutorial_sc_qubits Quantum computing with superconducting qubits
    tutorial_photonics Photonic quantum computing
 
+.. warning::
+
+    This demo is only compatible with PennyLane v0.45 or below.
+
 In the last few years, a new quantum technology has gained the attention of the quantum computing
 community. Thanks to recent developments in optical-tweezer technology,
 neutral atoms can be used as robust and versatile qubits. In 2022, a collaboration between QuEra and
