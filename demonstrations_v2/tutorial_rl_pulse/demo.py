@@ -716,6 +716,12 @@ plt.ylabel("Average reward")
 plt.grid(alpha=0.3)
 
 ######################################################################
+# .. figure:: ../_static/demonstration_assets/rl_pulse/training_reward.png
+#     :align: center
+#     :width: 60%
+#     :alt: Average reward of the reinforcement-learning agent over training iterations
+#     :target: javascript:void(0);
+#
 # .. rst-class:: sphx-glr-script-out
 #
 #
@@ -730,13 +736,6 @@ plt.grid(alpha=0.3)
 #      Iteration 240: reward 0.9803
 #      Iteration 280: reward 0.9796
 #      Iteration 319: reward 0.9791
-#
-#
-# .. figure:: ../_static/demonstration_assets/rl_pulse/training_reward.png
-#     :align: center
-#     :width: 60%
-#     :alt: Average reward of the reinforcement-learning agent over training iterations
-#     :target: javascript:void(0);
 #
 # The algorithm has converged to a policy with a very high average reward!! Let's see what this agent
 # is capable of.
