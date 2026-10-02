@@ -1,5 +1,5 @@
 {
-    "title": "Qubit and gate trade-offs in qubitized Quantum Phase Estimation",
+    "title": "Qubit and gate trade-offs in qubitized quantum phase estimation",
     "authors": [
         {
             "username": "ddhawan"
@@ -8,7 +8,7 @@
     "executable_stable": true,
     "executable_latest": true,
     "dateOfPublication": "2026-01-29T00:00:00+00:00",
-    "dateOfLastModification": "2026-05-28T00:00:00+00:00",
+    "dateOfLastModification": "2026-09-03T00:00:00+00:00",
     "categories": [
         "Algorithms",
         "Optimization",

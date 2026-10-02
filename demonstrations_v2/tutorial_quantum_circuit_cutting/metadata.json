@@ -1,5 +1,5 @@
 {
-    "title": "Quantum Circuit Cutting",
+    "title": "Quantum circuit cutting",
     "authors": [
         {
             "username": "gideonuchehara"
@@ -14,7 +14,7 @@
     "executable_stable": true,
     "executable_latest": true,
     "dateOfPublication": "2022-09-02T00:00:00+00:00",
-    "dateOfLastModification": "2026-06-19T00:00:00+00:00",
+    "dateOfLastModification": "2026-09-03T00:00:00+00:00",
     "categories": [
         "Algorithms",
         "Quantum Computing"

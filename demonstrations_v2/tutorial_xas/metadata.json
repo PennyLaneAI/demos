@@ -1,5 +1,5 @@
 {
-    "title": "X-ray Absorption Spectroscopy Simulation in the Time-Domain",
+    "title": "X-ray absorption spectroscopy simulation in the time-domain",
     "authors": [
         {
             "username": "colinjdale"
@@ -11,7 +11,7 @@
     "executable_stable": true,
     "executable_latest": true,
     "dateOfPublication": "2025-08-29T09:00:00+00:00",
-    "dateOfLastModification": "2026-06-19T00:00:00+00:00",
+    "dateOfLastModification": "2026-09-03T00:00:00+00:00",
     "categories": [
         "Quantum Chemistry",
         "Algorithms"

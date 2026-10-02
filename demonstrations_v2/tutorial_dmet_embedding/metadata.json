@@ -1,5 +1,5 @@
 {
-    "title": "Density Matrix Embedding Theory",
+    "title": "Density matrix embedding theory",
     "authors": [
         {
             "username": "ddhawan"
@@ -8,7 +8,7 @@
     "executable_stable": false,
     "executable_latest": false,
     "dateOfPublication": "2025-11-25T00:00:00+00:00",
-    "dateOfLastModification": "2026-06-19T00:00:00+00:00",
+    "dateOfLastModification": "2026-09-03T00:00:00+00:00",
     "categories": [
         "Quantum Chemistry",
         "How-to"

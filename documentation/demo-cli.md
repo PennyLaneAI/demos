@@ -106,7 +106,7 @@ demo new
 
 Upon executing this command, you will be prompted to provide the following details interactively:
 
-*   **Title**: A human-readable title for the demonstration.
+*   **Title**: A human-readable title for the demonstration in sentence case style.
 *   **Custom directory name**: A unique directory name (used as demonstration slug on the [PL.ai](https://pennylane.ai/) website.
 *   **Description**: A concise explanation of the demonstration's purpose or functionality.
 *   **Author(s)**: The PennyLane handle(s) of the author(s). If there are multiple authors, you will be prompted to enter each one individually. (\*Note\*: If you do not have a PennyLane handle, you will need to [create one](https://auth.cloud.pennylane.ai/u/signup?state=hKFo2SBqQzM4RlJmNDJZdzNjX0UwbHpYYVU2a012eUlTWDZBd6Fur3VuaXZlcnNhbC1sb2dpbqN0aWTZIHZaVUM2TGhRNjVtM3YtWjhjWGZiaTc0T1ZqTW16ZWVGo2NpZNkgU1hka2hOc2lMVDBHZHJPVEZBUjJnSjV0cThvR1ZjZzM) before authoring a demonstration.)

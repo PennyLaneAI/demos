@@ -1,5 +1,5 @@
 {
-    "title": "Variational Quantum Thermalizer",
+    "title": "Variational quantum thermalizer",
     "authors": [
         {
             "username": "jceroni"
@@ -8,7 +8,7 @@
     "executable_stable": true,
     "executable_latest": true,
     "dateOfPublication": "2020-07-07T00:00:00+00:00",
-    "dateOfLastModification": "2026-06-16T15:48:14+00:00",
+    "dateOfLastModification": "2026-09-03T00:00:00+00:00",
     "categories": [
         "Optimization"
     ],

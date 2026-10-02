@@ -1,5 +1,5 @@
 {
-  "title": "Iterative Quantum Amplitude Estimation",
+  "title": "Iterative quantum amplitude estimation",
   "authors": [
     {
       "username": "emgem"
@@ -8,7 +8,7 @@
   "executable_stable": true,
   "executable_latest": true,
   "dateOfPublication": "2026-07-07T00:00:00+00:00",
-  "dateOfLastModification": "2026-07-07T00:00:00+00:00",
+  "dateOfLastModification": "2026-09-03T00:00:00+00:00",
   "categories": ["Algorithms", "Quantum Computing"],
   "tags": [],
    "previewImages": [

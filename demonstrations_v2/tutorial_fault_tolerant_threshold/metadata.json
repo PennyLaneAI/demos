@@ -1,12 +1,12 @@
 {
-    "title": "Understanding the Fault-tolerant Threshold Theorem in Practice",
+    "title": "Understanding the fault-tolerant threshold theorem in practice",
     "authors": [{
         "username": "whatsis"
     }],
     "executable_stable": true,
     "executable_latest": true,
     "dateOfPublication": "2026-04-24T15:00:00+00:00",
-    "dateOfLastModification": "2026-07-14T15:00:00+00:00",
+    "dateOfLastModification": "2026-09-03T00:00:00+00:00",
     "categories": [
         "Quantum Computing",
         "FTQC",

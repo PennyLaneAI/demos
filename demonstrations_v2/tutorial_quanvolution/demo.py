@@ -1,7 +1,7 @@
 r"""
 .. _quanvolution:
 
-Quanvolutional Neural Networks
+Quanvolutional neural networks
 ==============================
 
 .. meta::
@@ -16,7 +16,7 @@ Quanvolutional Neural Networks
     :doc:`PyTorch <demos/tutorial_qnn_module_torch>` or
     :doc:`JAX <demos/tutorial_How_to_optimize_QML_model_using_JAX_and_Optax>`.
 
-In this demo we implement the *Quanvolutional Neural Network*, a quantum
+In this demo we implement the *quanvolutional neural network*, a quantum
 machine learning model originally introduced in
 `Henderson et al. (2019) <https://arxiv.org/abs/1904.04767>`_.
 

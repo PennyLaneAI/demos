@@ -1,5 +1,5 @@
 {
-    "title": "Quadratic Unconstrained Binary Optimization",
+    "title": "Quadratic unconstrained binary optimization",
     "authors": [
         {
             "username": "alejomonbar"
@@ -8,7 +8,7 @@
     "executable_stable": false,
     "executable_latest": false,
     "dateOfPublication": "2024-02-29T00:00:00+00:00",
-    "dateOfLastModification": "2026-06-16T00:00:00+00:00",
+    "dateOfLastModification": "2026-09-03T00:00:00+00:00",
     "categories": [
         "Optimization"
     ],

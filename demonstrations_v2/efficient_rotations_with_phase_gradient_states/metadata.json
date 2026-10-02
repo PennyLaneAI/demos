@@ -1,5 +1,5 @@
 {
-  "title": "Efficient Rotations With Phase Gradient States",
+  "title": "Efficient rotations with phase gradient states",
   "authors": [
     {
       "username": "emgem"
@@ -8,7 +8,7 @@
   "executable_stable": true,
   "executable_latest": true,
   "dateOfPublication": "2026-07-14T00:00:00+00:00",
-  "dateOfLastModification": "2026-07-14T00:00:00+00:00",
+  "dateOfLastModification": "2026-09-03T00:00:00+00:00",
   "categories": ["Algorithms", "Quantum Computing"],
   "tags": ["Algorithms", "Rotations", "Gate Decomposition", "Fault Tolerance", "Resource Estimation"],
   "previewImages": [

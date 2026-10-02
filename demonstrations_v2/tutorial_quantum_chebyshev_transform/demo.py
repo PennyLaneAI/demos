@@ -1,4 +1,4 @@
-r"""Quantum Chebyshev Transform
+r"""Quantum Chebyshev transform
 =============================================================
 
 Looking for ways to leverage the speed of the :doc:`quantum Fourier transform <demos/tutorial_qft>` is a common way to design quantum algorithms with exponential speed-ups over classical algorithms. 

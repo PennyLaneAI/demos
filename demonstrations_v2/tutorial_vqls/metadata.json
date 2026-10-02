@@ -1,5 +1,5 @@
 {
-    "title": "Variational Quantum Linear Solver",
+    "title": "Variational quantum linear solver",
     "authors": [
         {
             "username": "amari"
@@ -8,7 +8,7 @@
     "executable_stable": true,
     "executable_latest": true,
     "dateOfPublication": "2019-11-04T00:00:00+00:00",
-    "dateOfLastModification": "2026-04-17T00:00:00+00:00",
+    "dateOfLastModification": "2026-09-03T00:00:00+00:00",
     "categories": [
         "Optimization"
     ],
