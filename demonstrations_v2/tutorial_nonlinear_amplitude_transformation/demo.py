@@ -589,7 +589,7 @@ def qnn(weights, features, angles, main_wires, ancilla_wires, rot_wire):
     ProjCtrlPhaseShift(control_wires=ancilla_wires,
                        target_wire=rot_wire,
                        phi=angles[-1])
-    for i in range(1, deg):
+    for i in range(1, deg + 1):
         RealDiagonalBlockEncoding(
             embedding, wires=main_wires,
             ancilla_wires=ancilla_wires,
