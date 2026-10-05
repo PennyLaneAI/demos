@@ -36,104 +36,59 @@
     "doi": "",
     "references": [
         {
-            "id": "Bravyi2004",
+            "id": "blockencoding",
             "type": "article",
-            "title": "Universal Quantum Computation with ideal Clifford gates and noisy ancillas",
-            "authors": "Sergei Bravyi and Alexei Kitaev",
-            "year": "2004",
+            "title": "The power of block-encoded matrix powers: improved regression techniques via faster Hamiltonian simulation",
+            "authors": "Shantanav Chakraborty, András Gilyén, Stacey Jeffery",
+            "year": "2018",
             "journal": "arXiv",
-            "url": "https://arxiv.org/abs/quant-ph/0403025"
+            "url": "https://arxiv.org/abs/1804.01973"
         },
         {
-        "id": "Fowler",
+        "id": "qsvt",
         "type": "article",
-        "title": "Surface codes: Towards practical large-scale quantum computation",
-        "authors": "Austin G. Fowler, Matteo Mariantoni, John M. Martinis, Andrew N. Cleland",
-        "year": "2012",
-        "journal": "Phys. Rev. A",
-        "url": "https://journals.aps.org/pra/abstract/10.1103/PhysRevA.86.032324"
+        "title": "Quantum singular value transformation and beyond: exponential improvements for quantum matrix arithmetics",
+        "authors": "András Gilyén, Yuan Su, Guang Hao Low, Nathan Wiebe",
+        "year": "2018",
+        "journal": "arXiv",
+        "url": "https://arxiv.org/abs/1806.01838"
     },
     {
-        "id": "Gidney2024",
+        "id": "ntca",
         "type": "article",
-        "title": "Magic state cultivation: growing T states as cheap as CNOT gates",
-        "authors": "Craig Gidney, Noah Shutty, Cody Jones",
+        "title": "Nonlinear transformation of complex amplitudes via quantum singular value transformation",
+        "authors": "Naixu Guo, Kosuke Mitarai, Keisuke Fujii",
+        "year": "2024",
+        "journal": "Phys. Rev. Research",
+        "url": "https://journals.aps.org/prresearch/abstract/10.1103/PhysRevResearch.6.043227"
+    },
+    {
+        "id": "importancesampling",
+        "type": "article",
+        "title": "Non-Linear Transformations of Quantum Amplitudes: Exponential Improvement, Generalization, and Applications",
+        "authors": "Arthur G. Rattew, Patrick Rebentrost",
+        "year": "2023",
+        "journal": "arXiv",
+        "url": "https://arxiv.org/abs/2309.09839"
+    },
+    {
+        "id": "qaae",
+        "type": "article",
+        "title": "Quantum Amplitude Amplification and Estimation",
+        "authors": "Gilles Brassard, Peter Hoyer, Michele Mosca, Alain Tapp",
+        "year": "2000",
+        "journal": "arXiv",
+        "url": "https://arxiv.org/abs/quant-ph/0005055"
+    },
+    {
+        "id": "qtransformer",
+        "type": "article",
+        "title": "Quantum Transformer: Accelerating model inference via quantum linear algebra",
+        "authors": "Naixu Guo, Zhan Yu, Matthew Choi, Yizhan Han, Aman Agrawal, Kouhei Nakaji, Alán Aspuru-Guzik, Patrick Rebentrost",
         "year": "2024",
         "journal": "arXiv",
-        "url": "https://arxiv.org/abs/2409.17595"
-    },
-    {
-        "id": "QuEra2025",
-        "type": "article",
-        "title": "Experimental demonstration of logical magic state distillation",
-        "authors": "Pedro Sales Rodriguez, et al.",
-        "year": "2025",
-        "journal": "Nature",
-        "url": "https://www.nature.com/articles/s41586-025-09367-3"
-    },
-    {
-        "id": "Ruiz2025",
-        "type": "article",
-        "title": "Unfolded distillation: very low-cost magic state preparation for biased-noise qubits",
-        "authors": "Diego Ruiz, Jérémie Guillaud, Christophe Vuillot, Mazyar Mirrahimi",
-        "year": "2025",
-        "journal": "arXiv",
-        "url": "https://arxiv.org/abs/2507.12511"
-    },
-    {
-        "id": "Itogawa2025",
-        "type": "article",
-        "title": "Efficient magic state distillation by zero-Level distillation",
-        "authors": "Tomohiro Itogawa, Yugo Takada, Yutaka Hirano, Keisuke Fujii",
-        "year": "2025",
-        "journal": "PRX Quantum",
-        "url": "https://journals.aps.org/prxquantum/abstract/10.1103/thxx-njr6"
-    },
-    {
-        "id": "Hirano2024",
-        "type": "article",
-        "title": "Leveraging Zero-Level Distillation to Generate High-Fidelity Magic States",
-        "authors": "Yutaka Hirano, Tomohiro Itogawa, Keisuke Fujii",
-        "year": "2024",
-        "journal": "arXiv",
-        "url": "https://arxiv.org/abs/2404.09740"
-    },
-    {
-        "id": "Google2025",
-        "type": "article",
-        "title": "Magic state cultivation on a superconducting quantum processor",
-        "authors": "Emma Rosenfeld, et al.",
-        "year": "2025",
-        "journal": "arXiv",
-        "url": "https://arxiv.org/abs/2512.13908"
-    },
-    {
-        "id": "Chen2025",
-        "type": "article",
-        "title": "Efficient Magic State Cultivation on ℝ\u21192",
-        "authors": "Zi-Han Chen, Ming-Cheng Chen, Chao-Yang Lu, Jian-Wei Pan",
-        "year": "2025",
-        "journal": "arXiv",
-        "url": "https://arxiv.org/abs/2503.18657"
-    },
-    {
-        "id": "Hirano2025",
-        "type": "article",
-        "title": "Efficient magic state cultivation with lattice surgery",
-        "authors": "Yutaka Hirano, Riki Toshio, Tomohiro Itogawa, Keisuke Fujii",
-        "year": "2025",
-        "journal": "arXiv",
-        "url": "https://arxiv.org/abs/2510.24615"
-    },
-        {
-            "id": "Heinrich2019",
-            "type": "article",
-            "title": "Robustness of Magic and Symmetries of the Stabiliser Polytope",
-            "authors": "Markus Heinrich and David Gross",
-            "year": "2019",
-            "journal": "Quantum",
-            "url": "https://quantum-journal.org/papers/q-2019-04-08-132"
-        }
+        "url": "https://arxiv.org/abs/2402.16714"
+    }
     ],
     "basedOnPapers": [],
     "referencedByPapers": [],
