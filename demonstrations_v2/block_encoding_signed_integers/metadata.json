@@ -1,0 +1,82 @@
+{
+    "title": "Block encoding signed integers",
+    "authors": [
+        {
+            "username": "mpocrnic"
+        },
+        {
+            "username": "dren"
+        }
+    ],
+    "executable_stable": true,
+    "executable_latest": true,
+    "dateOfPublication": "2026-08-31T16:30:00+00:00",
+    "dateOfLastModification": "2026-08-31T16:36:00+00:00",
+    "categories": [
+        "Quantum Computing",
+        "Algorithms",
+        "Resource Estimation"
+    ],
+    "tags": ["Algorithms"],
+    "previewImages": [
+        {
+            "type": "thumbnail",
+            "uri": "/_static/demo_thumbnails/regular_demo_thumbnails/pennylane-demo-block-encoding-signed-integers-thumbnail.png"
+        },
+        {
+            "type": "large_thumbnail",
+            "uri": "/_static/demo_thumbnails/large_demo_thumbnails/pennylane-demo-block-encoding-signed-integers-large-thumbnail.png"
+        }
+    ],
+    "seoDescription": "Learn how to block encode signed integers and how to use it.",
+    "doi": "",
+    "references": [
+        {
+            "id": "pocrnic",
+            "type": "article",
+            "title": "Efficient Simulation of Pre-Born-Oppenheimer Dynamics on a Quantum Computer",
+            "authors": " M. Pocrnic, I. Loaiza, J. M. Arrazola, N. Wiebe, and D. Motlagh",
+            "year": "2026",
+            "journal": "arXiv",
+            "url": "https://arxiv.org/abs/2602.11272"
+        },
+        {
+        "id": "linlin",
+        "type": "book",
+        "title": "Lecture Notes on Quantum Algorithms for Scientific Computation",
+        "authors": "L. Lin",
+        "year": "2022",
+        "journal": "arXiv",
+        "url": "https://arxiv.org/abs/2201.08309"
+    },
+    {
+        "id": "Su",
+        "type": "article",
+        "title": "Fault-Tolerant Quantum Simulations of Chemistry in First Quantization",
+        "authors": "Y. Su, D. W. Berry, N. Wiebe, N. Rubin, and R. Babbush",
+        "year": "2021",
+        "journal": "PRX Quantum",
+        "doi": "10.1103/PRXQuantum.2.040332",
+        "url": "https://journals.aps.org/prxquantum/abstract/10.1103/PRXQuantum.2.040332"
+    }
+    ],
+    "basedOnPapers": [],
+    "referencedByPapers": [],
+    "relatedContent": [
+        {
+            "type": "demonstration",
+            "id": "tutorial_resource_estimation",
+            "weight": 1.0
+        },
+        {
+            "type": "demonstration",
+            "id": "tutorial_lcu_blockencoding",
+            "weight": 1.0
+        },
+        {
+            "type": "demonstration",
+            "id": "tutorial_qubitization",
+            "weight": 0.5
+        }
+    ]
+}

@@ -28,7 +28,7 @@ platform. We will learn how to:
 
 * discover what kind of devices IBM offers;
 * connect to IBM devices through PennyLane's device class;
-* use Qiskit Runtime to run hybrid algorithms;
+* use IBM's Quantum Compute service to run hybrid algorithms;
 * compare different devices to improve our quantum algorithms.
 """
 
@@ -93,9 +93,9 @@ print(Aer.backends())
 # for any programs you execute.
 
 ##############################################################################
-# Qiskit Runtime
+# IBM's Quantum Compute service
 # ---------------
-# Qiskit Runtime is a quantum computing service provided by IBM intended to make hybrid algorithms
+# IBM's Quantum Compute service is a quantum computing service provided by IBM intended to make hybrid algorithms
 # more efficient to execute. Hybrid algorithms are algorithms where a classical computer and
 # quantum computer work together. This often involves the classical algorithm iteratively
 # optimizing the quantum circuit, which the quantum computer repeatedly runs.
@@ -108,17 +108,17 @@ print(Aer.backends())
 # back and forth between the quantum computer and the classical computer in charge of the
 # optimization.
 #
-# The solution that Qiskit Runtime provides is placing a classical computer in close physical
+# The solution that IBM's Quantum Compute service provides is placing a classical computer in close physical
 # proximity of the quantum computer. The user uploads a job to the classical computer, which runs
 # the entire hybrid algorithm together with the quantum hardware, with no intermediate user input.
 # This automates the iterative process, which otherwise requires time and resources for
 # communication between the user and the hardware provider.
 
 ##############################################################################
-# Using Qiskit Runtime
+# Using IBM's Quantum Compute service
 # --------------------
-# The PennyLane-Qiskit plugin includes some tools to help create a Qiskit Runtime job. Since using
-# Qiskit Runtime only makes sense when using real quantum hardware, we must again specify our IBM
+# The PennyLane-Qiskit plugin includes some tools to help create a IBM's Quantum Compute service job. Since using
+# IBM's Quantum Compute service only makes sense when using real quantum hardware, we must again specify our IBM
 # Quantum account details to run these jobs.
 #
 # First, we set up our problem as usual, and then retrieve a program ID from IBM, which gives us a
