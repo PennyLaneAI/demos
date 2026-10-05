@@ -2,11 +2,7 @@ r"""Nonlinear amplitude transformation
 ===========================================
 
 
-There is no quantum gate that squares an unknown amplitude. 
-
-Fundamentally, no such unitary exists; squaring is nonlinear but unitaries are not. Yet nonlinear functions frequently appear in finance, machine learning, and fluid dynamics, to name a few. 
-
-So how can you produce a nonlinear function on a quantum computer that can only implement linear ones? 
+Many challenging problems in machine learning, finance, and fluid dynamics are nonlinear. Yet, quantum mechanics is inherently linear. So how can you produce a nonlinear function on a quantum computer that can only implement linear ones? 
 """
 
 ######################################################################
@@ -111,7 +107,7 @@ So how can you produce a nonlinear function on a quantum computer that can only 
 # invocations of :math:`U` and :math:`U^\dagger`. For the purposes of this demo, we treat
 # :math:`U_\Psi` as a primitive and focus on what it enables. The construction idea is intuitively
 # similar to building a quantum walk operator, and interested readers are encouraged to read the original
-# papers for [details](https://arxiv.org/abs/1610.06546).
+# papers for `details <https://arxiv.org/abs/1610.06546>`__.
 # 
 # With :math:`\Psi` block-encoded, QSVT can be used to implement :math:`P(\Psi)` for a chosen
 # polynomial :math:`P`. Since :math:`\Psi` is diagonal, this corresponds to applying
@@ -133,9 +129,11 @@ So how can you produce a nonlinear function on a quantum computer that can only 
 # Here, we build :math:`U_\Psi` explicitly for a small system (:math:`n=2`, so :math:`N=4`) to make
 # the construction tangible. Here n is the number of qubits and :math:`N = 2^n` is the size of the Hilbert space. The code below spells out the walk-style ingredients used in Guo et
 # al. (2024): 
+# 
 # - a reflection :math:`R`
 # - controlled applications of the state-preparation unitary and its adjoint
 # - a pair of composite steps :math:`W` and :math:`G` that together produce the desired block structure.
+# 
 # A phase toggle :math:`p \in \{0,1\}` switches between encoding the real part (:math:`p=0`) and the imaginary part (:math:`p=1`); here we focus on the real case.
 # 
 # 
@@ -374,7 +372,7 @@ qp.draw_mpl(be_circuit)(feature_vector, main_wires, ancilla_wires)
 # component. However, this may introduce a dependency on the dimension :math:`N`, which can be
 # prohibitively expensive for large systems. Another method, as outlined by Rattew and Rebentrost
 # [#importancesampling]_, is to use the equivalent of importance sampling in this
-# context and to start from the prepared state itself,
+# context and to start from the prepared state itself
 # 
 # .. math::
 # 
@@ -449,7 +447,7 @@ def generate_poly(deg, func, odd, max_scale=0.8):
 # - :math:`P_d(x) \approx \tanh(x)` as an odd polynomial,
 # - :math:`G_d(x) \approx \tanh(x)/x` as an even polynomial.
 # 
-# Another method, as outlined by Rattew and Rebentrost [#importancesampling], is to use the equivalent of importance sampling in this context and to start from the prepared state itself,: when :math:`f(0)=0`,
+# Another method, as outlined by Rattew and Rebentrost [#importancesampling]_, is to use the equivalent of importance sampling in this context and to start from the prepared state itself,: when :math:`f(0)=0`,
 # applying :math:`G_d(\Psi)` to the original state :math:`|\psi\rangle=\sum_i \psi_i|i\rangle`
 # produces amplitudes proportional to :math:`G_d(\psi_i)\psi_i \approx \tanh(\psi_i)`, avoiding the
 # need to start from a uniform superposition.
@@ -671,8 +669,8 @@ labels = (pnp.array(ds.test['4']['labels'][:200])+1)/2
 accuracy(best_weight, data, labels)
 
 ######################################################################
-The goal of this section is not state-of-the-art accuracy. It is to show that the NLAT activation can be dropped into an end-to-end differentiable quantum model and trained. The modest accuracy is expected given the deliberately small model (2 data qubits, a degree-4 polynomial approximation of tanh, and only 100 optimization steps). Scaling any of these is the natural next step, but is outside the scope of this
-minimal demonstration.
+# The goal of this section is not state-of-the-art accuracy. It is to show that the NTCA activation can be dropped into an end-to-end differentiable quantum model and trained. The modest accuracy is expected given the deliberately small model (2 data qubits, a degree-4 polynomial approximation of tanh, and only 100 optimization steps). Scaling any of these is the natural next step, but is outside the scope of this
+# minimal demonstration.
 # Conclusion
 # ----------
 # 
