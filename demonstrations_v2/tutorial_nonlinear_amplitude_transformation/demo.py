@@ -702,7 +702,7 @@ accuracy(best_weight, data, labels)
 # .. [#ntca]
 #     Naixu Guo, Kosuke Mitarai, Keisuke Fujii
 #     "Nonlinear transformation of complex amplitudes via quantum singular value transformation"
-#     `arXiv:2107.10764 <https://arxiv.org/abs/2107.10764>`__, 2021.
+#     `Phys. Rev. Research 6, 043227 <https://journals.aps.org/prresearch/abstract/10.1103/PhysRevResearch.6.043227>`__, 2024.
 # 
 # .. [#importancesampling]
 #     Arthur G. Rattew, Patrick Rebentrost
