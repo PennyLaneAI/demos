@@ -111,9 +111,8 @@ So how can you produce a nonlinear function on a quantum computer that can only 
 # invocations of :math:`U` and :math:`U^\dagger`. For the purposes of this demo, we treat
 # :math:`U_\Psi` as a primitive and focus on what it enables. The construction idea is intuitively
 # similar to building a quantum walk operator, and interested readers are encouraged to read the original
-# papers for details.
-# similar to building a quantum walk operator, and interested readers are encouraged to read the original
 # papers for [details](https://arxiv.org/abs/1610.06546).
+# 
 # With :math:`\Psi` block-encoded, QSVT can be used to implement :math:`P(\Psi)` for a chosen
 # polynomial :math:`P`. Since :math:`\Psi` is diagonal, this corresponds to applying
 # 
