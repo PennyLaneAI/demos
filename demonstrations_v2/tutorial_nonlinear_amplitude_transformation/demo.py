@@ -112,7 +112,8 @@ So how can you produce a nonlinear function on a quantum computer that can only 
 # :math:`U_\Psi` as a primitive and focus on what it enables. The construction idea is intuitively
 # similar to building a quantum walk operator, and interested readers are encouraged to read the original
 # papers for details.
-# 
+# similar to building a quantum walk operator, and interested readers are encouraged to read the original
+# papers for [details](https://arxiv.org/abs/1610.06546).
 # With :math:`\Psi` block-encoded, QSVT can be used to implement :math:`P(\Psi)` for a chosen
 # polynomial :math:`P`. Since :math:`\Psi` is diagonal, this corresponds to applying
 # 
@@ -132,17 +133,12 @@ So how can you produce a nonlinear function on a quantum computer that can only 
 # 
 # Here, we build :math:`U_\Psi` explicitly for a small system (:math:`n=2`, so :math:`N=4`) to make
 # the construction tangible. Here n is the number of qubits and :math:`N = 2^n` is the size of the Hilbert space. The code below spells out the walk-style ingredients used in Guo et
-# al. (2024): a reflection :math:`R`, controlled applications of the state-preparation unitary and its
-# adjoint, and a pair of composite steps :math:`W` and :math:`G` that together produce the desired
-# block structure. A phase toggle :math:`p \in \{0,1\}` switches between encoding the real part
-# (:math:`p=0`) and the imaginary part (:math:`p=1`); here we focus on the real case.
+# al. (2024): 
+# - a reflection :math:`R`
+# - controlled applications of the state-preparation unitary and its adjoint
+# - a pair of composite steps :math:`W` and :math:`G` that together produce the desired block structure.
+# A phase toggle :math:`p \in \{0,1\}` switches between encoding the real part (:math:`p=0`) and the imaginary part (:math:`p=1`); here we focus on the real case.
 # 
-# Sanity check: after building the circuit, we inspect its matrix representation and look at the
-# top-left :math:`N\times N` block. For a correct block-encoding, this block should behave like
-# :math:`\Psi` (up to known normalization conventions), meaning its diagonal entries should match the
-# input amplitudes :math:`\{\psi_k\}`. This is the smallest-scale verification that the circuit is
-# implementing the intended “amplitudes :math:`\rightarrow` diagonal operator” transformation before
-# we move on to applying QSVT polynomials.
 # 
 
 import pennylane as qp
@@ -297,6 +293,12 @@ def RealDiagonalBlockEncoding(U, wires, ancilla_wires, p=0, *args, **kwargs):
     qp.PauliX(wires=ancilla_wires[0])
 
 ######################################################################
+# Sanity check: after building the circuit, we inspect its matrix representation and look at the
+# top-left :math:`N\times N` block. For a correct block-encoding, this block should behave like
+# :math:`\Psi` (up to known normalization conventions), meaning its diagonal entries should match the
+# input amplitudes :math:`\{\psi_k\}`. This is the smallest-scale verification that the circuit is
+# implementing the intended “amplitudes :math:`\rightarrow` diagonal operator” transformation before
+# we move on to applying QSVT polynomials.
 # Below we create a simple block‑encoding for :math:`n=2` and inspect its matrix to confirm that its
 # diagonal corresponds to the input amplitudes.
 # 
@@ -317,10 +319,16 @@ def be_circuit(feature_vector, main_wires, ancilla_wires):
     features=feature_vector,
     normalize=True)
     return qp.probs(ancilla_wires)
-
+# @qp.qnode(qp.device("lightning.qubit", wires=main_qubits))
+# def prep_state(features):
+#    qp.AmplitudeEmbedding(features, wires=range(main_qubits), normalize=True)
+#    return qp.state()
+#
+# psi = prep_state(feature_vector)
+# print("Prepared |psi> amplitudes:", psi)
 ######################################################################
 # We now compute the matrix of the full unitary and extract its top-left :math:`4\times 4` block,
-# which should be approximately diagonal with diagonal entries equal to the normalized feature
+# which should be diagonal with entries equal to the normalized feature
 # amplitudes.
 # 
 
@@ -421,16 +429,18 @@ def ProjCtrlPhaseShift(control_wires, target_wire, phi):
     qp.MultiControlledX(wires=control_wires + target_wire,
                          control_values=[0] * len(control_wires))
 
-def generate_poly(deg, func, odd):
+from numpy.polynomial import chebyshev
+
+def generate_poly(deg, func, odd, max_scale=0.8):
     poly = PolyTaylorSeries().taylor_series(
-        func=func, degree=deg, max_scale=0.9,
+        func=func, degree=deg, max_scale=max_scale,
         chebyshev_basis=True, cheb_samples=2*deg)
-    pcoefs = poly.coef
+    ccoefs = poly.coef.copy()
     if odd:
-        pcoefs[0::2] = 0
+        ccoefs[0::2] = 0
     else:
-        pcoefs[1::2] = 0
-    return pcoefs
+        ccoefs[1::2] = 0
+    return chebyshev.cheb2poly(ccoefs)
 
 ######################################################################
 # QSVT imposes a parity structure on the implemented polynomial: depending on the construction, the
@@ -440,7 +450,7 @@ def generate_poly(deg, func, odd):
 # - :math:`P_d(x) \approx \tanh(x)` as an odd polynomial,
 # - :math:`G_d(x) \approx \tanh(x)/x` as an even polynomial.
 # 
-# The second choice is used for a dimension-friendly “importance” variant: when :math:`f(0)=0`,
+# Another method, as outlined by Rattew and Rebentrost [#importancesampling], is to use the equivalent of importance sampling in this context and to start from the prepared state itself,: when :math:`f(0)=0`,
 # applying :math:`G_d(\Psi)` to the original state :math:`|\psi\rangle=\sum_i \psi_i|i\rangle`
 # produces amplitudes proportional to :math:`G_d(\psi_i)\psi_i \approx \tanh(\psi_i)`, avoiding the
 # need to start from a uniform superposition.
@@ -448,7 +458,7 @@ def generate_poly(deg, func, odd):
 # Two ways to run the transformation
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 # 
-# We compare two initializations:
+# We compare two reference state initializations:
 # 
 # - Uniform initialization: start from :math:`\frac{1}{\sqrt{N}}\sum_i |i\rangle` and apply
 #   :math:`P_d(\Psi)`, yielding amplitudes proportional to :math:`P_d(\psi_i)` (up to postselection).
@@ -660,7 +670,8 @@ data = pnp.array(ds.test['4']['inputs'][:200])
 labels = (pnp.array(ds.test['4']['labels'][:200])+1)/2
 
 accuracy(best_weight, data, labels)
-
+The goal of this section is not state-of-the-art accuracy. It is to show that the NLAT activation can be dropped into an end-to-end differentiable quantum model and trained. The modest accuracy is expected given the deliberately small model (2 data qubits, a degree-4 polynomial approximation of tanh, and only 100 optimization steps). Scaling any of these is the natural next step, but is outside the scope of this
+minimal demonstration.
 ######################################################################
 # Conclusion
 # ----------
