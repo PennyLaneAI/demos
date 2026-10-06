@@ -671,6 +671,7 @@ accuracy(best_weight, data, labels)
 ######################################################################
 # The goal of this section is not state-of-the-art accuracy. It is to show that the NTCA activation can be dropped into an end-to-end differentiable quantum model and trained. The modest accuracy is expected given the deliberately small model (2 data qubits, a degree-4 polynomial approximation of tanh, and only 100 optimization steps). Scaling any of these is the natural next step, but is outside the scope of this
 # minimal demonstration.
+# 
 # Conclusion
 # ----------
 # 
