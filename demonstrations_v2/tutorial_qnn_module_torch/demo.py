@@ -10,6 +10,10 @@ Turning quantum nodes into Torch Layers
 
    qnn_module_tf Turning quantum nodes into Keras Layers
 
+.. warning::
+
+    This demo is only compatible with PennyLane v0.45 or below.
+
 Creating neural networks in `PyTorch <https://pytorch.org/>`__ is easy using the
 `nn module <https://pytorch.org/docs/stable/nn.html>`__. Models are constructed from elementary
 *layers* and can be trained using the PyTorch API. For example, the following code defines a
@@ -64,6 +68,12 @@ plt.scatter(X[:, 0], X[:, 1], c=c)
 plt.show()
 
 ###############################################################################
+# .. figure:: ../_static/demonstration_assets/qnn_module/moons.png
+#     :align: center
+#     :width: 60%
+#     :alt: Two-class moons dataset used to train the hybrid model
+#     :target: javascript:void(0);
+#
 # Defining a QNode
 # ----------------
 #
@@ -199,6 +209,20 @@ accuracy = sum(correct) / len(correct)
 print(f"Accuracy: {accuracy * 100}%")
 
 ###############################################################################
+# .. rst-class:: sphx-glr-script-out
+#
+#
+#  .. code-block:: none
+#
+#      Average loss over epoch 1: 0.4943
+#      Average loss over epoch 2: 0.4226
+#      Average loss over epoch 3: 0.2847
+#      Average loss over epoch 4: 0.2121
+#      Average loss over epoch 5: 0.1845
+#      Average loss over epoch 6: 0.1666
+#      Accuracy: 85.5%
+#
+#
 # How did we do? The model looks to have successfully trained and the accuracy is reasonably
 # high. In practice, we would aim to push the accuracy higher by thinking carefully about the
 # model design and the choice of hyperparameters such as the learning rate.
@@ -282,6 +306,20 @@ accuracy = sum(correct) / len(correct)
 print(f"Accuracy: {accuracy * 100}%")
 
 ###############################################################################
+# .. rst-class:: sphx-glr-script-out
+#
+#
+#  .. code-block:: none
+#
+#      Average loss over epoch 1: 0.4333
+#      Average loss over epoch 2: 0.2811
+#      Average loss over epoch 3: 0.2164
+#      Average loss over epoch 4: 0.1909
+#      Average loss over epoch 5: 0.1704
+#      Average loss over epoch 6: 0.1639
+#      Accuracy: 85.5%
+#
+#
 # Great! We've mastered the basics of constructing hybrid classical-quantum models using
 # PennyLane and Torch. Can you think of any interesting hybrid models to construct? How do they
 # perform on realistic datasets?

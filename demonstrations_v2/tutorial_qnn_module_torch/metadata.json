@@ -5,8 +5,8 @@
             "username": "trbromley"
         }
     ],
-    "executable_stable": true,
-    "executable_latest": true,
+    "executable_stable": false,
+    "executable_latest": false,
     "dateOfPublication": "2020-11-02T00:00:00+00:00",
     "dateOfLastModification": "2026-04-17T15:48:14+00:00",
     "categories": [
