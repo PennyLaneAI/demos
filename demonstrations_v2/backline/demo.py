@@ -206,7 +206,7 @@ bp_decoder = qp.backline.css_bp_decoder(Hx, Hz, postprocess="osd", num_iters=10,
 #
 #     Behind the scenes, this function utilizes ``@triton.jit`` to compile an optimized GPU kernel ---
 #     feel free to look under the hood at the `source code
-#     <https://github.com/PennyLaneAI/pennylane/blob/main/pennylane/backline/functions.py#L134>`__ to
+#     <https://github.com/PennyLaneAI/pennylane/blob/6ab3ef3f72975ca3a4a7c5141fe122c4e2ae04bd/pennylane/backline/functions.py#L140>`__ to
 #     see how Triton is being used. Later in this demo, we will also show you how to compile your
 #     own Triton function for Backline coprocessing.
 #
@@ -630,7 +630,7 @@ def steane_lookup(syndrome):
 
 
 ######################################################################
-# We can use the provided `decode <https://docs.pennylane.ai/en/latest/code/api/pennylane.backline.triton_decoder.html>`__ function to
+# We can use the provided `triton_decoder <https://docs.pennylane.ai/en/latest/code/api/pennylane.backline.triton_decoder.html>`__ function to
 # compile this for our target system using ``triton.jit``, and then it is simply a matter of
 # providing the compiled ``steane_triton_decoder`` as our coprocessing function when defining the
 # GPU coprocessor. Note that we provide ``steane_lookup`` twice, once for each error type. For the
