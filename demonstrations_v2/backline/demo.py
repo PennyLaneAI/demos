@@ -332,7 +332,7 @@ def encoded_decoded_circuit(error_kind):
 
 ######################################################################
 # We won't work through the details of the encoding here, but check out
-# :doc:`tutorial_qldpc_codes` if you would like to learn more.
+# :doc:`demos/tutorial_qldpc_codes` if you would like to learn more.
 #
 # You may notice a few functions that have not yet been defined, such as
 # ``correction_rounds`` and ``mean_stabilizer``. Let's define them now.
