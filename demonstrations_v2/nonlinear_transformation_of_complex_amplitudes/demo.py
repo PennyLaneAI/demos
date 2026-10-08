@@ -10,7 +10,7 @@ Many challenging problems in machine learning, finance, and fluid dynamics are n
 # transformation <demos/tutorial_intro_qsvt>`
 # [#qsvt]_, which applies a polynomial to an operator accessed through a :doc:`block
 # encoding <demos/tutorial_block_encoding>` [#blockencoding]_. However, it transforms the singular values (or eigenvalues) of an
-# operator. In many quantum machine learning settings, especially involving amplitude encoding, the data isn’t
+# operator. In many quantum machine learning settings, especially involving amplitude encoding, the data isn't
 # stored in an operator at all. Instead, it lives directly in the amplitudes of a quantum state.
 # 
 # Nonlinear transformation of complex amplitudes
@@ -18,7 +18,7 @@ Many challenging problems in machine learning, finance, and fluid dynamics are n
 # [#importancesampling]_ closes that gap, mapping 
 # :math:`|\psi\rangle = \sum x_i |i\rangle` to a target state
 # :math:`|\phi\rangle \propto \sum f(x_i) |i\rangle`, using only unitary operations, ancillas, and
-# (typically) postselection. The key conceptual move is to convert “amplitudes-as-data” into a form
+# (typically) postselection. The key conceptual move is to convert "amplitudes-as-data" into a form
 # that QSVT can act on, by building a block-encoding whose relevant spectrum contains the amplitude
 # values we care about.
 # 
@@ -28,12 +28,12 @@ Many challenging problems in machine learning, finance, and fluid dynamics are n
 # - use QSVT to apply a polynomial approximation of a nonlinear function (e.g., a smooth activation) to those amplitudes, 
 # - validate the transformation numerically via an application to a canonical quantum machine learning task of binary classification on downscaled MNIST-style images.
 # 
-# .. figure:: ../_static/demonstration_assets/nonlinear-amplitude-transformation/pennylane-demo-nonlinear-transformation-qsvt-method.png
-#   :alt: Schematic of the nonlinear amplitude transformation with QSVT
+# .. figure:: ../_static/demonstration_assets/nonlinear-transformation-of-complex-amplitudes/pennylane-demo-nonlinear-transformation-of-complex-amplitudes-qsvt-method.png
+#   :alt: Schematic of the nonlinear transformation of complex amplitudes method with QSVT
 #   :width: 95%
 #   :align: center
 # 
-#   Figure 1: *A schematic of the nonlinear transformation with QSVT*
+#   Figure 1: *A schematic of the nonlinear transformation of complex amplitude method with QSVT*
 # 
 
 ######################################################################
@@ -99,7 +99,7 @@ Many challenging problems in machine learning, finance, and fluid dynamics are n
 #    \cdot & \cdot
 #    \end{pmatrix}.
 # 
-# This is in a sense equivalent to “encoding the first column into a diagonal,” but the key point is
+# This is in a sense equivalent to "encoding the first column into a diagonal," but the key point is
 # subtler: :math:`U` is not modified. Instead, an auxiliary unitary :math:`U_\Psi` is engineered so
 # that the amplitudes :math:`\psi_i` appear as the diagonal entries of the encoded operator. In the
 # constructions of [#ntca]_,
@@ -294,7 +294,7 @@ def RealDiagonalBlockEncoding(U, wires, ancilla_wires, p=0, *args, **kwargs):
 # top-left :math:`N\times N` block. For a correct block-encoding, this block should behave like
 # :math:`\Psi` (up to known normalization conventions), meaning its diagonal entries should match the
 # input amplitudes :math:`\{\psi_k\}`. This is the smallest-scale verification that the circuit is
-# implementing the intended “amplitudes :math:`\rightarrow` diagonal operator” transformation before
+# implementing the intended "amplitudes :math:`\rightarrow` diagonal operator" transformation before
 # we move on to applying QSVT polynomials.
 # Below we create a simple block‑encoding for :math:`n=2` and inspect its matrix to confirm that its
 # diagonal corresponds to the input amplitudes.
@@ -360,8 +360,8 @@ qp.draw_mpl(be_circuit)(feature_vector, main_wires, ancilla_wires)
 # 
 # The constructed :math:`U_{P_d(\Psi)}` is then applied to the reference state and post-selection or
 # amplitude amplification [#qaae]_ is used to obtain the final
-# transformed state. The choice of the reference state significantly impacts the algorithm’s
-# efficiency. A direct way to “read out” the diagonal action is to start from a uniform superposition
+# transformed state. The choice of the reference state significantly impacts the algorithm's
+# efficiency. A direct way to "read out" the diagonal action is to start from a uniform superposition
 # :math:`\frac{1}{\sqrt{N}}\sum_i |i\rangle`, which applies :math:`P_d(\psi_i)` to every basis
 # component. However, this may introduce a dependency on the dimension :math:`N`, which can be
 # prohibitively expensive for large systems. Another method, as outlined by Rattew and Rebentrost
@@ -387,7 +387,7 @@ qp.draw_mpl(be_circuit)(feature_vector, main_wires, ancilla_wires)
 # 
 #    g(\psi_i)\,\psi_i = \frac{f(\psi_i)}{\psi_i}\,\psi_i = f(\psi_i),
 # 
-# In some cases, this can effectively “recover” the target function :math:`f(x)` without the overhead
+# In some cases, this can effectively "recover" the target function :math:`f(x)` without the overhead
 # of the system dimension :math:`N`, as we showcase in the implementation of the :math:`\tanh`
 # function below.
 # 
@@ -410,7 +410,7 @@ qp.draw_mpl(be_circuit)(feature_vector, main_wires, ancilla_wires)
 # 
 # 1. a polynomial :math:`P_d` that approximates the target function on :math:`[-1,1]`,
 # 2. the corresponding QSVT phase angles :math:`\{\phi_j\}`, and
-# 3. a sequence of projector-controlled phase shifts that implement the QSVT “signal processing” loop.
+# 3. a sequence of projector-controlled phase shifts that implement the QSVT "signal processing" loop.
 # 
 
 def ProjCtrlPhaseShift(control_wires, target_wire, phi):
@@ -566,7 +566,7 @@ plt.show()
 # rather, it is to demonstrate that the NTCA layer can be inserted into an end-to-end differentiable
 # pipeline and used as an activation function inside a trainable quantum model.
 # 
-# As a broader perspective, the same “linear mixing + elementwise nonlinearity” motif underpins more
+# As a broader perspective, the same "linear mixing + elementwise nonlinearity" motif underpins more
 # advanced architectures. Recent work has explored the feasibility of quantum implementations of
 # transformer-style inference under various access models and resource assumptions
 # [#qtransformer]_. The QMLP here should be viewed as a minimal instance of
@@ -670,7 +670,7 @@ accuracy(best_weight, data, labels)
 # ----------
 # 
 # Nonlinear functions are difficult to implement in quantum algorithms because quantum dynamics are
-# linear: a closed system evolves unitarily. When quantum algorithms exhibit “nonlinear-looking”
+# linear: a closed system evolves unitarily. When quantum algorithms exhibit "nonlinear-looking"
 # behavior, it typically comes from measurement and conditioning. NTCA makes this mechanism
 # systematic: it converts amplitude data into spectral data (via a block encoding), applies a
 # polynomial approximation using QSVT, and extracts the transformed amplitudes through postselection.
@@ -688,7 +688,7 @@ accuracy(best_weight, data, labels)
 # - A systematic bridge from amplitudes to nonlinearity: NTCA enables elementwise maps :math:`\psi_i \mapsto f(\psi_i)` by turning amplitudes into an operator spectrum that QSVT can transform. 
 # - Clear resource story: the block-encoding construction uses a constant number of calls to the state-preparation routine, while the main accuracy–cost knob is the polynomial degree :math:`d` (QSVT uses :math:`O(d)` applications of the block encoding). 
 # - Broad applicability: while we demonstrated :math:`\tanh`, the same workflow applies to many bounded functions that admit good polynomial approximations on :math:`[-1,1]`. 
-# - QML integration: NTCA can be used as an activation layer between trainable “linear” quantum layers, enabling MLP-style architectures in amplitude-based quantum pipelines.
+# - QML integration: NTCA can be used as an activation layer between trainable "linear" quantum layers, enabling MLP-style architectures in amplitude-based quantum pipelines.
 # 
 # 
 # References
