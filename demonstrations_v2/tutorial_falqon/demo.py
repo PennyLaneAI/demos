@@ -11,6 +11,9 @@ Feedback-Based Quantum Optimization (FALQON)
    tutorial_qaoa_intro Intro to QAOA
    tutorial_qaoa_maxcut QAOA for MaxCut
 
+.. warning::
+
+    This demo is only compatible with PennyLane v0.45 or below.
 
 -----------------------------
 
@@ -134,6 +137,12 @@ nx.draw(graph, with_labels=True, node_color="#e377c2", pos=positions)
 plt.show()
 
 ######################################################################
+# .. figure:: ../_static/demonstration_assets/falqon/falqon_graph.png
+#     :align: center
+#     :width: 60%
+#     :alt: The five-vertex graph used for the MaxClique problem
+#     :target: javascript:void(0);
+#
 # We must first encode this combinatorial problem into a cost Hamiltonian :math:`H_c.` This ends up being
 #
 # .. math:: H_c = \frac{3}{4} \sum_{(i, j) \in E(\bar{G})} (Z_i Z_j - Z_i - Z_j) + \displaystyle\sum_{i \in V(G)} Z_i,
@@ -164,6 +173,17 @@ print("Driver Hamiltonian")
 print(driver_h)
 
 ######################################################################
+# .. rst-class:: sphx-glr-script-out
+#
+#
+#  .. code-block:: none
+#
+#      Cost Hamiltonian
+#      0.75 * (Z(0) @ Z(3)) + -0.75 * Z(0) + -0.75 * Z(3) + 0.75 * (Z(0) @ Z(4)) + -0.75 * Z(0) + -0.75 * Z(4) + 0.75 * (Z(1) @ Z(3)) + -0.75 * Z(1) + -0.75 * Z(3) + 0.75 * (Z(2) @ Z(4)) + -0.75 * Z(2) + -0.75 * Z(4) + 0.75 * (Z(3) @ Z(4)) + -0.75 * Z(3) + -0.75 * Z(4) + 1.0 * Z(0) + 1.0 * Z(1) + 1.0 * Z(2) + 1.0 * Z(3) + 1.0 * Z(4)
+#      Driver Hamiltonian
+#      1 * X(0) + 1 * X(1) + 1 * X(2) + 1 * X(3) + 1 * X(4)
+#
+#
 # One of the main ingredients in the FALQON algorithm is the operator :math:`i [H_d, H_c].` In
 # the case of MaxClique, we can write down the commutator :math:`[H_d, H_c]` explicitly:
 #
@@ -212,6 +232,15 @@ print("MaxClique Commutator")
 print(build_hamiltonian(graph))
 
 ######################################################################
+# .. rst-class:: sphx-glr-script-out
+#
+#
+#  .. code-block:: none
+#
+#      MaxClique Commutator
+#      1.0 * 1.5 * (Y(0) @ Z(3) + -1 * Y(0)) + 1.0 * 1.5 * (Y(0) @ Z(4) + -1 * Y(0)) + 1.0 * 2 * Y(0) + 1.0 * 1.5 * (Y(1) @ Z(3) + -1 * Y(1)) + 1.0 * 2 * Y(1) + 1.0 * 1.5 * (Y(2) @ Z(4) + -1 * Y(2)) + 1.0 * 2 * Y(2) + 1.0 * 1.5 * (Z(0) @ Y(3) + -1 * Y(3)) + 1.0 * 1.5 * (Z(1) @ Y(3) + -1 * Y(3)) + 1.0 * 1.5 * (Y(3) @ Z(4) + -1 * Y(3)) + 1.0 * 2 * Y(3) + 1.0 * 1.5 * (Z(0) @ Y(4) + -1 * Y(4)) + 1.0 * 1.5 * (Z(2) @ Y(4) + -1 * Y(4)) + 1.0 * 1.5 * (Z(3) @ Y(4) + -1 * Y(4)) + 1.0 * 2 * Y(4)
+#
+#
 # .. note::
 #
 #     For general graphs, the commutator :math:`i[H_d, H_c]` can also be computed
@@ -313,6 +342,12 @@ plt.ylabel("Cost Function Value")
 plt.show()
 
 ######################################################################
+# .. figure:: ../_static/demonstration_assets/falqon/cost_convergence.png
+#     :align: center
+#     :width: 70%
+#     :alt: Cost function value decreasing over FALQON iterations
+#     :target: javascript:void(0);
+#
 # The expectation value decreases!
 #
 # To get a better understanding of the performance of the FALQON algorithm,
@@ -338,6 +373,12 @@ plt.ylabel("Measurement Probability")
 plt.show()
 
 ######################################################################
+# .. figure:: ../_static/demonstration_assets/falqon/falqon_probs.png
+#     :align: center
+#     :width: 70%
+#     :alt: Measurement probability of each bit string after running FALQON
+#     :target: javascript:void(0);
+#
 # The bit string occurring with the highest probability is the state :math:`|28\rangle = |11100\rangle.`
 # This corresponds to nodes :math:`0`, :math:`1`, and :math:`2,` which is precisely the maximum clique.
 # FALQON has solved the MaxClique problem 🤩.
@@ -350,6 +391,12 @@ nx.draw(graph, with_labels=True, node_color=cmap, pos=positions)
 plt.show()
 
 ######################################################################
+# .. figure:: ../_static/demonstration_assets/falqon/falqon_solution_graph.png
+#     :align: center
+#     :width: 60%
+#     :alt: The graph with the maximum clique highlighted in blue
+#     :target: javascript:void(0);
+#
 # Benchmarking FALQON
 # -------------------
 #
@@ -426,6 +473,12 @@ nx.draw(new_graph, with_labels=True, node_color="#e377c2", pos=positions)
 plt.show()
 
 ######################################################################
+# .. figure:: ../_static/demonstration_assets/falqon/new_graph.png
+#     :align: center
+#     :width: 60%
+#     :alt: The larger seven-vertex graph used to combine FALQON with QAOA
+#     :target: javascript:void(0);
+#
 # We can now use the PennyLane QAOA module to create a QAOA circuit corresponding to the MaxClique problem. For this
 # demonstration, we set the depth to :math:`5:`
 
@@ -479,6 +532,53 @@ for s in range(steps):
     print("Step {}, Cost = {}".format(s + 1, cost))
 
 ######################################################################
+# .. rst-class:: sphx-glr-script-out
+#
+#
+#  .. code-block:: none
+#
+#      Step 1, Cost = -3.6970396145986464
+#      Step 2, Cost = 0.6227822315037639
+#      Step 3, Cost = -1.852085008214594
+#      Step 4, Cost = -4.5293650911891
+#      Step 5, Cost = -5.948763627993239
+#      Step 6, Cost = -6.188178886322035
+#      Step 7, Cost = -6.265077550715061
+#      Step 8, Cost = -6.317600854983232
+#      Step 9, Cost = -6.359601878541835
+#      Step 10, Cost = -6.390524527821302
+#      Step 11, Cost = -6.393653458272237
+#      Step 12, Cost = -6.365435104513047
+#      Step 13, Cost = -6.150259713608135
+#      Step 14, Cost = -6.21043198467218
+#      Step 15, Cost = -5.583541255341673
+#      Step 16, Cost = -6.55048885550736
+#      Step 17, Cost = -6.400042076898395
+#      Step 18, Cost = -6.512779015830687
+#      Step 19, Cost = -6.165293589954591
+#      Step 20, Cost = -6.649091710251023
+#      Step 21, Cost = -6.4290000729350805
+#      Step 22, Cost = -6.65477598026097
+#      Step 23, Cost = -6.307862538482856
+#      Step 24, Cost = -6.651060165232121
+#      Step 25, Cost = -6.197486828209832
+#      Step 26, Cost = -6.6353218110408765
+#      Step 27, Cost = -6.093706320148122
+#      Step 28, Cost = -6.649222275736627
+#      Step 29, Cost = -6.105379904036456
+#      Step 30, Cost = -6.6638222226699275
+#      Step 31, Cost = -6.117732332172844
+#      Step 32, Cost = -6.669871764163656
+#      Step 33, Cost = -6.102612865681013
+#      Step 34, Cost = -6.678795210569683
+#      Step 35, Cost = -6.097098942422491
+#      Step 36, Cost = -6.689380504249331
+#      Step 37, Cost = -6.094589301376488
+#      Step 38, Cost = -6.701120298702593
+#      Step 39, Cost = -6.092890663913084
+#      Step 40, Cost = -6.715735876697456
+#
+#
 # To conclude, we can check how well FALQON/QAOA solved the optimization problem. We
 # define a circuit which outputs the probabilities of measuring each bit string, and
 # create a bar graph:
@@ -497,6 +597,12 @@ plt.ylabel("Measurement Probability")
 plt.show()
 
 ######################################################################
+# .. figure:: ../_static/demonstration_assets/falqon/new_graph_probs.png
+#     :align: center
+#     :width: 70%
+#     :alt: Measurement probability of each bit string for the combined FALQON and QAOA workflow
+#     :target: javascript:void(0);
+#
 # The state :math:`|112\rangle = |1110000\rangle` occurs with highest probability.
 # This corresponds to nodes :math:`0`, :math:`1,` and :math:`2` of the graph, which is
 # the maximum clique! We have successfully combined FALQON and QAOA to solve a combinatorial
