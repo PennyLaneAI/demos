@@ -1,4 +1,4 @@
-r"""Nonlinear amplitude transformation
+r"""Nonlinear transformation of complex amplitudes
 ===========================================
 
 
@@ -13,8 +13,8 @@ Many challenging problems in machine learning, finance, and fluid dynamics are n
 # operator. In many quantum machine learning settings, especially involving amplitude encoding, the data isn’t
 # stored in an operator at all. Instead, it lives directly in the amplitudes of a quantum state.
 # 
-# Nonlinear amplitude
-# transformation [#ntca]_,
+# Nonlinear transformation of complex amplitudes
+# [#ntca]_,
 # [#importancesampling]_ closes that gap, mapping 
 # :math:`|\psi\rangle = \sum x_i |i\rangle` to a target state
 # :math:`|\phi\rangle \propto \sum f(x_i) |i\rangle`, using only unitary operations, ancillas, and
@@ -127,7 +127,7 @@ Many challenging problems in machine learning, finance, and fluid dynamics are n
 # --------------------------------------------
 # 
 # Here, we build :math:`U_\Psi` explicitly for a small system (:math:`n=2`, so :math:`N=4`) to make
-# the construction tangible. Here n is the number of qubits and :math:`N = 2^n` is the size of the Hilbert space. The code below spells out the walk-style ingredients used in Guo et
+# the construction tangible. Here :math:`n` is the number of qubits and :math:`N = 2^n` is the size of the Hilbert space. The code below spells out the walk-style ingredients used in Guo et
 # al. (2024): 
 # 
 # - a reflection :math:`R`
@@ -677,7 +677,7 @@ accuracy(best_weight, data, labels)
 # The result is a principled way to implement elementwise nonlinear maps on amplitudes without
 # violating linearity.
 # 
-# In this demo, we have implemented the nonlinear amplitude transformation described in Guo et
+# In this demo, we have implemented the nonlinear transformation of complex amplitudes described in Guo et
 # al. (2024) and Rattew and Rebentrost (2024) [#ntca]_,
 # [#importancesampling]_. We verified the diagonal amplitude block encoding on a
 # toy example, applied a :math:`\tanh` nonlinearity via QSVT, and integrated the activation as a layer

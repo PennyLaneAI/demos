@@ -1,5 +1,5 @@
 {
-    "title": "Nonlinear amplitude transformation",
+    "title": "Nonlinear transformation of complex amplitudes",
     "authors": [
         {
             "username": "naixuguo"
@@ -90,7 +90,8 @@
         "url": "https://arxiv.org/abs/2402.16714"
     }
     ],
-    "basedOnPapers": [],
+    "basedOnPapers": ["10.48550/arXiv.2107.10764"
+  ],
     "referencedByPapers": [],
     "relatedContent": [
         {
