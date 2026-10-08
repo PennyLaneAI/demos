@@ -33,7 +33,7 @@ Many challenging problems in machine learning, finance, and fluid dynamics are n
 #   :width: 95%
 #   :align: center
 # 
-#   Figure 1: *A schematic of the nonlinear transformation of complex amplitude method with QSVT*
+#   Figure 1: *A schematic of the nonlinear transformation of complex amplitudes method with QSVT*
 # 
 
 ######################################################################
@@ -128,7 +128,7 @@ Many challenging problems in machine learning, finance, and fluid dynamics are n
 # 
 # Here, we build :math:`U_\Psi` explicitly for a small system (:math:`n=2`, so :math:`N=4`) to make
 # the construction tangible. Here :math:`n` is the number of qubits and :math:`N = 2^n` is the size of the Hilbert space. The code below spells out the walk-style ingredients used in Guo et
-# al. (2024): 
+# al. (2024): 
 # 
 # - a reflection :math:`R`
 # - controlled applications of the state-preparation unitary and its adjoint
@@ -160,7 +160,7 @@ dev = qp.device("lightning.qubit", wires = all_wires)
 
 
 # -----------------------------------------------------------------------------
-#  Implementation of the block‑encoding for real or imaginary
+#  Implementation of the block-encoding for real or imaginary
 #  parts of amplitudes.
 
 # Controlled-Z on multiple controls.  control_values specify which bit value
@@ -251,7 +251,7 @@ def W_adj(base, wires, p, *args, **kwargs):
 
 
 # G_block implements the operator G = W S0 W^† Z_B.  Its adjoint is defined
-# similarly.  See Eq. (9) of Guo *et al.* (2024).
+# similarly.  See Eq. (9) of Guo *et al.* (2024).
 def G(base, wires, p, *args, **kwargs):
     assert len(wires) % 2 == 1
     n = len(wires)//2
@@ -296,7 +296,7 @@ def RealDiagonalBlockEncoding(U, wires, ancilla_wires, p=0, *args, **kwargs):
 # input amplitudes :math:`\{\psi_k\}`. This is the smallest-scale verification that the circuit is
 # implementing the intended "amplitudes :math:`\rightarrow` diagonal operator" transformation before
 # we move on to applying QSVT polynomials.
-# Below we create a simple block‑encoding for :math:`n=2` and inspect its matrix to confirm that its
+# Below we create a simple block-encoding for :math:`n=2` and inspect its matrix to confirm that its
 # diagonal corresponds to the input amplitudes.
 # 
 
@@ -678,7 +678,7 @@ accuracy(best_weight, data, labels)
 # violating linearity.
 # 
 # In this demo, we have implemented the nonlinear transformation of complex amplitudes described in Guo et
-# al. (2024) and Rattew and Rebentrost (2024) [#ntca]_,
+# al. (2024) and Rattew and Rebentrost (2024) [#ntca]_,
 # [#importancesampling]_. We verified the diagonal amplitude block encoding on a
 # toy example, applied a :math:`\tanh` nonlinearity via QSVT, and integrated the activation as a layer
 # inside a small quantum classifier trained on downscaled MNIST.
@@ -686,7 +686,7 @@ accuracy(best_weight, data, labels)
 # Key Takeaways: 
 # 
 # - A systematic bridge from amplitudes to nonlinearity: NTCA enables elementwise maps :math:`\psi_i \mapsto f(\psi_i)` by turning amplitudes into an operator spectrum that QSVT can transform. 
-# - Clear resource story: the block-encoding construction uses a constant number of calls to the state-preparation routine, while the main accuracy–cost knob is the polynomial degree :math:`d` (QSVT uses :math:`O(d)` applications of the block encoding). 
+# - Clear resource story: the block-encoding construction uses a constant number of calls to the state-preparation routine, while the main accuracy-cost knob is the polynomial degree :math:`d` (QSVT uses :math:`O(d)` applications of the block encoding). 
 # - Broad applicability: while we demonstrated :math:`\tanh`, the same workflow applies to many bounded functions that admit good polynomial approximations on :math:`[-1,1]`. 
 # - QML integration: NTCA can be used as an activation layer between trainable "linear" quantum layers, enabling MLP-style architectures in amplitude-based quantum pipelines.
 # 
