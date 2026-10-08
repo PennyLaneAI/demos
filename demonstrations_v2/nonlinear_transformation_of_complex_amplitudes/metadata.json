@@ -1,0 +1,113 @@
+{
+    "title": "Nonlinear transformation of complex amplitudes",
+    "authors": [
+        {
+            "username": "naixuguo"
+        },
+        {
+            "username": "rishabhgupta"
+        },
+        {
+            "username": "georgepwhuang"
+        },
+        {
+            "username": "hyizhak"
+        }
+    ],
+    "executable_stable": true,
+    "executable_latest": true,
+    "dateOfPublication": "2026-10-19T10:00:00+00:00",
+    "dateOfLastModification": "2026-10-19T15:48:14+00:00",
+    "categories": [
+        "Quantum Machine Learning"
+    ],
+    "tags": [],
+    "previewImages": [
+        {
+            "type": "thumbnail",
+            "uri": "/_static/demo_thumbnails/regular_demo_thumbnails/pennylane-demo-nonlinear-transformation-qsvt-thumbnail.png"
+        },
+        {
+            "type": "large_thumbnail",
+            "uri": "/_static/demo_thumbnails/large_demo_thumbnails/pennylane-demo-nonlinear-transformation-qsvt-large-thumbnail.png"
+        }
+    ],
+    "seoDescription": "Learn about the nonlinear transformation of complex amplitudes using QSVT.",
+    "doi": "",
+    "references": [
+        {
+            "id": "blockencoding",
+            "type": "article",
+            "title": "The power of block-encoded matrix powers: improved regression techniques via faster Hamiltonian simulation",
+            "authors": "Shantanav Chakraborty, András Gilyén, Stacey Jeffery",
+            "year": "2018",
+            "journal": "arXiv",
+            "url": "https://arxiv.org/abs/1804.01973"
+        },
+        {
+        "id": "qsvt",
+        "type": "article",
+        "title": "Quantum singular value transformation and beyond: exponential improvements for quantum matrix arithmetics",
+        "authors": "András Gilyén, Yuan Su, Guang Hao Low, Nathan Wiebe",
+        "year": "2018",
+        "journal": "arXiv",
+        "url": "https://arxiv.org/abs/1806.01838"
+    },
+    {
+        "id": "ntca",
+        "type": "article",
+        "title": "Nonlinear transformation of complex amplitudes via quantum singular value transformation",
+        "authors": "Naixu Guo, Kosuke Mitarai, Keisuke Fujii",
+        "year": "2024",
+        "journal": "Phys. Rev. Research",
+        "url": "https://journals.aps.org/prresearch/abstract/10.1103/PhysRevResearch.6.043227"
+    },
+    {
+        "id": "importancesampling",
+        "type": "article",
+        "title": "Non-Linear Transformations of Quantum Amplitudes: Exponential Improvement, Generalization, and Applications",
+        "authors": "Arthur G. Rattew, Patrick Rebentrost",
+        "year": "2023",
+        "journal": "arXiv",
+        "url": "https://arxiv.org/abs/2309.09839"
+    },
+    {
+        "id": "qaae",
+        "type": "article",
+        "title": "Quantum Amplitude Amplification and Estimation",
+        "authors": "Gilles Brassard, Peter Hoyer, Michele Mosca, Alain Tapp",
+        "year": "2000",
+        "journal": "arXiv",
+        "url": "https://arxiv.org/abs/quant-ph/0005055"
+    },
+    {
+        "id": "qtransformer",
+        "type": "article",
+        "title": "Quantum Transformer: Accelerating model inference via quantum linear algebra",
+        "authors": "Naixu Guo, Zhan Yu, Matthew Choi, Yizhan Han, Aman Agrawal, Kouhei Nakaji, Alán Aspuru-Guzik, Patrick Rebentrost",
+        "year": "2024",
+        "journal": "arXiv",
+        "url": "https://arxiv.org/abs/2402.16714"
+    }
+    ],
+    "basedOnPapers": ["10.48550/arXiv.2107.10764"
+  ],
+    "referencedByPapers": [],
+    "relatedContent": [
+        {
+            "type": "demonstration",
+            "id": "tutorial_magic_state_distillation",
+            "weight": 1.0
+        },
+        {
+            "type": "demonstration",
+            "id": "tutorial_game_of_surface_codes",
+            "weight": 0.5
+        },
+        {
+            "type": "demonstration",
+            "id": "tutorial_lattice_surgery",
+            "weight": 0.5
+        }
+    ]
+}
