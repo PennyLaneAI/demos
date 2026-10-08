@@ -72,7 +72,7 @@ Many challenging problems in machine learning, finance, and fluid dynamics are n
 # So the amplitude vector :math:`{\psi_i}` appears as the first column of :math:`U`. 
 # A column is not a spectrum, so QSVT cannot manipulate it yet. 
 # 
-# The nonlinear amplitude transformation approach resolves this by constructing, from :math:`U` and
+# The nonlinear transformation of complex amplitudes (NTCA) approach resolves this by constructing, from :math:`U` and
 # controlled uses of :math:`U^\dagger`, a new unitary :math:`U_\Psi` whose encoded block is the
 # diagonal operator
 # 
@@ -535,7 +535,7 @@ plt.show()
 # 
 # So far, the demo has focused on the primitive itself: using diagonal block encodings and QSVT to
 # implement an elementwise nonlinear map on amplitude-encoded data. Finally, we showcase the nonlinear
-# transformation of complex amplitude (NTCA) method as a genuine nonlinear activation layer within a
+# transformation of complex amplitudes method as a genuine nonlinear activation layer within a
 # trainable quantum model. We build a small quantum analogue of a two-layer MLP: two trainable linear
 # layers (implemented as parameterized unitaries) separated by a :math:`\tanh` activation implemented
 # via NTCA:

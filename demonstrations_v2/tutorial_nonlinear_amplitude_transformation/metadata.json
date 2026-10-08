@@ -32,7 +32,7 @@
             "uri": "/_static/demo_thumbnails/large_demo_thumbnails/pennylane-demo-nonlinear-transformation-qsvt-large-thumbnail.png"
         }
     ],
-    "seoDescription": "Learn about the nonlinear amplitude transformation using QSVT",
+    "seoDescription": "Learn about the nonlinear transformation of complex amplitudes using QSVT.",
     "doi": "",
     "references": [
         {
