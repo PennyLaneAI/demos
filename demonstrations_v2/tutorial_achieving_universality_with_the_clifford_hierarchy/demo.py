@@ -39,7 +39,7 @@ In other words, Clifford gates map Pauli gates to Pauli gates under conjugation.
 
 What do non-Clifford gates map Pauli gates to? Does that mapping help us simplify computation too? 
 
-The Clifford Hierarchy
+The Clifford hierarchy
 ---------------------------------
 
 It turns out that there is a structure connecting infinite classes of gates called the Clifford hierarchy [#gottesmanchuang]_. Exploiting this hierarchy can help us implement any non-Clifford gate fault-tolerantly. 

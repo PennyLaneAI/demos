@@ -1,4 +1,4 @@
-r"""Intro to the Quantum Fourier Transform
+r"""Intro to the quantum Fourier transform
 =============================================================
 
 The quantum Fourier transform (QFT) is one of the most important building blocks in quantum algorithms, famously used in :doc:`quantum phase estimation <demos/tutorial_qpe>` and `Shor's factoring algorithm <https://en.wikipedia.org/wiki/Shor%27s_algorithm>`__.
@@ -12,7 +12,7 @@ In this tutorial you will learn how to define this operation and how to build it
     :width: 60%
     :target: javascript:void(0)
 
-Defining the Quantum Fourier Transform
+Defining the quantum Fourier transform
 ---------------------------------------
 
 To appreciate the QFT, it will help to start with its classical counterpart.
@@ -49,7 +49,7 @@ print(np.round(qft_inverse.matrix(), 2))
 #############################################
 # The QFT achieves something remarkable: it is able to transform an :math:`N`-dimensional vector encoded in a system of only :math:`n=\log_2 N` qubits. As we now explain, this is possible using only  :math:`\mathcal{O}(n^2)` operations, as opposed to  :math:`\mathcal{O}(n2^n)` steps required for the DFT.
 #
-# Building the Quantum Fourier Transform
+# Building the quantum Fourier transform
 # --------------------------------------
 #
 # To implement the QFT on a quantum computer, it is useful to express the transformation using the equivalent representation:

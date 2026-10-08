@@ -89,7 +89,7 @@ If you prefer to set up your demo manually, follow these steps:
 While you are encouraged to be creative with your demo, please keep the following guidelines in mind:
 
 - **License:** All contributions must be made under the Apache 2.0 license.
-- **Title:** The title should be clear and concise. If based on a research paper, the title should be similar to the paper being implemented.
+- **Title:** The title should be clear and concise. If based on a research paper, the title should be similar to the paper being implemented. As a convention use [sentence case](https://apastyle.apa.org/style-grammar-guidelines/capitalization/sentence-case) capitalization.
 - **Summary:** All demos should include a 1-3 sentence summary below the title. This summary should clearly state the goal and outcome of the demo and link to any relevant papers or resources used.
 - **Code Clarity:** Code should be clearly commented and explained, either through ReST-formatted comments or standard Python comments.
 - **Reproducibility:** If your content involves random variables or outputs, a fixed seed should be set for reproducibility.
