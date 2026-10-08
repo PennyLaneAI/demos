@@ -1,5 +1,5 @@
 r"""Nonlinear transformation of complex amplitudes
-===========================================
+===============================================================
 
 
 Many challenging problems in machine learning, finance, and fluid dynamics are nonlinear. Yet, quantum mechanics is inherently linear. So how can you produce a nonlinear function on a quantum computer that can only implement linear ones? 
