@@ -1,6 +1,10 @@
 r"""Fast optimization of instantaneous quantum polynomial circuits
 ===============================================================
 
+.. warning::
+
+    This demo is only compatible with PennyLane v0.45 or below.
+
 Instantaneous Quantum Polynomial (IQP) circuits are a class of circuits that are expected to be hard
 to sample from using classical computers [#marshall1]_. In this demo, we take a look at the `IQPopt <https://github.com/XanaduAI/iqpopt>`__ package [#recio1]_,
 which shows that despite this, such circuits can still be optimized efficiently!
@@ -156,7 +160,7 @@ def penn_iqp_circuit(params: np.ndarray, gates: list, op: np.ndarray, n_qubits: 
     Returns:
         qp.measurements.ExpectationMP: PennyLane circuit with an expectation value.
     """
-    qp.IQP(weights=params, wires=list(range(n_qubits)), pattern=gates)
+    qp.IQP(weights=params, num_wires=n_qubits, pattern=gates)
     obs = penn_obs(op)
     return qp.expval(obs)
 
@@ -188,6 +192,13 @@ penn_op_expval = penn_iqp_op_expval(params, gates, op, n_qubits)
 print("Expectation value: ", penn_op_expval)
 
 ######################################################################
+# .. rst-class:: sphx-glr-script-out
+#
+#
+#  .. code-block:: none
+#
+#      Expectation value:  0.08001240207360882
+#
 #
 # Estimating expectation values with IQPopt
 # -----------------------------------------
@@ -260,6 +271,15 @@ print("Expectation value:  ", expval)
 print("Standard error: ", std)
 
 ######################################################################
+# .. rst-class:: sphx-glr-script-out
+#
+#
+#  .. code-block:: none
+#
+#      Expectation value:   [0.0870145]
+#      Standard error:  [0.01888795]
+#
+#
 # Since the calculation is stochastic, the result is not exactly the same as
 # the one obtained with PennyLane's ``qp.expval`` method. However, as we can see, they are within the standard error `std`. You can try
 # increasing ``n_samples`` in order to obtain a more accurate approximation.
@@ -274,6 +294,15 @@ print("Expectation values: ", expvals)
 print("Standard errors: ", stds)
 
 ######################################################################
+# .. rst-class:: sphx-glr-script-out
+#
+#
+#  .. code-block:: none
+#
+#      Expectation values:  [0.02647049 0.03355077 0.23011003]
+#      Standard errors:  [0.01705229 0.01207979 0.01708047]
+#
+#
 # With PennyLane's simulator method, surpassing 30 qubits would be extremely time-consuming. However, with :func:`~pennylane.qnn.iqp_expval`, we can scale far beyond that with ease.
 #
 n_qubits = 1000
@@ -299,6 +328,14 @@ print("Expectation value: ", expval)
 print("Standard error: ", std)
 
 ######################################################################
+# .. rst-class:: sphx-glr-script-out
+#
+#
+#  .. code-block:: none
+#
+#      Expectation value:  [0.03169782]
+#      Standard error:  [0.02200987]
+#
 #
 # Sampling and probabilities
 # --------------------------
@@ -335,6 +372,18 @@ except Exception as e:
     print(e)
 
 ######################################################################
+# .. rst-class:: sphx-glr-script-out
+#
+#
+#  .. code-block:: none
+#
+#      Sample:  [[1 1 0]]
+#      Probabilities:  [0.43955275 0.12216668 0.04787031 0.02942319 0.02424693 0.0480718
+#       0.16782596 0.12084238]
+#      vector
+#      vector
+#
+#
 # As we can see, we can't sample or know the probabilities of the circuit for the large one. The only
 # efficient approximation algorithm we have is for the calculation of expectation values. Let's see
 # how time scales for each of the methods using a logarithmic plot.
@@ -386,6 +435,12 @@ plt.legend()
 plt.show()
 
 ######################################################################
+# .. figure:: ../_static/demonstration_assets/iqpopt/timing_scaling.png
+#     :align: center
+#     :width: 70%
+#     :alt: Runtime versus number of qubits for expectation values, sampling, and probabilities
+#     :target: javascript:void(0);
+#
 # In the previous figure, you can see that the time to sample or compute probabilities scales
 # exponentially, however expectation values are very efficient (the scaling can be shown to be
 # linear).
@@ -437,6 +492,33 @@ plt.plot(trainer.losses) # plot the loss curve
 plt.show()
 
 ######################################################################
+# .. figure:: ../_static/demonstration_assets/iqpopt/loss_curve.png
+#     :align: center
+#     :width: 70%
+#     :alt: Loss during training of the small IQP circuit, approaching -3
+#     :target: javascript:void(0);
+#
+# .. rst-class:: sphx-glr-script-out
+#
+#
+#  .. code-block:: none
+#
+#      Training Progress:   0%|          | 0/1000 [00:00<?, ?it/s, elapsed time=0, loss=0, total time=0]
+#      Training Progress:   0%|          | 0/1000 [00:00<?, ?it/s, loss=-0.681963, elapsed time=0.15, total time=0.4]
+#      Training Progress:  10%|█         | 100/1000 [00:00<00:01, 675.71it/s, loss=-0.681963, elapsed time=0.15, total time=0.4]
+#      Training Progress:  10%|█         | 100/1000 [00:00<00:01, 675.71it/s, loss=-0.967715, elapsed time=0.01, total time=0.41]
+#      Training Progress:  20%|██        | 200/1000 [00:00<00:01, 675.71it/s, loss=-1.622085, elapsed time=0.01, total time=0.42]
+#      Training Progress:  30%|███       | 300/1000 [00:00<00:01, 675.71it/s, loss=-2.129662, elapsed time=0.01, total time=0.42]
+#      Training Progress:  40%|████      | 400/1000 [00:00<00:00, 675.71it/s, loss=-2.489403, elapsed time=0, total time=0.43]
+#      Training Progress:  50%|█████     | 500/1000 [00:00<00:00, 675.71it/s, loss=-2.739546, elapsed time=0.01, total time=0.43]
+#      Training Progress:  60%|██████    | 600/1000 [00:00<00:00, 675.71it/s, loss=-2.866404, elapsed time=0, total time=0.44]
+#      Training Progress:  70%|███████   | 700/1000 [00:00<00:00, 675.71it/s, loss=-2.930498, elapsed time=0, total time=0.44]
+#      Training Progress:  80%|████████  | 800/1000 [00:00<00:00, 675.71it/s, loss=-2.966148, elapsed time=0.01, total time=0.45]
+#      Training Progress:  90%|█████████ | 900/1000 [00:00<00:00, 675.71it/s, loss=-2.984255, elapsed time=0.01, total time=0.45]
+#      Training Progress: 100%|██████████| 1000/1000 [00:00<00:00, 5115.39it/s, loss=-2.984255, elapsed time=0.01, total time=0.45]
+#      Training has not converged after 1000 steps
+#
+#
 # This training process finds its global minimum at loss = -3.0, which is the minimum possible with
 # the defined loss function.
 #
@@ -478,6 +560,14 @@ mmd = genq.mmd_loss_samples(X1, X2, sigma)
 print(mmd)
 
 ######################################################################
+# .. rst-class:: sphx-glr-script-out
+#
+#
+#  .. code-block:: none
+#
+#      0.005407984582934511
+#
+#
 # This metric can also be estimated efficiently with expectation values of Pauli Z operators only [#recio1]_.
 # This means that if we have an ``IqpSimulator`` object, we can also estimate the MMD loss.
 #
@@ -511,6 +601,15 @@ mmd = genq.mmd_loss_iqp(params,
 print("MMD: ", mmd)
 
 ######################################################################
+# .. rst-class:: sphx-glr-script-out
+#
+#
+#  .. code-block:: none
+#
+#      Sigma: 0.8819171036881969
+#      MMD:  0.02412621797833021
+#
+#
 # Now, similar to what we did a few sections back in *Optimizing a circuit*, this function can be used
 # with a ``Trainer`` object to train a quantum generative model given as a parameterized IQP circuit.
 #
@@ -538,6 +637,62 @@ plt.plot(trainer.losses)
 plt.show()
 
 ######################################################################
+# .. figure:: ../_static/demonstration_assets/iqpopt/mmd_loss.png
+#     :align: center
+#     :width: 70%
+#     :alt: MMD loss during training of the 20-qubit generative IQP circuit
+#     :target: javascript:void(0);
+#
+# .. rst-class:: sphx-glr-script-out
+#
+#
+#  .. code-block:: none
+#
+#      Training Progress:   0%|          | 0/200 [00:00<?, ?it/s, elapsed time=0, loss=0, total time=0]
+#      Training Progress:   0%|          | 0/200 [00:00<?, ?it/s, loss=0.033285, elapsed time=0.46, total time=0.55]
+#      Training Progress:   5%|▌         | 10/200 [00:00<00:08, 21.84it/s, loss=0.033285, elapsed time=0.46, total time=0.55]
+#      Training Progress:   5%|▌         | 10/200 [00:00<00:08, 21.84it/s, loss=0.033205, elapsed time=0.26, total time=0.81]
+#      Training Progress:  10%|█         | 20/200 [00:00<00:06, 29.12it/s, loss=0.033205, elapsed time=0.26, total time=0.81]
+#      Training Progress:  10%|█         | 20/200 [00:00<00:06, 29.12it/s, loss=0.013384, elapsed time=0.24, total time=1.05]
+#      Training Progress:  15%|█▌        | 30/200 [00:00<00:05, 33.90it/s, loss=0.013384, elapsed time=0.24, total time=1.05]
+#      Training Progress:  15%|█▌        | 30/200 [00:01<00:05, 33.90it/s, loss=0.006550, elapsed time=0.24, total time=1.29]
+#      Training Progress:  20%|██        | 40/200 [00:01<00:04, 36.78it/s, loss=0.006550, elapsed time=0.24, total time=1.29]
+#      Training Progress:  20%|██        | 40/200 [00:01<00:04, 36.78it/s, loss=0.001678, elapsed time=0.24, total time=1.52]
+#      Training Progress:  25%|██▌       | 50/200 [00:01<00:03, 38.64it/s, loss=0.001678, elapsed time=0.24, total time=1.52]
+#      Training Progress:  25%|██▌       | 50/200 [00:01<00:03, 38.64it/s, loss=0.000849, elapsed time=0.24, total time=1.76]
+#      Training Progress:  30%|███       | 60/200 [00:01<00:03, 39.60it/s, loss=0.000849, elapsed time=0.24, total time=1.76]
+#      Training Progress:  30%|███       | 60/200 [00:01<00:03, 39.60it/s, loss=0.001224, elapsed time=0.25, total time=2.01]
+#      Training Progress:  35%|███▌      | 70/200 [00:01<00:03, 39.86it/s, loss=0.001224, elapsed time=0.25, total time=2.01]
+#      Training Progress:  35%|███▌      | 70/200 [00:02<00:03, 39.86it/s, loss=0.000518, elapsed time=0.25, total time=2.26]
+#      Training Progress:  40%|████      | 80/200 [00:02<00:03, 39.88it/s, loss=0.000518, elapsed time=0.25, total time=2.26]
+#      Training Progress:  40%|████      | 80/200 [00:02<00:03, 39.88it/s, loss=0.000182, elapsed time=0.24, total time=2.5]
+#      Training Progress:  45%|████▌     | 90/200 [00:02<00:02, 40.61it/s, loss=0.000182, elapsed time=0.24, total time=2.5]
+#      Training Progress:  45%|████▌     | 90/200 [00:02<00:02, 40.61it/s, loss=-0.000042, elapsed time=0.24, total time=2.74]
+#      Training Progress:  50%|█████     | 100/200 [00:02<00:02, 40.87it/s, loss=-0.000042, elapsed time=0.24, total time=2.74]
+#      Training Progress:  50%|█████     | 100/200 [00:02<00:02, 40.87it/s, loss=-0.000150, elapsed time=0.24, total time=2.98]
+#      Training Progress:  55%|█████▌    | 110/200 [00:02<00:02, 41.18it/s, loss=-0.000150, elapsed time=0.24, total time=2.98]
+#      Training Progress:  55%|█████▌    | 110/200 [00:03<00:02, 41.18it/s, loss=0.000010, elapsed time=0.24, total time=3.21]
+#      Training Progress:  60%|██████    | 120/200 [00:03<00:01, 41.50it/s, loss=0.000010, elapsed time=0.24, total time=3.21]
+#      Training Progress:  60%|██████    | 120/200 [00:03<00:01, 41.50it/s, loss=-0.000325, elapsed time=0.24, total time=3.45]
+#      Training Progress:  65%|██████▌   | 130/200 [00:03<00:01, 41.57it/s, loss=-0.000325, elapsed time=0.24, total time=3.45]
+#      Training Progress:  65%|██████▌   | 130/200 [00:03<00:01, 41.57it/s, loss=-0.000167, elapsed time=0.24, total time=3.69]
+#      Training Progress:  70%|███████   | 140/200 [00:03<00:01, 41.56it/s, loss=-0.000167, elapsed time=0.24, total time=3.69]
+#      Training Progress:  70%|███████   | 140/200 [00:03<00:01, 41.56it/s, loss=-0.000352, elapsed time=0.25, total time=3.94]
+#      Training Progress:  75%|███████▌  | 150/200 [00:03<00:01, 41.25it/s, loss=-0.000352, elapsed time=0.25, total time=3.94]
+#      Training Progress:  75%|███████▌  | 150/200 [00:04<00:01, 41.25it/s, loss=-0.000169, elapsed time=0.24, total time=4.18]
+#      Training Progress:  80%|████████  | 160/200 [00:04<00:00, 41.39it/s, loss=-0.000169, elapsed time=0.24, total time=4.18]
+#      Training Progress:  80%|████████  | 160/200 [00:04<00:00, 41.39it/s, loss=-0.000198, elapsed time=0.24, total time=4.42]
+#      Training Progress:  85%|████████▌ | 170/200 [00:04<00:00, 41.29it/s, loss=-0.000198, elapsed time=0.24, total time=4.42]
+#      Training Progress:  85%|████████▌ | 170/200 [00:04<00:00, 41.29it/s, loss=-0.000231, elapsed time=0.24, total time=4.67]
+#      Training Progress:  90%|█████████ | 180/200 [00:04<00:00, 41.29it/s, loss=-0.000231, elapsed time=0.24, total time=4.67]
+#      Training Progress:  90%|█████████ | 180/200 [00:04<00:00, 41.29it/s, loss=-0.000303, elapsed time=0.25, total time=4.91]
+#      Training Progress:  95%|█████████▌| 190/200 [00:04<00:00, 41.13it/s, loss=-0.000303, elapsed time=0.25, total time=4.91]
+#      Training Progress:  95%|█████████▌| 190/200 [00:05<00:00, 41.13it/s, loss=-0.000243, elapsed time=0.25, total time=5.16]
+#      Training Progress: 100%|██████████| 200/200 [00:05<00:00, 40.68it/s, loss=-0.000243, elapsed time=0.25, total time=5.16]
+#      Training Progress: 100%|██████████| 200/200 [00:05<00:00, 39.43it/s, loss=-0.000243, elapsed time=0.25, total time=5.16]
+#      Training has not converged after 200 steps
+#
+#
 # We can now try to see how well this generative IQP circuit resembles the ground truth. Since we are
 # not working with a large number of qubits, we can sample from the circuit with the PennyLane
 # machinery. We can then compare our trained and untrained samples with the ground truth through a
@@ -555,6 +710,12 @@ plt.legend()
 plt.show()
 
 ######################################################################
+# .. figure:: ../_static/demonstration_assets/iqpopt/bitstring_weights.png
+#     :align: center
+#     :width: 70%
+#     :alt: Bitstring-weight histograms for the untrained circuit, trained circuit, and ground truth
+#     :target: javascript:void(0);
+#
 # As we can see the trained circuit closely resembles the ground truth distribution. Although we won't
 # cover it in this demo, the package also contains tools to evaluate generative models and investigate
 # model dropping via the Kernel Generalized Empirical Likelihood [#ravuri]_.
