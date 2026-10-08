@@ -316,13 +316,7 @@ def be_circuit(feature_vector, main_wires, ancilla_wires):
     features=feature_vector,
     normalize=True)
     return qp.probs(ancilla_wires)
-# @qp.qnode(qp.device("lightning.qubit", wires=main_qubits))
-# def prep_state(features):
-#    qp.AmplitudeEmbedding(features, wires=range(main_qubits), normalize=True)
-#    return qp.state()
-#
-# psi = prep_state(feature_vector)
-# print("Prepared |psi> amplitudes:", psi)
+
 ######################################################################
 # We now compute the matrix of the full unitary and extract its top-left :math:`4\times 4` block,
 # which should be diagonal with entries equal to the normalized feature
