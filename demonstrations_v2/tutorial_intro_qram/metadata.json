@@ -1,0 +1,80 @@
+{
+    "title": "Intro to quantum random access memory (QRAM)",
+    "authors": [
+        {
+            "username": "dren"
+        }
+    ],
+    "executable_stable": true,
+    "executable_latest": true,
+    "dateOfPublication": "2026-04-23T15:00:00+00:00",
+    "dateOfLastModification": "2026-04-23T15:00:00+00:00",
+    "categories": [
+        "Algorithms",
+        "Quantum Computing"
+    ],
+    "tags": [],
+    "previewImages": [
+        {
+            "type": "thumbnail",
+            "uri": "/_static/demo_thumbnails/regular_demo_thumbnails/thumbnail_qrom.png"
+        },
+        {
+            "type": "large_thumbnail",
+            "uri": "/_static/demo_thumbnails/large_demo_thumbnails/thumbnail_large_qrom.png"
+        }
+    ],
+    "seoDescription": "Learn how to enter data into a quantum computer with a quantum read-only memory (QROM) approach.",
+    "doi": "",
+    "references": [
+        {
+            "id": "unary",
+            "type": "article",
+            "title": "Encoding Electronic Spectra in Quantum Circuits with Linear T Complexity",
+            "authors": "Ryan Babbush, Craig Gidney, Dominic W. Berry, Nathan Wiebe, Jarrod McClean, Alexandru Paler, Austin Fowler, Hartmut Neven",
+            "year": "2018",
+            "publisher": "",
+            "journal": "Physical Review X",
+            "url": "http://dx.doi.org/10.1103/PhysRevX.8.041015"
+        },
+        {
+            "id": "selectSwap",
+            "type": "article",
+            "title": "Trading T-gates for dirty qubits in state preparation and unitary synthesis",
+            "authors": "Guang Hao Low, Vadym Kliuchnikov, Luke Schaeffer",
+            "year": "2018",
+            "publisher": "",
+            "journal": "arXiv",
+            "url": "https://arxiv.org/abs/1812.00954"
+        },
+        {
+            "id": "cleanQROM",
+            "type": "article",
+            "title": "Qubitization of Arbitrary Basis Quantum Chemistry Leveraging Sparsity and Low Rank Factorization",
+            "authors": "Dominic W. Berry, Craig Gidney, Mario Motta, Jarrod R. McClean, Ryan Babbush",
+            "year": "2019",
+            "publisher": "",
+            "journal": "Quantum",
+            "url": "http://dx.doi.org/10.22331/q-2019-12-02-208"
+        },
+        {
+            "id": "StatePrep",
+            "type": "article",
+            "title": "Creating superpositions that correspond to efficiently integrable probability distributions",
+            "authors": "Lov Grover, Terry Rudolph",
+            "year": "2002",
+            "publisher": "",
+            "journal": "arXiv",
+            "url": "https://arxiv.org/abs/quant-ph/0208112"
+        }
+    ],
+    "basedOnPapers": [],
+    "referencedByPapers": [],
+    "relatedContent": [
+        {
+            "type": "demonstration",
+            "id": "tutorial_initial_state_preparation",
+            "weight": 1.0
+        }
+    ]
+}
