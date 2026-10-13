@@ -1,5 +1,5 @@
 r"""
-Quantum Teleportation
+Quantum teleportation
 =====================
 
 This tutorial walks you through a popular quantum information technique known as
@@ -19,7 +19,7 @@ principle of deferred measurement. Let's dive in!
 
 |
 
-Goal: Transferring Quantum Information
+Goal: Transferring quantum information
 --------------------------------------
 
 Suppose there are two researchers named Alice and Bob, and Alice wants to send
@@ -45,7 +45,7 @@ An overview of the protocol can be seen here:
     :align: center
     :width: 75%
 
-Problem: The No-Cloning Theorem
+Problem: The no-cloning theorem
 -------------------------------
 
 You might be wondering why we need to teleport a state at all. Can't Alice
@@ -80,7 +80,7 @@ squares to itself. The only valid values for the inner product then are 1 and 0.
 if the inner product is 1, the states are the same; on the other hand, if the inner
 product is 0, the states are orthogonal. Therefore, we can't clone arbitrary states!
 
-Solution: Quantum Teleportation
+Solution: Quantum teleportation
 ----------------------------------
 
 We will now walk through how to share quantum information without cloning it, one

@@ -1,8 +1,8 @@
-r"""Qubit and gate trade-offs in Qubitized Quantum Phase Estimation
+r"""Qubit and gate trade-offs in qubitized quantum phase estimation
 ======================================================================
 
 
-:doc:`Quantum Phase Estimation (QPE) <demos/tutorial_qpe>` is a powerful quantum algorithm
+:doc:`Quantum phase estimation (QPE) <demos/tutorial_qpe>` is a powerful quantum algorithm
 that allows us to estimate the eigenvalues of a Hamiltonian with high precision.
 The most advanced variants of QPE rely on
 :doc:`qubitization <demos/tutorial_qubitization>`  to encode chemical Hamiltonians  as unitary operators. This leverages a :doc:`linear combination of unitaries (LCU) <demos/tutorial_lcu_blockencoding>` decomposition to create a
@@ -102,7 +102,7 @@ femoco = qre.THCHamiltonian(num_orbitals=76, tensor_rank=450, one_norm=1201.5)
 #
 # Defining the error budget
 # -------------------------
-# We begin by fixing the target accuracy for the Quantum Phase Estimation (QPE) routine to :math:`\epsilon_{QPE} = 0.0016 \textrm{Ha}` ,
+# We begin by fixing the target accuracy for the quantum phase estimation (QPE) routine to :math:`\epsilon_{QPE} = 0.0016 \textrm{Ha}` ,
 # which dictates the total number of QPE iterations required:
 #
 # .. math::
