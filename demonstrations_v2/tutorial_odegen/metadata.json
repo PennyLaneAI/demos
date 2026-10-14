@@ -5,8 +5,8 @@
             "username": "Qottmann"
         }
     ],
-    "executable_stable": true,
-    "executable_latest": true,
+    "executable_stable": false,
+    "executable_latest": false,
     "dateOfPublication": "2023-12-12T00:00:00+00:00",
     "dateOfLastModification": "2026-06-01T15:48:14+00:00",
     "categories": [

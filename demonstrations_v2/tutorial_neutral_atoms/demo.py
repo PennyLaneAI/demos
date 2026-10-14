@@ -14,6 +14,10 @@ Neutral-atom quantum computers
    tutorial_sc_qubits Quantum computing with superconducting qubits
    tutorial_photonics Photonic quantum computing
 
+.. warning::
+
+    This demo is only compatible with PennyLane v0.45 or below.
+
 In the last few years, a new quantum technology has gained the attention of the quantum computing
 community. Thanks to recent developments in optical-tweezer technology,
 neutral atoms can be used as robust and versatile qubits. In 2022, a collaboration between QuEra and
@@ -341,6 +345,11 @@ plt.title(f"Blackman Window Pulse (duration = {duration})")
 plt.plot(t_points, y_points, c="#66c4ed")
 plt.show()
 ##############################################################################
+# .. figure:: ../_static/demonstration_assets/neutral_atoms/blackman_window.png
+#     :align: center
+#     :width: 60%
+#     :alt: A Blackman window pulse of duration 0.2 that peaks at amplitude 1
+#     :target: javascript:void(0);
 #
 # We will stick to using Blackman window pulses for the rest of this tutorial.
 #
@@ -373,6 +382,13 @@ def state_evolution():
 
 print("The final state is {}".format(state_evolution().round(2)))
 ##############################################################################
+# .. rst-class:: sphx-glr-script-out
+#
+#
+#  .. code-block:: none
+#
+#      The final state is [ 0.86+0.j -0.5 -0.j]
+#
 #
 # We see that the electronic state changes indeed. As a sanity check, let's see what happens when the detuning is
 # large, such that we expect not to drive the transition.
@@ -397,6 +413,13 @@ print(
     "The final state is {}, which is the initial state!".format(state_evolution_detuned().round(2))
 )
 ##############################################################################
+# .. rst-class:: sphx-glr-script-out
+#
+#
+#  .. code-block:: none
+#
+#      The final state is [1.-0.j 0.-0.j], which is the initial state!
+#
 #
 # All works as expected!
 #
@@ -452,6 +475,19 @@ print(
     )
 )
 ##############################################################################
+# .. rst-class:: sphx-glr-script-out
+#
+#
+#  .. code-block:: none
+#
+#      For theta = pi/2, the matrix for the pulse-based RX gate is
+#       [[0.71+0.j   0.  -0.71j]
+#       [0.  -0.71j 0.71+0.j  ]]
+#
+#      The matrix for the exact RX(pi/2) gate is
+#       [[0.71+0.j   0.  -0.71j]
+#       [0.  -0.71j 0.71+0.j  ]]
+#
 #
 # A similar argument can be made for :math:`RY` rotations, with the only difference being that :math:`\phi = -\pi/2.`
 
@@ -475,6 +511,19 @@ print(
     )
 )
 ##############################################################################
+# .. rst-class:: sphx-glr-script-out
+#
+#
+#  .. code-block:: none
+#
+#      For theta = pi/2, the matrix for the pulse-based RY gate is
+#       [[ 0.71-0.j -0.71-0.j]
+#       [ 0.71-0.j  0.71+0.j]]
+#
+#      The matrix for the exact RY(pi/2) gate is
+#       [[ 0.71+0.j -0.71-0.j]
+#       [ 0.71+0.j  0.71+0.j]]
+#
 #
 # We have implemented two orthogonal rotations in our neutral-atom device. This means that we have a universal set of single-qubit gates:
 # all one-qubit gates can be implemented using some combination of :math:`RX` and :math:`RY!` The easy part is over—now we need to
@@ -573,6 +622,11 @@ plt.text(1.2, 25, "|0r>-|r0>", c="#66c4ed")
 plt.text(1.25, 6, "|00>", c="#e565e5")
 plt.show()
 ##############################################################################
+# .. figure:: ../_static/demonstration_assets/neutral_atoms/rydberg_energy_levels.png
+#     :align: center
+#     :width: 60%
+#     :alt: Energy levels of two atoms versus their separation, showing the Rydberg blockade
+#     :target: javascript:void(0);
 #
 # Let's analyze what we see above. When the atoms are far away, the energy levels are evenly spaced. This means that if a pulse
 # excites the system from :math:`\vert 00 \rangle` (both atoms in the ground state) to :math:`\vert 0r \rangle` (one atom in the ground state,
@@ -652,6 +706,14 @@ print(
     )
 )
 ##############################################################################
+# .. rst-class:: sphx-glr-script-out
+#
+#
+#  .. code-block:: none
+#
+#      The final state after the set of pulses is [-1.-0.j -0.-0.j -0.-0.j -0.-0.j] when atoms are close.
+#      The final state after the set of pulses is [ 1.-0.j -0.-0.j  0.-0.j -0.-0.j] when atoms are far.
+#
 #
 # The effect is to multiply the two-qubit state by :math:`-1,` which doesn't happen without the Rydberg blockade! Indeed, when the atoms
 # are far away from each other, each individual atomic state gets multiplied by :math:`-1.` Therefore, there would be

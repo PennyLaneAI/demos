@@ -5,8 +5,8 @@
             "username": "brequena"
         }
     ],
-    "executable_stable": true,
-    "executable_latest": true,
+    "executable_stable": false,
+    "executable_latest": false,
     "dateOfPublication": "2024-04-09T00:00:00+00:00",
     "dateOfLastModification": "2026-06-19T00:00:00+00:00",
     "categories": [

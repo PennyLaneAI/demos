@@ -8,6 +8,10 @@ r"""Differentiable pulse programming with qubits in PennyLane
 .. related::
    ahs_aquila Pulse programming on neutral atom hardware
 
+.. warning::
+
+    This demo is only compatible with PennyLane v0.45 or below.
+
 Quantum computers perform gates via electromagnetic pulses on the hardware level. In differentiable pulse programming, we
 can write quantum algorithms directly on the hardware level and variationally optimize the shape, phase and amplitude of the interactions
 for our desired goals.
@@ -94,6 +98,14 @@ t = 0.5  # some fixed point in time
 print(Ht((p1, p2), t))  # order of parameters p1, p2 matters
 
 ##############################################################################
+# .. rst-class:: sphx-glr-script-out
+#
+#
+#  .. code-block:: none
+#
+#      1.9375 * X(0) + 1.0 * Y(1)
+#
+#
 # We can construct general Hamiltonians of the form :math:`\sum_i H_i^d + \sum_i f_i(p_i, t) H_i`
 # using :func:`qp.dot <pennylane.dot>`. Such a time-dependent Hamiltonian consists of time-independent drift terms :math:`H_i^d`
 # and time-dependent control terms :math:`f_i(p_i, t) H_i` with scalar complex-valued functions :math:`f_i(p, t).`
@@ -113,6 +125,14 @@ params = [jax.random.uniform(subkeys[i], shape=[2], maxval=5) for i in range(3)]
 print(Ht(params, 0.5))
 
 ##############################################################################
+# .. rst-class:: sphx-glr-script-out
+#
+#
+#  .. code-block:: none
+#
+#      1.0 * (X(0) @ X(1)) + 1.0 * (X(1) @ X(2)) + 1.1397848295222481 * Z(0) + 1.2521554100899 * Z(1) + 1.946230460548898 * Z(2)
+#
+#
 # We can visualize the Hamiltonian interaction by plotting the time-dependent envelopes. We refer to the drift term as all constant terms in time, i.e. :math:`\sum_i X_i X_{i+1},`
 # and plot the envelopes :math:`f_i(p_i, t)` of the time-dependent terms :math:`f_i(p_i, t) Z_i.`
 
@@ -125,12 +145,17 @@ for n in range(n_channels):
     ax = axs[n]
     ax.plot(ts, fs[n](params[n], ts))
     ax.set_ylabel(f"$f_{n}$")
-axs[0].set_title(f"Envelopes $f_i(p_i, t)$ of $\sum_i X_i X_{{i+1}} + \sum_i f_i(p_i, t) Z_i$")
+axs[0].set_title(rf"Envelopes $f_i(p_i, t)$ of $\sum_i X_i X_{{i+1}} + \sum_i f_i(p_i, t) Z_i$")
 axs[-1].set_xlabel("time t")
 plt.tight_layout()
 plt.show()
 
 ##############################################################################
+# .. figure:: ../_static/demonstration_assets/pulse_programming101/envelopes.png
+#     :align: center
+#     :width: 60%
+#     :alt: Time-dependent envelopes of the three parametrized Pauli-Z terms
+#     :target: javascript:void(0);
 #
 # A pulse program is then executed by using the :func:`~.pennylane.evolve` transform to create the evolution
 # gate :math:`U(t_0, t_1),` which implicitly depends on the parameters ``p`.` The objective of the program
@@ -152,6 +177,14 @@ def qnode(params):
 print(qnode(params))
 
 ##############################################################################
+# .. rst-class:: sphx-glr-script-out
+#
+#
+#  .. code-block:: none
+#
+#      0.5075172381240806
+#
+#
 # We used the decorator ``jax.jit`` to compile this execution just-in-time. This means the first execution will typically take a little longer with the
 # benefit that all following executions will be significantly faster, see the `jax docs on jitting <https://jax.readthedocs.io/en/latest/jax-101/02-jitting.html>`_.
 # Note that when removing the ``jax.jit`` decorator, the numerical solver `odeint <https://github.com/google/jax/blob/main/jax/experimental/ode.py>`_ for the time evolution
@@ -169,6 +202,14 @@ print(qnode(params))
 print(jax.grad(qnode)(params))
 
 ##############################################################################
+# .. rst-class:: sphx-glr-script-out
+#
+#
+#  .. code-block:: none
+#
+#      [Array([ 0.03377133, -0.20455505], dtype=float64), Array([ 0.49384295, -0.25342893], dtype=float64), Array([0.18579167, 1.39135004], dtype=float64)]
+#
+#
 # Alternatively, one could consider computing the gradient with the parameter shift rule [#Leng2022]_, which is particularly interesting for
 # real hardware execution. In classical simulations, however, backpropagation is recommended.
 
@@ -206,6 +247,12 @@ ax.set_xlabel("time t")
 plt.show()
 
 ##############################################################################
+# .. figure:: ../_static/demonstration_assets/pulse_programming101/piecewise_constant.png
+#     :align: center
+#     :width: 70%
+#     :alt: Piecewise-constant pulse envelopes with 4 and 10 time bins
+#     :target: javascript:void(0);
+#
 # We can use these callables as before to construct a :func:`~.pennylane.pulse.ParametrizedHamiltonian`.
 
 ops = [qp.PauliX(i) for i in range(2)]
@@ -213,6 +260,14 @@ H = qp.pulse.ParametrizedHamiltonian(coeffs, ops)
 print(H(theta, 0.5))
 
 ##############################################################################
+# .. rst-class:: sphx-glr-script-out
+#
+#
+#  .. code-block:: none
+#
+#      0.7542490066126573 * X(0) + 4.696515322729557 * X(1)
+#
+#
 # Note that this construction is equivalent to using :func:`qp.dot <pennylane.dot>`.
 #
 # Variational quantum eigensolver with pulse programming
@@ -398,6 +453,28 @@ for n in range(n_epochs):
         print(f"mean grad: {gradients[n]}")
 
 ##############################################################################
+# .. rst-class:: sphx-glr-script-out
+#
+#
+#  .. code-block:: none
+#
+#      jax/_src/lax/lax.py:5422: ComplexWarning: Casting complex values to real discards the imaginary part
+#        x_bar = _convert_element_type(x_bar, x.aval.dtype, x.aval.weak_type)
+#      grad and val compilation time: 0:00:00.610144
+#      1 / 60; energy discrepancy: 0.002998497640721798
+#      mean grad: 9.515833922349867e-05
+#      11 / 60; energy discrepancy: 0.0013581408722553867
+#      mean grad: 6.804313052011665e-06
+#      21 / 60; energy discrepancy: 0.0013706813069562784
+#      mean grad: 1.19868306558663e-05
+#      31 / 60; energy discrepancy: 0.0010416464765876654
+#      mean grad: 2.1483936434874777e-05
+#      41 / 60; energy discrepancy: 0.0008414908903326968
+#      mean grad: 5.4752059621715314e-05
+#      51 / 60; energy discrepancy: 0.0006271706113247788
+#      mean grad: 4.191590296375765e-05
+#
+#
 # We see that we have converged to chemical accuracy after half the number of epochs.
 
 fig, ax = plt.subplots(nrows=1, figsize=(5, 3), sharex=True)
@@ -414,6 +491,12 @@ plt.tight_layout()
 plt.show()
 
 ##############################################################################
+# .. figure:: ../_static/demonstration_assets/pulse_programming101/ctrl_vqe_energy.png
+#     :align: center
+#     :width: 60%
+#     :alt: Energy error of the pulse-level VQE versus epoch, entering chemical accuracy
+#     :target: javascript:void(0);
+#
 # We can also visualize the envelopes for each qubit in time.
 # We only plot the real amplitude :math:`\Omega(t)` and indicate the deviation
 # :math:`\Delta \nu_q = \omega_q - \nu_q` of the drive frequency :math:`\nu_q` from the qubit frequency :math:`\omega_q`
@@ -435,6 +518,12 @@ plt.tight_layout()
 plt.show()
 
 ##############################################################################
+# .. figure:: ../_static/demonstration_assets/pulse_programming101/drive_amplitudes.png
+#     :align: center
+#     :width: 60%
+#     :alt: Optimized drive amplitudes for each qubit, with the drive-frequency deviation in the legend
+#     :target: javascript:void(0);
+#
 # Note that we obtain bang-bang like solutions as indicated in [#Asthana2022]_, making it
 # likely we are close to the minimal evolution time with ``15ns``.
 #
