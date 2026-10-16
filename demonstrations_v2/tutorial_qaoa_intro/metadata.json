@@ -5,10 +5,10 @@
             "username": "jceroni"
         }
     ],
-    "executable_stable": true,
-    "executable_latest": true,
+    "executable_stable": false,
+    "executable_latest": false,
     "dateOfPublication": "2020-11-18T00:00:00+00:00",
-    "dateOfLastModification": "2026-05-15T00:00:00+00:00",
+    "dateOfLastModification": "2026-10-06T00:00:00+00:00",
     "categories": [
         "Optimization",
         "Getting Started"

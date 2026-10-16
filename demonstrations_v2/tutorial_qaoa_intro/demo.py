@@ -12,6 +12,10 @@ Intro to QAOA
 
 *Author: Jack Ceroni — Posted: 18 November 2020. Last updated: 11 January 2021.*
 
+.. warning::
+
+    This demo is only compatible with PennyLane v0.45 or below.
+
 The Quantum Approximate Optimization Algorithm (QAOA) is a widely-studied
 method for solving combinatorial optimization problems on NISQ devices.
 The applications of QAOA are broad and far-reaching, and the performance
@@ -86,6 +90,13 @@ print(H)
 
 
 ######################################################################
+# .. rst-class:: sphx-glr-script-out
+#
+#
+#  .. code-block:: none
+#
+#      1 * X(0) + 1 * Z(1) + 0.5 * (X(0) @ X(1))
+#
 #
 # We can implement the approximate time-evolution operator corresponding to this
 # Hamiltonian:
@@ -105,6 +116,15 @@ def circuit():
 print(qp.draw(circuit, level="device")())
 
 ######################################################################
+# .. rst-class:: sphx-glr-script-out
+#
+#
+#  .. code-block:: none
+#
+#      0: ──RX(1.00)─╭RXX(0.50)──RX(1.00)─╭RXX(0.50)─┤  <Z>
+#      1: ──RZ(1.00)─╰RXX(0.50)──RZ(1.00)─╰RXX(0.50)─┤  <Z>
+#
+#
 # Layering circuits
 # -----------------
 #
@@ -153,6 +173,14 @@ def circuit(param):
 print(qp.draw(circuit)(0.5))
 
 ######################################################################
+# .. rst-class:: sphx-glr-script-out
+#
+#
+#  .. code-block:: none
+#
+#      0: ──RX(0.50)─╭●─┤  <Z>
+#      1: ──H────────╰X─┤  <Z>
+#
 #
 # We simply pass this function into a for loop:
 #
@@ -168,6 +196,14 @@ def circuit(params, **kwargs):
 print(qp.draw(circuit)([0.3, 0.4, 0.5]))
 
 ######################################################################
+# .. rst-class:: sphx-glr-script-out
+#
+#
+#  .. code-block:: none
+#
+#      0: ──RX(0.30)─╭●──RX(0.40)─╭●──RX(0.50)─╭●─┤  <Z>
+#      1: ──H────────╰X──H────────╰X──H────────╰X─┤  <Z>
+#
 #
 # We have learned how time evolution can be used to create circuits from Hamiltonians,
 # and how these can be layered to create longer circuits. We are now ready to
@@ -254,6 +290,11 @@ plt.show()
 
 
 ######################################################################
+# .. figure:: ../_static/demonstration_assets/qaoa_module/mvc_graph.png
+#     :align: center
+#     :width: 60%
+#     :alt: The four-vertex graph used for the minimum vertex cover problem
+#     :target: javascript:void(0);
 #
 # There are two minimum vertex covers of this graph: the vertices 0 and 2,
 # and the vertices 1 and 2. These can be respectively represented by the bit strings 1010 and
@@ -277,6 +318,14 @@ print("Cost Hamiltonian", cost_h)
 print("Mixer Hamiltonian", mixer_h)
 
 ######################################################################
+# .. rst-class:: sphx-glr-script-out
+#
+#
+#  .. code-block:: none
+#
+#      Cost Hamiltonian 0.75 * (Z(0) @ Z(1)) + 0.75 * Z(0) + 0.75 * Z(1) + 0.75 * (Z(0) @ Z(2)) + 0.75 * Z(0) + 0.75 * Z(2) + 0.75 * (Z(1) @ Z(2)) + 0.75 * Z(1) + 0.75 * Z(2) + 0.75 * (Z(2) @ Z(3)) + 0.75 * Z(2) + 0.75 * Z(3) + -1.0 * Z(0) + -1.0 * Z(1) + -1.0 * Z(2) + -1.0 * Z(3)
+#      Mixer Hamiltonian 1 * X(0) + 1 * X(1) + 1 * X(2) + 1 * X(3)
+#
 #
 # A single layer of QAOA consists of time evolution under these
 # Hamiltonians:
@@ -369,6 +418,15 @@ print(params)
 
 
 ######################################################################
+# .. rst-class:: sphx-glr-script-out
+#
+#
+#  .. code-block:: none
+#
+#      Optimal Parameters
+#      [[0.59806352 0.94198485]
+#       [0.52797281 0.85552845]]
+#
 #
 # With the optimal parameters, we can now reconstruct the probability
 # landscape. We redefine the
@@ -397,6 +455,11 @@ plt.show()
 
 
 ######################################################################
+# .. figure:: ../_static/demonstration_assets/qaoa_module/qaoa_probs.png
+#     :align: center
+#     :width: 70%
+#     :alt: Probability of measuring each bitstring after optimizing the QAOA circuit
+#     :target: javascript:void(0);
 #
 # The states
 # :math:`|6\rangle \ = \ |0110\rangle` and
@@ -474,6 +537,15 @@ print(params)
 
 
 ######################################################################
+# .. rst-class:: sphx-glr-script-out
+#
+#
+#  .. code-block:: none
+#
+#      Optimal Parameters
+#      [[0.45959941 0.96095271]
+#       [0.27029962 0.78042396]]
+#
 #
 # We then reconstruct the probability landscape with the optimal parameters:
 #
@@ -492,6 +564,11 @@ plt.bar(range(2 ** len(wires)), probs)
 plt.show()
 
 ######################################################################
+# .. figure:: ../_static/demonstration_assets/qaoa_module/qaoa_probs_constrained.png
+#     :align: center
+#     :width: 70%
+#     :alt: Probability of each bitstring after adding the constraint favouring state 10
+#     :target: javascript:void(0);
 #
 # Just as we expected, the :math:`|10\rangle` state is now favoured
 # over :math:`|6\rangle!`
