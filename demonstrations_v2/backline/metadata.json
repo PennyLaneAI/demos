@@ -17,7 +17,7 @@
     "executable_stable": false,
     "executable_latest": false,
     "dateOfPublication": "2026-09-10T00:00:00+00:00",
-    "dateOfLastModification": "2026-10-06T10:43:00+02:00",
+    "dateOfLastModification": "2026-09-25T11:26:21+00:00",
     "categories": [
         "Quantum Hardware",
         "Quantum Computing"
@@ -43,6 +43,11 @@
     "basedOnPapers": [],
     "referencedByPapers": [],
     "relatedContent": [
+        {
+            "type": "demonstration",
+            "id": "backline-ising-decoders",
+            "weight": 1.0
+        },
         {
             "type": "demonstration",
             "id": "tutorial_qldpc_codes",
