@@ -20,7 +20,7 @@ In those cases the directive will not appear 1-to-1 in the rendered demo.
 """
 
 # %%
-# Comprehensive Mathematical Notation Reference
+# Comprehensive mathematical notation reference
 # ---------------------------------------------
 #
 # This document contains a comprehensive collection of all mathematical symbols and notations
