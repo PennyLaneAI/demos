@@ -316,7 +316,9 @@ def _build_demo(
                         break
 
             # Need to reinstall the demo's requirements file to ensure the correct versions are installed
-            if demo.requirements_file:
+            # Note that the tutorial_iqp_circuit_optimization_jax demo's plugin will override the PennyLane
+            # dev version with stable, so skip it here. 
+            if demo.requirements_file and demo.name != "tutorial_iqp_circuit_optimization_jax":
                 cmds.pip_install(
                     build_venv.python,
                     "--upgrade",
