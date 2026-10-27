@@ -1,5 +1,9 @@
 r"""Adversarial attacks and robustness for quantum machine learning
 ===============================================
+
+.. warning::
+
+    This demo is only compatible with PennyLane v0.45 or below.
 """
 
 ######################################################################
@@ -133,6 +137,12 @@ def visualize_data(x, y, pred=None):
 visualize_data(x_vis, y_vis)
 
 ######################################################################
+# .. figure:: ../_static/demonstration_assets/adversarial_attacks_QML/dataset_samples.png
+#     :align: center
+#     :width: 80%
+#     :alt: One training image from each of the four symbol classes
+#     :target: javascript:void(0);
+#
 # Building the QML circuit for classification
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #
@@ -202,6 +212,14 @@ class QML_classifier(torch.nn.Module):
 
 
 ######################################################################
+# .. rst-class:: sphx-glr-script-out
+#
+#
+#  .. code-block:: none
+#
+#      Using device: cpu
+#
+#
 # Training the classifier
 # ~~~~~~~~~~~~~~~~~~~~~~~
 #
@@ -283,6 +301,19 @@ for ep in range(0, epochs):
 print_acc(epochs)
 
 ######################################################################
+# .. rst-class:: sphx-glr-script-out
+#
+#
+#  .. code-block:: none
+#
+#      Starting training loop for quantum variational classifier (8 qubits, 32 layers)...
+#      Epoch 0/4 | Approx Cost (train): 1.3883215 | Cost (val): 1.3875421 | Approx Acc train: 0.1600000 | Acc val: 0.1200000
+#      Epoch 1/4 | Approx Cost (train): 1.2474118 | Cost (val): 1.2367977 | Approx Acc train: 0.8200000 | Acc val: 0.8800000
+#      Epoch 2/4 | Approx Cost (train): 1.1586390 | Cost (val): 1.1770582 | Approx Acc train: 0.9800000 | Acc val: 0.9600000
+#      Epoch 3/4 | Approx Cost (train): 1.0626484 | Cost (val): 1.0834213 | Approx Acc train: 0.9600000 | Acc val: 0.9800000
+#      Epoch 4/4 | Approx Cost (train): 1.0000392 | Cost (val): 1.0049576 | Approx Acc train: 1.0000000 | Acc val: 0.9800000
+#
+#
 # Evaluation - benign data
 # ~~~~~~~~~~~~~~~~~~~~~~~~
 #
@@ -296,6 +327,12 @@ benign_class_output = [torch.argmax(p) for p in benign_preds]
 visualize_data(x_vis, y_vis, benign_class_output)
 
 ######################################################################
+# .. figure:: ../_static/demonstration_assets/adversarial_attacks_QML/benign_predictions.png
+#     :align: center
+#     :width: 80%
+#     :alt: The trained classifier correctly labels one image from each class
+#     :target: javascript:void(0);
+#
 # Let’s break stuff!
 # ~~~~~~~~~~~~~~~~~~
 #
@@ -350,6 +387,12 @@ adversarial_class_output = [torch.argmax(p) for p in adversarial_preds]
 visualize_data(perturbed_x.reshape(-1, 16, 16), y_vis, adversarial_class_output)
 
 ######################################################################
+# .. figure:: ../_static/demonstration_assets/adversarial_attacks_QML/attacked_predictions.png
+#     :align: center
+#     :width: 80%
+#     :alt: The same images after a projected-gradient attack, now misclassified
+#     :target: javascript:void(0);
+#
 # We can see the devastating effect of a simple PGD (projected gradient descent) attack using a perturbation strength
 # :math:`\varepsilon=0.1,` where the model misclassifies each of the four samples we used for
 # visualization of the dataset. For humans, the images are still very easily classifiable, the
@@ -404,6 +447,16 @@ for ep in range(0, epochs_retraining):
 print_acc(epochs_retraining, max_ep=2)
 
 ######################################################################
+# .. rst-class:: sphx-glr-script-out
+#
+#
+#  .. code-block:: none
+#
+#      Epoch 0/2 | Approx Cost (train): 1.0000392 | Cost (val): 1.0049576 | Approx Acc train: 1.0000000 | Acc val: 0.9800000
+#      Epoch 1/2 | Approx Cost (train): 0.9360704 | Cost (val): 0.9477174 | Approx Acc train: 0.9600000 | Acc val: 0.9600000
+#      Epoch 2/2 | Approx Cost (train): 0.9085806 | Cost (val): 0.9232398 | Approx Acc train: 0.9800000 | Acc val: 0.9600000
+#
+#
 # Evaluation of the retrained model
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #
@@ -414,6 +467,12 @@ adversarial_class_output = [torch.argmax(p) for p in adversarial_preds]
 visualize_data(perturbed_x.reshape(-1, 16, 16), y_vis, adversarial_class_output)
 
 ######################################################################
+# .. figure:: ../_static/demonstration_assets/adversarial_attacks_QML/retrained_predictions.png
+#     :align: center
+#     :width: 80%
+#     :alt: After adversarial retraining, three of the four attacked images are classified correctly
+#     :target: javascript:void(0);
+#
 # We can see that the model now correctly classifies three out of the four perturbed input images. As
 # before, you can adapt the code above and test the retrained model for the whole dataset to see how
 # much the accuracy under attack improves overall.
