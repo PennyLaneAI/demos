@@ -5,10 +5,10 @@
       "username": "andynader"
     }
   ],
-  "executable_stable": true,
+  "executable_stable": false,
   "executable_latest": false,
   "dateOfPublication": "2026-01-20T10:00:00+00:00",
-  "dateOfLastModification": "2026-04-17T10:00:00+00:01",
+  "dateOfLastModification": "2026-10-27T00:00:00+00:00",
   "categories": [
     "Quantum Machine Learning"
   ],

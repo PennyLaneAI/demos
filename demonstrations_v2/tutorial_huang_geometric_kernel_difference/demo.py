@@ -1,6 +1,10 @@
 r"""Before you train: Pre-screening quantum kernels with geometric difference
 =============================================================================
 
+.. warning::
+
+    This demo is only compatible with PennyLane v0.45 or below.
+
 Can we predict---*before* investing a ton of research hours---whether a quantum kernel has the
 potential to beat a classical one across all kernel methods?
 
@@ -119,6 +123,16 @@ plt.title("Two‑moons— training split (standardised)")
 plt.legend(frameon=False)
 plt.show()
 
+##############################################################################
+# .. rst-class:: sphx-glr-script-out
+#
+# .. code-block:: none
+#
+#     Train size: 210    Test size: 90
+#
+# .. figure:: ../_static/demonstration_assets/huang_geometric_kernel_difference/two_moons_data.png
+#     :align: center
+
 ######################################################################
 #
 # Quantum kernels: fidelity-based and projected variants
@@ -212,6 +226,10 @@ draw_circuits_side_by_side(
 )
 
 
+##############################################################################
+# .. figure:: ../_static/demonstration_assets/huang_geometric_kernel_difference/embedding_circuits.png
+#     :align: center
+
 ######################################################################
 #
 # Gram matrix computation
@@ -275,6 +293,17 @@ K_quantum_E2 = quantum_kernel_matrix(X_train, embed=embedding_E2)
 print(f"K_QK_E1 shape: {K_quantum_E1.shape}")
 print(f"K_QK_E2 shape: {K_quantum_E2.shape}")
 
+##############################################################################
+# .. rst-class:: sphx-glr-script-out
+#
+# .. code-block:: none
+#
+#     K_RBF shape: (210, 210)
+#     Computing QK-E1 (fidelity)...
+#     Computing QK-E2 (fidelity)...
+#     K_QK_E1 shape: (210, 210)
+#     K_QK_E2 shape: (210, 210)
+
 ######################################################################
 #
 # Next, we compute the projected quantum kernels (Pauli vectors + classical RBF).
@@ -321,6 +350,16 @@ K_pqk_E2 = pqk_kernel_matrix(X_train, embedding_E2)
 print(f"K_PQK_E1 shape: {K_pqk_E1.shape}")
 print(f"K_PQK_E2 shape: {K_pqk_E2.shape}")
 
+##############################################################################
+# .. rst-class:: sphx-glr-script-out
+#
+# .. code-block:: none
+#
+#     Computing PQK-E1 (Pauli + RBF)...
+#     Computing PQK-E2 (Pauli + RBF)...
+#     K_PQK_E1 shape: (210, 210)
+#     K_PQK_E2 shape: (210, 210)
+
 ######################################################################
 #
 # Let's now visualize the Gram Matrices. Each matrix shows how similar data points are to each other:
@@ -353,6 +392,10 @@ for j in range(len(matrices), len(axes)):
 
 plt.tight_layout()
 plt.show()
+
+##############################################################################
+# .. figure:: ../_static/demonstration_assets/huang_geometric_kernel_difference/kernel_matrices.png
+#     :align: center
 
 ######################################################################
 # 
@@ -394,6 +437,17 @@ print(f"g (RBF vs QK‑E1):    {g_QK_E1:.4f}")
 print(f"g (RBF vs QK‑E2):    {g_QK_E2:.4f}")
 print(f"g (RBF vs PQK‑E1):   {g_PQK_E1:.4f}")
 print(f"g (RBF vs PQK‑E2):   {g_PQK_E2:.4f}")
+
+##############################################################################
+# .. rst-class:: sphx-glr-script-out
+#
+# .. code-block:: none
+#
+#     --- Geometric Difference (g) ---
+#     g (RBF vs QK‑E1):    8.3359
+#     g (RBF vs QK‑E2):    2.1493
+#     g (RBF vs PQK‑E1):   894.0699
+#     g (RBF vs PQK‑E2):   194.6228
 
 ######################################################################
 # What does a high g mean?
@@ -490,6 +544,32 @@ for bar, acc in zip(bars, accuracies):
     )
 
 plt.show()
+
+##############################################################################
+# .. rst-class:: sphx-glr-script-out
+#
+# .. code-block:: none
+#
+#     Training SVM with Classical RBF kernel...
+#       Test accuracy: 0.9111
+#     Training SVM with Quantum E1 kernel...
+#       Test accuracy: 0.8333
+#     Training SVM with Quantum E2 kernel...
+#       Test accuracy: 0.8444
+#     Training SVM with PQK E1 kernel...
+#       Test accuracy: 0.8333
+#     Training SVM with PQK E2 kernel...
+#       Test accuracy: 1.0000
+#
+#     --- Accuracy Comparison ---
+#       Classical RBF: 0.9111
+#               QK-E1: 0.8333
+#               QK-E2: 0.8444
+#              PQK-E1: 0.8333
+#              PQK-E2: 1.0000
+#
+# .. figure:: ../_static/demonstration_assets/huang_geometric_kernel_difference/svm_accuracies.png
+#     :align: center
 
 ######################################################################
 #
