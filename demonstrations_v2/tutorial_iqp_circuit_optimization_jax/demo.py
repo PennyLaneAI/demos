@@ -17,7 +17,7 @@ estimating expectation values of certain observables is easy.
 .. note::
     The IQP circuit and expectation values estimator are now directly implemented and
     available in PennyLane v0.44 via the :class:`IQP <pennylane.IQP> template
-    and :func:`~pennylane.qnn.iqp_expval` function, respectively.
+    and :func:`~pennylane.math.iqp_expval` function, respectively.
 
 Parameterized IQP circuits
 --------------------------
@@ -226,11 +226,11 @@ print("Expectation value: ", penn_op_expval)
 #
 # where :math:`s` is the number of samples.
 #
-# Let's see now how to use the :func:`~pennylane.qnn.iqp_expval` function to calculate expectation values, based on the same
+# Let's see now how to use the :func:`~pennylane.math.iqp_expval` function to calculate expectation values, based on the same
 # arguments in the previous example. First, we create the circuit object with ``IqpSimulator``,
 # which takes in the number of qubits ``n_qubits`` and the ``gates`` in our usual format:
 #
-# .. note:: 
+# .. note::
 #   Here we are using the estimator method added in PennyLane v0.44 but note that this functionality is also available in
 #   IQPopt via the class method ``IqpSimulator.op_expval``)
 #
@@ -239,7 +239,7 @@ import iqpopt as iqp
 small_circuit = iqp.IqpSimulator(n_qubits, gates)
 
 ######################################################################
-# The :func:`~pennylane.qnn.iqp_expval` function requires a PauliZ operator specified by its binary
+# The :func:`~pennylane.math.iqp_expval` function requires a PauliZ operator specified by its binary
 # representation ``op``, a parameter array ``params``, the circuit ``gates``, the number of qubits ``n_qubits``,
 # a new parameter ``n_samples`` (the number of samples :math:`s`) that controls
 # the precision of the approximation (the more the better), and a JAX pseudo random number generator
@@ -248,7 +248,7 @@ small_circuit = iqp.IqpSimulator(n_qubits, gates)
 #
 # Using the same ``params`` and ``op`` as before:
 #
-from pennylane.qnn import iqp_expval as op_expval
+from pennylane.math import iqp_expval as op_expval
 import jax
 
 n_samples = 2000
