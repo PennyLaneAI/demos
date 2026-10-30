@@ -1,6 +1,10 @@
 r"""Training and evaluating quantum kernels
 ===========================================
 
+.. warning::
+
+    This demo is only compatible with PennyLane v0.45 or below.
+
 .. meta::
     :property="og:description": Kernels and alignment training with Pennylane.
     :property="og:image": https://pennylane.ai/qml/_static/demonstration_assets/QEK_thumbnail.png
@@ -17,7 +21,7 @@ Here we are concerned with kernels that can be evaluated on quantum computers,
 In this tutorial you will learn how to evaluate kernels, use them for classification
 and train them with gradient-based optimization, and all that using the
 functionality of PennyLane's
-:doc:`kernels module <pennylane:code/qp_kernels>`.
+``kernels`` module.
 The demo is based on Ref. [#Training_QEKs]_, a project from Xanadu's own
 `QHack <https://qhack.ai/>`__ hackathon.
 
@@ -228,9 +232,13 @@ X, Y = make_double_cake_data(num_sectors)
 ax = plot_double_cake_data(X, Y, plt.gca(), num_sectors=num_sectors)
 
 ##############################################################################
+# .. figure:: ../_static/demonstration_assets/kernels_module/double_cake_data.png
+#     :align: center
+
+##############################################################################
 # Defining a Quantum Embedding Kernel
 # -----------------------------------
-# PennyLane's :doc:`kernels module <pennylane:code/qp_kernels>`
+# PennyLane's ``kernels`` module
 # allows for a particularly simple
 # implementation of Quantum Embedding Kernels. The first ingredient we
 # need for this is an *ansatz*, which we will construct by repeating a
@@ -260,7 +268,7 @@ def layer(x, params, wires, i0=0, inc=1):
 # Together, the datapoint and the variational parameters fully determine
 # the embedding ansatz :math:`U(\boldsymbol{x}).`
 # In order to construct the full kernel circuit, we also require its adjoint
-# :math:`U(\boldsymbol{x})^\dagger,` which we can obtain via ``qp.adjoint`.`
+# :math:`U(\boldsymbol{x})^\dagger,` which we can obtain via ``qp.adjoint``.
 
 
 def ansatz(x, params, wires):
@@ -333,6 +341,13 @@ kernel_value = kernel(X[0], X[1], init_params)
 print(f"The kernel value between the first and second datapoint is {kernel_value:.3f}")
 
 ##############################################################################
+# .. rst-class:: sphx-glr-script-out
+#
+# .. code-block:: none
+#
+#     The kernel value between the first and second datapoint is 0.030
+
+##############################################################################
 # The mutual kernel values between all elements of the dataset form the
 # *kernel matrix*. We can inspect it via the ``qp.kernels.square_kernel_matrix``
 # method, which makes use of symmetry of the kernel,
@@ -349,6 +364,18 @@ K_init = qp.kernels.square_kernel_matrix(X, init_kernel, assume_normalized_kerne
 
 with np.printoptions(precision=3, suppress=True):
     print(K_init)
+
+##############################################################################
+# .. rst-class:: sphx-glr-script-out
+#
+# .. code-block:: none
+#
+#     [[1.    0.03  0.086 0.633 0.032 0.066]
+#      [0.03  1.    0.121 0.141 0.701 0.18 ]
+#      [0.086 0.121 1.    0.137 0.256 0.763]
+#      [0.633 0.141 0.137 1.    0.331 0.274]
+#      [0.032 0.701 0.256 0.331 1.    0.475]
+#      [0.066 0.18  0.763 0.274 0.475 1.   ]]
 
 ##############################################################################
 # Using the Quantum Embedding Kernel for predictions
@@ -390,6 +417,13 @@ accuracy_init = accuracy(svm, X, Y)
 print(f"The accuracy of the kernel with random parameters is {accuracy_init:.3f}")
 
 ##############################################################################
+# .. rst-class:: sphx-glr-script-out
+#
+# .. code-block:: none
+#
+#     The accuracy of the kernel with random parameters is 0.833
+
+##############################################################################
 # We are also interested in seeing what the decision boundaries in this
 # classification look like. This could help us spot overfitting issues
 # visually in more complex data sets. To this end we will introduce a
@@ -422,6 +456,10 @@ def plot_decision_boundaries(classifier, ax, N_gridpoints=14):
 # initial classifier:
 
 init_plot_data = plot_decision_boundaries(svm, plt.gca())
+
+##############################################################################
+# .. figure:: ../_static/demonstration_assets/kernels_module/initial_decision_boundary.png
+#     :align: center
 
 ##############################################################################
 # We see the outer points in the dataset can be correctly classified, but
@@ -499,6 +537,13 @@ kta_init = qp.kernels.target_alignment(X, Y, init_kernel, assume_normalized_kern
 print(f"The kernel-target alignment for our dataset and random parameters is {kta_init:.3f}")
 
 ##############################################################################
+# .. rst-class:: sphx-glr-script-out
+#
+# .. code-block:: none
+#
+#     The kernel-target alignment for our dataset and random parameters is 0.074
+
+##############################################################################
 # Now let's code up an optimization loop and improve the kernel-target alignment!
 #
 # We will make use of regular gradient descent optimization. To speed up
@@ -573,6 +618,22 @@ for i in range(500):
         print(f"Step {i+1} - Alignment = {current_alignment:.3f}")
 
 ##############################################################################
+# .. rst-class:: sphx-glr-script-out
+#
+# .. code-block:: none
+#
+#     Step 50 - Alignment = 0.090
+#     Step 100 - Alignment = 0.115
+#     Step 150 - Alignment = 0.137
+#     Step 200 - Alignment = 0.159
+#     Step 250 - Alignment = 0.176
+#     Step 300 - Alignment = 0.191
+#     Step 350 - Alignment = 0.208
+#     Step 400 - Alignment = 0.227
+#     Step 450 - Alignment = 0.245
+#     Step 500 - Alignment = 0.266
+
+##############################################################################
 # We want to assess the impact of training the parameters of the quantum
 # kernel. Thus, let's build a second support vector classifier with the
 # trained kernel:
@@ -594,6 +655,13 @@ accuracy_trained = accuracy(svm_trained, X, Y)
 print(f"The accuracy of a kernel with trained parameters is {accuracy_trained:.3f}")
 
 ##############################################################################
+# .. rst-class:: sphx-glr-script-out
+#
+# .. code-block:: none
+#
+#     The accuracy of a kernel with trained parameters is 1.000
+
+##############################################################################
 # We have now achieved perfect classification! 🎆
 #
 # Following on the results that SVM's have proven good generalisation
@@ -601,6 +669,10 @@ print(f"The accuracy of a kernel with trained parameters is {accuracy_trained:.3
 # our classifier:
 
 trained_plot_data = plot_decision_boundaries(svm_trained, plt.gca())
+
+##############################################################################
+# .. figure:: ../_static/demonstration_assets/kernels_module/trained_decision_boundary.png
+#     :align: center
 
 ##############################################################################
 # Indeed, we see that now not only every data instance falls within the
