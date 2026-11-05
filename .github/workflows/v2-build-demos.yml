@@ -189,7 +189,13 @@ jobs:
 
       - name: Make demo name list
         id: demo-name-list
-        run: printf "demo-names=%s" "$(jq -nc '${{ needs.generate-build-variables.outputs.chunk-array }}[${{ matrix.chunk-index }}][]' | tr -s '\n"' ' ')" >> $GITHUB_OUTPUT
+        run: |
+          demo_names=$(jq -nr '${{ needs.generate-build-variables.outputs.chunk-array }}[${{ matrix.chunk-index }}] | join(" ")')
+          if [ -z "$demo_names" ]; then
+            echo "::error::Empty demo list for chunk ${{ matrix.chunk-index }}"
+            exit 1
+          fi
+          printf "demo-names=%s\n" "$demo_names" >> "$GITHUB_OUTPUT"
 
       - name: Build demos
         run: |
