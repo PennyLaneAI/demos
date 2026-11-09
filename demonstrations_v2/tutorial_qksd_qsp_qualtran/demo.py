@@ -1,6 +1,12 @@
 r"""Using PennyLane and Qualtran to analyze how QSP can improve measurements of molecular properties
 ====================================================================================================
 
+.. warning::
+
+    This demo was last verified with PennyLane v0.45.1 and Qualtran v0.7.0.
+    It uses legacy resource-estimation APIs and is no longer executed during
+    documentation builds. The outputs and plot below were recorded with these versions.
+
 Want to efficiently measure molecular properties using quantum computers? In this demo, we
 outline a powerful workflow for measuring molecular properties on future 
 fault-tolerant quantum computers. We demonstrate how to construct the
@@ -294,6 +300,16 @@ coherent_result = 2*lambda_lcu*(P+RP)
 print("Coherent result:", coherent_result)
 
 ######################################################################
+# .. rst-class:: sphx-glr-script-out
+#
+# .. code-block:: none
+#
+#    P: 0.9677972215518822
+#    RP: -0.6875560272165014
+#    Coherent result: 3.1200328692888832
+#
+
+######################################################################
 # Analyzing with Qualtran
 # -----------------------
 # 
@@ -319,6 +335,25 @@ for gate, count in sigma.items():
     print(f"{gate}: {count}")
 
 ######################################################################
+# .. rst-class:: sphx-glr-script-out
+#
+# .. code-block:: none
+#
+#    --- Gate counts ---
+#    X: 2326
+#    H: 2
+#    CHadamard: 4972
+#    CNOT: 2828
+#    And: 2536
+#    And†: 2536
+#    Z**\phi: 116
+#    C[T]: 190080
+#    Toffoli: 6804
+#    C[S]: 648
+#    CZ: 324
+#
+
+######################################################################
 # As explained in [#Oumarou]_,
 # increasing :math:`D` improves the accuracy of the Krylov minimal energy
 # compared to the true ground state energy. This extra accuracy is paid for by requiring additional gates.
@@ -341,6 +376,25 @@ graph, sigma = bloq.call_graph(generalizer=generalize_rotation_angle)
 print("--- Gate counts ---")
 for gate, count in sigma.items():
     print(f"{gate}: {count}")
+
+######################################################################
+# .. rst-class:: sphx-glr-script-out
+#
+# .. code-block:: none
+#
+#    --- Gate counts ---
+#    X: 3206
+#    H: 2
+#    CHadamard: 6996
+#    CNOT: 3972
+#    And: 3548
+#    And†: 3548
+#    Z**\phi: 160
+#    C[T]: 267520
+#    Toffoli: 9576
+#    C[S]: 912
+#    CZ: 456
+#
 
 ######################################################################
 # We can plot how the number of gates increases with the Krylov dimension to see if it is linear
@@ -369,6 +423,13 @@ plt.xlabel('Krylov Subspace Dimension, D')
 plt.ylabel('Number of Gates')
 plt.legend()
 plt.show()
+
+######################################################################
+# .. figure:: ../_static/demonstration_assets/qksd_qsp_qualtran/gate_counts.png
+#    :align: center
+#    :width: 80%
+#    :alt: CNOT, Toffoli, and X gate counts increasing linearly with Krylov subspace dimension.
+#
 
 ######################################################################
 # As expected, the gate counts increase linearly with the Krylov subspace dimension.
