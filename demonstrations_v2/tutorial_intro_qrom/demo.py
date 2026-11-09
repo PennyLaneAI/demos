@@ -58,8 +58,6 @@ We use :class:`~.pennylane.BasisState` as a useful template for implementing the
 
 """
 
-from functools import partial
-
 import matplotlib.pyplot as plt
 import numpy as np
 import pennylane as qp
@@ -69,18 +67,20 @@ bitstrings = ["01", "11", "11", "00", "01", "11", "11", "00"]
 control_wires = [0, 1, 2]
 target_wires = [3, 4]
 
-Ui = [qp.BasisState(int(bitstring, 2), target_wires) for bitstring in bitstrings]
+Ui = [qp.BasisState([int(bit) for bit in bitstring], target_wires) for bitstring in bitstrings]
 
 dev = qp.device("default.qubit")
 
+# We apply the one-level decomposition of Select for drawing purposes only.
+select_ops = qp.Select(Ui, control=control_wires).decomposition()
 
-# This line is included for drawing purposes only.
-@partial(qp.transforms.decompose, max_expansion=1)
+
 @qp.set_shots(1)
 @qp.qnode(dev)
 def circuit(index):
-    qp.BasisState(index, wires=control_wires)
-    qp.Select(Ui, control=control_wires)
+    qp.BasisState(qp.math.int_to_binary(index, len(control_wires)), wires=control_wires)
+    for op in select_ops:
+        qp.apply(op)
     return qp.sample(wires=target_wires)
 
 
@@ -109,12 +109,17 @@ SINGLE_QUBIT_GATES = {qp.RX, qp.RY, qp.RZ, qp.T}
 TWO_QUBIT_GATES = {qp.CNOT}
 gate_set = SINGLE_QUBIT_GATES | TWO_QUBIT_GATES | {qp.GlobalPhase}
 
+# Decomposing to a gate set is a compilation pass, so we compile the circuit with qjit
+# and use the graph-based decomposition system.
+qp.decomposition.enable_graph()
 
+
+@qp.qjit(capture=True)
 @qp.decompose(gate_set=gate_set)
 @qp.set_shots(1)
-@qp.qnode(dev)
+@qp.qnode(qp.device("lightning.qubit", wires=control_wires + target_wires))
 def circuit(index):
-    qp.BasisState(index, wires=control_wires)
+    qp.BasisState(qp.math.int_to_binary(index, len(control_wires)), wires=control_wires)
     qp.QROM(bitstrings, control_wires, target_wires, work_wires=None)
     return qp.sample(wires=target_wires)
 
@@ -147,11 +152,12 @@ target_wires = [3, 4]
 work_wires = [5, 6, 7]
 
 
+@qp.qjit(capture=True)
 @qp.decompose(gate_set=gate_set)
 @qp.set_shots(1)
-@qp.qnode(dev)
+@qp.qnode(qp.device("lightning.qubit", wires=control_wires + target_wires + work_wires))
 def circuit(index):
-    qp.BasisState(index, wires=control_wires)
+    qp.BasisState(qp.math.int_to_binary(index, len(control_wires)), wires=control_wires)
     #  added work wires below
     qp.QROM(bitstrings, control_wires, target_wires, work_wires, clean=False)
     return qp.sample(wires=control_wires + target_wires + work_wires)
@@ -220,13 +226,17 @@ target_wires = [3, 4]
 work_wires = [5, 6, 7, 8, 9, 10, 11, 12]
 
 
-# Line added for drawing purposes only
-@partial(qp.transforms.decompose, max_expansion=2)
+# We apply the QROM decomposition two levels deep for drawing purposes only.
+qrom_ops = qp.QROM(bitstrings, control_wires, target_wires, work_wires, clean=False).decomposition()
+qrom_ops = [sub_op for op in qrom_ops for sub_op in op.decomposition()]
+
+
 @qp.set_shots(1)
 @qp.qnode(qp.device("default.qubit"))
 def circuit(index):
-    qp.BasisState(index, wires=control_wires)
-    qp.QROM(bitstrings, control_wires, target_wires, work_wires, clean=False)
+    qp.BasisState(qp.math.int_to_binary(index, len(control_wires)), wires=control_wires)
+    for op in qrom_ops:
+        qp.apply(op)
     return qp.sample(wires=target_wires), qp.sample(wires=target_wires)
 
 
@@ -255,7 +265,7 @@ work_wires = [5, 6, 7]
 @qp.set_shots(1)
 @qp.qnode(dev)
 def circuit(index):
-    qp.BasisState(index, wires=control_wires)
+    qp.BasisState(qp.math.int_to_binary(index, len(control_wires)), wires=control_wires)
     qp.QROM(bitstrings, control_wires, target_wires, work_wires, clean=True)
     return qp.sample(wires=target_wires + work_wires)
 

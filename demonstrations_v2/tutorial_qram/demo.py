@@ -107,7 +107,7 @@ def decode_probs(probs, num_wires):
 
 @qp.qnode(qp.device("default.qubit"))
 def select_only_qram(index):
-    qp.BasisEmbedding(index, wires=control_wires)
+    qp.BasisEmbedding(qp.math.int_to_binary(index, len(control_wires)), wires=control_wires)
     qp.SelectOnlyQRAM(bitstrings, control_wires=control_wires, target_wires=target_wires)
     return qp.probs(wires=target_wires)
 
@@ -115,11 +115,16 @@ for i in range(len(bitstrings)):
     output = decode_probs(select_only_qram(i), len(target_wires))
     print(f"address {i:02b} -> {output}")
     
-@partial(qp.transforms.decompose, max_expansion=1)
+# To draw the circuit, we apply the one-level decomposition of SelectOnlyQRAM.
+qram_ops = qp.SelectOnlyQRAM(
+    bitstrings, control_wires=control_wires, target_wires=target_wires
+).decomposition()
+
 @qp.qnode(qp.device("default.qubit"))
 def select_only_qram_draw(index):
-    qp.BasisEmbedding(index, wires=control_wires)
-    qp.SelectOnlyQRAM(bitstrings, control_wires=control_wires, target_wires=target_wires)
+    qp.BasisEmbedding(qp.math.int_to_binary(index, len(control_wires)), wires=control_wires)
+    for op in qram_ops:
+        qp.apply(op)
     return qp.probs(wires=target_wires)
 
 qp.draw_mpl(select_only_qram_draw, style="pennylane")(2)
@@ -133,19 +138,35 @@ plt.show()
 #
 
 
-@partial(qp.compile, basis_set="CNOT")
+gate_set = ["CNOT", "RX", "RY", "RZ", "T"]
+
+
+def compiled_resources(qnode, index):
+    """Count the one- and two-qubit gates and the depth of a compiled circuit."""
+    tape = qp.workflow.construct_tape(qnode)(index)
+    # Global phases act on no qubits, so we leave them out of the counts.
+    ops = [op for op in tape.operations if len(op.wires) > 0]
+    resources = qp.resource.resources_from_tape(tape.copy(operations=ops))
+    return {
+        "one_qubit_gates": sum(len(op.wires) == 1 for op in ops),
+        "two_qubit_gates": sum(len(op.wires) == 2 for op in ops),
+        "circuit_depth": resources.depth,
+    }
+
+
+@partial(qp.compile, basis_set=gate_set)
 @qp.qnode(qp.device("default.qubit"))
 def compiled_select_only_qram(index):
-    qp.BasisEmbedding(index, wires=control_wires)
+    qp.BasisEmbedding(qp.math.int_to_binary(index, len(control_wires)), wires=control_wires)
     qp.SelectOnlyQRAM(bitstrings, control_wires=control_wires, target_wires=target_wires)
     return qp.probs(wires=target_wires)
 
 
-select_specs = qp.specs(compiled_select_only_qram)(0)["resources"]
+select_specs = compiled_resources(compiled_select_only_qram, 0)
 print("Total work wires:", len(control_wires + target_wires))
-print("One-qubit gates:", select_specs.gate_sizes.get(1, 0))
-print("Two-qubit gates:", select_specs.gate_sizes.get(2, 0))
-print("Circuit depth:", select_specs.depth)
+print("One-qubit gates:", select_specs["one_qubit_gates"])
+print("Two-qubit gates:", select_specs["two_qubit_gates"])
+print("Circuit depth:", select_specs["circuit_depth"])
 
 
 ######################################################################
@@ -194,7 +215,7 @@ bb_work_wires = list(range(5, 5 + bb_num_work_wires))
 
 @qp.qnode(qp.device("default.qubit"))
 def bucket_brigade_qram(index):
-    qp.BasisEmbedding(index, wires=control_wires)
+    qp.BasisEmbedding(qp.math.int_to_binary(index, len(control_wires)), wires=control_wires)
     qp.BBQRAM(
         bitstrings,
         control_wires=control_wires,
@@ -217,10 +238,10 @@ for i in range(len(bitstrings)):
 #
 
 
-@partial(qp.compile, basis_set="CNOT")
+@partial(qp.compile, basis_set=gate_set)
 @qp.qnode(qp.device("default.qubit"))
 def compiled_bucket_brigade_qram(index):
-    qp.BasisEmbedding(index, wires=control_wires)
+    qp.BasisEmbedding(qp.math.int_to_binary(index, len(control_wires)), wires=control_wires)
     qp.BBQRAM(
         bitstrings,
         control_wires=control_wires,
@@ -230,11 +251,11 @@ def compiled_bucket_brigade_qram(index):
     return qp.probs(wires=target_wires)
 
 
-bb_specs = qp.specs(compiled_bucket_brigade_qram)(0)["resources"]
+bb_specs = compiled_resources(compiled_bucket_brigade_qram, 0)
 print("Total work wires:", len(control_wires + target_wires + bb_work_wires))
-print("One-qubit gates:", bb_specs.gate_sizes.get(1, 0))
-print("Two-qubit gates:", bb_specs.gate_sizes.get(2, 0))
-print("Circuit depth:", bb_specs.depth)
+print("One-qubit gates:", bb_specs["one_qubit_gates"])
+print("Two-qubit gates:", bb_specs["two_qubit_gates"])
+print("Circuit depth:", bb_specs["circuit_depth"])
 
 
 ######################################################################
@@ -281,7 +302,7 @@ hybrid_work_wires = list(range(5, 5 + hybrid_num_work_wires))
 
 @qp.qnode(qp.device("default.qubit"))
 def hybrid_qram(index):
-    qp.BasisEmbedding(index, wires=control_wires)
+    qp.BasisEmbedding(qp.math.int_to_binary(index, len(control_wires)), wires=control_wires)
     qp.HybridQRAM(
         bitstrings,
         control_wires=control_wires,
@@ -305,10 +326,10 @@ for i in range(len(bitstrings)):
 #
 
 
-@partial(qp.compile, basis_set="CNOT")
+@partial(qp.compile, basis_set=gate_set)
 @qp.qnode(qp.device("default.qubit"))
 def compiled_hybrid_qram(index):
-    qp.BasisEmbedding(index, wires=control_wires)
+    qp.BasisEmbedding(qp.math.int_to_binary(index, len(control_wires)), wires=control_wires)
     qp.HybridQRAM(
         bitstrings,
         control_wires=control_wires,
@@ -319,11 +340,11 @@ def compiled_hybrid_qram(index):
     return qp.probs(wires=target_wires)
 
 
-hybrid_specs = qp.specs(compiled_hybrid_qram)(0)["resources"]
+hybrid_specs = compiled_resources(compiled_hybrid_qram, 0)
 print("Total work wires:", len(control_wires + target_wires + hybrid_work_wires))
-print("One-qubit gates:", hybrid_specs.gate_sizes.get(1, 0))
-print("Two-qubit gates:", hybrid_specs.gate_sizes.get(2, 0))
-print("Circuit depth:", hybrid_specs.depth)
+print("One-qubit gates:", hybrid_specs["one_qubit_gates"])
+print("Two-qubit gates:", hybrid_specs["two_qubit_gates"])
+print("Circuit depth:", hybrid_specs["circuit_depth"])
 
 
 ######################################################################
@@ -387,21 +408,21 @@ for k_value in range(num_address_wires):
 resource_table = {
     "SelectOnlyQRAM": {
         "total_work_wires": len(control_wires + target_wires),
-        "one_qubit_gates": select_specs.gate_sizes.get(1, 0),
-        "two_qubit_gates": select_specs.gate_sizes.get(2, 0),
-        "circuit_depth": select_specs.depth,
+        "one_qubit_gates": select_specs["one_qubit_gates"],
+        "two_qubit_gates": select_specs["two_qubit_gates"],
+        "circuit_depth": select_specs["circuit_depth"],
     },
     "BBQRAM": {
         "total_work_wires": len(control_wires + target_wires + bb_work_wires),
-        "one_qubit_gates": bb_specs.gate_sizes.get(1, 0),
-        "two_qubit_gates": bb_specs.gate_sizes.get(2, 0),
-        "circuit_depth": bb_specs.depth,
+        "one_qubit_gates": bb_specs["one_qubit_gates"],
+        "two_qubit_gates": bb_specs["two_qubit_gates"],
+        "circuit_depth": bb_specs["circuit_depth"],
     },
     "HybridQRAM": {
         "total_work_wires": len(control_wires + target_wires + hybrid_work_wires),
-        "one_qubit_gates": hybrid_specs.gate_sizes.get(1, 0),
-        "two_qubit_gates": hybrid_specs.gate_sizes.get(2, 0),
-        "circuit_depth": hybrid_specs.depth,
+        "one_qubit_gates": hybrid_specs["one_qubit_gates"],
+        "two_qubit_gates": hybrid_specs["two_qubit_gates"],
+        "circuit_depth": hybrid_specs["circuit_depth"],
     },
 }
 
