@@ -3,9 +3,7 @@ r"""Using PennyLane and Qualtran to analyze how QSP can improve measurements of 
 
 .. warning::
 
-    This demo was last verified with PennyLane v0.45.1 and Qualtran v0.7.0.
-    It uses legacy resource-estimation APIs and is no longer executed during
-    documentation builds. The outputs and plot below were recorded with these versions.
+    This demo is only compatible with PennyLane v0.45.1 or below.
 
 Want to efficiently measure molecular properties using quantum computers? In this demo, we
 outline a powerful workflow for measuring molecular properties on future 
