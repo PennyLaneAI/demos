@@ -183,48 +183,21 @@ plt.show()
 
 ######################################################################
 # Compile pipelines can be easily composed and modified. Now let's create a new
-# pipeline from the original by repeating the same sequence of transforms twice,
-# and extract the operations of the optimized circuit.
+# pipeline from the original by repeating the same sequence of transforms twice
+# and then decomposing the optimized circuit into a gate set so that it could
+# be executed on a device that can only execute single-qubit rotations and the
+# :class:`~pennylane.CNOT` gate.
 #
 
-new_pipeline = pipeline * 2
+new_pipeline = pipeline * 2 + qp.compile(pipeline=[], basis_set={"CNOT", "RX", "RY", "RZ"})
 compiled_circuit = new_pipeline(circuit)
 
-optimized_ops = qp.workflow.construct_tape(compiled_circuit)(angles).operations
-print(optimized_ops)
+qp.draw_mpl(compiled_circuit, decimals=1, style="sketch")(angles)
+plt.show()
 
 ######################################################################
-# Finally, we decompose the optimized circuit into a gate set so that it could
-# be executed on a device that can only execute single-qubit rotations and the
-# :class:`~pennylane.CNOT` gate. Decomposing into a gate set is a compilation pass,
-# so we compile the circuit with :func:`~pennylane.qjit` and use the graph-based
-# decomposition system. We also add :class:`~pennylane.GlobalPhase` to the gate set,
-# since the decompositions of the Hadamard and control-Y gates include a global phase.
-#
-
-qp.decomposition.enable_graph()
-
-@qp.qjit(capture=True)
-@qp.decompose(gate_set={"CNOT", "RX", "RY", "RZ", "GlobalPhase"})
-@qp.qnode(qp.device("lightning.qubit", wires=3))
-def hardware_circuit():
-    for op in optimized_ops:
-        qp.apply(op)
-    return qp.expval(qp.PauliZ(wires=0))
-
-print(qp.specs(hardware_circuit)())
-
-######################################################################
-# The gate counts show that the Hadamard and control-Y gates have been decomposed into a series
-# of single-qubit rotations and CNOT gates. The compiled circuit gives the same result as the
-# original one:
-#
-
-print(f"Original circuit: {circuit(angles):.6f}")
-print(f"Compiled circuit: {hardware_circuit():.6f}")
-
-######################################################################
-# We're ready to run our circuit on the quantum device. Great job!
+# We can see how the Hadamard and control-Y gates have been decomposed into a series of single-qubit
+# rotations and CNOT gates. We're ready to run our circuit on the quantum device. Great job!
 #
 # Conclusion
 # ----------
