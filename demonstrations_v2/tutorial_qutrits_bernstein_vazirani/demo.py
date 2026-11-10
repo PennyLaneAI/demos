@@ -3,6 +3,10 @@ r"""
 Qutrits and quantum algorithms
 ==============================
 
+.. warning::
+
+    This demo only supports PennyLane v0.45.1.
+
 .. meta::
     :property="og:description": Learn how to interpret the Bernstein-Vazirani algorithm with qutrits
     :property="og:image": https://pennylane.ai/qml/_static/demonstration_assets/thumbnail_tutorial_qutrits_bernstein_vazirani.png
@@ -190,6 +194,16 @@ a2 = circuit2()
 
 print(f"The value of 'a' is [{a0},{a1},{a2}]")
 
+###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. rst-class:: sphx-glr-script-out
+#
+#      .. code-block:: none
+#
+#          The value of 'a' is [[[0]],[[1]],[[1]]]
+
+
 ##############################################################################
 #
 # In this case, with 3 queries (:math:`n=3`), we have discovered the value of :math:`\vec{a}.` Let's run the Bernstein–Vazirani subroutine (using qubits as qubits this time) to check that one call is enough:
@@ -219,6 +233,16 @@ def circuit():
 a = circuit()
 
 print(f"The value of a is {a}")
+
+###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. rst-class:: sphx-glr-script-out
+#
+#      .. code-block:: none
+#
+#          The value of a is [[0 1 1]]
+
 
 
 ##############################################################################
@@ -303,6 +327,16 @@ a2 = circuit2()
 
 print(f"The value of a is [{a0},{a1},{a2}]")
 
+###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. rst-class:: sphx-glr-script-out
+#
+#      .. code-block:: none
+#
+#          The value of a is [[[0]],[[2]],[[1]]]
+
+
 ##############################################################################
 #
 # The question is, can we perform the same procedure as we have done before to find :math:`\vec{a}` using a single shot? The Hadamard gate also generalizes to qutrits (also denoted as :class:`~.pennylane.THadamard`), so we could try to simply substitute it and see what happens!
@@ -345,6 +379,16 @@ def circuit():
 a = circuit()
 
 print(f"The value of a is {a}")
+
+###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. rst-class:: sphx-glr-script-out
+#
+#      .. code-block:: none
+#
+#          The value of a is [[0 2 1]]
+
 
 ##############################################################################
 #
