@@ -2,6 +2,10 @@ r"""
 Quantum models as Fourier series
 ================================
 
+.. warning::
+
+    This demo only supports PennyLane v0.45.1.
+
 .. meta::
     :property="og:description": The class of functions a quantum model can learn is characterized by the structure of its corresponding Fourier series.
     :property="og:image": https://pennylane.ai/qml/_static/demonstration_assets/scheme.png
@@ -223,6 +227,14 @@ plt.scatter(x, target_y, facecolor="white", edgecolor="black")
 plt.ylim(-1, 1)
 plt.show()
 
+###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. figure:: ../_static/demonstration_assets/expressivity_fourier_series/target_function.png
+#        :align: center
+#        :alt: target function
+
+
 
 ######################################################################
 # .. note::
@@ -316,6 +328,14 @@ plt.plot(x, random_quantum_model_y, c="blue")
 plt.ylim(-1, 1)
 plt.show()
 
+###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. figure:: ../_static/demonstration_assets/expressivity_fourier_series/serial_model_samples.png
+#        :align: center
+#        :alt: serial model samples
+
+
 
 ######################################################################
 #
@@ -339,6 +359,16 @@ plt.show()
 #
 
 print(qp.draw(serial_quantum_model)(weights, x[-1]))
+
+###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. rst-class:: sphx-glr-script-out
+#
+#      .. code-block:: none
+#
+#          0: ──Rot(1.15,4.90,3.75)──RX(6.00)──Rot(2.80,0.63,2.89)─┤  <Z>
+
 
 
 ######################################################################
@@ -379,6 +409,20 @@ for step in range(max_steps):
     if (step + 1) % 10 == 0:
         print("Cost at step {0:3}: {1}".format(step + 1, c))
 
+###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. rst-class:: sphx-glr-script-out
+#
+#      .. code-block:: none
+#
+#          Cost at step  10: 0.11428002647555736
+#          Cost at step  20: 0.012640683454725538
+#          Cost at step  30: 0.0021405817315259695
+#          Cost at step  40: 0.001932244909153259
+#          Cost at step  50: 0.00013360533241901706
+
+
 
 ######################################################################
 # To continue training, you may just run the above cell again. Once you
@@ -394,6 +438,14 @@ plt.plot(x, predictions, c="blue")
 plt.ylim(-1, 1)
 plt.show()
 
+###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. figure:: ../_static/demonstration_assets/expressivity_fourier_series/serial_model_fit.png
+#        :align: center
+#        :alt: serial model fit
+
+
 
 ######################################################################
 # Let's also have a look at the cost during training.
@@ -404,6 +456,14 @@ plt.ylabel("Cost")
 plt.xlabel("Step")
 plt.ylim(0, 0.23)
 plt.show()
+
+###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. figure:: ../_static/demonstration_assets/expressivity_fourier_series/serial_training_loss.png
+#        :align: center
+#        :alt: serial training loss
+
 
 
 ######################################################################
@@ -505,6 +565,18 @@ def ansatz(weights):
 weights_ansatz = 2 * np.pi * np.random.random(size=(n_ansatz_layers, n_qubits, 3))
 print(qp.draw(ansatz, level="device")(weights_ansatz))
 
+###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. rst-class:: sphx-glr-script-out
+#
+#      .. code-block:: none
+#
+#          0: ──Rot(0.69,5.62,6.23)─╭●────╭X──Rot(3.42,5.43,4.61)─╭●─╭X────┤  <I>
+#          1: ──Rot(0.39,5.55,3.24)─╰X─╭●─│───Rot(3.28,5.45,1.54)─│──╰●─╭X─┤     
+#          2: ──Rot(5.70,3.59,4.16)────╰X─╰●──Rot(0.99,1.01,2.10)─╰X────╰●─┤
+
+
 
 ######################################################################
 # Now we define the actual quantum model.
@@ -551,6 +623,14 @@ plt.plot(x, random_quantum_model_y, c="blue")
 plt.ylim(-1, 1)
 plt.show()
 
+###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. figure:: ../_static/demonstration_assets/expressivity_fourier_series/parallel_model_samples.png
+#        :align: center
+#        :alt: parallel model samples
+
+
 
 ######################################################################
 # Training the model
@@ -593,6 +673,22 @@ for step in range(max_steps):
     if (step + 1) % 10 == 0:
         print("Cost at step {0:3}: {1}".format(step + 1, c))
 
+###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. rst-class:: sphx-glr-script-out
+#
+#      .. code-block:: none
+#
+#          Cost at step  10: 0.024742300200738632
+#          Cost at step  20: 0.010715703200827173
+#          Cost at step  30: 0.006796849973353017
+#          Cost at step  40: 0.009175593776216798
+#          Cost at step  50: 0.011346436503646114
+#          Cost at step  60: 0.003365411249361767
+#          Cost at step  70: 0.0007606196424081104
+
+
 
 ######################################################################
 #
@@ -606,6 +702,14 @@ plt.plot(x, predictions, c="blue")
 plt.ylim(-1, 1)
 plt.show()
 
+###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. figure:: ../_static/demonstration_assets/expressivity_fourier_series/parallel_model_fit.png
+#        :align: center
+#        :alt: parallel model fit
+
+
 
 ######################################################################
 #
@@ -615,6 +719,14 @@ plt.plot(range(len(cst)), cst)
 plt.ylabel("Cost")
 plt.xlabel("Step")
 plt.show()
+
+###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. figure:: ../_static/demonstration_assets/expressivity_fourier_series/parallel_training_loss.png
+#        :align: center
+#        :alt: parallel training loss
+
 
 
 ######################################################################
@@ -763,6 +875,14 @@ for idx, ax_ in enumerate(ax):
 
 plt.tight_layout(pad=0.5)
 plt.show()
+
+###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. figure:: ../_static/demonstration_assets/expressivity_fourier_series/sampled_fourier_coefficients.png
+#        :align: center
+#        :alt: sampled fourier coefficients
+
 
 
 ######################################################################
