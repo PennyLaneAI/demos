@@ -4,6 +4,10 @@ r"""
 Gaussian transformation
 =======================
 
+.. warning::
+
+    This demo only supports PennyLane v0.45.1.
+
 .. meta::
     :property="og:description": Use quantum machine learning techniques to tune a beamsplitter.
     :property="og:image": https://pennylane.ai/qml/_static/demonstration_assets/gauss-circuit.png
@@ -116,6 +120,16 @@ init_params = np.array([0.015, 0.02, 0.005])
 print(cost(init_params))
 
 ###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. rst-class:: sphx-glr-script-out
+#
+#      .. code-block:: none
+#
+#          0.99955004
+
+
+###############################################################################
 # When the gate parameters are near to zero, the gates are close to the
 # identity transformation, which leaves the initial state largely unchanged.
 # Since the initial state contains no photons, the mean photon number of the
@@ -150,6 +164,38 @@ for i in range(steps):
 print("Optimized mag_alpha:{:8f}".format(params[0]))
 print("Optimized phase_alpha:{:8f}".format(params[1]))
 print("Optimized phi:{:8f}".format(params[2]))
+
+###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. rst-class:: sphx-glr-script-out
+#
+#      .. code-block:: none
+#
+#          Cost after step     1: 0.999118
+#          Cost after step     2: 0.998273
+#          Cost after step     3: 0.996618
+#          Cost after step     4: 0.993382
+#          Cost after step     5: 0.987074
+#          Cost after step     6: 0.974837
+#          Cost after step     7: 0.951332
+#          Cost after step     8: 0.907043
+#          Cost after step     9: 0.826649
+#          Cost after step    10: 0.690812
+#          Cost after step    11: 0.490303
+#          Cost after step    12: 0.258845
+#          Cost after step    13: 0.083224
+#          Cost after step    14: 0.013179
+#          Cost after step    15: 0.001001
+#          Cost after step    16: 0.000049
+#          Cost after step    17: 0.000002
+#          Cost after step    18: 0.000000
+#          Cost after step    19: 0.000000
+#          Cost after step    20: 0.000000
+#          Optimized mag_alpha:0.999994
+#          Optimized phase_alpha:0.020000
+#          Optimized phi:0.005000
+
 
 ###############################################################################
 # The optimization converges after about 20 steps to a cost function value
