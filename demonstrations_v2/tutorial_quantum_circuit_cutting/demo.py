@@ -1,6 +1,11 @@
 r""".. _quantum_circuit_cutting:
+
 Quantum Circuit Cutting
 =======================
+
+.. warning::
+
+    This demo only supports PennyLane v0.45.1.
 
 .. meta::
     :property="og:description": We dive into two algorithms for splitting a large quantum circuit into smaller ones.
@@ -152,6 +157,15 @@ def circuit(x):
 x = np.array(0.531, requires_grad=True)
 fig, ax = qp.draw_mpl(circuit)(x)
 
+###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. figure:: ../_static/demonstration_assets/quantum_circuit_cutting/figure-line-153-1.png
+#       :align: center
+#       :width: 100%
+#
+
+
 
 ######################################################################
 # Given the above quantum circuit, our goal is to simulate a 3-qubit quantum
@@ -191,6 +205,15 @@ def circuit(x):
 x = np.array(0.531, requires_grad=True)  # Defining the parameter x
 fig, ax = qp.draw_mpl(circuit)(x)  # Drawing circuit
 
+###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. figure:: ../_static/demonstration_assets/quantum_circuit_cutting/figure-line-192-1.png
+#       :align: center
+#       :width: 100%
+#
+
+
 
 ######################################################################
 # The dashed line and the scissors between the two ``CZ`` gates on qubit 1 in the
@@ -225,6 +248,16 @@ def circuit(x):
 
 x = np.array(0.531, requires_grad=True)
 circuit(x)  # Executing the quantum circuit
+
+###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. rst-class:: sphx-glr-script-out
+#
+#      .. code-block:: none
+#
+#          np.float64(0.47165198882111165)
+
 
 
 ######################################################################
@@ -313,6 +346,16 @@ def circuit(x):
 
 x = np.array(0.531, requires_grad=True)
 circuit(x)
+
+###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. rst-class:: sphx-glr-script-out
+#
+#      .. code-block:: none
+#
+#          np.float64(0.47165198882111165)
+
 
 
 ######################################################################
@@ -457,6 +500,15 @@ graph.add_edges_from(combinations(bottom_nodes, 2), color=1)
 
 nx.draw_spring(graph, with_labels=True)
 
+###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. figure:: ../_static/demonstration_assets/quantum_circuit_cutting/figure-line-458-1.png
+#       :align: center
+#       :width: 100%
+#
+
+
 ######################################################################
 # For this graph, optimal QAOA parameters read:
 #
@@ -540,6 +592,15 @@ tape = QuantumTape.from_queue(q)
 
 fig, _ = qp.drawer.tape_mpl(tape)
 fig.set_size_inches(12, 6)
+
+###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. figure:: ../_static/demonstration_assets/quantum_circuit_cutting/figure-line-542-1.png
+#       :align: center
+#       :width: 100%
+#
+
 
 
 ######################################################################
@@ -695,6 +756,21 @@ print(f"Channel probabilities: p0={probs[0]:.2f}; p1={probs[1]:.2f}", "\n")
 fig, _ = qp.drawer.tape_mpl(tape0)
 fig.set_size_inches(12, 6)
 
+###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. figure:: ../_static/demonstration_assets/quantum_circuit_cutting/figure-line-696-1.png
+#       :align: center
+#       :width: 100%
+#
+#    .. rst-class:: sphx-glr-script-out
+#
+#      .. code-block:: none
+#
+#          Cut size: k=3
+#          Channel probabilities: p0=0.53; p1=0.47
+
+
 ######################################################################
 # You may have noticed that both generated tapes have the same size as
 # the original ``tape``. It may seem that no circuit cutting actually took
@@ -728,6 +804,18 @@ channels, channel_shots = np.unique(choices, return_counts=True)
 print("Which channel to run:", choices)
 print(f"Channel 0: {channel_shots[0]} times")
 print(f"Channel 1: {channel_shots[1]} times.")
+
+###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. rst-class:: sphx-glr-script-out
+#
+#      .. code-block:: none
+#
+#          Which channel to run: [1 0 1 ... 0 1 0]
+#          Channel 0: 5305 times
+#          Channel 1: 4695 times.
+
 
 
 ######################################################################
@@ -805,6 +893,15 @@ ax.set_ylabel("QAOA cost", fontsize=20)
 ax.set_xlabel("Number of shots", fontsize=20)
 
 _ = ax.legend(frameon=True, loc="lower right", fontsize=20)
+
+###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. figure:: ../_static/demonstration_assets/quantum_circuit_cutting/figure-line-807-1.png
+#       :align: center
+#       :width: 100%
+#
+
 
 ######################################################################
 # We see that the randomized method converges faster than the Pauli method
