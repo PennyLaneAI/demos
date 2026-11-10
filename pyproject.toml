@@ -21,7 +21,7 @@ dependencies = [
   "dulwich<1.3",
   "requirements-parser>=0.11.0,<0.12.0",
   "lxml>=6.1.0,<7.0.0",
-  "uv>=0.7.18,<0.8.0",
+  "uv>=0.7.18",
   "sphobjinv>=2.3.1.3,<3.0.0",
   "pandocfilters>=1.4.0",
   "packaging>=24.0"
@@ -71,7 +71,7 @@ pyyaml = "^6.0.1"
 pennylane-sphinx-theme = "0.25.0"
 pypandoc = "1.5"
 pennylane = "0.45.0"
-uv = "^0.7.18"
+uv = ">=0.7.18"
 
 # Metadata validation dependencies (optional)
 [tool.poetry.group.metadata-validation]
