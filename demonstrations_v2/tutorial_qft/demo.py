@@ -91,16 +91,16 @@ print(np.round(qft_inverse.matrix(), 2))
 # apply SWAP gates at the end. Let's see how the decomposition looks like using the drawer:
 
 import pennylane as qp
-from functools import partial
 import matplotlib.pyplot as plt
 
 plt.style.use('pennylane.drawer.plot')
 
-# This line is to expand the circuit to see the operators
-@partial(qp.transforms.decompose, max_expansion=1)
+# We apply the decomposition of the QFT to see the operators
+qft_ops = qp.QFT(wires=range(4)).decomposition()
 
 def circuit():
-    qp.QFT(wires=range(4))
+    for op in qft_ops:
+        qp.apply(op)
 
 qp.draw_mpl(circuit, decimals = 2, style = "pennylane")()
 plt.show()

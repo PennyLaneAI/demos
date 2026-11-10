@@ -97,16 +97,12 @@ print(f"Ground state energy: {circuit()}")
 # We use an ansatz constructed with :doc:`Givens rotations <demos/tutorial_givens_rotations>`, and we define the circuit for finding the excited state.
 #
 
-from functools import partial
-
-# This line is added to better visualise the circuit
-@partial(qp.transforms.decompose, max_expansion=1)
-
 def ansatz(theta, wires):
     singles, doubles = qp.qchem.excitations(2, n_qubits)
     singles = [[wires[i] for i in single] for single in singles]
     doubles = [[wires[i] for i in double] for double in doubles]
-    qp.AllSinglesDoubles(theta, wires, np.array([1,1,0,0]), singles, doubles)
+    # We apply the decomposition of AllSinglesDoubles to better visualise the circuit
+    qp.AllSinglesDoubles.compute_decomposition(theta, wires, np.array([1,1,0,0]), singles, doubles)
 
 theta = np.random.rand(3) # 3 parameters for the ansatz
 print(qp.draw(ansatz, decimals = 2)(theta, range(4)))

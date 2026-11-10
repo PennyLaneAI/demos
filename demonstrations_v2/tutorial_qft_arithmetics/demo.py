@@ -94,8 +94,9 @@ Let’s see how we would represent all the integers from :math:`0` to :math:`7` 
     representation that helps better visualize and interpret quantum gates such as rotations.
 
 We can use
-the :class:`qp.BasisEmbedding <pennylane.BasisEmbedding>`
-template to obtain the binary representation in a simple way.
+:func:`qp.math.int_to_binary <pennylane.math.int_to_binary>` to obtain the binary representation
+of an integer, and the :class:`qp.BasisEmbedding <pennylane.BasisEmbedding>`
+template to encode it in the qubits.
 Let's see how we would code the number :math:`6.`
 """
 
@@ -107,7 +108,7 @@ dev = qp.device("default.qubit", wires=3)
 @qp.compile
 @qp.qnode(dev)
 def basis_embedding_circuit(m):
-    qp.BasisEmbedding(m, wires=range(3))
+    qp.BasisEmbedding(qp.math.int_to_binary(m, 3), wires=range(3))
     return qp.state()
 
 m = 6 # number to be encoded
@@ -181,7 +182,7 @@ def add_k_fourier(k, wires):
 @qp.set_shots(1)
 @qp.qnode(dev)
 def sum(m, k):
-    qp.BasisEmbedding(m, wires=range(n_wires))  # m encoding
+    qp.BasisEmbedding(qp.math.int_to_binary(m, n_wires), wires=range(n_wires))  # m encoding
 
     qp.QFT(wires=range(n_wires))  # step 1
 
@@ -256,8 +257,8 @@ def addition(wires_m, wires_k, wires_solution):
 @qp.qnode(dev)
 def sum2(m, k, wires_m, wires_k, wires_solution):
     # m and k codification
-    qp.BasisEmbedding(m, wires=wires_m)
-    qp.BasisEmbedding(k, wires=wires_k)
+    qp.BasisEmbedding(qp.math.int_to_binary(m, len(wires_m)), wires=wires_m)
+    qp.BasisEmbedding(qp.math.int_to_binary(k, len(wires_k)), wires=wires_k)
 
     # apply the addition circuit
     addition(wires_m, wires_k, wires_solution)
@@ -321,8 +322,8 @@ def multiplication(wires_m, wires_k, wires_solution):
 @qp.qnode(dev)
 def mul(m, k):
     # m and k codification
-    qp.BasisEmbedding(m, wires=wires_m)
-    qp.BasisEmbedding(k, wires=wires_k)
+    qp.BasisEmbedding(qp.math.int_to_binary(m, len(wires_m)), wires=wires_m)
+    qp.BasisEmbedding(qp.math.int_to_binary(k, len(wires_k)), wires=wires_k)
 
     # Apply multiplication
     multiplication(wires_m, wires_k, wires_solution)
