@@ -2,6 +2,10 @@ r"""Symmetry-invariant quantum machine learning force fields
 ========================================================
 
 
+.. warning::
+
+    This demo only supports PennyLane v0.45.1.
+
 Symmetries are ubiquitous in physics. From condensed matter to particle physics, they have helped us
 make connections and formulate new theories. In the context of machine learning, inductive bias has
 proven to be successful in the presence of symmetries. This framework, known as geometric deep
@@ -511,6 +515,14 @@ plt.ylabel("Mean Squared Error", fontsize=fontsize)
 plt.legend(fontsize=fontsize)
 plt.tight_layout()
 plt.show()
+
+###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. figure:: ../_static/demonstration_assets/eqnn_force_field/training_loss.png
+#        :align: center
+#        :alt: training loss
+
 ######################################################################
 # Energy predictions
 # ~~~~~~~~~~~~~~~~~~
@@ -530,6 +542,14 @@ plt.ylabel("Predicted energy", fontsize=fontsize)
 plt.legend(fontsize=fontsize)
 plt.tight_layout()
 plt.show()
+
+###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. figure:: ../_static/demonstration_assets/eqnn_force_field/energy_predictions.png
+#        :align: center
+#        :alt: energy predictions
+
 
 
 ######################################################################
@@ -573,6 +593,14 @@ for _, a in enumerate(["x", "y", "z"]):
 
 plt.tight_layout()
 plt.show()
+
+###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. figure:: ../_static/demonstration_assets/eqnn_force_field/force_predictions.png
+#        :align: center
+#        :alt: force predictions
+
 ######################################################################
 # In this series of plots, we can see the predicted forces on the two Hydrogen atoms in the three :math:`x,` :math:`y` and :math:`z` directions. Again, the model
 # does a fairly good job. The few points which are not on the diagonal can be improved using some tricks, such as incorporating the forces in the loss function.
