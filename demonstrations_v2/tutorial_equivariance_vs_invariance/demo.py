@@ -50,6 +50,7 @@ import pennylane as qml
 import torch
 
 torch.set_default_dtype(torch.float64)
+torch.manual_seed(42)  # fixed seed for the random images and angles of the checks below
 
 SIDE, N_QUBITS, HALF = 16, 8, 4
 ROWS, COLS = range(0, HALF), range(HALF, N_QUBITS)
