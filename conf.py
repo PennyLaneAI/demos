@@ -48,9 +48,12 @@ extensions = [
     "sphinx.ext.intersphinx",
     "sphinx.ext.mathjax",
     "sphinx.ext.ifconfig",
+    "sphinx.ext.todo",
     "sphinx_gallery.gen_gallery",
     "extension",
 ]
+
+todo_include_todos = True
 
 dev = os.getenv("DEV", "False")
 dev = True if dev == "True" else False

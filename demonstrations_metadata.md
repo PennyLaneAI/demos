@@ -76,7 +76,7 @@ The table below gives details about the fields in the metadata JSON file for ver
 
 | Name | Is Required | Value Type | Description |
 |---|---|---|---|
-| `title` | Yes | `string` | The title of this demo. |
+| `title` | Yes | `string` | The title of this demo. Use sentence case capitalization. |
 | `authors` | Yes | `array` of `object` | An array of the authors of this demo. This array must contain at least one item. See below for the object structure. |
 | `dateOfPublication` | Yes | `datetime` | The date on which this demo was first published, in the form `YYYY-MM-DDTHH:MM:SS+00:00`. |
 | `dateOfLastModification` | Yes | `datetime` | The date on which this demo was last modified, in the form `YYYY-MM-DDTHH:MM:SS+00:00`. |

@@ -147,11 +147,15 @@ jobs:
 
       - name: Create job chunk array
         id: get-chunk-array
-        run: printf "chunk-array=%s" "$(jq -nc '[$ARGS.positional | _nwise(${{ inputs.batch_size }})]' --args ${{ steps.get-demo-names.outputs.demo-names }})" >> $GITHUB_OUTPUT
+        run: |
+          chunk_array=$(jq -nc '[$ARGS.positional | . as $a | range(0; length; ${{ inputs.batch_size }}) | $a[.:.+${{ inputs.batch_size }}]]' --args ${{ steps.get-demo-names.outputs.demo-names }})
+          printf "chunk-array=%s\n" "$chunk_array" >> "$GITHUB_OUTPUT"
 
       - name: Get chunk indexes
         id: get-chunk-indexes
-        run: printf "chunk-indexes=%s" "$(jq -nc '${{ steps.get-chunk-array.outputs.chunk-array }} | [range(0, length)]')" >> $GITHUB_OUTPUT
+        run: |
+          chunk_indexes=$(jq -nc '${{ steps.get-chunk-array.outputs.chunk-array }} | [range(0, length)]')
+          printf "chunk-indexes=%s\n" "$chunk_indexes" >> "$GITHUB_OUTPUT"
 
   build-demos:
     runs-on: ubuntu-latest
@@ -185,7 +189,13 @@ jobs:
 
       - name: Make demo name list
         id: demo-name-list
-        run: printf "demo-names=%s" "$(jq -nc '${{ needs.generate-build-variables.outputs.chunk-array }}[${{ matrix.chunk-index }}][]' | tr -s '\n"' ' ')" >> $GITHUB_OUTPUT
+        run: |
+          demo_names=$(jq -nr '${{ needs.generate-build-variables.outputs.chunk-array }}[${{ matrix.chunk-index }}] | join(" ")')
+          if [ -z "$demo_names" ]; then
+            echo "::error::Empty demo list for chunk ${{ matrix.chunk-index }}"
+            exit 1
+          fi
+          printf "demo-names=%s\n" "$demo_names" >> "$GITHUB_OUTPUT"
 
       - name: Build demos
         run: |

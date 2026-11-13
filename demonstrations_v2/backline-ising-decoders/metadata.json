@@ -1,0 +1,58 @@
+{
+    "title": "Hierarchical QEC decoding with Backline, NVIDIA Ising, and PyMatching",
+    "authors": [
+        {
+            "username": "mehrdad2m"
+        },
+        {
+            "username": "josh"
+        },
+        {
+            "username": "mlxd"
+        }
+    ],
+    "executable_stable": false,
+    "executable_latest": false,
+    "dateOfPublication": "2026-10-13T00:00:00+00:00",
+    "dateOfLastModification": "2026-10-13T00:00:00+00:00",
+    "categories": [
+        "Quantum Hardware",
+        "Quantum Computing"
+    ],
+    "tags": [],
+    "previewImages": [
+        {
+            "type": "thumbnail",
+            "uri": "/_static/demo_thumbnails/regular_demo_thumbnails/pennylane-demo-backline-ising-decoder-thumbnail.png"
+        },
+        {
+            "type": "large_thumbnail",
+            "uri": "/_static/demo_thumbnails/large_demo_thumbnails/pennylane-demo-backline-ising-decoder-large-thumbnail.png"
+        },
+        {
+            "type": "hero_image",
+            "uri": "/_static/hero_illustrations/pennylane-blog-backline-ising-decoder-hero.png"
+        }
+    ],
+    "seoDescription": "How to use NVIDIA Ising decoding models and PyMatching with Backline",
+    "doi": "",
+    "references": [],
+    "basedOnPapers": [],
+    "referencedByPapers": [],
+    "relatedContent": [        {
+            "type": "demonstration",
+            "id": "backline",
+            "weight": 1.0
+        },
+        {
+            "type": "demonstration",
+            "id": "tutorial_qldpc_codes",
+            "weight": 1.0
+        },
+        {
+            "type": "demonstration",
+            "id": "tutorial_bp_catalyst",
+            "weight": 1.0
+        }
+    ]
+}
