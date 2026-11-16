@@ -1,6 +1,10 @@
 r"""Using PennyLane and Qualtran to analyze how QSP can improve measurements of molecular properties
 ====================================================================================================
 
+.. warning::
+
+    This demo is only compatible with PennyLane v0.45.1 or below.
+
 Want to efficiently measure molecular properties using quantum computers? In this demo, we
 outline a powerful workflow for measuring molecular properties on future 
 fault-tolerant quantum computers. We demonstrate how to construct the
@@ -67,7 +71,7 @@ import pennylane as qp
 import numpy as np
 
 coeffs = [-2.6055398817649027, 0.4725512342017669, 0.06908378485045799, 0.06908378485045799, 0.42465877221739423, 0.040785962774025165, 0.02016371425557293, 0.33650704944175736, 0.059002396986463035, 0.059002396986463035, 0.2401948108687125, 0.2696430914655511, 0.04971997220167805, 0.04971997220167805, 0.2751875205710399, 0.30033122257656397, 0.22551650339251875]
-paulis = [qp.GlobalPhase(0, 0), qp.Z(0), qp.Y(0) @ qp.Z(1) @ qp.Y(2), qp.X(0) @ qp.Z(1) @ qp.X(2), qp.Z(1), qp.Z(2), qp.Z(3), qp.Z(0) @ qp.Z(1), qp.Y(0) @ qp.Y(2), qp.X(0) @ qp.X(2), qp.Z(0) @ qp.Z(2), qp.Z(0) @ qp.Z(3), qp.Y(0) @ qp.Z(1) @ qp.Y(2) @ qp.Z(3), qp.X(0) @ qp.Z(1) @ qp.X(2) @ qp.Z(3), qp.Z(1) @ qp.Z(2), qp.Z(1) @ qp.Z(3), qp.Z(2) @ qp.Z(3)]
+paulis = [qp.GlobalPhase(0), qp.Z(0), qp.Y(0) @ qp.Z(1) @ qp.Y(2), qp.X(0) @ qp.Z(1) @ qp.X(2), qp.Z(1), qp.Z(2), qp.Z(3), qp.Z(0) @ qp.Z(1), qp.Y(0) @ qp.Y(2), qp.X(0) @ qp.X(2), qp.Z(0) @ qp.Z(2), qp.Z(0) @ qp.Z(3), qp.Y(0) @ qp.Z(1) @ qp.Y(2) @ qp.Z(3), qp.X(0) @ qp.Z(1) @ qp.X(2) @ qp.Z(3), qp.Z(1) @ qp.Z(2), qp.Z(1) @ qp.Z(3), qp.Z(2) @ qp.Z(3)]
 hamiltonian = qp.Hamiltonian(coeffs, paulis)
 
 ######################################################################
@@ -294,6 +298,16 @@ coherent_result = 2*lambda_lcu*(P+RP)
 print("Coherent result:", coherent_result)
 
 ######################################################################
+# .. rst-class:: sphx-glr-script-out
+#
+# .. code-block:: none
+#
+#    P: 0.9677972215518822
+#    RP: -0.6875560272165014
+#    Coherent result: 3.1200328692888832
+#
+
+######################################################################
 # Analyzing with Qualtran
 # -----------------------
 # 
@@ -319,6 +333,25 @@ for gate, count in sigma.items():
     print(f"{gate}: {count}")
 
 ######################################################################
+# .. rst-class:: sphx-glr-script-out
+#
+# .. code-block:: none
+#
+#    --- Gate counts ---
+#    X: 2326
+#    H: 2
+#    CHadamard: 4972
+#    CNOT: 2828
+#    And: 2536
+#    And†: 2536
+#    Z**\phi: 116
+#    C[T]: 190080
+#    Toffoli: 6804
+#    C[S]: 648
+#    CZ: 324
+#
+
+######################################################################
 # As explained in [#Oumarou]_,
 # increasing :math:`D` improves the accuracy of the Krylov minimal energy
 # compared to the true ground state energy. This extra accuracy is paid for by requiring additional gates.
@@ -341,6 +374,25 @@ graph, sigma = bloq.call_graph(generalizer=generalize_rotation_angle)
 print("--- Gate counts ---")
 for gate, count in sigma.items():
     print(f"{gate}: {count}")
+
+######################################################################
+# .. rst-class:: sphx-glr-script-out
+#
+# .. code-block:: none
+#
+#    --- Gate counts ---
+#    X: 3206
+#    H: 2
+#    CHadamard: 6996
+#    CNOT: 3972
+#    And: 3548
+#    And†: 3548
+#    Z**\phi: 160
+#    C[T]: 267520
+#    Toffoli: 9576
+#    C[S]: 912
+#    CZ: 456
+#
 
 ######################################################################
 # We can plot how the number of gates increases with the Krylov dimension to see if it is linear
@@ -369,6 +421,13 @@ plt.xlabel('Krylov Subspace Dimension, D')
 plt.ylabel('Number of Gates')
 plt.legend()
 plt.show()
+
+######################################################################
+# .. figure:: ../_static/demonstration_assets/qksd_qsp_qualtran/gate_counts.png
+#    :align: center
+#    :width: 80%
+#    :alt: CNOT, Toffoli, and X gate counts increasing linearly with Krylov subspace dimension.
+#
 
 ######################################################################
 # As expected, the gate counts increase linearly with the Krylov subspace dimension.

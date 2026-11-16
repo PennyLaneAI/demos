@@ -234,6 +234,7 @@ def adjust_phases():
 #############################################
 # All together, we can construct the circuit.
 # We have added :class:`qp.BasisState` to initialize the input in any computational basis state with the optional argument ``state``.
+# Since :class:`qp.BasisState` expects a binary array, we convert the integer ``state`` with :func:`qp.math.int_to_binary <pennylane.math.int_to_binary>`.
 
 
 def QChT():
@@ -252,7 +253,7 @@ dev = qp.device("default.qubit")
 
 @qp.qnode(dev)
 def circuit(state=0):
-    qp.BasisState(state=state, wires=range(1, N + 1))
+    qp.BasisState(qp.math.int_to_binary(state, N), wires=range(1, N + 1))
     QChT()
     return qp.state()
 
@@ -262,7 +263,7 @@ def circuit(state=0):
 
 
 def circuit_to_draw():
-    qp.BasisState(state=0, wires=range(1, N + 1))
+    qp.BasisState(qp.math.int_to_binary(0, N), wires=range(1, N + 1))
     QChT()
 
 

@@ -189,7 +189,7 @@ plt.show()
 # :class:`~pennylane.CNOT` gate.
 #
 
-new_pipeline = pipeline * 2 + qp.transforms.decompose(gate_set={"CNOT", "RX", "RY", "RZ"})
+new_pipeline = pipeline * 2 + qp.compile(pipeline=[], basis_set={"CNOT", "RX", "RY", "RZ"})
 compiled_circuit = new_pipeline(circuit)
 
 qp.draw_mpl(compiled_circuit, decimals=1, style="sketch")(angles)

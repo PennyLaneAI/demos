@@ -256,7 +256,7 @@ def core_unitary_rotation(core, body_type, wires):
         for wire, cval in enumerate(qp.math.diag(core)):
             for sigma in [0, 1]:
                 qp.RZ(-cval, wires=2 * wire + sigma)
-        qp.GlobalPhase(qp.math.sum(core), wires=wires)
+        qp.GlobalPhase(qp.math.sum(core))
 
     if body_type == "two_body":  # implements two-body term
         for odx1, odx2 in it.product(range(len(wires) // 2), repeat=2):
@@ -265,7 +265,7 @@ def core_unitary_rotation(core, body_type, wires):
                 if odx1 != odx2 or sigma != tau:
                     qp.IsingZZ(cval, wires=[2*odx1+sigma, 2*odx2+tau])
         gphase = 0.5 * qp.math.sum(core) - 0.25 * qp.math.trace(core)
-        qp.GlobalPhase(-gphase, wires=wires)
+        qp.GlobalPhase(-gphase)
 
 ######################################################################
 # We can now use these functions to approximate the evolution operator :math:`e^{-iHt}` for
@@ -325,7 +325,7 @@ hf_state = qp.qchem.hf_state(electrons=mol.n_electrons, orbitals=len(circ_wires)
 def cdf_circuit(n_steps, order):
     qp.BasisState(hf_state, wires=circ_wires)
     qp.trotterize(CDFTrotterStep, n_steps, order)(time, cdf_hamiltonian, circ_wires)
-    qp.GlobalPhase(cdf_hamiltonian["nuc_constant"], wires=circ_wires)
+    qp.GlobalPhase(cdf_hamiltonian["nuc_constant"])
     return qp.state()
 
 circuit_state = cdf_circuit(n_steps=10, order=2)
