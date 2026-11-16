@@ -330,6 +330,7 @@ qp.matrix(be_circuit)(feature_vector, main_wires, ancilla_wires)[:4,:4]
 # 
 
 qp.draw_mpl(be_circuit)(feature_vector, main_wires, ancilla_wires)
+plt.show()
 
 ######################################################################
 # Applying the nonlinearity
