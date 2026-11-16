@@ -2,6 +2,10 @@ r"""
 Photonic quantum computers
 =============================
 
+.. warning::
+
+    This demo only supports PennyLane v0.45.1.
+
 .. meta::
     :property="og:description": Learn how photonic quantum computers work through code
     :property="og:image": https://pennylane.ai/qml/_static/demonstration_assets/photonics_tn.png
@@ -191,6 +195,14 @@ ax.set_xlabel("Position", fontsize = 11)
 ax.set_aspect("equal", adjustable = "box")
 plt.show()
 
+###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. figure:: ../_static/demonstration_assets/photonics/vacuum_samples.png
+#        :align: center
+#        :alt: vacuum samples
+
+
 ##############################################################################
 #
 # We observe that the values of the quadratures are distributed around the
@@ -225,6 +237,19 @@ print("Expectation value of x-quadrature: {}".format(vacuum_mean_x()))
 print("Expectation value of p-quadrature: {}".format(vacuum_mean_p()))
 print("Variance of x-quadrature: {}".format(vacuum_var_x()))
 print("Variance of p-quadrature: {}".format(vacuum_var_p()))
+
+###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. rst-class:: sphx-glr-script-out
+#
+#      .. code-block:: none
+#
+#          Expectation value of x-quadrature: 0.0
+#          Expectation value of p-quadrature: 0.0
+#          Variance of x-quadrature: 1.0
+#          Variance of p-quadrature: 1.0
+
 
 ##############################################################################
 #
@@ -307,6 +332,14 @@ ax1.set_aspect("equal", adjustable = "box")
 plt.xlim([-0.5, 8])
 plt.ylim([0, 9])
 plt.show()
+
+###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. figure:: ../_static/demonstration_assets/photonics/coherent_state_samples.png
+#        :align: center
+#        :alt: coherent state samples
+
 ##############################################################################
 #
 # Indeed, we see that the distribution of quadrature measurements is similar to that of the vacuum, except that
@@ -401,6 +434,14 @@ ax1.set_title("Displacing coherent states", fontsize=12)
 ax1.set_aspect("equal", adjustable = "box")
 plt.show()
 
+###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. figure:: ../_static/demonstration_assets/photonics/displaced_coherent_state_samples.png
+#        :align: center
+#        :alt: displaced coherent state samples
+
+
 ##############################################################################
 #
 # Note that setting :math:`x=3` gave a displacement of 6 units in the horizontal direction in phase space.
@@ -473,6 +514,14 @@ ax1.set_aspect("equal", adjustable="box")
 ax1.set_title("Implementation of displacement operator", fontsize = 12)
 plt.show()
 
+###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. figure:: ../_static/demonstration_assets/photonics/beamsplitter_displacement_samples.png
+#        :align: center
+#        :alt: beamsplitter displacement samples
+
+
 ##############################################################################
 #
 # We see that we get a displaced state. The amount of displacement can be adjusted by
@@ -540,6 +589,14 @@ ax1.set_xlim([-4, 4])
 ax1.set_aspect("equal", adjustable = "box")
 plt.show()
 
+###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. figure:: ../_static/demonstration_assets/photonics/squeezed_state_samples.png
+#        :align: center
+#        :alt: squeezed state samples
+
+
 ##############################################################################
 #
 # This confirms that squeezing changes the variances of the quadratures.
@@ -595,6 +652,16 @@ def measure_n_coherent(alpha, phi):
 coherent_expval = measure_n_coherent(1, np.pi / 3)
 print("Expected number of photons: {}".format(coherent_expval))
 
+###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. rst-class:: sphx-glr-script-out
+#
+#      .. code-block:: none
+#
+#          Expected number of photons: 1.3810978455418157
+
+
 ##############################################################################
 #
 # Since the expectation value is not an integer number, the measurement results cannot have been all the same integer.
@@ -649,6 +716,21 @@ print(
         measurement2_1(3, 0, 1, 0) - measurement2_0(3, 0, 1, 0)
     )
 )
+
+###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. rst-class:: sphx-glr-script-out
+#
+#      .. code-block:: none
+#
+#          Expectation value of x-quadrature after displacement: 6.0
+#          
+#          Expected current in each detector:
+#          Detector 1: 2.000000000000001
+#          Detector 2: 7.999999999999998
+#          Difference between currents: 5.999999999999997
+
 
 ##############################################################################
 #

@@ -5,6 +5,10 @@ r"""
 Generalized parameter-shift rules
 =================================
 
+.. warning::
+
+    This demo only supports PennyLane v0.45.1.
+
 .. meta::
 
     :property="og:description": Reconstruct quantum functions and compute their derivatives.
@@ -217,6 +221,13 @@ for ax, N, E in zip(axs, Ns, evaluated_cost):
 _ = axs[0].set_ylabel("$E$")
 plt.show()
 
+###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. figure:: ../_static/demonstration_assets/general_parshift/cost_functions.png
+#        :align: center
+#        :alt: cost functions
+
 
 ###############################################################################
 #
@@ -245,6 +256,18 @@ for N, cost_function in zip(Ns, cost_functions):
     print(f"For {N} qubits the spectrum is {spec}.")
     # Store spectrum
     spectra.append([freq for freq in spec if freq>0.0])
+
+###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. rst-class:: sphx-glr-script-out
+#
+#      .. code-block:: none
+#
+#          For 1 qubits the spectrum is [np.float64(-1.0), 0.0, np.float64(1.0)].
+#          For 2 qubits the spectrum is [np.float64(-2.0), np.float64(-1.0), 0.0, np.float64(1.0), np.float64(2.0)].
+#          For 4 qubits the spectrum is [np.float64(-4.0), np.float64(-3.0), np.float64(-2.0), np.float64(-1.0), 0.0, np.float64(1.0), np.float64(2.0), np.float64(3.0), np.float64(4.0)].
+#          For 5 qubits the spectrum is [np.float64(-5.0), np.float64(-4.0), np.float64(-3.0), np.float64(-2.0), np.float64(-1.0), 0.0, np.float64(1.0), np.float64(2.0), np.float64(3.0), np.float64(4.0), np.float64(5.0)].
 
 
 ###############################################################################
@@ -276,6 +299,13 @@ for i, (cost_function, spec) in enumerate(zip(cost_functions, spectra)):
     else:
         _ = [axs[j, i].set_ylabel("") for j in [0, 1]]
 plt.show()
+
+###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. figure:: ../_static/demonstration_assets/general_parshift/fourier_coefficients.png
+#        :align: center
+#        :alt: fourier coefficients
 
 
 ###############################################################################
@@ -407,6 +437,13 @@ equ_shifts = [[2 * mu * np.pi / (2 * N + 1) for mu in range(-N, N + 1)] for N in
 fig, axs = compare_functions(cost_functions, reconstructions_equ, Ns, equ_shifts)
 plt.show()
 
+###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. figure:: ../_static/demonstration_assets/general_parshift/full_reconstructions.png
+#        :align: center
+#        :alt: full reconstructions
+
 
 ###############################################################################
 # *It works!*
@@ -485,6 +522,13 @@ shifts = [rnd.random(2 * N + 1) * 2 * np.pi - np.pi for N in Ns]
 reconstructions_gen = list(map(full_reconstruction_gen, cost_functions, shifts))
 fig, axs = compare_functions(cost_functions, reconstructions_gen, Ns, shifts)
 plt.show()
+
+###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. figure:: ../_static/demonstration_assets/general_parshift/partial_reconstructions.png
+#        :align: center
+#        :alt: partial reconstructions
 
 
 ###############################################################################
@@ -696,6 +740,13 @@ labels = ['Original', 'Odd reconstruction', 'Even reconstruction', 'Summed recon
 _ = fig.legend(handles, labels, bbox_to_anchor=(0.2, 0.89), loc='lower left', ncol=4)
 plt.show()
 
+###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. figure:: ../_static/demonstration_assets/general_parshift/even_odd_reconstructions.png
+#        :align: center
+#        :alt: even odd reconstructions
+
 
 ###############################################################################
 # Great! The even and odd part indeed sum to the correct function again. But what did we
@@ -727,6 +778,25 @@ for order, name in zip([1, 2, 4], ["First", "Second", "4th"]):
     print(f"{name} derivatives via jax: {all_equal}")
     print("From the cost functions:       ", np.round(np.array(cost_grads), 6))
     print(f"From the {recon_name} reconstructions: ", np.round(np.array(recon_grads), 6), "\n")
+
+###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. rst-class:: sphx-glr-script-out
+#
+#      .. code-block:: none
+#
+#          First derivatives via jax: All entries match
+#          From the cost functions:        [-0.689767 -2.463189  2.704583  1.935272]
+#          From the odd  reconstructions:  [-0.689767 -2.463189  2.704583  1.935272] 
+#          
+#          Second derivatives via jax: All entries match
+#          From the cost functions:        [ 0.26814   1.696854 -2.055918 -7.236953]
+#          From the even reconstructions:  [ 0.26814   1.696854 -2.055918 -7.236953] 
+#          
+#          4th derivatives via jax: All entries match
+#          From the cost functions:        [-0.26814  -6.938376 15.640123 53.355635]
+#          From the even reconstructions:  [-0.26814  -6.938376 15.640123 53.355635]
 
 
 ###############################################################################
@@ -827,6 +897,19 @@ print(f"First-order parameter-shift rule:  {np.round(np.array(ps_der1), 6)}")
 print(f"First-order finite difference:     {np.round(np.array(fd_der1), 6)}")
 print(f"Second-order parameter-shift rule: {np.round(np.array(ps_der2), 6)}")
 print(f"Second-order finite difference:    {np.round(np.array(fd_der2), 6)}")
+
+###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. rst-class:: sphx-glr-script-out
+#
+#      .. code-block:: none
+#
+#          Number of qubits/RZ gates:                  1         2         4         5
+#          First-order parameter-shift rule:  [-0.689767 -2.463189  2.704583  1.935272]
+#          First-order finite difference:     [-0.689767 -2.463189  2.704583  1.935272]
+#          Second-order parameter-shift rule: [ 0.26814   1.696854 -2.055918 -7.236953]
+#          Second-order finite difference:    [ 0.26814   1.696854 -2.055918 -7.236954]
 
 ###############################################################################
 # The parameter-shift rules work as expected! And we were able to save
