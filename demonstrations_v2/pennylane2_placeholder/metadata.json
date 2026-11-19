@@ -1,5 +1,5 @@
 {
-  "title": "PennyLane2 placeholder",
+  "title": "Simulating near-infrared spectroscopy with PennyLane2",
   "authors": [
     {
       "username": "isaacdevlugt"
@@ -8,11 +8,15 @@
       "username": "ANT0N"
     }
   ],
-  "executable_stable": true,
-  "executable_latest": true,
+  "executable_stable": false,
+  "executable_latest": false,
   "dateOfPublication": "2026-11-13T00:00:00+00:00",
-  "dateOfLastModification": "2026-11-13T00:00:00+00:00",
-  "categories": [],
+  "dateOfLastModification": "2026-11-19T00:00:00+00:00",
+  "categories": [
+    "Algorithms",
+    "Quantum Chemistry",
+    "Compilation"
+  ],
   "tags": [],
   "previewImages": [
     {
@@ -20,7 +24,7 @@
       "uri": "/_static/demo_thumbnails/regular_demo_thumbnails/thumbnail_placeholder.png"
     }
   ],
-  "seoDescription": "placeholder",
+  "seoDescription": "Build and compile a quantum algorithm for near-infrared spectroscopy with PennyLane2 and Catalyst.",
   "doi": "",
   "references": [],
   "basedOnPapers": [],
