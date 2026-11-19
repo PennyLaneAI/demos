@@ -2,15 +2,20 @@ r"""
 Simulating near-infrared spectroscopy with PennyLane2
 =====================================================
 
-Near-infrared spectroscopy (NIRS) probes overtones and combination bands of molecular
-vibrations. In this demo, we build the quantum algorithm that computes an NIRS spectrum for
-hydrogen sulfide (H\ :sub:`2`\ S), following [#nirs_paper]_, and compile it all the way down to a
-fault-tolerant instruction set with PennyLane2 and Catalyst.
+Near-infrared spectroscopy (NIRS) measures how molecules absorb light through overtones and
+combinations of their vibrations. These spectra are a fingerprint for chemical detection, and
+computing them accurately is a natural application for fault-tolerant quantum computers
+[#Loaiza2025]_.
 
-The algorithm estimates the time-correlation function
-:math:`\langle \psi | e^{-iHt} | \psi \rangle` of a vibrational Hamiltonian :math:`H` with a
-Hadamard test. The spectrum is then the Fourier transform of these estimates over many evolution
-times :math:`t`.
+In this demo, we go from inspiration to implementation with PennyLane2: we take the NIRS
+algorithm from the research literature, write it with a handful of high-level building blocks,
+and compile it into instructions for a fault-tolerant quantum computer. Then we scale it up to
+a full-sized problem with over a billion operations, compiled in seconds.
+
+PennyLane2 runs every program through a single compilation pipeline, powered by
+`Catalyst <https://docs.pennylane.ai/projects/catalyst>`__ and designed for fault-tolerant
+quantum computing (FTQC). That is what makes compiling and analyzing algorithms at this scale
+fast.
 
 .. note::
 
@@ -19,32 +24,57 @@ times :math:`t`.
 """
 
 ######################################################################
+# The algorithm
+# -------------
+#
+# The NIRS spectrum is the Fourier transform of the time-correlation function
+# :math:`\langle \psi | e^{-iHt} | \psi \rangle`, where :math:`H` is the vibrational Hamiltonian
+# of the molecule and :math:`|\psi\rangle` is the state created when the molecule absorbs light.
+# The quantum algorithm estimates this function with a Hadamard test: a control qubit decides
+# whether the time evolution is applied, and measuring :math:`X` and :math:`Y` on that qubit
+# gives the real and imaginary parts of the correlation function. Repeating this for
+# evolution times :math:`t_k = k\tau` with :math:`k = 1, \dots, k_{\max}` yields the
+# spectrum. For a detailed walkthrough of spectroscopy algorithms of this kind, see the
+# :doc:`X-ray Absorption Spectroscopy (XAS) <demos/tutorial_xas>` demo.
+#
 # Loading the Hamiltonian and initial state
 # -----------------------------------------
 #
-# We use a pre-computed vibrational Hamiltonian for H\ :sub:`2`\ S in the Christiansen form,
-# factorized into fragments with Christiansen greedy fragmentation (CGF) [#cgf_paper]_, together
-# with the initial state :math:`|\psi\rangle`: the dipole operator applied to the vibrational
-# ground state, restricted to the near-infrared window.
+# Following [#Malpathak2026]_, we write the vibrational Hamiltonian in the Christiansen form and
+# factorize it into a sum of fragments with Christiansen greedy fragmentation (CGF). Each
+# fragment can be implemented efficiently with rotations and Pauli :math:`ZZ` interactions. The
+# initial state :math:`|\psi\rangle` is the dipole operator applied to the vibrational ground
+# state, restricted to the near-infrared window. It is a superposition of a small number of
+# computational basis states.
+#
+# Both were computed classically and stored as NumPy arrays. We load them for hydrogen sulfide
+# (H\ :sub:`2`\ S) first.
 
 import numpy as np
 import pennylane as qp
 
-ham_data = np.load("nirs_data/cgf_regrouped.npz")
-state_data = np.load("nirs_data/vscf_state.npz")
 
-hamiltonian = qp.CGFHamiltonian(
-    core_tensors=ham_data["core_tensors"],
-    leaf_tensors=ham_data["leaf_tensors"],
-    nuc_constant=ham_data["nuc_constant"].item(),
-)
+def load_molecule(name):
+    ham_data = np.load(f"nirs_data/{name}/cgf_regrouped.npz")
+    state_data = np.load(f"nirs_data/{name}/vscf_state.npz")
 
-indices = tuple(int(i) for i in state_data["indices"])
-coefficients = state_data["coefficients"]
-num_qubits = state_data["num_qubits"].item()
+    hamiltonian = qp.CGFHamiltonian(
+        core_tensors=ham_data["core_tensors"],
+        leaf_tensors=ham_data["leaf_tensors"],
+        nuc_constant=ham_data["nuc_constant"].item(),
+    )
+    state = {
+        "coefficients": state_data["coefficients"],
+        "indices": tuple(int(i) for i in state_data["indices"]),
+        "num_qubits": state_data["num_qubits"].item(),
+    }
+    return hamiltonian, state
+
+
+hamiltonian, state = load_molecule("h2s")
 
 print(hamiltonian)
-print(f"{len(indices)} basis states on {num_qubits} qubits")
+print(f"{len(state['indices'])} basis states on {state['num_qubits']} qubits")
 
 ######################################################################
 # .. rst-class:: sphx-glr-script-out
@@ -55,136 +85,137 @@ print(f"{len(indices)} basis states on {num_qubits} qubits")
 #     22 basis states on 12 qubits
 
 ######################################################################
-# The Hamiltonian has six fragments acting on three vibrational modes, each with four modals,
-# so the system register needs 12 qubits. The initial state is a superposition of only 22
-# computational basis states.
+# The Hamiltonian has six fragments acting on the three vibrational modes of H\ :sub:`2`\ S, with
+# four states per mode, so the system register needs 12 qubits.
 #
-# Setting up the registers
-# ------------------------
-#
-# Besides the system, the circuit needs a control qubit for the Hadamard test, wires for the
-# state preparation, and wires for implementing rotations with a phase gradient state. We
-# synthesize rotations to an accuracy of :math:`\epsilon = 10^{-10}`.
-
-epsilon = 1e-10
-precision = qp.math.ceil_log2(1 / epsilon)
-num_work_wires = max(precision - 1, qp.math.ceil_log2(len(indices)) - 2)
-
-register_sizes_sos = qp.SumOfSlatersPrep.required_register_sizes(indices, num_qubits)
-register_sizes_sos.pop("wires")
-
-register_sizes = {
-    "hadamard": 1,
-    "system": num_qubits,
-    "angle_wires": precision,
-    "phase_grad_wires": precision,
-    **register_sizes_sos,
-    "work_wires": num_work_wires,
-}
-registers = qp.registers(register_sizes)
-total_wires = sum(register_sizes.values())
-
-print(register_sizes)
-print("Total wires:", total_wires)
-
-######################################################################
-# .. rst-class:: sphx-glr-script-out
-#
-#   .. code-block:: none
-#
-#     {'hadamard': 1, 'system': 12, 'angle_wires': 34, 'phase_grad_wires': 34, 'enumeration_wires': 5, 'identification_wires': 0, 'qrom_work_wires': 4, 'mcx_cache_wires': 7, 'work_wires': 33}
-#     Total wires: 130
-
-######################################################################
 # Building the circuit
 # --------------------
 #
-# The circuit prepares a phase gradient state, prepares :math:`|\psi\rangle` with
-# :class:`~pennylane.SumOfSlatersPrep`, and applies the controlled Trotterized time evolution
-# :class:`~pennylane.TrotterCGF`. The expectation values of :math:`X` and :math:`Y` on the
-# control qubit give the real and imaginary parts of the time-correlation function. We build
-# the shortest circuit, with evolution time :math:`t = 250` atomic units and two Trotter steps.
-
-evolution_time = 250.0
-num_trotter_steps = 2
-
-dev = qp.device("null.qubit", wires=total_wires)
-
-sos_work_wires = {
-    k: registers[k]
-    for k in ("enumeration_wires", "qrom_work_wires", "identification_wires", "mcx_cache_wires")
-}
-
-
-@qp.qnode(dev)
-def circuit():
-    qp.PhaseGradientStatePrep(registers["phase_grad_wires"])
-    qp.SumOfSlatersPrep(coefficients, wires=registers["system"], indices=indices, **sos_work_wires)
-    qp.ctrl(
-        qp.TrotterCGF(
-            evolution_time=evolution_time,
-            num_trotter_steps=num_trotter_steps,
-            hamiltonian=hamiltonian,
-            wires=registers["system"],
-            double_phase=True,
-        ),
-        control=registers["hadamard"],
-    )
-    return qp.expval(qp.X(registers["hadamard"])), qp.expval(qp.Y(registers["hadamard"]))
-
-
-######################################################################
-# Compiling to Pauli-based computation
-# ------------------------------------
+# The circuit uses three high-level operations from PennyLane2:
 #
-# Multiplexed rotations in the state preparation are implemented with the phase gradient
-# technique, and the phase gradient state itself is prepared by distillation. Both rules act on
-# the registers defined above, so we create them here and register them locally.
+# * :class:`~pennylane.SumOfSlatersPrep` prepares :math:`|\psi\rangle`, a sparse superposition of
+#   basis states.
+# * :class:`~pennylane.TrotterCGF` applies the Trotterized time evolution under the CGF
+#   Hamiltonian, and :func:`~pennylane.ctrl` controls it on the Hadamard-test qubit.
+# * :class:`~pennylane.PhaseGradientStatePrep` prepares a phase gradient state, which lets us
+#   implement many rotations with cheap arithmetic instead of costly rotation synthesis. See the
+#   :doc:`phase gradient demo <demos/efficient_rotations_with_phase_gradient_states>` for how
+#   this works.
+#
+# Each operation needs some auxiliary wires, so we first work out the register sizes. We then
+# create the decomposition rules that use the phase gradient state: one for the multiplexed
+# rotations in the state preparation, and one that prepares the phase gradient state itself by
+# distillation. Both act on our registers, so they are created together with the circuit.
 
-from pennylane.decomposition.decomposition_rule import local_decomps
+epsilon = 1e-10  # accuracy of each rotation
 
-pg_registers = {k: registers[k] for k in ("angle_wires", "phase_grad_wires", "work_wires")}
 
-spr_rule = qp.transforms.decompositions.make_selectpaulirot_to_phase_gradient_decomp(
-    **pg_registers
-)
-spr_rule.name = "nirs_spr_phase_gradient"
-pgsp_rule = qp.transforms.decompositions.make_phase_gradient_distillation_decomp(
-    pg_registers["angle_wires"], pg_registers["work_wires"]
-)
+def make_circuit(hamiltonian, state, k_max):
+    """Build the Hadamard-test circuit for the longest evolution time, t = k_max * tau."""
+    indices, num_qubits = state["indices"], state["num_qubits"]
+    precision = qp.math.ceil_log2(1 / epsilon)
+
+    sos_sizes = qp.SumOfSlatersPrep.required_register_sizes(indices, num_qubits)
+    sos_sizes.pop("wires")
+    register_sizes = {
+        "hadamard": 1,
+        "system": num_qubits,
+        "angle_wires": precision,
+        "phase_grad_wires": precision,
+        **sos_sizes,
+        "work_wires": max(precision - 1, qp.math.ceil_log2(len(indices)) - 2),
+    }
+    registers = qp.registers(register_sizes)
+    sos_wires = {k: registers[k] for k in sos_sizes}
+    pg_wires = {k: registers[k] for k in ("angle_wires", "phase_grad_wires", "work_wires")}
+
+    decomps = qp.transforms.decompositions
+    rules = {
+        qp.SelectPauliRot: decomps.make_selectpaulirot_to_phase_gradient_decomp(**pg_wires),
+        qp.PhaseGradientStatePrep: decomps.make_phase_gradient_distillation_decomp(
+            pg_wires["angle_wires"], pg_wires["work_wires"]
+        ),
+    }
+    rules[qp.SelectPauliRot].name = "spr_phase_gradient"
+
+    dev = qp.device("null.qubit", wires=sum(register_sizes.values()))
+
+    @qp.qnode(dev)
+    def circuit():
+        qp.PhaseGradientStatePrep(registers["phase_grad_wires"])
+        qp.SumOfSlatersPrep(
+            state["coefficients"], wires=registers["system"], indices=indices, **sos_wires
+        )
+        qp.ctrl(
+            qp.TrotterCGF(
+                evolution_time=k_max * 250.0,  # tau = 250 atomic units
+                num_trotter_steps=2 * k_max,
+                hamiltonian=hamiltonian,
+                wires=registers["system"],
+                double_phase=True,
+            ),
+            control=registers["hadamard"],
+        )
+        return qp.expval(qp.X(registers["hadamard"])), qp.expval(qp.Y(registers["hadamard"]))
+
+    return circuit, rules
+
 
 ######################################################################
-# The compilation pipeline decomposes the circuit into Clifford + T + RZ gates, synthesizes the
-# RZ rotations with ``gridsynth``, and converts the result into Pauli product rotations (PPRs) and
-# Pauli product measurements (PPMs).
+# The ``null.qubit`` device lets us compile and analyze the circuit without simulating it. We
+# build the shortest circuit for H\ :sub:`2`\ S, with :math:`k_{\max} = 1`.
 
-CLIFFORD = {
-    "X": 1, "Y": 1, "Z": 1, "S": 10, "Hadamard": 10, "SX": 10, "Adjoint(S)": 10,
-    "Adjoint(SX)": 10, "CNOT": 50, "CY": 50, "CZ": 50, "GlobalPhase": 0, "Identity": 0,
-}
-MEASUREMENTS = {
-    "PauliMeasure": 1, "PauliMeasureMP": 1, "MidMeasure": 1, "MidMeasureMP": 1,
-    "MidCircuitMeasure": 1,
-}
-gate_set = {"T": 100, "Adjoint(T)": 100, "RZ": 5000} | CLIFFORD | MEASUREMENTS
+circuit, rules = make_circuit(hamiltonian, state, k_max=1)
+
+######################################################################
+# Compiling for a fault-tolerant quantum computer
+# -----------------------------------------------
+#
+# Fault-tolerant architectures are often programmed with Pauli-based computation (PBC), in which
+# a circuit is a sequence of Pauli product rotations (PPRs) and Pauli product measurements
+# (PPMs). In PennyLane2, getting there is a matter of chaining compilation passes into a
+# :class:`~pennylane.CompilePipeline`:
+#
+# #. :func:`~pennylane.decompose` breaks the circuit down into Clifford gates, :math:`T` gates and
+#    :math:`R_Z` rotations, using our phase gradient rule for the multiplexed rotations.
+# #. :func:`~pennylane.transforms.gridsynth` approximates each :math:`R_Z` rotation to accuracy
+#    :math:`\epsilon` with Clifford and :math:`T` gates.
+# #. :func:`~pennylane.transforms.to_ppr` and :func:`~pennylane.transforms.ppr_to_ppm` convert
+#    the result into PPRs and then into PPMs.
+#
+# The gate set tells the decomposition which gates to target, and how much each one costs.
+
+clifford = {"X": 1, "Y": 1, "Z": 1, "S": 10, "Adjoint(S)": 10, "Hadamard": 10}
+clifford |= {"CNOT": 50, "CZ": 50, "GlobalPhase": 0}
+measurements = {"MidMeasure": 1, "PauliMeasure": 1}
+gate_set = {"T": 100, "Adjoint(T)": 100, "RZ": 5000} | clifford | measurements
 
 pipeline = qp.CompilePipeline(
-    qp.decompose(gate_set=gate_set, fixed_decomps={qp.SelectPauliRot: spr_rule.name}),
-    qp.transform(pass_name="symbol-dce"),
+    qp.decompose(gate_set=gate_set, fixed_decomps={qp.SelectPauliRot: "spr_phase_gradient"}),
+    qp.transform(pass_name="symbol-dce"),  # remove unused decomposition rules
     qp.transforms.gridsynth(epsilon=epsilon, method="mixed", ppr_basis=True),
     qp.transforms.to_ppr,
     qp.transforms.ppr_to_ppm,
 )
 
-compiled = qp.qjit(pipeline(circuit), capture=True, target="mlir_opt", enable_aot_compilation=False)
-
 ######################################################################
-# We can now inspect the resources at every stage of the pipeline with :func:`~pennylane.analyze`.
+# We apply the pipeline, compile with :func:`~pennylane.qjit`, and inspect the circuit after
+# every pass with :func:`~pennylane.analyze`. Since we only analyze the circuit and never run it,
+# we ask ``qjit`` to stop once the compilation passes are done (``target="mlir_opt"``) instead of
+# producing an executable. Our custom rules are registered locally while compiling.
 
-with local_decomps():
-    qp.add_decomps(qp.PhaseGradientStatePrep, pgsp_rule)
-    qp.add_decomps(qp.SelectPauliRot, spr_rule)
-    print(qp.analyze(compiled, level="all")())
+from pennylane.decomposition.decomposition_rule import local_decomps
+
+
+def analyze(circuit, rules, level):
+    compiled = qp.qjit(pipeline(circuit), target="mlir_opt", enable_aot_compilation=False)
+    with local_decomps():
+        for op, rule in rules.items():
+            qp.add_decomps(op, rule)
+        return qp.analyze(compiled, level=level)()
+
+
+print(analyze(circuit, rules, level="all"))
 
 ######################################################################
 # .. rst-class:: sphx-glr-script-out
@@ -239,23 +270,80 @@ with local_decomps():
 #     - Qubit disjoint depth     |        - |    2,117 |    2,117 |   90,988 | 1.491E+5 | 3.896E+5 | 3.896E+5
 
 ######################################################################
-# The three high-level operations become about 39,000 Clifford + T + RZ gates. After rotation
-# synthesis and conversion, the circuit needs 91,781 non-Clifford :math:`\pi/8` rotations, each
-# implemented with a magic state (``pbc.fabricate``).
+# Each column is one stage of the pipeline. The three high-level operations become about 39,000
+# Clifford, :math:`T` and :math:`R_Z` gates, and finally a sequence of PPMs. The number that
+# matters most is ``pbc.fabricate``: the magic states that each non-Clifford :math:`\pi/8`
+# rotation consumes. Magic states are the most expensive resource on a fault-tolerant
+# quantum computer.
+#
+# Scaling up
+# ----------
+#
+# H\ :sub:`2`\ S with a single time step is a small example. A useful spectrum needs a larger
+# molecule and the full set of evolution times. We now build the longest circuit,
+# :math:`k_{\max} = 300`, for azidoacetylene (HC\ :sub:`2`\ N\ :sub:`3`), a molecule with 12
+# vibrational modes. Thanks to ``make_circuit``, this is a change of two arguments. This time,
+# we only look at the end of the pipeline and time the compilation.
+
+import time
+
+hamiltonian, state = load_molecule("hc2n3")
+circuit, rules = make_circuit(hamiltonian, state, k_max=300)
+
+start = time.perf_counter()
+specs = analyze(circuit, rules, level="user")
+elapsed = time.perf_counter() - start
+
+resources = specs.resources
+print(f"Logical qubits: {specs.num_device_wires}")
+print(f"Operations: {resources.total_quantum_operations:.3e}")
+print(f"Magic states: {resources.quantum_operations['pbc.fabricate']:.3e}")
+print(f"Compiled and analyzed in {elapsed:.0f} s")
+
+######################################################################
+# .. rst-class:: sphx-glr-script-out
+#
+#   .. code-block:: none
+#
+#     Logical qubits: 176
+#     Operations: 1.209e+09
+#     Magic states: 2.647e+08
+#     Compiled and analyzed in 11 s
+
+######################################################################
+# The full-scale circuit has over a billion operations, and PennyLane2 compiles it down to
+# fault-tolerant instructions in seconds. Catalyst keeps repeated structure, such as the 600
+# Trotter steps, as loops in the compiled program instead of unrolling it, so the compilation
+# time does not grow with the number of operations.
 #
 # Conclusion
 # ----------
 #
-# TODO: summary and outlook.
+# We implemented a state-of-the-art quantum algorithm for near-infrared spectroscopy, starting
+# from the research papers, and compiled it into Pauli-based instructions for a fault-tolerant
+# quantum computer. With PennyLane2, the algorithm is a few high-level operations, compilation
+# is a pipeline of passes, and a billion-operation, full-scale problem compiles and analyzes in
+# seconds.
+#
+# To learn more, see the PennyLane2 documentation, including the guide for users
+# `coming from PennyLane Classic
+# <https://docs.pennylane.ai/en/latest/introduction/coming_from_classic.html>`__, and the
+# :doc:`resource estimation demo for spectroscopy
+# <demos/tutorial_resource_estimation_spectroscopy>`.
 #
 # References
 # ----------
 #
-# .. [#nirs_paper]
+# .. [#Loaiza2025]
 #
-#     TODO: reference for arXiv:2504.10602.
+#     I. Loaiza, S. Fomichev, D. Motlagh, P. A. M. Casares, D. Honciuc Menendez, S. Shum,
+#     A. Delgado, J. M. Arrazola,
+#     "Simulating near-infrared spectroscopy on a quantum computer for enhanced chemical
+#     detection". `arXiv:2504.10602 <https://arxiv.org/abs/2504.10602>`__ (2025).
 #
-# .. [#cgf_paper]
+# .. [#Malpathak2026]
 #
-#     TODO: reference for arXiv:2508.11865.
+#     S. Malpathak, S. D. Kallullathil, I. Loaiza, S. Fomichev, J. M. Arrazola, A. F. Izmaylov,
+#     "Trotter simulation of vibrational Hamiltonians on a quantum computer".
+#     `J. Chem. Theory Comput. 22, 95 (2026) <https://doi.org/10.1021/acs.jctc.5c01600>`__.
 #
