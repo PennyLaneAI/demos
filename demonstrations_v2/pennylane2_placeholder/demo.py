@@ -4,29 +4,36 @@ Simulating near-infrared spectroscopy with PennyLane2
 
 .. note::
 
-    TODO: This demo only works with PennyLane2 installed. Link to the PennyLane2 installation
-    instructions and documentation here (URLs TBD). This demo is not executed when the website
-    is built. The outputs shown were generated with the development versions of PennyLane
-    (0.46.0-dev159) and Catalyst (0.16.0-dev147); update them to the open beta release versions.
+    This demo is only compatible with ``pennylane2``, which can be installed with
+    ``pip install pennylane2`` in your Python environment.
 
-    TODO: Publish the H\ :sub:`2`\ S and HC\ :sub:`2`\ N\ :sub:`3` data files and add their
-    download links (URLs TBD) to the start of the "Simulating real molecules" section.
+    TODO: Link to the PennyLane2 documentation here (URLs TBD). This demo is not executed when
+    the website is built. The outputs shown were generated with the development versions of
+    PennyLane (0.46.0-dev159) and Catalyst (0.16.0-dev147); update them to the open beta release
+    versions.
 
-Near-infrared spectroscopy (NIRS) measures how molecules absorb light through overtones and
-combinations of their vibrations. These spectra are a fingerprint for chemical detection, and
-computing them accurately is a natural application for fault-tolerant quantum computers
-[#Loaiza2025]_.
+    TODO: Publish the HC\ :sub:`2`\ N\ :sub:`3` data files and add their download links (URLs TBD)
+    to the start of the "Loading in concrete data" section.
 
-In this demo, we go from inspiration to implementation with PennyLane2: we take the NIRS
-algorithm from the research literature and write it with a handful of high-level building blocks.
-Before touching any data, we estimate the resources it needs for a molecule of a given size. Then
-we load real molecules and compile the algorithm into instructions for a fault-tolerant quantum
-computer, scaling up to billions of operations, compiled in seconds.
+PennyLane2 takes quantum algorithms from inspiration to implementation. You write an algorithm
+with high-level, state-of-the-art building blocks, get resource estimates from coarse information
+alone, and then compile and analyze the full algorithm, at scale, in seconds. Compilation and
+resource analysis are two sides of the same coin: the pipeline that compiles a program is also
+what tells you what it costs.
+
+We show this with a valuable application: near-infrared spectroscopy (NIRS), which measures how
+molecules absorb light through overtones and combinations of their vibrations. These spectra are a
+fingerprint for chemical detection, and computing them accurately is a natural application for
+quantum computers [#Loaiza2025]_.
+
+In this demo, we define the NIRS algorithm for the azidoacetylene molecule
+(HC\ :sub:`2`\ N\ :sub:`3`) with only abstract inputs and shape information, and get resource
+estimates in seconds. Then we replace the coarse data with actual data, compile the algorithm with
+billions of operations, and analyze its resources along the way.
 
 PennyLane2 runs every program through a single compilation pipeline, powered by
-`Catalyst <https://docs.pennylane.ai/projects/catalyst>`__ and designed for fault-tolerant
-quantum computing (FTQC). That is what makes estimating, compiling and analyzing algorithms at
-this scale fast.
+`Catalyst <https://docs.pennylane.ai/projects/catalyst>`__. That is what makes estimating,
+compiling and analyzing algorithms at this scale fast.
 """
 
 ######################################################################
@@ -56,36 +63,47 @@ this scale fast.
 # approximate :math:`e^{-iHt}` with a second-order product formula of these fragments, with
 # :math:`r = 2` Trotter steps per time step :math:`\tau`. [#Malpathak2026]_ picks :math:`r` per
 # molecule from a Trotter error estimate, and finds :math:`r = 2` for CH\ :sub:`4`; we use the same
-# value throughout.
+# value for HC\ :sub:`2`\ N\ :sub:`3`, which that work does not cover.
 #
-# Estimating resources with abstract inputs
-# -----------------------------------------
+# Estimating resources with coarse information
+# --------------------------------------------
 #
-# How many resources would this algorithm need for a molecule of a given size? With PennyLane2,
-# we can answer this before computing a single Hamiltonian coefficient. Operators accept
-# abstract inputs, which have a shape but no values, and :func:`~pennylane.estimate` projects the
-# resources of a circuit onto a gate set without running it.
+# How many resources does this algorithm need for HC\ :sub:`2`\ N\ :sub:`3`? With PennyLane2, we
+# can answer this before computing a single Hamiltonian coefficient. Operators accept abstract
+# inputs, which have a shape but no values, and :func:`~pennylane.estimate` projects the resources
+# of a circuit onto a gate set without running it.
 #
-# Consider a hypothetical molecule with 10 vibrational modes and 4 modals per mode, so 40 system
-# qubits, whose Hamiltonian is split into 5 fragments, and an initial state that is a superposition
-# of 16 basis states. A :class:`~pennylane.CGFHamiltonian` is defined by its core and leaf
-# tensors, and we only give their shapes with :data:`~pennylane.typing.Float`. The positions of
-# the basis states in the initial state must be known at compile time, so we use placeholders.
+# HC\ :sub:`2`\ N\ :sub:`3` has 12 vibrational modes. With 4 modals per mode, the system register
+# has 48 qubits. Its Hamiltonian is split into 5 fragments, and its initial state is a
+# superposition of 19 basis states. A :class:`~pennylane.CGFHamiltonian` is defined by its core
+# and leaf tensors, and we only give their shapes, with :data:`~pennylane.typing.Float`.
+#
+# The state preparation needs to know which basis states make up the initial state at compile
+# time, because the circuit that prepares them depends on their bit patterns. We don't have them
+# yet, so we pick random ones. They affect the state preparation, but not the time evolution,
+# which dominates the cost.
+
+import random
 
 import pennylane as qp
 
-num_modes, num_modals, num_fragments, num_basis_states = 10, 4, 5, 16
 
-hamiltonian = qp.CGFHamiltonian(
-    core_tensors=qp.typing.Float[num_fragments, num_modes, num_modes, num_modals, num_modals],
-    leaf_tensors=qp.typing.Float[num_fragments, num_modes, num_modals, num_modals],
-    nuc_constant=qp.typing.Float,
-)
-state = {
-    "coefficients": qp.typing.Float[num_basis_states],
-    "indices": tuple(range(num_basis_states)),  # placeholder positions
-    "num_qubits": num_modes * num_modals,
-}
+def abstract_molecule(num_modes, num_modals=4, num_fragments=5, num_basis_states=19):
+    num_qubits = num_modes * num_modals
+    hamiltonian = qp.CGFHamiltonian(
+        core_tensors=qp.typing.Float[num_fragments, num_modes, num_modes, num_modals, num_modals],
+        leaf_tensors=qp.typing.Float[num_fragments, num_modes, num_modals, num_modals],
+        nuc_constant=qp.typing.Float,
+    )
+    state = {
+        "coefficients": qp.typing.Float[num_basis_states],
+        "indices": tuple(sorted(random.Random(0).sample(range(2**num_qubits), num_basis_states))),
+        "num_qubits": num_qubits,
+    }
+    return hamiltonian, state
+
+
+hamiltonian, state = abstract_molecule(num_modes=12)
 
 ######################################################################
 # Building the circuit
@@ -153,9 +171,9 @@ def make_rules(registers):
 
 ######################################################################
 # Finally, the circuit itself. It runs on ``null.qubit``
-# (:class:`~pennylane.devices.NullQubit`), a device that performs no simulation at all: the
-# circuits in this demo have well over a hundred qubits, far beyond what we could simulate
-# classically, and we only want to estimate, compile and analyze them.
+# (:class:`~pennylane.devices.NullQubit`), a device that performs no simulation at all: our
+# circuits have well over a hundred qubits, far beyond what we could simulate classically, and
+# we only want to estimate, compile and analyze them.
 
 
 def make_circuit(hamiltonian, state, registers, k_max):
@@ -190,8 +208,12 @@ def make_circuit(hamiltonian, state, registers, k_max):
 # sizes matter for the estimate, so even the wire labels can be abstract, with
 # :func:`~pennylane.core.abstractify`.
 
-registers = make_registers(state)
-registers = {name: qp.core.abstractify(wires) for name, wires in registers.items()}
+
+def abstract_registers(state):
+    return {name: qp.core.abstractify(wires) for name, wires in make_registers(state).items()}
+
+
+registers = abstract_registers(state)
 rules = make_rules(registers)
 circuit = make_circuit(hamiltonian, state, registers, k_max=300)
 
@@ -199,11 +221,19 @@ circuit = make_circuit(hamiltonian, state, registers, k_max=300)
 # Estimating resources
 # ^^^^^^^^^^^^^^^^^^^^
 #
-# We estimate the resources in terms of Clifford gates, :math:`T` gates and :math:`R_Z`
-# rotations, a common gate set for fault-tolerant algorithms. The gate set also tells the
-# decomposition how much each gate costs, and :func:`~pennylane.decompose` selects our phase
-# gradient rule for the multiplexed rotations. Our custom rules are registered locally, with
-# :func:`~pennylane.decomposition.local_decomps`, while estimating.
+# We estimate the resources for two gate sets. The first is made of Clifford gates, :math:`T`
+# gates and :math:`R_Z` rotations, the standard way to count the cost of fault-tolerant
+# algorithms. The second is made of Pauli product rotations (PPRs) and measurements, the
+# instructions of `Pauli-based computation
+# <https://pennylane.ai/compilation/pauli-based-computation>`__ (PBC). PBC suits surface-code
+# architectures based on lattice surgery, where multi-qubit Pauli measurements are the native
+# operations [#Litinski2019]_. In both, we keep the :math:`R_Z` rotations by arbitrary angles
+# explicit, since they are synthesized from the other gates later, during compilation.
+#
+# The weights in the gate sets tell the decomposition how much each gate costs, and
+# :func:`~pennylane.decompose` selects our phase gradient rule for the multiplexed rotations. Our
+# custom rules are registered locally, with :func:`~pennylane.decomposition.local_decomps`, while
+# estimating.
 
 clifford = {
     "X": 1, "Y": 1, "Z": 1, "S": 10, "Hadamard": 10, "SX": 10, "Adjoint(S)": 10, "Adjoint(SX)": 10,
@@ -214,71 +244,120 @@ measurements = {
     "MidCircuitMeasure": 1,
 }  # fmt: skip
 gate_set = {"T": 100, "Adjoint(T)": 100, "RZ": 5000} | clifford | measurements
+pbc_gate_set = {"PPR_8": 100, "PPR_4": 10, "PPR_2": 1, "GlobalPhase": 0, "RZ": 5000} | {
+    name: 2 for name in measurements
+}
 decompose = qp.decompose(
     gate_set=gate_set, fixed_decomps={qp.SelectPauliRot: "nirs_spr_phase_gradient"}
 )
 
 
-def estimate(circuit, rules):
+def estimate(circuit, rules, target):
     compiled = qp.qjit(decompose(circuit), target="mlir_opt", enable_aot_compilation=False)
     with qp.decomposition.local_decomps():
         for op, rule in rules.items():
             qp.add_decomps(op, rule)
-        return qp.estimate(compiled, target=gate_set)()
+        return qp.estimate(compiled, target=target)()
 
 
 import time
 
-start = time.perf_counter()
-print(estimate(circuit, rules))
-print(f"Estimated in {time.perf_counter() - start:.0f} s")
+for label, target in (("Clifford+T+RZ", gate_set), ("PBC+RZ", pbc_gate_set)):
+    start = time.perf_counter()
+    specs = estimate(circuit, rules, target)
+    print(f"{label}, estimated in {time.perf_counter() - start:.0f} s")
+    print(specs.resources)
 
 ######################################################################
 # .. rst-class:: sphx-glr-script-out
 #
 #   .. code-block:: none
 #
-#     Device: null.qubit
-#     Device wires: 152
-#     Shots: Shots(total=None)
-#     Level: top
-#
+#     Clifford+T+RZ, estimated in 4 s
 #     Quantum operations:
-#     - Total: 1.821E+7
-#       - Adjoint(S): 5.766E+5
-#       - Adjoint(T): 720
-#       - CNOT: 8.766E+6
-#       - CZ: 360
-#       - GlobalPhase: 1.152E+6
-#       - Hadamard: 3.458E+6
-#       - PauliMeasure: 1,549
-#       - PauliX: 4,060
-#       - PauliZ: 48,077
-#       - RZ: 3.625E+6
-#       - S: 5.762E+5
-#       - T: 720
+#     - Total: 2.468E+7
+#       - Adjoint(S): 6.920E+5
+#       - Adjoint(T): 924
+#       - CNOT: 1.254E+7
+#       - CZ: 462
+#       - GlobalPhase: 1.383E+6
+#       - Hadamard: 4.150E+6
+#       - PauliMeasure: 1,817
+#       - PauliX: 6,571
+#       - PauliZ: 57,723
+#       - RZ: 5.157E+6
+#       - S: 6.915E+5
+#       - T: 924
 #     Measurement processes:
 #     - expval(PauliX): 1
 #     - expval(PauliY): 1
-#     Total wires: 152
+#     Total wires: 163
 #     Circuit Depth: Not computed
-#     Estimated in 4 s
+#     PBC+RZ, estimated in 3 s
+#     Quantum operations:
+#     - Total: 5.612E+7
+#       - GlobalPhase: 1.260E+7
+#       - PPR_2: 64,558
+#       - PPR_4: 3.830E+7
+#       - PPR_8: 1,848
+#       - PauliMeasure: 1,817
+#       - RZ: 5.157E+6
+#     Measurement processes:
+#     - expval(PauliX): 1
+#     - expval(PauliY): 1
+#     Total wires: 163
+#     Circuit Depth: Not computed
 
 ######################################################################
-# In a few seconds, and without any data, we know that this molecule needs about 150 logical
-# qubits and :math:`3.6 \times 10^6` :math:`R_Z` rotations, which dominate the cost: at our
-# accuracy, each rotation takes about 50 :math:`T` gates [#Malpathak2026]_. To estimate a
-# different molecule, change the shapes; to explore a different algorithm, change the circuit.
+# In seconds, and without any data, we know that HC\ :sub:`2`\ N\ :sub:`3` needs about 160 logical
+# qubits and :math:`5 \times 10^6` :math:`R_Z` rotations, which dominate the cost: at our
+# accuracy, each rotation takes about 50 :math:`T` gates, or :math:`\pi/8` PPRs
+# [#Malpathak2026]_. The exact number of auxiliary qubits depends on the basis states of the
+# initial state, which we only know once we load the data.
 #
-# Simulating real molecules
-# -------------------------
+# Since the estimate only needs shapes, we can just as quickly ask how the cost grows with the
+# size of the molecule. We repeat the estimate for molecules with more and more vibrational modes,
+# keeping everything else fixed.
+
+import matplotlib.pyplot as plt
+
+mode_counts = [3, 6, 9, 12, 15]
+num_qubits, num_rotations = [], []
+for num_modes in mode_counts:
+    hamiltonian, state = abstract_molecule(num_modes)
+    registers = abstract_registers(state)
+    circuit = make_circuit(hamiltonian, state, registers, k_max=300)
+    resources = estimate(circuit, make_rules(registers), gate_set).resources
+    num_qubits.append(resources.num_wires)
+    num_rotations.append(resources.quantum_operations["RZ"])
+
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(9, 3.5), layout="constrained")
+ax1.plot(mode_counts, [n / 1e6 for n in num_rotations], "o-", color="#2a78d6", linewidth=2, markersize=8)
+ax1.set(xlabel="Vibrational modes", title="$R_Z$ rotations (millions)", ylim=(0, None))
+ax2.plot(mode_counts, num_qubits, "o-", color="#2a78d6", linewidth=2, markersize=8)
+ax2.set(xlabel="Vibrational modes", title="Logical qubits", ylim=(0, None))
+for ax in (ax1, ax2):
+    ax.set_xticks(mode_counts)
+    ax.spines[["top", "right"]].set_visible(False)
+    ax.grid(axis="y", alpha=0.3)
+plt.show()
+
+######################################################################
+# .. figure:: ../_static/demonstration_assets/pennylane2_placeholder/estimate_scaling.png
+#     :align: center
+#     :width: 90%
+#     :alt: Estimated R_Z rotations and logical qubits against the number of vibrational modes
 #
-# Now we move from estimates to a concrete circuit, compiled all the way down for a
-# fault-tolerant quantum computer. The CGF Hamiltonians and initial states that we use were
-# computed classically and stored as NumPy arrays. TODO: download links for the data (URLs TBD).
-# Place them in a ``nirs_data`` folder next to this demo.
+# The number of rotations grows roughly quadratically with the number of modes, as the two-mode
+# terms of the Hamiltonian do, while the number of qubits, most of them auxiliary, grows only
+# linearly.
 #
-# We load them for hydrogen sulfide (H\ :sub:`2`\ S) first.
+# Loading in concrete data
+# ------------------------
+#
+# Now we replace the coarse information with actual data. The CGF Hamiltonian and initial state of
+# HC\ :sub:`2`\ N\ :sub:`3` were computed classically and stored as NumPy arrays. TODO: download
+# links for the data (URLs TBD). Place them in a ``nirs_data`` folder next to this demo.
 
 import numpy as np
 
@@ -300,7 +379,7 @@ def load_molecule(name):
     return hamiltonian, state
 
 
-hamiltonian, state = load_molecule("h2s")
+hamiltonian, state = load_molecule("hc2n3")
 
 print(hamiltonian)
 print(f"{len(state['indices'])} basis states on {state['num_qubits']} qubits")
@@ -310,57 +389,51 @@ print(f"{len(state['indices'])} basis states on {state['num_qubits']} qubits")
 #
 #   .. code-block:: none
 #
-#     CGFHamiltonian(core_tensors=tensor(shape=(6, 3, 3, 4, 4)), leaf_tensors=tensor(shape=(6, 3, 4, 4)), nuc_constant=array(0.0037294))
-#     22 basis states on 12 qubits
+#     CGFHamiltonian(core_tensors=tensor(shape=(5, 12, 12, 4, 4)), leaf_tensors=tensor(shape=(5, 12, 4, 4)), nuc_constant=array(0.01672215))
+#     19 basis states on 48 qubits
 
 ######################################################################
-# The Hamiltonian has six fragments acting on the three vibrational modes of H\ :sub:`2`\ S, with
-# four modals per mode, so the system register needs 12 qubits. The circuit is built with the
-# same functions as before, now with concrete data. We start small, with a single time step
-# (:math:`k_{\max} = 1`).
+# The shapes match the ones we estimated with. The circuit is built with the same functions as
+# before, now with concrete data and concrete wires.
 
 registers = make_registers(state)
 rules = make_rules(registers)
-circuit = make_circuit(hamiltonian, state, registers, k_max=1)
+circuit = make_circuit(hamiltonian, state, registers, k_max=300)
 
 ######################################################################
-# Compiling for a fault-tolerant quantum computer
-# ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+# Compilation and resource analysis
+# ---------------------------------
 #
-# We compile the circuit to `Pauli-based computation
-# <https://pennylane.ai/compilation/pauli-based-computation>`__ (PBC), in which a circuit is a
-# sequence of Pauli product rotations (PPRs) and Pauli product measurements (PPMs). PBC is a
-# natural fit for surface-code architectures based on lattice surgery, where multi-qubit Pauli
-# measurements are the native operations [#Litinski2019]_. In PennyLane2, getting there is a
-# matter of chaining compilation passes into a :class:`~pennylane.CompilePipeline`:
+# To compile the circuit, we chain compilation passes into a
+# :class:`~pennylane.CompilePipeline`. Here we target PBC:
 #
 # #. The ``decompose`` pass from before breaks the circuit down into Clifford gates, :math:`T`
 #    gates and :math:`R_Z` rotations.
 # #. :func:`~pennylane.transforms.gridsynth` approximates each :math:`R_Z` rotation to accuracy
-#    :math:`\epsilon` with :math:`\pi/8` and Clifford PPRs.
+#    :math:`\epsilon` with :math:`\pi/8` and Clifford PPRs. We use it because its cost per
+#    rotation is close to the one assumed in [#Malpathak2026]_.
 # #. :func:`~pennylane.transforms.to_ppr` converts the remaining gates into PPRs, and
-#    :func:`~pennylane.transforms.ppr_to_ppm` replaces every PPR with PPMs.
+#    :func:`~pennylane.transforms.ppr_to_ppm` replaces every PPR with Pauli product measurements
+#    (PPMs).
 #
-# The PBC passes alone are not enough: :func:`~pennylane.transforms.ppr_to_ppm` only knows how to
-# implement Clifford and :math:`\pi/8` rotations, the latter by consuming a magic state. An
-# :math:`R_Z` rotation by an arbitrary angle has no such implementation, so ``gridsynth`` first
-# approximates it with rotations that do. Alternatively, these rotations could be implemented
-# with the phase gradient state, as we do for the multiplexed rotations. We use ``gridsynth``
-# because its cost per rotation is close to the one assumed in [#Malpathak2026]_.
+# One more pass is needed in between. The decomposition keeps a function for every rule it
+# considered, even the ones it did not use, and some of those contain controlled :math:`R_Z`
+# rotations, which ``gridsynth`` cannot handle. Catalyst's ``symbol-dce`` (dead code elimination)
+# pass removes these unused functions first.
 
 pipeline = qp.CompilePipeline(
     decompose,
-    qp.transform(pass_name="symbol-dce"),  # remove unused decomposition rules
+    qp.transform(pass_name="symbol-dce"),
     qp.transforms.gridsynth(epsilon=epsilon, method="mixed", ppr_basis=True),
     qp.transforms.to_ppr,
     qp.transforms.ppr_to_ppm,
 )
 
 ######################################################################
-# We apply the pipeline, compile with :func:`~pennylane.qjit`, and inspect the circuit after
-# every pass with :func:`~pennylane.analyze`. Since we only analyze the circuit and never run it,
-# we ask ``qjit`` to stop once the compilation passes are done (``target="mlir_opt"``) instead of
-# producing an executable.
+# We apply the pipeline, compile with :func:`~pennylane.qjit`, and analyze the resources of the
+# circuit after every pass with :func:`~pennylane.analyze`. Since we only analyze the circuit and
+# never run it, we ask ``qjit`` to stop once the compilation passes are done
+# (``target="mlir_opt"``) instead of producing an executable.
 
 
 def analyze(circuit, rules, level):
@@ -371,65 +444,22 @@ def analyze(circuit, rules, level):
         return qp.analyze(compiled, level=level)()
 
 
+start = time.perf_counter()
 specs = analyze(circuit, rules, level="all")
+print(f"Compiled and analyzed in {time.perf_counter() - start:.0f} s\n")
 
 ######################################################################
 # The full report lists every gate type, and every PPR and PPM by its weight, the number of
 # qubits it acts on. To keep things short, we summarize it for each stage of the pipeline.
 
-print(f"{'Stage':<28}{'Operations':>12}{'PPRs':>10}{'PPMs':>10}{'Magic states':>14}")
+print(f"{'Stage':<22}{'Operations':>15}{'RZ':>11}{'PPRs':>15}{'PPMs':>15}{'Magic states':>15}")
 for stage, resources in specs.resources.items():
     ops = resources.quantum_operations
     pprs = sum(count for name, count in ops.items() if name.startswith("PPR"))
     ppms = sum(count for name, count in ops.items() if name.startswith("PPM"))
-    magic_states = ops.get("pbc.fabricate", 0)
-    total = resources.total_quantum_operations
-    print(f"{stage:<28}{total:>12,}{pprs:>10,}{ppms:>10,}{magic_states:>14,}")
-
-######################################################################
-# .. rst-class:: sphx-glr-script-out
-#
-#   .. code-block:: none
-#
-#     Stage                         Operations      PPRs      PPMs  Magic states
-#     Before MLIR Passes                     3         0         0             0
-#     graph-decomposition               43,227         0     4,961             0
-#     symbol-dce                        43,227         0     4,961             0
-#     gridsynth                        132,100    88,873     4,961             0
-#     to-ppr                           202,696   159,472     4,961             0
-#     ppr-to-ppm                       589,855   159,471   300,308        91,813
-#     Device Preprocessing             589,855   159,471   300,308        91,813
-
-######################################################################
-# The three high-level operations become tens of thousands of Clifford gates, :math:`T` gates,
-# :math:`R_Z` rotations and measurements, and finally a sequence of PPMs. The number that matters
-# most is the last column: the magic states that each non-Clifford :math:`\pi/8` rotation
-# consumes. Magic states are the most expensive resource on a fault-tolerant quantum computer.
-#
-# Scaling up
-# ^^^^^^^^^^
-#
-# H\ :sub:`2`\ S with a single time step is a small example. We now move to azidoacetylene
-# (HC\ :sub:`2`\ N\ :sub:`3`), a molecule with 12 vibrational modes, and compile the longest
-# circuit for an increasing number of time steps, up to beyond the :math:`k_{\max} = 300` that a
-# full spectrum needs. This time, we only look at the end of the pipeline, and we time the
-# compilation.
-
-hamiltonian, state = load_molecule("hc2n3")
-registers = make_registers(state)
-rules = make_rules(registers)
-
-print(f"{'k_max':>6}{'Logical qubits':>16}{'Operations':>12}{'Magic states':>14}{'Time':>7}")
-for k_max in (1, 10, 100, 300, 1000):
-    circuit = make_circuit(hamiltonian, state, registers, k_max=k_max)
-    start = time.perf_counter()
-    specs = analyze(circuit, rules, level="user")
-    elapsed = time.perf_counter() - start
-    ops = specs.resources.quantum_operations
-    total = specs.resources.total_quantum_operations
     print(
-        f"{k_max:>6}{specs.num_device_wires:>16}{total:>12.2e}"
-        f"{ops['pbc.fabricate']:>14.2e}{elapsed:>6.0f}s"
+        f"{stage:<22}{resources.total_quantum_operations:>15,}{ops.get('RZ', 0):>11,}"
+        f"{pprs:>15,}{ppms:>15,}{ops.get('pbc.fabricate', 0):>15,}"
     )
 
 ######################################################################
@@ -437,28 +467,71 @@ for k_max in (1, 10, 100, 300, 1000):
 #
 #   .. code-block:: none
 #
-#      k_max  Logical qubits  Operations  Magic states   Time
-#          1             176    4.60e+06      9.54e+05    20s
-#         10             176    4.17e+07      8.89e+06    20s
-#        100             176    4.13e+08      8.83e+07    20s
-#        300             176    1.24e+09      2.65e+08    21s
-#       1000             176    4.13e+09      8.82e+08    21s
+#     Compiled and analyzed in 22 s
+#
+#     Stage                      Operations         RZ           PPRs           PPMs   Magic states
+#     Before MLIR Passes                  3          0              0              0              0
+#     graph-decomposition        24,692,137  5,156,547              0          5,999              0
+#     symbol-dce                 24,692,137  5,156,547              0          5,999              0
+#     gridsynth                 289,434,462          0    264,742,325          5,999              0
+#     to-ppr                    340,959,867          0    316,267,733          5,999              0
+#     ppr-to-ppm              1,238,079,028          0    316,267,732    632,390,732    264,734,429
+#     Device Preprocessing    1,238,079,028          0    316,267,732    632,390,732    264,734,429
 
 ######################################################################
-# The number of operations grows with the number of time steps, to over four billion, but the
-# compilation time does not. Catalyst keeps repeated structure, such as the Trotter steps, as
-# loops in the compiled program instead of unrolling it, so the full-scale circuit compiles to
-# fault-tolerant instructions in seconds.
+# The three high-level operations become millions of gates, and finally over a billion
+# instructions. The decomposition produces 5,156,547 :math:`R_Z` rotations, one more than we
+# estimated from shapes alone; the difference is in the state preparation, which now uses the
+# actual basis states. Each rotation then becomes about 50 :math:`\pi/8` PPRs. In the last
+# column, each :math:`\pi/8` rotation consumes a magic state, the most expensive resource on a
+# fault-tolerant quantum computer.
+#
+# Compilation at scale
+# ^^^^^^^^^^^^^^^^^^^^
+#
+# The full spectrum needs :math:`k_{\max} = 300`, but how does compilation cope with longer or
+# shorter evolutions? We compile the circuit for an increasing number of time steps, and time it.
+
+k_maxes = [1, 10, 100, 300, 1000]
+num_operations, compile_times = [], []
+for k_max in k_maxes:
+    circuit = make_circuit(hamiltonian, state, registers, k_max=k_max)
+    start = time.perf_counter()
+    specs = analyze(circuit, rules, level="user")
+    compile_times.append(time.perf_counter() - start)
+    num_operations.append(specs.resources.total_quantum_operations)
+
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(9, 3.5), layout="constrained")
+ax1.plot(k_maxes, num_operations, "o-", color="#2a78d6", linewidth=2, markersize=8)
+ax1.set(xscale="log", yscale="log", xlabel="$k_{\\max}$", title="Compiled operations")
+ax2.plot(k_maxes, compile_times, "o-", color="#2a78d6", linewidth=2, markersize=8)
+ax2.set(xscale="log", xlabel="$k_{\\max}$", title="Compile time (s)", ylim=(0, 1.2 * max(compile_times)))
+for ax in (ax1, ax2):
+    ax.spines[["top", "right"]].set_visible(False)
+    ax.grid(axis="y", alpha=0.3)
+plt.show()
+
+######################################################################
+# .. figure:: ../_static/demonstration_assets/pennylane2_placeholder/compile_scaling.png
+#     :align: center
+#     :width: 90%
+#     :alt: Compiled operations grow linearly with k_max while compile time stays flat
+#
+# The number of operations grows a thousandfold, to over four billion, but the compile time
+# stays flat. Catalyst keeps repeated structure, such as the Trotter steps, as loops in the
+# compiled program instead of unrolling it, so the size of the problem barely affects how long
+# it takes to compile.
 #
 # Conclusion
 # ----------
 #
 # We implemented a state-of-the-art quantum algorithm for near-infrared spectroscopy, starting
-# from the research papers. With abstract inputs, we estimated its resources for a molecule of a
-# given size before using any data. With real data, we compiled it into Pauli-based instructions
-# for a fault-tolerant quantum computer. With PennyLane2, the algorithm is a few high-level
-# operations, compilation is a pipeline of passes, and a full-scale problem with billions of
-# operations compiles and analyzes in seconds.
+# from the research papers. With abstract inputs, we estimated its resources for
+# HC\ :sub:`2`\ N\ :sub:`3`, and for larger molecules, before using any data. With the actual data,
+# the same circuit compiled to over a billion Pauli-based instructions, with its resources
+# analyzed after every pass. With PennyLane2, the algorithm is a few high-level operations,
+# compilation and resource analysis are one pipeline, and problems with billions of operations
+# compile in seconds.
 #
 # To learn more, see the PennyLane2 documentation, including the guide for users
 # `coming from PennyLane Classic
