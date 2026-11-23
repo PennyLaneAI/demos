@@ -2,6 +2,13 @@ r"""
 Simulating near-infrared spectroscopy with PennyLane2
 =====================================================
 
+.. note::
+
+    TODO: This demo only works with PennyLane2 installed. Link to the PennyLane2 installation
+    instructions and documentation here (URLs TBD). This demo is not executed when the website
+    is built. The outputs shown were generated with the development versions of PennyLane
+    (0.46.0-dev159) and Catalyst (0.16.0-dev147); update them to the open beta release versions.
+
 Near-infrared spectroscopy (NIRS) measures how molecules absorb light through overtones and
 combinations of their vibrations. These spectra are a fingerprint for chemical detection, and
 computing them accurately is a natural application for fault-tolerant quantum computers
@@ -16,11 +23,6 @@ PennyLane2 runs every program through a single compilation pipeline, powered by
 `Catalyst <https://docs.pennylane.ai/projects/catalyst>`__ and designed for fault-tolerant
 quantum computing (FTQC). That is what makes compiling and analyzing algorithms at this scale
 fast.
-
-.. note::
-
-    This demo is not executed when the website is built. The outputs shown were generated with
-    the development versions of PennyLane (0.46.0-dev154) and Catalyst (0.16.0-dev143).
 """
 
 ######################################################################
@@ -48,7 +50,7 @@ fast.
 # computational basis states.
 #
 # Both were computed classically and stored as NumPy arrays. We load them for hydrogen sulfide
-# (H\ :sub:`2`\ S) first.
+# (H\ :sub:`2`\ S) first, and wrap the Hamiltonian in a :class:`~pennylane.CGFHamiltonian`.
 
 import numpy as np
 import pennylane as qp
@@ -102,49 +104,90 @@ print(f"{len(state['indices'])} basis states on {state['num_qubits']} qubits")
 #   :doc:`phase gradient demo <demos/efficient_rotations_with_phase_gradient_states>` for how
 #   this works.
 #
-# Each operation needs some auxiliary wires, so we first work out the register sizes. We then
-# create the decomposition rules that use the phase gradient state: one for the multiplexed
-# rotations in the state preparation, and one that prepares the phase gradient state itself by
-# distillation. Both act on our registers, so they are created together with the circuit.
+# Registers
+# ^^^^^^^^^
+#
+# Besides the Hadamard-test qubit and the system register, each operation needs some auxiliary
+# wires. :meth:`~pennylane.SumOfSlatersPrep.required_register_sizes` tells us how many the state
+# preparation needs, and the phase gradient registers need as many qubits as there are bits of
+# precision in each rotation angle. :func:`~pennylane.registers` then assigns wires to every
+# register.
 
 epsilon = 1e-10  # accuracy of each rotation
+sos_registers = ("enumeration_wires", "identification_wires", "qrom_work_wires", "mcx_cache_wires")
 
 
-def make_circuit(hamiltonian, state, k_max):
-    """Build the Hadamard-test circuit for the longest evolution time, t = k_max * tau."""
+def make_registers(state):
     indices, num_qubits = state["indices"], state["num_qubits"]
     precision = qp.math.ceil_log2(1 / epsilon)
-
     sos_sizes = qp.SumOfSlatersPrep.required_register_sizes(indices, num_qubits)
-    sos_sizes.pop("wires")
-    register_sizes = {
-        "hadamard": 1,
-        "system": num_qubits,
-        "angle_wires": precision,
-        "phase_grad_wires": precision,
-        **sos_sizes,
-        "work_wires": max(precision - 1, qp.math.ceil_log2(len(indices)) - 2),
-    }
-    registers = qp.registers(register_sizes)
-    sos_wires = {k: registers[k] for k in sos_sizes}
+    return qp.registers(
+        {
+            "hadamard": 1,
+            "system": num_qubits,
+            "angle_wires": precision,
+            "phase_grad_wires": precision,
+            **{name: sos_sizes[name] for name in sos_registers},
+            "work_wires": max(precision - 1, qp.math.ceil_log2(len(indices)) - 2),
+        }
+    )
+
+
+registers = make_registers(state)
+
+######################################################################
+# Decomposition rules
+# ^^^^^^^^^^^^^^^^^^^
+#
+# Next, we create two decomposition rules that use the phase gradient state on our registers.
+# The first, from
+# :func:`~pennylane.transforms.decompositions.make_selectpaulirot_to_phase_gradient_decomp`,
+# implements the multiplexed rotations (:class:`~pennylane.SelectPauliRot`) in the state
+# preparation with arithmetic on the phase gradient register. The second, from
+# :func:`~pennylane.transforms.decompositions.make_phase_gradient_distillation_decomp`, prepares
+# the phase gradient state itself. We name the first rule so that we can select it when
+# compiling.
+
+decomps = qp.transforms.decompositions
+
+
+def make_rules(registers):
     pg_wires = {k: registers[k] for k in ("angle_wires", "phase_grad_wires", "work_wires")}
+    spr_rule = decomps.make_selectpaulirot_to_phase_gradient_decomp(**pg_wires)
+    spr_rule.name = "spr_phase_gradient"
+    pgsp_rule = decomps.make_phase_gradient_distillation_decomp(
+        pg_wires["angle_wires"], pg_wires["work_wires"]
+    )
+    return {qp.SelectPauliRot: spr_rule, qp.PhaseGradientStatePrep: pgsp_rule}
 
-    decomps = qp.transforms.decompositions
-    rules = {
-        qp.SelectPauliRot: decomps.make_selectpaulirot_to_phase_gradient_decomp(**pg_wires),
-        qp.PhaseGradientStatePrep: decomps.make_phase_gradient_distillation_decomp(
-            pg_wires["angle_wires"], pg_wires["work_wires"]
-        ),
-    }
-    rules[qp.SelectPauliRot].name = "spr_phase_gradient"
 
-    dev = qp.device("null.qubit", wires=sum(register_sizes.values()))
+rules = make_rules(registers)
+
+######################################################################
+# The circuit
+# ^^^^^^^^^^^
+#
+# Finally, the circuit itself. It has 130 qubits, far beyond what we could simulate classically,
+# and we only want to compile and analyze it. So we run it on ``null.qubit``
+# (:class:`~pennylane.devices.NullQubit`), a device that performs no simulation at all.
+#
+# The algorithm runs one circuit for each evolution time :math:`t_k`, and the longest one,
+# :math:`t = k_{\max}\tau`, is the most expensive. Since we only analyze that circuit, we build
+# it directly. We start small, with a single time step (:math:`k_{\max} = 1`) for
+# H\ :sub:`2`\ S.
+
+
+def make_circuit(hamiltonian, state, registers, k_max):
+    dev = qp.device("null.qubit", wires=sum(len(wires) for wires in registers.values()))
 
     @qp.qnode(dev)
     def circuit():
         qp.PhaseGradientStatePrep(registers["phase_grad_wires"])
         qp.SumOfSlatersPrep(
-            state["coefficients"], wires=registers["system"], indices=indices, **sos_wires
+            state["coefficients"],
+            wires=registers["system"],
+            indices=state["indices"],
+            **{name: registers[name] for name in sos_registers},
         )
         qp.ctrl(
             qp.TrotterCGF(
@@ -158,30 +201,35 @@ def make_circuit(hamiltonian, state, k_max):
         )
         return qp.expval(qp.X(registers["hadamard"])), qp.expval(qp.Y(registers["hadamard"]))
 
-    return circuit, rules
+    return circuit
 
 
-######################################################################
-# The ``null.qubit`` device lets us compile and analyze the circuit without simulating it. We
-# build the shortest circuit for H\ :sub:`2`\ S, with :math:`k_{\max} = 1`.
-
-circuit, rules = make_circuit(hamiltonian, state, k_max=1)
+circuit = make_circuit(hamiltonian, state, registers, k_max=1)
 
 ######################################################################
 # Compiling for a fault-tolerant quantum computer
 # -----------------------------------------------
 #
-# Fault-tolerant architectures are often programmed with Pauli-based computation (PBC), in which
-# a circuit is a sequence of Pauli product rotations (PPRs) and Pauli product measurements
-# (PPMs). In PennyLane2, getting there is a matter of chaining compilation passes into a
-# :class:`~pennylane.CompilePipeline`:
+# We compile the circuit to `Pauli-based computation
+# <https://pennylane.ai/compilation/pauli-based-computation>`__ (PBC), in which a circuit is a
+# sequence of Pauli product rotations (PPRs) and Pauli product measurements (PPMs). PBC is a
+# natural fit for surface-code architectures based on lattice surgery, where multi-qubit Pauli
+# measurements are the native operations [#Litinski2019]_. In PennyLane2, getting there is a
+# matter of chaining compilation passes into a :class:`~pennylane.CompilePipeline`:
 #
 # #. :func:`~pennylane.decompose` breaks the circuit down into Clifford gates, :math:`T` gates and
 #    :math:`R_Z` rotations, using our phase gradient rule for the multiplexed rotations.
 # #. :func:`~pennylane.transforms.gridsynth` approximates each :math:`R_Z` rotation to accuracy
-#    :math:`\epsilon` with Clifford and :math:`T` gates.
-# #. :func:`~pennylane.transforms.to_ppr` and :func:`~pennylane.transforms.ppr_to_ppm` convert
-#    the result into PPRs and then into PPMs.
+#    :math:`\epsilon` with :math:`\pi/8` and Clifford PPRs.
+# #. :func:`~pennylane.transforms.to_ppr` converts the remaining gates into PPRs, and
+#    :func:`~pennylane.transforms.ppr_to_ppm` replaces every PPR with PPMs.
+#
+# The PBC passes alone are not enough: :func:`~pennylane.transforms.ppr_to_ppm` only knows how to
+# implement Clifford and :math:`\pi/8` rotations, the latter by consuming a magic state. An
+# :math:`R_Z` rotation by an arbitrary angle has no such implementation, so ``gridsynth`` first
+# approximates it with rotations that do. Alternatively, these rotations could be implemented
+# with the phase gradient state, as we do for the multiplexed rotations. We use ``gridsynth``
+# because its cost per rotation is close to the one assumed in [#Loaiza2025]_.
 #
 # The gate set tells the decomposition which gates to target, and how much each one costs.
 
@@ -227,54 +275,86 @@ print(analyze(circuit, rules, level="all"))
 #     Shots: Shots(total=None)
 #     Levels:
 #     - 0: Before MLIR Passes
-#     - 1: graph-decomposition
-#     - 2: symbol-dce
-#     - 3: gridsynth
-#     - 4: to-ppr
-#     - 5: ppr-to-ppm
-#     - 6: Device Preprocessing
+#     - 1: After graph-decomposition
+#     - 2: After symbol-dce
+#     - 3: After gridsynth
+#     - 4: After to-ppr
+#     - 5: After ppr-to-ppm
+#     - 6: After Device Preprocessing
 #
 #     ↓Metric             Level→ |        0 |        1 |        2 |        3 |        4 |        5 |        6
 #     -------------------------------------------------------------------------------------------------------
 #     Quantum operations:        |
-#     - Total                    |        3 |   38,861 |   38,861 | 1.277E+5 | 1.986E+5 | 5.861E+5 | 5.861E+5
-#       - C(TrotterCGF)          |        1 |        0 |        0 |        0 |        0 |        0 |        0
+#     - Total                    |        3 |   43,227 |   43,227 | 1.321E+5 | 2.027E+5 | 5.899E+5 | 5.899E+5
+#       - 1C(TrotterCGF)         |        1 |        0 |        0 |        0 |        0 |        0 |        0
 #       - PhaseGradientStatePrep |        1 |        0 |        0 |        0 |        0 |        0 |        0
 #       - SumOfSlatersPrep       |        1 |        0 |        0 |        0 |        0 |        0 |        0
-#       - Adjoint(S)             |        0 |    1,575 |    1,575 |    1,575 |        0 |        0 |        0
-#       - Adjoint(T)             |        0 |    1,457 |    1,457 |    1,457 |        0 |        0 |        0
-#       - CNOT                   |        0 |   12,997 |   12,997 |   12,997 |        0 |        0 |        0
-#       - CZ                     |        0 |      729 |      729 |      729 |        0 |        0 |        0
-#       - GlobalPhase            |        0 |        1 |        1 |    1,732 |   36,845 |   36,845 |   36,845
-#       - Hadamard               |        0 |    4,172 |    4,172 |    4,172 |        0 |        0 |        0
-#       - PPM-w1                 |        0 |    2,013 |    2,013 |    2,013 |    2,013 | 1.499E+5 | 1.499E+5
-#       - PauliX                 |        0 |   11,816 |   11,816 |   11,816 |        0 |        0 |        0
-#       - PauliZ                 |        0 |      116 |      116 |      116 |        0 |        0 |        0
+#       - Adjoint(S)             |        0 |    1,583 |    1,583 |    1,583 |        0 |        0 |        0
+#       - Adjoint(T)             |        0 |    1,473 |    1,473 |    1,473 |        0 |        0 |        0
+#       - CNOT                   |        0 |   10,527 |   10,527 |   10,527 |        0 |        0 |        0
+#       - CZ                     |        0 |      737 |      737 |      737 |        0 |        0 |        0
+#       - GlobalPhase            |        0 |    1,585 |    1,585 |    3,316 |   38,263 |   38,263 |   38,263
+#       - Hadamard               |        0 |    6,564 |    6,564 |    6,564 |        0 |        0 |        0
+#       - PPM-w1                 |        0 |    2,029 |    2,029 |    2,029 |    2,029 | 1.497E+5 | 1.497E+5
+#       - PPM-w10                |        0 |      105 |      105 |      105 |      105 |      105 |      105
+#       - PPM-w11                |        0 |      105 |      105 |      105 |      105 |      105 |      105
+#       - PPM-w12                |        0 |      105 |      105 |      105 |      105 |      105 |      105
+#       - PPM-w13                |        0 |      105 |      105 |      105 |      105 |      105 |      105
+#       - PPM-w14                |        0 |       76 |       76 |       76 |       76 |       76 |       76
+#       - PPM-w15                |        0 |       76 |       76 |       76 |       76 |       76 |       76
+#       - PPM-w16                |        0 |       76 |       76 |       76 |       76 |       76 |       76
+#       - PPM-w17                |        0 |       76 |       76 |       76 |       76 |       76 |       76
+#       - PPM-w18                |        0 |       76 |       76 |       76 |       76 |       76 |       76
+#       - PPM-w19                |        0 |       76 |       76 |       76 |       76 |       76 |       76
+#       - PPM-w2                 |        0 |      105 |      105 |      105 |      105 | 1.365E+5 | 1.365E+5
+#       - PPM-w20                |        0 |       76 |       76 |       76 |       76 |       76 |       76
+#       - PPM-w21                |        0 |       76 |       76 |       76 |       76 |       76 |       76
+#       - PPM-w22                |        0 |       76 |       76 |       76 |       76 |       76 |       76
+#       - PPM-w23                |        0 |       76 |       76 |       76 |       76 |       76 |       76
+#       - PPM-w24                |        0 |       76 |       76 |       76 |       76 |       76 |       76
+#       - PPM-w25                |        0 |       76 |       76 |       76 |       76 |       76 |       76
+#       - PPM-w26                |        0 |       76 |       76 |       76 |       76 |       76 |       76
+#       - PPM-w27                |        0 |       76 |       76 |       76 |       76 |       76 |       76
+#       - PPM-w28                |        0 |       76 |       76 |       76 |       76 |       76 |       76
+#       - PPM-w29                |        0 |       76 |       76 |       76 |       76 |       76 |       76
+#       - PPM-w3                 |        0 |      105 |      105 |      105 |      105 |   11,368 |   11,368
+#       - PPM-w30                |        0 |       76 |       76 |       76 |       76 |       76 |       76
+#       - PPM-w31                |        0 |       76 |       76 |       76 |       76 |       76 |       76
+#       - PPM-w32                |        0 |       76 |       76 |       76 |       76 |       76 |       76
+#       - PPM-w33                |        0 |       76 |       76 |       76 |       76 |       76 |       76
+#       - PPM-w34                |        0 |       76 |       76 |       76 |       76 |       76 |       76
+#       - PPM-w35                |        0 |       76 |       76 |       76 |       76 |       76 |       76
+#       - PPM-w4                 |        0 |      105 |      105 |      105 |      105 |      105 |      105
+#       - PPM-w5                 |        0 |      105 |      105 |      105 |      105 |      105 |      105
+#       - PPM-w6                 |        0 |      105 |      105 |      105 |      105 |      105 |      105
+#       - PPM-w7                 |        0 |      105 |      105 |      105 |      105 |      105 |      105
+#       - PPM-w8                 |        0 |      105 |      105 |      105 |      105 |      105 |      105
+#       - PPM-w9                 |        0 |      105 |      105 |      105 |      105 |      105 |      105
+#       - PauliX                 |        0 |   11,575 |   11,575 |   11,575 |        0 |        0 |        0
+#       - PauliZ                 |        0 |      221 |      221 |      221 |        0 |        0 |        0
 #       - RZ                     |        0 |    1,731 |    1,731 |        0 |        0 |        0 |        0
 #       - S                      |        0 |      797 |      797 |      797 |        0 |        0 |        0
-#       - T                      |        0 |    1,457 |    1,457 |    1,457 |        0 |        0 |        0
-#       - PPR-pi/2-w1            |        0 |        0 |        0 |        2 |   11,933 | 1.461E+5 | 1.461E+5
-#       - PPR-pi/4-w1            |        0 |        0 |        0 |        3 |   42,339 |        0 |        0
-#       - PPR-pi/8-w1            |        0 |        0 |        0 |   88,868 |   91,781 |        0 |        0
-#       - PPR-pi/4-w2            |        0 |        0 |        0 |        0 |   13,725 |        0 |        0
-#       - PPM-w2                 |        0 |        0 |        0 |        0 |        0 | 1.341E+5 | 1.341E+5
-#       - PPM-w3                 |        0 |        0 |        0 |        0 |        0 |   13,725 |   13,725
-#       - PPR-pi/2-w2            |        0 |        0 |        0 |        0 |        0 |   13,725 |   13,725
-#       - pbc.fabricate          |        0 |        0 |        0 |        0 |        0 |   91,781 |   91,781
+#       - T                      |        0 |    1,473 |    1,473 |    1,473 |        0 |        0 |        0
+#       - PPR-pi/2-w1            |        0 |        0 |        0 |        2 |   11,797 | 1.482E+5 | 1.482E+5
+#       - PPR-pi/4-w1            |        0 |        0 |        0 |        3 |   44,599 |        0 |        0
+#       - PPR-pi/8-w1            |        0 |        0 |        0 |   88,868 |   91,813 |        0 |        0
+#       - PPR-pi/4-w2            |        0 |        0 |        0 |        0 |   11,263 |        0 |        0
+#       - PPR-pi/2-w2            |        0 |        0 |        0 |        0 |        0 |   11,263 |   11,263
+#       - pbc.fabricate          |        0 |        0 |        0 |        0 |        0 |   91,813 |   91,813
 #     Measurement processes:     |
 #     - expval(PauliX)           |        1 |        1 |        1 |        1 |        1 |        1 |        1
 #     - expval(PauliY)           |        1 |        1 |        1 |        1 |        1 |        1 |        1
-#     Total wires                |      130 |      130 |      130 |      130 |      130 | 1.480E+5 | 1.480E+5
+#     Total wires                |      130 |      130 |      130 |      130 |      130 | 1.478E+5 | 1.478E+5
 #     PBC Depths:                |
-#     - Any commuting depth      |        - |    2,117 |    2,117 |   90,988 | 1.350E+5 | 3.755E+5 | 3.755E+5
-#     - Qubit disjoint depth     |        - |    2,117 |    2,117 |   90,988 | 1.491E+5 | 3.896E+5 | 3.896E+5
+#     - Any commuting depth      |        - |    2,133 |    2,133 |   91,004 | 1.392E+5 | 3.789E+5 | 3.789E+5
+#     - Qubit disjoint depth     |        - |    2,133 |    2,133 |   91,004 | 1.506E+5 | 3.903E+5 | 3.903E+5
 
 ######################################################################
-# Each column is one stage of the pipeline. The three high-level operations become about 39,000
-# Clifford, :math:`T` and :math:`R_Z` gates, and finally a sequence of PPMs. The number that
-# matters most is ``pbc.fabricate``: the magic states that each non-Clifford :math:`\pi/8`
-# rotation consumes. Magic states are the most expensive resource on a fault-tolerant
-# quantum computer.
+# Each column is one stage of the pipeline. The three high-level operations become about 43,000
+# Clifford gates, :math:`T` gates, :math:`R_Z` rotations and measurements, and finally a sequence
+# of PPMs. The number that matters most is ``pbc.fabricate``: the magic states that each
+# non-Clifford :math:`\pi/8` rotation consumes. Magic states are the most expensive resource on
+# a fault-tolerant quantum computer.
 #
 # Scaling up
 # ----------
@@ -282,13 +362,15 @@ print(analyze(circuit, rules, level="all"))
 # H\ :sub:`2`\ S with a single time step is a small example. A useful spectrum needs a larger
 # molecule and the full set of evolution times. We now build the longest circuit,
 # :math:`k_{\max} = 300`, for azidoacetylene (HC\ :sub:`2`\ N\ :sub:`3`), a molecule with 12
-# vibrational modes. Thanks to ``make_circuit``, this is a change of two arguments. This time,
-# we only look at the end of the pipeline and time the compilation.
+# vibrational modes. We call the same functions with a different molecule and
+# :math:`k_{\max}`. This time, we only look at the end of the pipeline and time the compilation.
 
 import time
 
 hamiltonian, state = load_molecule("hc2n3")
-circuit, rules = make_circuit(hamiltonian, state, k_max=300)
+registers = make_registers(state)
+rules = make_rules(registers)
+circuit = make_circuit(hamiltonian, state, registers, k_max=300)
 
 start = time.perf_counter()
 specs = analyze(circuit, rules, level="user")
@@ -306,9 +388,9 @@ print(f"Compiled and analyzed in {elapsed:.0f} s")
 #   .. code-block:: none
 #
 #     Logical qubits: 176
-#     Operations: 1.209e+09
+#     Operations: 1.238e+09
 #     Magic states: 2.647e+08
-#     Compiled and analyzed in 11 s
+#     Compiled and analyzed in 19 s
 
 ######################################################################
 # The full-scale circuit has over a billion operations, and PennyLane2 compiles it down to
@@ -340,6 +422,12 @@ print(f"Compiled and analyzed in {elapsed:.0f} s")
 #     A. Delgado, J. M. Arrazola,
 #     "Simulating near-infrared spectroscopy on a quantum computer for enhanced chemical
 #     detection". `arXiv:2504.10602 <https://arxiv.org/abs/2504.10602>`__ (2025).
+#
+# .. [#Litinski2019]
+#
+#     D. Litinski,
+#     "A Game of Surface Codes: Large-Scale Quantum Computing with Lattice Surgery".
+#     `Quantum 3, 128 (2019) <https://doi.org/10.22331/q-2019-03-05-128>`__.
 #
 # .. [#Malpathak2026]
 #

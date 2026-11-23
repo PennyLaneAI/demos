@@ -11,7 +11,7 @@
   "executable_stable": false,
   "executable_latest": false,
   "dateOfPublication": "2026-11-13T00:00:00+00:00",
-  "dateOfLastModification": "2026-11-19T00:00:00+00:00",
+  "dateOfLastModification": "2026-11-23T00:00:00+00:00",
   "categories": [
     "Algorithms",
     "Quantum Chemistry",
@@ -35,6 +35,16 @@
       "year": "2025",
       "doi": "10.48550/arXiv.2504.10602",
       "url": "https://arxiv.org/abs/2504.10602"
+    },
+    {
+      "id": "Litinski2019",
+      "type": "article",
+      "title": "A Game of Surface Codes: Large-Scale Quantum Computing with Lattice Surgery",
+      "authors": "D. Litinski",
+      "year": "2019",
+      "journal": "Quantum",
+      "doi": "10.22331/q-2019-03-05-128",
+      "url": "https://doi.org/10.22331/q-2019-03-05-128"
     },
     {
       "id": "Malpathak2026",
