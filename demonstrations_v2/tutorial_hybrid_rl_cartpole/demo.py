@@ -9,8 +9,6 @@ Train a classical and a qubit-based PPO agent on CartPole and compare their reso
 # Introduction
 # ------------
 # 
-# --------------
-# 
 # This series of experiments is based on the 2025 paper by Nagy et al.: “`Hybrid Quantum-Classical
 # Reinforcement Learning in Latent Observation Spaces <https://arxiv.org/abs/2410.18284>`__”.
 # 
@@ -34,9 +32,6 @@ Train a classical and a qubit-based PPO agent on CartPole and compare their reso
 # *Note: This notebook was run on an Intel Core processor i9-14900K (3.20 GHz) and an NVIDIA GeForce
 # RTX 4090*
 # 
-
-# Uncomment the following line to install the required dependencies
-# !pip install ipynb torch torchvision gymnasium "gymnasium[classic-control]" matplotlib pennylane
 
 import copy
 import datetime
@@ -80,8 +75,6 @@ results_filename = "qrl_results.json"
 ######################################################################
 # 1 - The Cart Pole environment
 # -----------------------------
-# 
-# --------------
 # 
 # In the article mentioned in the introduction, the authors use two environments: CartPole-v1 (OpenAI
 # Gymnasium) and Maze-v0 (custom environment). For this experiment to run in a short amount of time,
@@ -137,8 +130,6 @@ cartpole_env.observation_space.seed(seed)
 # 2 - AutoEncoders (AEs)
 # ----------------------
 # 
-# --------------
-# 
 # The Cart Pole environment contains four observations which can be reduced to only two variables with
 # an AE.
 # 
@@ -186,8 +177,6 @@ class AutoEncoder(nn.Module):
 ######################################################################
 # 3 - Proximal Policy Optimization (PPO)
 # --------------------------------------
-# 
-# --------------
 # 
 # The framework of Proximal Policy Optimization (PPO) involves two models: the Actor and the Critic.
 # At each step, the Actor receives the compressed observations of the environment from the AE (the
@@ -532,8 +521,6 @@ class PPO:
 # 4 - Classical PPO agent
 # -----------------------
 # 
-# --------------
-# 
 # In the classical case of PPO, both the Actor and the Critic are simple Neural Networks (NNs).
 # 
 
@@ -575,8 +562,6 @@ class CriticNN(nn.Module):
 ######################################################################
 # 5 - Qubit-based PPO agent
 # -------------------------
-# 
-# --------------
 # 
 # The quantum versions of PPO used in the article replace the Actor’s NN by a Parametrized Quantum
 # Circuit (PQC). In the case of the qubit-based PPO agent, the PQC consists of several layers of
@@ -629,8 +614,6 @@ class ActorQubitNN(nn.Module):
 ######################################################################
 # 6 - Results
 # -----------
-# 
-# --------------
 # 
 # Before the trainings are launched, some additional functions are needed to measure the memory
 # allocated, load the models’ weights and save / plot the results.
@@ -909,8 +892,6 @@ plot_results(env_name, qrl_results.get(env_name, {}), cp_config["mean_reward_sto
 # 7 - Conclusions
 # ---------------
 # 
-# --------------
-# 
 # The models were prepared so that they’d have the same number of parameters. The qubit agent uses
 # about 50% more memory.
 # 
@@ -926,8 +907,6 @@ plot_results(env_name, qrl_results.get(env_name, {}), cp_config["mean_reward_sto
 
 ######################################################################
 # 8 - Follow-ups
-# --------------
-# 
 # --------------
 # 
 # You can play around with the configuration : for example, try using other values for the AE’s
