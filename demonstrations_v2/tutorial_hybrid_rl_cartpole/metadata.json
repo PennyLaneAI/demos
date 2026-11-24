@@ -1,0 +1,39 @@
+{
+  "title": "Hybrid quantum-classical reinforcement learning on CartPole",
+  "authors": [
+    {
+      "username": "sarah_ceo"
+    }
+  ],
+  "executable_stable": true,
+  "executable_latest": true,
+  "dateOfPublication": "2026-11-24T00:00:00+00:00",
+  "dateOfLastModification": "2026-11-24T00:00:00+00:00",
+  "categories": [],
+  "tags": [],
+  "previewImages": [
+    {
+      "type": "thumbnail",
+      "uri": "/_static/demo_thumbnails/regular_demo_thumbnails/thumbnail_placeholder.png"
+    }
+  ],
+  "seoDescription": "Train a classical and a qubit-based PPO agent on CartPole and compare their resource costs.",
+  "doi": "",
+  "references": [
+    {
+      "id": "Nagy2025",
+      "type": "article",
+      "title": "Hybrid Quantum-Classical Reinforcement Learning in Latent Observation Spaces",
+      "authors": "Dániel T. R. Nagy, Csaba Czabán, Bence Bakó, Péter Hága, Zsófia Kallus, Zoltán Zimborás",
+      "year": "2025",
+      "journal": "arXiv preprint arXiv:2410.18284",
+      "doi": "10.48550/arXiv.2410.18284",
+      "url": "https://arxiv.org/abs/2410.18284"
+    }
+  ],
+  "basedOnPapers": [
+    "10.48550/arXiv.2410.18284"
+  ],
+  "referencedByPapers": [],
+  "relatedContent": []
+}
