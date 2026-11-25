@@ -946,10 +946,9 @@ plot_results(env_name, qrl_results.get(env_name, {}), cp_config["mean_reward_sto
 # The models were prepared so that they’d have the same number of parameters. The qubit agent uses
 # about 50% more memory.
 #
-# Both methods reached the expected performance, though the Qubit-based method took a few more
-# episodes to reach it in this particular instance. It has been the case with other seeds that the
-# Qubit-based PPO took fewer episodes than the classical one. Its training time is always longer
-# however. This is probably due to the fact that the quantum circuit is simulated.
+# Both methods reached the expected performance. Which one needs fewer episodes to get there
+# varies from run to run. The Qubit-based PPO's training time is always longer however.
+# This is probably due to the fact that the quantum circuit is simulated.
 #
 # It is not expected that the Qubit-based model would outclass the classical one on such a simple
 # problem, but it is interesting to see how easy it was to implement and integrate into PyTorch with
