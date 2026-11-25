@@ -9,7 +9,9 @@
   "executable_latest": true,
   "dateOfPublication": "2026-11-24T00:00:00+00:00",
   "dateOfLastModification": "2026-11-24T00:00:00+00:00",
-  "categories": [],
+  "categories": [
+    "Quantum Machine Learning"
+  ],
   "tags": [],
   "previewImages": [
     {
