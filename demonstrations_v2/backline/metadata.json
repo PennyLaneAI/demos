@@ -58,5 +58,12 @@
             "id": "tutorial_bp_catalyst",
             "weight": 1.0
         }
+    ],
+    "hardware": [
+        {
+            "id": "qbraid",
+            "link": "https://account.qbraid.com/?install-project=backline-demos",
+            "logo": "/_static/hardware_logos/qbraid.png"
+        }
     ]
 }
