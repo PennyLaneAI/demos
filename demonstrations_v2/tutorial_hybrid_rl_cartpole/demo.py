@@ -40,10 +40,13 @@ import gc
 import os
 import tracemalloc
 import json
+import io
+import base64
 from collections import namedtuple, deque
 from itertools import count
 import numpy as np
-from IPython.display import display, clear_output
+from PIL import Image
+from IPython.display import HTML
 import matplotlib.pyplot as plt
 from matplotlib.colors import TABLEAU_COLORS
 import torch
@@ -115,13 +118,6 @@ cartpole_env = gym.make("CartPole-v1", render_mode="rgb_array")
 cartpole_env.reset(seed=seed)
 cartpole_env.action_space.seed(seed)
 cartpole_env.observation_space.seed(seed)
-
-######################################################################
-# .. rst-class:: sphx-glr-script-out
-#
-# .. code-block:: none
-#
-#    42
 
 ######################################################################
 # 2 - AutoEncoders (AEs)
@@ -560,13 +556,12 @@ class PPO:
         self.buffer.memory.clear()
 
     def evaluate(self):
-        # Matplotlib is used to display an episode with the PPO in action
-        fig, ax = plt.subplots()
-        im = None
+        """Runs one episode with the trained agent and returns it as an animated GIF"""
+        frames = []
 
         # Episode starts
         state, _ = self.env.reset()
-        for _ in count():
+        for step in count():
 
             # An action is sampled from the actor's policy
             state = torch.tensor(state, dtype=torch.float32).unsqueeze(0).to(self.device)
@@ -581,23 +576,22 @@ class PPO:
             done = terminated or truncated
             state = next_state
 
-            # Render the environment
-            frame = self.env.render()
-            if im is None:
-                im = ax.imshow(frame)
-                ax.axis("off")
-            else:
-                im.set_data(frame)
-            clear_output(wait=True)
-            display(fig)
+            # Render the environment (every 2nd frame, to keep the GIF small)
+            if step % 2 == 0 or done:
+                frames.append(Image.fromarray(self.env.render()))
 
             if done:
                 # Episode ends
                 break
 
-        # Close the maptlotlib figure
-        clear_output(wait=True)
-        plt.close(fig)
+        # The frames are assembled into an animated GIF (at half size) and returned as HTML so it plays in the demo
+        frames = [frame.resize((frame.width // 2, frame.height // 2)) for frame in frames]
+        buffer = io.BytesIO()
+        frames[0].save(
+            buffer, format="GIF", save_all=True, append_images=frames[1:], duration=40, loop=0
+        )
+        gif = base64.b64encode(buffer.getvalue()).decode("ascii")
+        return HTML(f'<img src="data:image/gif;base64,{gif}" alt="CartPole episode"/>')
 
 
 ######################################################################
@@ -853,6 +847,9 @@ def plot_results(env_name, env_results, env_reward_stop, methods=["classical", "
     plt.show()
 
 
+######################################################################
+#
+
 # Set the configuration for Cart Pole
 env_name = "Cart Pole"
 cp_config = {
@@ -872,6 +869,9 @@ cp_config = {
     "print_episodes_frequency": 20,
     "max_episodes": 1000,
 }
+
+######################################################################
+#
 
 # 1. Classical PPO
 cp_config["actor_intermediate_dim"] = 2
@@ -898,40 +898,12 @@ else:
     qrl_results = load_results(os.path.join(results_folder, results_filename))
 
 ######################################################################
-# .. rst-class:: sphx-glr-script-out
 #
-# .. code-block:: none
-#
-#
-#    PPO training
-#
-#    Episode 20: mean reward = 15.95 (0:00:07.744132)
-#
-#    Episode 40: mean reward = 21.40 (0:00:07.432987)
-#
-#    Episode 60: mean reward = 24.35 (0:00:07.502276)
-#
-#    Episode 80: mean reward = 36.05 (0:00:07.952963)
-#
-#    Episode 100: mean reward = 51.65 (0:00:08.266106)
-#
-#    Episode 120: mean reward = 104.65 (0:00:09.727036)
-#
-#    Episode 140: mean reward = 153.65 (0:00:10.900881)
-#
-#    Episode 160: mean reward = 152.35 (0:00:10.256279)
-#
-#    Episode 180: mean reward = 384.50 (0:00:16.673862)
-#
-#    Total training time: 0:01:41.282041
 
 cp_classical_ppo.evaluate()
 
 ######################################################################
 #
-# .. figure:: ../_static/demonstration_assets/hybrid_rl_cartpole/classical_ppo_evaluation.png
-#    :align: center
-#    :width: 80%
 
 # 2. Qubit PPO
 cp_config["actor_intermediate_dim"] = 3  # QNN Layers
@@ -958,50 +930,14 @@ else:
     qrl_results = load_results(os.path.join(results_folder, results_filename))
 
 ######################################################################
-# .. rst-class:: sphx-glr-script-out
 #
-# .. code-block:: none
-#
-#
-#    PPO training
-#
-#    Episode 20: mean reward = 19.47 (0:00:10.510966)
-#
-#    Episode 40: mean reward = 24.60 (0:00:10.706885)
-#
-#    Episode 60: mean reward = 37.00 (0:00:12.164241)
-#
-#    Episode 80: mean reward = 95.75 (0:00:18.976910)
-#
-#    Episode 100: mean reward = 142.95 (0:00:23.497803)
-#
-#    Episode 120: mean reward = 268.15 (0:00:37.297799)
-#
-#    Episode 140: mean reward = 235.85 (0:00:35.652695)
-#
-#    Episode 160: mean reward = 292.00 (0:00:39.709227)
-#
-#    Episode 180: mean reward = 220.40 (0:00:33.624410)
-#
-#    Episode 200: mean reward = 420.30 (0:00:55.900640)
-#
-#    Total training time: 0:05:00.798199
 
 cp_qubit_ppo.evaluate()
 
 ######################################################################
 #
-# .. figure:: ../_static/demonstration_assets/hybrid_rl_cartpole/qubit_ppo_evaluation.png
-#    :align: center
-#    :width: 80%
 
 plot_results(env_name, qrl_results.get(env_name, {}), cp_config["mean_reward_stop"])
-
-######################################################################
-#
-# .. figure:: ../_static/demonstration_assets/hybrid_rl_cartpole/results_comparison.png
-#    :align: center
-#    :width: 80%
 
 ######################################################################
 # 7 - Conclusions

@@ -3,3 +3,4 @@
 torch
 gymnasium[classic-control]
 ipython
+pillow
