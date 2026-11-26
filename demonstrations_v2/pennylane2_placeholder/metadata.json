@@ -1,0 +1,79 @@
+{
+  "title": "Simulating near-infrared spectroscopy with PennyLane2",
+  "authors": [
+    {
+      "username": "isaacdevlugt"
+    },
+    {
+      "username": "ANT0N"
+    }
+  ],
+  "executable_stable": false,
+  "executable_latest": false,
+  "dateOfPublication": "2026-11-13T00:00:00+00:00",
+  "dateOfLastModification": "2026-11-23T00:00:00+00:00",
+  "categories": [
+    "Algorithms",
+    "Quantum Chemistry",
+    "Compilation"
+  ],
+  "tags": [],
+  "previewImages": [
+    {
+      "type": "thumbnail",
+      "uri": "/_static/demo_thumbnails/regular_demo_thumbnails/thumbnail_placeholder.png"
+    }
+  ],
+  "seoDescription": "Implement a quantum algorithm for near-infrared spectroscopy and compile a billion-operation fault-tolerant circuit in seconds with PennyLane2.",
+  "doi": "",
+  "references": [
+    {
+      "id": "Loaiza2025",
+      "type": "preprint",
+      "title": "Simulating near-infrared spectroscopy on a quantum computer for enhanced chemical detection",
+      "authors": "I. Loaiza, S. Fomichev, D. Motlagh, P. A. M. Casares, D. Honciuc Menendez, S. Shum, A. Delgado, J. M. Arrazola",
+      "year": "2025",
+      "doi": "10.48550/arXiv.2504.10602",
+      "url": "https://arxiv.org/abs/2504.10602"
+    },
+    {
+      "id": "Litinski2019",
+      "type": "article",
+      "title": "A Game of Surface Codes: Large-Scale Quantum Computing with Lattice Surgery",
+      "authors": "D. Litinski",
+      "year": "2019",
+      "journal": "Quantum",
+      "doi": "10.22331/q-2019-03-05-128",
+      "url": "https://doi.org/10.22331/q-2019-03-05-128"
+    },
+    {
+      "id": "Malpathak2026",
+      "type": "article",
+      "title": "Trotter simulation of vibrational Hamiltonians on a quantum computer",
+      "authors": "S. Malpathak, S. D. Kallullathil, I. Loaiza, S. Fomichev, J. M. Arrazola, A. F. Izmaylov",
+      "year": "2026",
+      "journal": "J. Chem. Theory Comput.",
+      "doi": "10.1021/acs.jctc.5c01600",
+      "url": "https://doi.org/10.1021/acs.jctc.5c01600"
+    }
+  ],
+  "basedOnPapers": [],
+  "referencedByPapers": [],
+  "relatedContent": [
+    {
+      "type": "demonstration",
+      "id": "tutorial_resource_estimation_spectroscopy",
+      "weight": 1.0
+    },
+    {
+      "type": "demonstration",
+      "id": "tutorial_xas",
+      "weight": 1.0
+    },
+    {
+      "type": "demonstration",
+      "id": "efficient_rotations_with_phase_gradient_states",
+      "weight": 1.0
+    }
+  ]
+}
