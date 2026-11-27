@@ -1,0 +1,93 @@
+{
+    "title": "Equivariant circuit or invariant model? Where the advantage of symmetric QNNs comes from",
+    "authors": [
+        {
+            "username": "giuseppe_dambruoso"
+        }
+    ],
+    "executable_stable": true,
+    "executable_latest": true,
+    "dateOfPublication": "2026-11-12T00:00:00+00:00",
+    "dateOfLastModification": "2026-11-12T00:00:00+00:00",
+    "categories": [
+        "Quantum Machine Learning"
+    ],
+    "tags": [],
+    "previewImages": [
+        {
+            "type": "thumbnail",
+            "uri": "/_static/demo_thumbnails/regular_demo_thumbnails/thumbnail_placeholder.png"
+        }
+    ],
+    "seoDescription": "Separate the roles of an equivariant circuit and an invariant readout in geometric quantum machine learning, and see which one protects an image classifier from shortcuts.",
+    "doi": "",
+    "references": [
+        {
+            "id": "Larocca2022",
+            "type": "article",
+            "title": "Group-invariant quantum machine learning",
+            "authors": "M. Larocca, F. Sauvage, F. M. Sbahi, G. Verdon, P. J. Coles, M. Cerezo",
+            "year": "2022",
+            "journal": "PRX Quantum",
+            "url": "https://doi.org/10.1103/PRXQuantum.3.030341"
+        },
+        {
+            "id": "Meyer2023",
+            "type": "article",
+            "title": "Exploiting symmetry in variational quantum machine learning",
+            "authors": "J. J. Meyer, M. Mularski, E. Gil-Fuster, A. A. Mele, F. Arzani, A. Wilms, J. Eisert",
+            "year": "2023",
+            "journal": "PRX Quantum",
+            "url": "https://doi.org/10.1103/PRXQuantum.4.010328"
+        },
+        {
+            "id": "Chang2023",
+            "type": "article",
+            "title": "Approximately equivariant quantum neural network for p4m group symmetries in images",
+            "authors": "S. Y. Chang, M. Grossi, B. Le Saux, S. Vallecorsa",
+            "year": "2023",
+            "journal": "IEEE QCE",
+            "url": "https://arxiv.org/abs/2310.02323"
+        },
+        {
+            "id": "Ragone2024",
+            "type": "article",
+            "title": "A Lie algebraic theory of barren plateaus for deep parameterized quantum circuits",
+            "authors": "M. Ragone, B. N. Bakalov, F. Sauvage, A. F. Kemper, C. Ortiz Marrero, M. Larocca, M. Cerezo",
+            "year": "2024",
+            "journal": "Nature Communications",
+            "url": "https://doi.org/10.1038/s41467-024-49909-3"
+        },
+        {
+            "id": "DAmbruoso2026",
+            "type": "article",
+            "title": "Invariance can prevent overfitting and shortcut learning in Quantum Neural Networks",
+            "authors": "G. D'Ambruoso, G. Gramegna, D. Pomarico, G. Magnifico, C. Lupo",
+            "year": "2026",
+            "journal": "arXiv",
+            "url": "https://arxiv.org/abs/2611.14368",
+            "doi": "10.48550/arXiv.2611.14368"
+        }
+    ],
+    "basedOnPapers": [
+        "10.48550/arXiv.2611.14368"
+    ],
+    "referencedByPapers": [],
+    "relatedContent": [
+        {
+            "type": "demonstration",
+            "id": "tutorial_geometric_qml",
+            "weight": 1.0
+        },
+        {
+            "type": "demonstration",
+            "id": "tutorial_equivariant_graph_embedding",
+            "weight": 1.0
+        },
+        {
+            "type": "demonstration",
+            "id": "tutorial_liealgebra",
+            "weight": 1.0
+        }
+    ]
+}
