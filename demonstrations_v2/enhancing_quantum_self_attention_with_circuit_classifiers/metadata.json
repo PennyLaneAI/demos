@@ -1,0 +1,129 @@
+{
+  "title": "Enhancing quantum self-attention with strongly entangling circuit classifiers",
+  "authors": [
+    {
+      "username": "Tqhuyen"
+    },
+    {
+      "name": "Yu-Han Lin"
+    },
+    {
+      "name": "Hanh T. M. Tran"
+    },
+    {
+      "name": "Duy-Tuan Dao"
+    },
+    {
+      "name": "Van-Linh Nguyen"
+    }
+  ],
+  "executable_stable": true,
+  "executable_latest": true,
+  "dateOfPublication": "2026-09-20T00:00:00+00:00",
+  "dateOfLastModification": "2026-09-20T12:00:00+00:00",
+  "categories": [
+    "Quantum Machine Learning"
+  ],
+  "tags": [
+    "quantum machine learning",
+    "self-attention",
+    "quantum classifiers",
+    "variational quantum circuits"
+  ],
+  "previewImages": [
+    {
+      "type": "thumbnail",
+      "uri": "/_static/demo_thumbnails/regular_demo_thumbnails/thumbnail_placeholder.png"
+    }
+  ],
+  "seoDescription": "Build a quantum self-attention-inspired circuit with a strongly entangling classifier and explore its training and test accuracy on a small MNIST task.",
+  "doi": "",
+  "references": [
+    {
+      "id": "Tran2025",
+      "type": "article",
+      "title": "Efficient Circuit Classifier Design for Enhancing Quantum Self-Attention in Vision Transformers",
+      "authors": "Quang-Huyen Tran, Yu-Han Lin, Hanh T. M. Tran, Duy-Tuan Dao and Van-Linh Nguyen",
+      "year": "2025",
+      "journal": "2025 IEEE Globecom Workshops (GC Wkshps)",
+      "doi": "10.1109/gcwkshps68340.2025.11591004",
+      "url": "https://doi.org/10.1109/gcwkshps68340.2025.11591004"
+    },
+    {
+      "id": "Shi2025",
+      "type": "article",
+      "title": "QSAN: A Near-Term Achievable Quantum Self-Attention Network",
+      "authors": "Jinye Shi, Run-Xia Zhao, Wei Wang, Shangbin Zhang and Xi Li",
+      "year": "2025",
+      "journal": "IEEE Trans. Neural Netw. Learn. Syst.",
+      "doi": "10.1109/tnnls.2024.3504828",
+      "url": "https://doi.org/10.1109/tnnls.2024.3504828"
+    },
+    {
+      "id": "Zhao2024",
+      "type": "article",
+      "title": "QKSAN: A Quantum Kernel Self-Attention Network",
+      "authors": "Run-Xia Zhao, Jinye Shi and Xi Li",
+      "year": "2024",
+      "journal": "IEEE Trans. Pattern Anal. Mach. Intell.",
+      "doi": "10.1109/tpami.2024.3434974",
+      "url": "https://doi.org/10.1109/tpami.2024.3434974"
+    },
+    {
+      "id": "Li2024",
+      "type": "article",
+      "title": "Quantum Self-Attention Neural Networks for Text Classification",
+      "authors": "Guangxi Li, Xuanqiang Zhao and Xin Wang",
+      "year": "2024",
+      "journal": "Sci. China Inf. Sci.",
+      "doi": "10.1007/s11432-023-3879-7",
+      "url": "https://doi.org/10.1007/s11432-023-3879-7"
+    },
+    {
+      "id": "Zheng2023",
+      "type": "article",
+      "title": "Design of a Quantum Self-Attention Neural Network on Quantum Circuits",
+      "authors": "Jin Zheng, Qing Gao and Zibo Miao",
+      "year": "2023",
+      "journal": "IEEE SMC",
+      "doi": "10.1109/SMC53992.2023.10393989",
+      "url": "https://doi.org/10.1109/SMC53992.2023.10393989"
+    },
+    {
+      "id": "Schuld2020",
+      "type": "article",
+      "title": "Circuit-Centric Quantum Classifiers",
+      "authors": "Maria Schuld, Alex Bocharov, Krysta Svore and Nathan Wiebe",
+      "year": "2020",
+      "journal": "Phys. Rev. A",
+      "volume": "101",
+      "pages": "032308",
+      "doi": "10.1103/physreva.101.032308",
+      "url": "https://doi.org/10.1103/physreva.101.032308"
+    },
+    {
+      "id": "Bowles2024",
+      "type": "other",
+      "title": "PennyLane Datasets for 'Better than classical? The subtle art of benchmarking quantum machine learning models'",
+      "authors": "Joseph Bowles, Shahnawaz Ahmed and Maria Schuld",
+      "year": "2024",
+      "url": "https://pennylane.ai/datasets/downscaled-mnist"
+    }
+  ],
+  "basedOnPapers": [
+    "10.1109/gcwkshps68340.2025.11591004"
+  ],
+  "referencedByPapers": [],
+  "relatedContent": [
+    {
+      "type": "demonstration",
+      "id": "low_depth_circuits_mnist",
+      "weight": 1.0
+    },
+    {
+      "type": "demonstration",
+      "id": "tutorial_variational_classifier",
+      "weight": 1.0
+    }
+  ]
+}
