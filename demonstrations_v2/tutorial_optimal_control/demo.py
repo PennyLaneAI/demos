@@ -2,6 +2,10 @@ r"""
 Optimal control for gate compilation
 ====================================
 
+.. warning::
+
+    This demo only supports PennyLane v0.45.1.
+
 .. meta::
     :property="og:description": Optimize pulse programs to obtain digital gates.
     :property="og:image": https://pennylane.ai/qml/_static/demonstration_assets/thumbnail_tutorial_optimal_control.png
@@ -278,6 +282,15 @@ plt.xlabel("time $t$")
 plt.ylabel("Pulse function")
 plt.show()
 
+###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. figure:: ../_static/demonstration_assets/optimal_control/figure-line-279-1.png
+#       :align: center
+#       :width: 100%
+#
+
+
 #############################################################################
 # We see that for very large :math:`k,` the smooth rectangle becomes practically
 # indistinguishable from the original rectangle function :math:`R_\infty.` This means
@@ -422,6 +435,15 @@ ax = plt.gca()
 ax.set(xlabel="Time t", ylabel=r"Pulse function $S_k(p, t)$")
 plt.show()
 
+###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. figure:: ../_static/demonstration_assets/optimal_control/figure-line-423-1.png
+#       :align: center
+#       :width: 100%
+#
+
+
 #############################################################################
 # Note that the rectangles are rather round for these generic parameters.
 # The optimized parameters in the training workflows below will lead to more
@@ -465,6 +487,20 @@ target = qp.CNOT([0, 1]).matrix()
 target_name = "CNOT"
 print(f"Our target unitary is a {target_name} gate, with matrix\n{target.astype('int')}")
 
+###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. rst-class:: sphx-glr-script-out
+#
+#      .. code-block:: none
+#
+#          Our target unitary is a CNOT gate, with matrix
+#          [[1 0 0 0]
+#           [0 1 0 0]
+#           [0 0 0 1]
+#           [0 0 1 0]]
+
+
 
 def pulse_matrix(params):
     """Compute the unitary time evolution matrix of the pulse for given parameters."""
@@ -493,6 +529,21 @@ print(
     f"The arbitrarily chosen parameters yield the unitary\n{arb_mat}\n"
     f"which has a fidelity of {arb_profit:.6f}."
 )
+
+###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. rst-class:: sphx-glr-script-out
+#
+#      .. code-block:: none
+#
+#          The arbitrarily chosen parameters yield the unitary
+#          [[-0.0315+0.2074j  0.967 +0.1442j  0.    +0.j      0.    +0.j    ]
+#           [ 0.6004+0.7717j -0.1653+0.1292j  0.    +0.j      0.    +0.j    ]
+#           [ 0.    +0.j      0.    +0.j      0.8553-0.1974j  0.4013+0.2618j]
+#           [ 0.    +0.j      0.    +0.j     -0.0311-0.4781j -0.5918+0.6482j]]
+#          which has a fidelity of 0.052782.
+
 
 #############################################################################
 # Before we can start the optimization, we require initial parameters.
@@ -549,6 +600,30 @@ learning_rate = -0.2  # negative learning rate leads to maximization
 num_steps = 500
 hist = run_adam(profit, grad, params, learning_rate, num_steps)
 
+###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. figure:: ../_static/demonstration_assets/optimal_control/figure-line-550-1.png
+#       :align: center
+#       :width: 100%
+#
+#    .. rst-class:: sphx-glr-script-out
+#
+#      .. code-block:: none
+#
+#          Step   50: 0.993980
+#          Step  100: 0.999696
+#          Step  150: 0.999628
+#          Step  200: 0.999854
+#          Step  250: 0.999977
+#          Step  300: 0.999995
+#          Step  350: 0.999998
+#          Step  400: 1.000000
+#          Step  450: 1.000000
+#          Step  500: 1.000000
+#          The optimization took 29.3 (CPU) seconds.
+
+
 #############################################################################
 # As we can see, Adam steadily increases the fidelity, bringing the pulse program
 # closer and closer to the target unitary. On its way, the optimizer produces a mild
@@ -596,6 +671,15 @@ def plot_optimal_pulses(hist, pulse_fn, ops, T, target_name):
 
 
 plot_optimal_pulses(hist, S_k, ops_param, T, target_name)
+
+###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. figure:: ../_static/demonstration_assets/optimal_control/figure-line-598-1.png
+#       :align: center
+#       :width: 100%
+#
+
 
 #############################################################################
 # We observe that a single rectangular pulse is sufficient for some of the
@@ -654,6 +738,24 @@ target = qp.Toffoli([0, 1, 2]).matrix()
 target_name = "Toffoli"
 print(f"Our target unitary is a {target_name} gate, with matrix\n{target.astype('int')}")
 
+###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. rst-class:: sphx-glr-script-out
+#
+#      .. code-block:: none
+#
+#          Our target unitary is a Toffoli gate, with matrix
+#          [[1 0 0 0 0 0 0 0]
+#           [0 1 0 0 0 0 0 0]
+#           [0 0 1 0 0 0 0 0]
+#           [0 0 0 1 0 0 0 0]
+#           [0 0 0 0 1 0 0 0]
+#           [0 0 0 0 0 1 0 0]
+#           [0 0 0 0 0 0 0 1]
+#           [0 0 0 0 0 0 1 0]]
+
+
 
 def pulse_matrix(params):
     """Compute the unitary time evolution matrix of the pulse for given parameters."""
@@ -685,6 +787,30 @@ num_steps = 1200
 learning_rate = -2e-3
 hist = run_adam(profit, grad, params, learning_rate, num_steps)
 
+###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. figure:: ../_static/demonstration_assets/optimal_control/figure-line-686-1.png
+#       :align: center
+#       :width: 100%
+#
+#    .. rst-class:: sphx-glr-script-out
+#
+#      .. code-block:: none
+#
+#          Step  120: 0.772116
+#          Step  240: 0.827255
+#          Step  360: 0.890429
+#          Step  480: 0.930445
+#          Step  600: 0.984312
+#          Step  720: 0.995645
+#          Step  840: 0.998453
+#          Step  960: 0.999210
+#          Step 1080: 0.999538
+#          Step 1200: 0.999708
+#          The optimization took 311.2 (CPU) seconds.
+
+
 params_hist, profit_hist = list(zip(*hist))
 max_params = params_hist[jnp.argmax(jnp.array(profit_hist))]
 
@@ -713,6 +839,18 @@ def node(params):
 
 probs = node(max_params)
 print(f"The state |110> is mapped to the probability vector\n{jnp.round(probs, 6)}.")
+
+###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. rst-class:: sphx-glr-script-out
+#
+#      .. code-block:: none
+#
+#          The state |110> is mapped to the probability vector
+#          [1.34000e-04 2.90000e-04 2.12000e-04 7.80000e-05 1.18000e-04 5.30000e-05
+#           1.10000e-05 9.99104e-01].
+
 
 #############################################################################
 # We see that the returned probabilities are close to the expected vector. The
@@ -755,6 +893,15 @@ sc.set_array([])
 plt.colorbar(sc, cax=cax, ax=ax)
 plt.show()
 
+###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. figure:: ../_static/demonstration_assets/optimal_control/figure-line-756-1.png
+#       :align: center
+#       :width: 100%
+#
+
+
 #############################################################################
 # The transition amplitudes are as expected, except for very small deviations.
 # All computational basis states are mapped to themselves, but the last two are
@@ -765,6 +912,15 @@ plt.show()
 # Let's also look at the pulse sequence itself:
 
 plot_optimal_pulses(hist, S_k, ops_param, T, target_name)
+
+###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. figure:: ../_static/demonstration_assets/optimal_control/figure-line-767-1.png
+#       :align: center
+#       :width: 100%
+#
+
 
 #############################################################################
 # As we can see, the optimized smooth rectangles do not fill out the time at maximal

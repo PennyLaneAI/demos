@@ -6,9 +6,9 @@
         }
     ],
     "executable_stable": true,
-    "executable_latest": true,
+    "executable_latest": false,
     "dateOfPublication": "2022-05-31T00:00:00+00:00",
-    "dateOfLastModification": "2026-06-16T00:00:00+00:00",
+    "dateOfLastModification": "2026-11-10T00:00:00+00:00",
     "categories": [
         "Quantum Hardware",
         "Quantum Computing"

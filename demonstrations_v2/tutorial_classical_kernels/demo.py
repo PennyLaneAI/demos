@@ -5,6 +5,10 @@ r"""
 Approximating a classical kernel with a quantum computer
 =============================================================
 
+.. warning::
+
+    This demo only supports PennyLane v0.45.1.
+
 .. meta::
     :property="og:description": Finding a QK to approximate the Gaussian kernel.
     :property="og:image": https://pennylane.ai/qml/_static/demonstration_assets/toy_qek.png
@@ -123,6 +127,7 @@ Start importing the usual suspects:
 import pennylane as qp
 from pennylane import numpy as np
 import matplotlib.pyplot as plt
+
 np.random.seed(53173)
 
 ###############################################################################
@@ -163,6 +168,13 @@ plt.suptitle("The Gaussian kernel with $\sigma=1/\sqrt{2}$")
 plt.xlabel("$\delta$")
 plt.ylabel("$k(\delta)$")
 plt.show()
+
+###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. figure:: ../_static/demonstration_assets/classical_kernels/gaussian_kernel.png
+#        :align: center
+#        :alt: gaussian kernel
 
 ###############################################################################
 # In this demo, we will consider only this one example. However, the arguments we
@@ -217,6 +229,13 @@ plt.xlabel("$\delta$")
 plt.suptitle("Periodic extension to the Gaussian kernel")
 plt.show()
 
+###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. figure:: ../_static/demonstration_assets/classical_kernels/periodic_gaussian_kernel.png
+#        :align: center
+#        :alt: periodic gaussian kernel
+
 ##################################################################################
 # In practice, we would construct several periodic extensions of the aperiodic
 # function, with increasing periods.
@@ -269,6 +288,13 @@ plt.xlabel("frequency $n$")
 plt.ylabel("Fourier coefficient $c_n$")
 plt.show()
 
+###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. figure:: ../_static/demonstration_assets/classical_kernels/fourier_coefficients.png
+#        :align: center
+#        :alt: fourier coefficients
+
 ##################################################################################
 # What do we see?
 # For very small coefficient counts, like :math:`2` and :math:`3,` we see that
@@ -290,6 +316,13 @@ plt.xlabel("frequency $n$")
 plt.ylabel("Fourier coefficient $c_n$")
 plt.suptitle("Fourier spectrum of the Gaussian kernel")
 plt.show()
+
+###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. figure:: ../_static/demonstration_assets/classical_kernels/gaussian_spectrum.png
+#        :align: center
+#        :alt: gaussian spectrum
 
 ##################################################################################
 # We just need a QK with the same Fourier spectrum!
@@ -459,6 +492,13 @@ plt.suptitle("QK with test amplitudes")
 plt.show()
 
 ###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. figure:: ../_static/demonstration_assets/classical_kernels/test_quantum_kernel.png
+#        :align: center
+#        :alt: test quantum kernel
+
+###############################################################################
 # One can see that the stationary kernel with this particular initial state has
 # a decaying spectrum that looks similar to :math:`1/\lvert x\rvert` — but not
 # yet like a Gaussian.
@@ -621,6 +661,25 @@ for step in range(max_steps):
             print("Tolerance trespassed! This is the end.")
             break
 
+
+###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. rst-class:: sphx-glr-script-out
+#
+#      .. code-block:: none
+#
+#          Error norm at step  10: 7.232771825171691e-14
+#          Error norm at step  20: 2.780994475228042e-17
+#          Error norm at step  30: 6.216063084075807e-17
+#          Error norm at step  40: 2.802615450748846e-17
+#          Error norm at step  50: 3.103186766408166e-17
+#          Error norm at step  60: 2.798502065841085e-17
+#          Error norm at step  70: 6.206941499167929e-17
+#          Error norm at step  80: 6.807555173321802e-17
+#          Error norm at step  90: 6.206950940052457e-17
+#          Error norm at step 100: 1.1102574375053522e-16
+
 ###############################################################################
 # The tolerance we set was fairly low, one should expect good things to come
 # out of this.
@@ -630,6 +689,13 @@ plt.plot(range(d), probabilities, 'x')
 plt.xlabel("array entry $j$")
 plt.ylabel("probabilities $p_j$")
 plt.show()
+
+###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. figure:: ../_static/demonstration_assets/classical_kernels/optimized_probabilities.png
+#        :align: center
+#        :alt: optimized probabilities
 
 ###############################################################################
 # Would you be able to tell whether this is correct?
@@ -672,6 +738,13 @@ plt.legend()
 plt.show()
 
 ###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. figure:: ../_static/demonstration_assets/classical_kernels/probabilities_and_amplitudes.png
+#        :align: center
+#        :alt: probabilities and amplitudes
+
+###############################################################################
 # Visualizing the solution
 # --------------------------
 #
@@ -686,6 +759,13 @@ plt.ylabel("Fourier coefficient")
 plt.suptitle("Fourier spectrum of the Gaussian kernel")
 plt.legend()
 plt.show()
+
+###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. figure:: ../_static/demonstration_assets/classical_kernels/predicted_spectrum.png
+#        :align: center
+#        :alt: predicted spectrum
 
 ###############################################################################
 # It seems like it does!
@@ -717,6 +797,13 @@ plt.legend()
 plt.show()
 
 ###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. figure:: ../_static/demonstration_assets/classical_kernels/computed_spectrum.png
+#        :align: center
+#        :alt: computed spectrum
+
+###############################################################################
 # It seems it went well!
 # Matching spectra should mean matching kernel functions, right?
 
@@ -729,6 +816,13 @@ plt.xlabel("$\delta$")
 plt.ylabel("$k(\delta)$")
 plt.legend()
 plt.show()
+
+###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. figure:: ../_static/demonstration_assets/classical_kernels/learned_quantum_kernel.png
+#        :align: center
+#        :alt: learned quantum kernel
 
 ###############################################################################
 # Yeah!

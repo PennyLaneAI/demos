@@ -2,6 +2,10 @@ r"""
 Quantum computing with superconducting qubits
 =============================================
 
+.. warning::
+
+    This demo only supports PennyLane v0.45.1.
+
 .. meta::
     :property="og:description": Learn about quantum computers based on superconducting qubits, developed by companies such as IBM and Google.
     :property="og:image": https://pennylane.ai/qml/_static/demonstration_assets/sc_qubits_tn.png
@@ -456,6 +460,14 @@ ax1.set_ylabel("Momentum", fontsize=16)
 ax2.set_xlabel("Position", fontsize=16)
 plt.show()
 
+###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. figure:: ../_static/demonstration_assets/sc_qubits/position_momentum_samples.png
+#        :align: center
+#        :alt: Position and momentum measurements at three evolution times
+
+
 ##############################################################################
 #
 # In the above, the blue and orange dots represent qubits which we can infer to be in the state :math:`\left\lvert g \right\rangle`
@@ -560,6 +572,22 @@ print(
     )
 )
 
+###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. rst-class:: sphx-glr-script-out
+#
+#      .. code-block:: none
+#
+#          State |0>:
+#          X-rotated by pi/3: [0.87+0.j  0.  -0.5j]; Evolved for phi=0, t=pi/6: [0.87+0.j  0.  -0.5j]
+#          Y-rotated by pi/3: [0.87+0.j 0.5 +0.j]; Evolved for phi=pi/2, t=pi/6: [0.87-0.j 0.5 -0.j]
+#          
+#          State |1>:
+#          X-rotated by pi/3: [0.  -0.5j 0.87+0.j ]; Evolved for phi=0, t=pi/6: [0.  -0.5j 0.87+0.j ]
+#          Y-rotated by pi/3: [-0.5 +0.j  0.87+0.j]; Evolved for phi=pi/2, t=pi/6: [-0.5 -0.j  0.87+0.j]
+
+
 ##############################################################################
 #
 # Thus, for a particular choice of angle, we have verified that this Hamiltonian implements rotations around the X and Y axes.
@@ -661,6 +689,26 @@ print(
     )
 )
 
+###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. rst-class:: sphx-glr-script-out
+#
+#      .. code-block:: none
+#
+#          State |0>|0>:
+#          Evolved for t=3*pi/2: [ 1.+0.j -0.-0.j -0.-0.j -0.+0.j]; Output of ISWAP gate: [1.+0.j 0.+0.j 0.+0.j 0.+0.j]
+#           
+#          State |0>|1>:
+#          Evolved for t=3*pi/2: [ 0.+0.j -0.-0.j  0.+1.j  0.+0.j]; Output of ISWAP gate: [0.+0.j 0.+0.j 0.+1.j 0.+0.j]
+#           
+#          State |1>|0>:
+#          Evolved for t=3*pi/2: [ 0.+0.j  0.+1.j -0.-0.j  0.+0.j]; Output of ISWAP gate: [0.+0.j 0.+1.j 0.+0.j 0.+0.j]
+#           
+#          State |1>|1>:
+#          Evolved for t=3*pi/2: [-0.+0.j -0.-0.j -0.-0.j  1.+0.j]; Output of ISWAP gate: [0.+0.j 0.+0.j 0.+0.j 1.+0.j]
+
+
 
 ##############################################################################
 #
@@ -693,6 +741,19 @@ matrix = qp.matrix(cnot_with_iswap, wire_order=[0, 1])()
 
 # Multiply by a global phase to obtain CNOT
 (np.exp(1j * np.pi / 4) * matrix).round(2)
+
+###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. rst-class:: sphx-glr-script-out
+#
+#      .. code-block:: none
+#
+#          [[ 1.+0.j  0.+0.j  0.+0.j  0.+0.j]
+#           [-0.+0.j  1.-0.j  0.+0.j  0.+0.j]
+#           [ 0.+0.j  0.+0.j -0.+0.j  1.+0.j]
+#           [ 0.+0.j  0.+0.j  1.-0.j  0.+0.j]]
+
 
 ##############################################################################
 #
@@ -749,6 +810,16 @@ def H_evolve(state, phi, time):
 
 # Verify that we return maximally entangled state up to a global phase
 (np.exp(-1j * np.pi / 4) * H_evolve([0, 0], 0, np.pi / 4)).round(3)
+
+###############################################################################
+# .. ifconfig:: not sphinx_gallery_conf['plot_gallery']
+#
+#    .. rst-class:: sphx-glr-script-out
+#
+#      .. code-block:: none
+#
+#          [0.707-0.j 0.   +0.j 0.   -0.j 0.707+0.j]
+
 
 ##############################################################################
 #
