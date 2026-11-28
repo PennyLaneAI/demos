@@ -74,11 +74,12 @@ wires = qp.registers({"x": 4, "y":4, "output":6,"work_wires": 4})
 ######################################################################
 # Now, we write a circuit to prepare the state :math:`|x \rangle|y \rangle|0 \rangle`, which will be needed for the out-place
 # operation, where we initialize specific values to :math:`x` and :math:`y`. Note that in this example we use computational basis states, but
-# you could introduce any quantum state as input.
+# you could introduce any quantum state as input. Since :class:`~.pennylane.BasisState` expects a binary array, we convert
+# the integers with :func:`~.pennylane.math.int_to_binary`.
 
 def product_basis_state(x=0,y=0):
-    qp.BasisState(x, wires=wires["x"])
-    qp.BasisState(y, wires=wires["y"])
+    qp.BasisState(qp.math.int_to_binary(x, len(wires["x"])), wires=wires["x"])
+    qp.BasisState(qp.math.int_to_binary(y, len(wires["y"])), wires=wires["y"])
 
 dev = qp.device("default.qubit")
 @qp.set_shots(1)

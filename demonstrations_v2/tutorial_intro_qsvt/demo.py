@@ -258,7 +258,19 @@ eigvals = np.linspace(-1, 1, 16)
 A = np.diag(eigvals)  # 16-dim matrix
 wire_order = list(range(5))
 
-qp.draw_mpl(qp.transforms.decompose(qp.qsvt))(A,  target_poly, encoding_wires=wire_order, block_encoding="embedding")
+# To draw the circuit, we expand qsvt into its BlockEncode and PCPhase operations.
+qsvt_op = qp.qsvt(A, target_poly, encoding_wires=wire_order, block_encoding="embedding")
+qsvt_ops = [
+    sub_op
+    for op in qsvt_op.decomposition()
+    for sub_op in ([op] if isinstance(op, (qp.BlockEncode, qp.PCPhase)) else op.decomposition())
+]
+
+def qsvt_circuit():
+    for op in qsvt_ops:
+        qp.apply(op)
+
+qp.draw_mpl(qsvt_circuit)()
 plt.show()
 
 ###############################################################################
